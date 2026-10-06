@@ -589,7 +589,7 @@ export const projects = [
   },
   {
     id: "taylosite",
-    title: "Taylor Drew Personal Website",
+    title: "Personal website",
     category: "web",
     summary:
       "A retro desktop-window personal website with a full admin panel for editing copy, links, photos, dates, and colors.",

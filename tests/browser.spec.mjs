@@ -7,7 +7,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    /Taylor\s+Drew/i,
+    /Selected\s+work/i,
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
   for (const image of await page.locator("#featured-projects img").all()) {
