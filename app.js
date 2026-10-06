@@ -36,12 +36,12 @@ const liveLink = (project) =>
 function featuredCard(project, index) {
   const preview = project.image
     ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 260 : 960}" height="${project.portrait ? 563 : 600}" loading="lazy" decoding="async">`
-    : `<div class="concept-preview" aria-hidden="true"><span class="preview-symbol">${project.id === "the-trip-handler" ? "⌁" : "◈"}</span><span class="preview-wordmark">${escape(project.title)}</span><span class="preview-caption">${project.id === "the-trip-handler" ? "PLAN / INVITE / GO" : "IDEA / PLAN / CREATE"}</span><div class="preview-route"><i></i><i></i><i></i></div></div>`;
-  return `<article class="project-card"><button class="project-visual ${escape(project.tone || "sage")} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 4)}</div><div class="project-links">${detailsButton(project, "Project details", "case-link")}${liveLink(project)}</div></article>`;
+    : `<div class="concept-preview" aria-hidden="true">${escape(project.title)}</div>`;
+  return `<article class="project-card"><button class="project-visual ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 4)}</div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a>${liveLink(project)}</div></article>`;
 }
 
 function archiveCard(project) {
-  return `<article class="archive-card"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="project-id mono">↗</span></div><h3>${escape(project.title)}</h3><p>${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 4)}</div><div class="project-links">${detailsButton(project, "Explore", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
+  return `<article class="archive-card"><div class="archive-description"><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p></div><div><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span></div><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 $("#featured-projects").innerHTML = featuredProjects.map(featuredCard).join("");
@@ -60,15 +60,6 @@ function renderArchive() {
   $("#empty-state").hidden = visible.length > 0;
 }
 renderArchive();
-
-$("#archive-toggle").addEventListener("click", () => {
-  const expanded =
-    $("#archive-toggle").getAttribute("aria-expanded") !== "true";
-  $("#archive-toggle").setAttribute("aria-expanded", String(expanded));
-  $("#archive-toggle").innerHTML =
-    `${expanded ? "Close project archive" : "Explore all projects"} <span aria-hidden="true">${expanded ? "−" : "+"}</span>`;
-  $("#project-archive").hidden = !expanded;
-});
 
 function setFilter(category) {
   activeFilter = category;

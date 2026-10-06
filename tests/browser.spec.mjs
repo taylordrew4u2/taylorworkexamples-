@@ -7,7 +7,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "working product",
+    "Taylor Drew",
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
   for (const image of await page.locator("#featured-projects img").all()) {
@@ -31,17 +31,18 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
     fullPage: true,
   });
+  await page.screenshot({
+    path: testInfo.outputPath(`portfolio-${testInfo.project.name}-intro.png`),
+  });
 });
 
-test("archive filters, searches, empty state, reset, and collapse work together", async ({
+test("all projects are visible and filters, searches, empty state, and reset work together", async ({
   page,
 }) => {
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: "Explore all projects" });
-  await toggle.click();
   await expect(page.locator("#project-archive")).toBeVisible();
   const total = await page.locator(".archive-card").count();
-  expect(total).toBeGreaterThan(6);
+  expect(total).toBe(24);
   await page.locator('[data-filter="ios"]').click();
   await expect(page.locator('[data-filter="ios"]')).toHaveAttribute(
     "aria-pressed",
@@ -68,6 +69,7 @@ test("archive filters, searches, empty state, reset, and collapse work together"
   await expect(page.locator("#result-count")).toHaveText(
     `0 OF ${total} PROJECTS`,
   );
+  await page.locator('[data-filter="ios"]').click();
   await page.getByRole("button", { name: "Clear filters" }).click();
   await expect(search).toHaveValue("");
   await expect(search).toBeFocused();
@@ -76,8 +78,6 @@ test("archive filters, searches, empty state, reset, and collapse work together"
     "true",
   );
   await expect(page.locator(".archive-card")).toHaveCount(total);
-  await page.getByRole("button", { name: "Close project archive" }).click();
-  await expect(page.locator("#project-archive")).toBeHidden();
 });
 
 test("project dialog keeps background controls inactive, closes with Escape, and restores the trigger", async ({
@@ -166,7 +166,7 @@ test("navigation opens, closes on selection, and handles Escape on phones", asyn
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await page
     .getByRole("navigation")
-    .getByRole("link", { name: "About", exact: true })
+    .getByRole("link", { name: "Projects", exact: true })
     .click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   await expect(page.getByRole("navigation")).toBeHidden();

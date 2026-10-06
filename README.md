@@ -1,6 +1,6 @@
 # Taylor Drew — Developer Portfolio
 
-A responsive portfolio for Taylor Drew's full stack, native iOS, desktop, and audio work. Six featured products lead into a searchable archive of 24 public project repositories. Contact is by email: **taylordrew4u@gmail.com**.
+A responsive portfolio for Taylor Drew's full stack, native iOS, desktop, and audio work. Six featured projects appear above an always-visible searchable list of all 24 public project repositories. Contact is by email: **taylordrew4u@gmail.com**.
 
 ## Run locally
 
@@ -45,4 +45,4 @@ Descriptions and stacks are based on [Taylor's GitHub profile](https://github.co
 
 Project screenshots were extracted from [the profile's demonstration GIFs](https://github.com/taylordrew4u2/taylordrew4u2/tree/main/assets), preserving their aspect ratios. The Trip Handler screenshot comes from its [project documentation](https://github.com/taylordrew4u2/the-trip-handler/tree/main/docs/screenshots). RoleCall's SVG is a [repository UI preview](https://github.com/taylordrew4u2/Role-Call/tree/main/docs/screenshots) and is labeled accordingly. The BitBinder images originate from its App Store screenshot walkthrough; My Gig Calendar shows its public fan calendar. The illustrated avatar is from the public GitHub profile.
 
-The visual layout is custom. Fonts are DM Sans and DM Mono via Google Fonts, with local system fallbacks. Email links open the visitor's mail app; the copy button uses the browser clipboard with a selection fallback. No analytics or contact-form submission service is included.
+The visual layout uses a white background, blue accents, and system sans serif and monospace fonts. Project screenshots lead the page, followed by a compact project list and email contact. Email links open the visitor's mail app; the copy button uses the browser clipboard with a selection fallback. No analytics or contact-form submission service is included.
