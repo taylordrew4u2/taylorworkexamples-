@@ -7,7 +7,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    "Taylor Drew",
+    /Taylor\s+Drew/i,
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
   for (const image of await page.locator("#featured-projects img").all()) {
@@ -34,6 +34,14 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}-intro.png`),
   });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  expect(
+    await page.evaluate(() => ({
+      scroll: getComputedStyle(document.documentElement).scrollBehavior,
+      imageTransition: getComputedStyle(document.querySelector(".project-visual img")).transitionDuration,
+      cardTransition: getComputedStyle(document.querySelector(".project-visual")).transitionDuration,
+    })),
+  ).toEqual({ scroll: "auto", imageTransition: "0s", cardTransition: "0s" });
 });
 
 test("all projects are visible and filters, searches, empty state, and reset work together", async ({
