@@ -1,0 +1,21 @@
+{
+  "name": "taylor-drew-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Taylor Drew's full stack and iOS development portfolio",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check app.js && node --check projects.js && npm test && npm run build",
+    "test:browser": "playwright test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
+  }
+}
