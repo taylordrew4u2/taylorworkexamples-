@@ -19,8 +19,8 @@
     />
     <meta name="twitter:card" content="summary" />
     <title>Websites & apps — Development portfolio</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=6" />
-    <link rel="stylesheet" href="./styles.css?v=6" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=7" />
+    <link rel="stylesheet" href="./styles.css?v=7" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -38,7 +38,7 @@
         ]
       }
     </script>
-    <script type="module" src="./app.js?v=6"></script>
+    <script type="module" src="./app.js?v=7"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -106,8 +106,8 @@
       </section>
       <section id="work" class="work-section wrap" aria-labelledby="work-title">
         <div class="section-heading">
-          <h2 id="work-title">See what I’ve built</h2>
-          <span class="section-count mono">01 — 06</span>
+          <h2 id="work-title">Selected work</h2>
+          <span class="section-count mono">03 PRODUCT STORIES</span>
         </div>
         <div id="featured-projects" class="featured-grid"></div>
         <noscript
@@ -163,60 +163,79 @@
         class="archive wrap"
         aria-labelledby="archive-title"
       >
-        <div class="section-heading">
-          <h2 id="archive-title">All projects</h2>
-          <a
-            class="text-link"
-            href="https://github.com/taylordrew4u2?tab=repositories"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub repositories <span aria-hidden="true">↗</span></a
-          >
-        </div>
-        <div class="archive-controls">
-          <div
-            class="filter-group"
-            role="group"
-            aria-label="Filter projects by type"
-          >
-            <button class="filter active" data-filter="all" aria-pressed="true">
-              All work</button
-            ><button class="filter" data-filter="web" aria-pressed="false">
-              Web</button
-            ><button class="filter" data-filter="ios" aria-pressed="false">
-              iOS</button
-            ><button class="filter" data-filter="desktop" aria-pressed="false">
-              Desktop</button
-            ><button class="filter" data-filter="tools" aria-pressed="false">
-              Tools & experiments
-            </button>
+        <details class="archive-disclosure">
+          <summary class="archive-heading">
+            <h2 id="archive-title">Explore all 24 projects</h2>
+            <span class="archive-symbol" aria-hidden="true">+</span>
+          </summary>
+          <div class="archive-content">
+            <div class="section-heading">
+              <a
+                class="text-link"
+                href="https://github.com/taylordrew4u2?tab=repositories"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub repositories <span aria-hidden="true">↗</span></a
+              >
+            </div>
+            <div class="archive-controls">
+              <div
+                class="filter-group"
+                role="group"
+                aria-label="Filter projects by type"
+              >
+                <button
+                  class="filter active"
+                  data-filter="all"
+                  aria-pressed="true"
+                >
+                  All work</button
+                ><button class="filter" data-filter="web" aria-pressed="false">
+                  Web</button
+                ><button class="filter" data-filter="ios" aria-pressed="false">
+                  iOS</button
+                ><button
+                  class="filter"
+                  data-filter="desktop"
+                  aria-pressed="false"
+                >
+                  Desktop</button
+                ><button
+                  class="filter"
+                  data-filter="tools"
+                  aria-pressed="false"
+                >
+                  Tools & experiments
+                </button>
+              </div>
+              <label class="search-field"
+                ><svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                  <circle cx="10.5" cy="10.5" r="6.5" />
+                  <path d="m16 16 5 5" /></svg
+                ><input
+                  id="project-search"
+                  type="search"
+                  aria-label="Search projects by name, technology, or description"
+                  placeholder="Search projects"
+                  autocomplete="off"
+              /></label>
+            </div>
+            <p
+              id="result-count"
+              class="result-count mono"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <div id="archive-projects" class="archive-list"></div>
+            <div id="empty-state" class="empty-state" hidden>
+              <h3>No projects found.</h3>
+              <p>Try a different name or technology.</p>
+              <button id="clear-filters" class="text-link">
+                Clear filters <span aria-hidden="true">↗</span>
+              </button>
+            </div>
           </div>
-          <label class="search-field"
-            ><svg aria-hidden="true" viewBox="0 0 24 24" fill="none">
-              <circle cx="10.5" cy="10.5" r="6.5" />
-              <path d="m16 16 5 5" /></svg
-            ><input
-              id="project-search"
-              type="search"
-              aria-label="Search projects by name, technology, or description"
-              placeholder="Search projects"
-              autocomplete="off"
-          /></label>
-        </div>
-        <p
-          id="result-count"
-          class="result-count mono"
-          role="status"
-          aria-live="polite"
-        ></p>
-        <div id="archive-projects" class="archive-list"></div>
-        <div id="empty-state" class="empty-state" hidden>
-          <h3>No projects found.</h3>
-          <p>Try a different name or technology.</p>
-          <button id="clear-filters" class="text-link">
-            Clear filters <span aria-hidden="true">↗</span>
-          </button>
-        </div>
+        </details>
       </section>
     </main>
     <footer id="contact" class="site-footer wrap">

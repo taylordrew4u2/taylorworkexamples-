@@ -49,11 +49,11 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   assert.deepEqual(
     featuredProjects.map((project) => project.id),
     [
-      "markvegas",
-      "The-Bit-Binder",
-      "PinsAndNeedlesComedyWebsite",
       "Showrunner-ICanRunAShow",
+      "The-Bit-Binder",
       "the-trip-handler",
+      "Bill-Spilt",
+      "Role-Call",
       "MyGigCalendar",
     ],
   );
@@ -65,13 +65,7 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("featured proof covers websites, web applications, and shipped iOS apps with complete case studies", () => {
-  for (const type of ["Website", "Web application", "iOS app"]) {
-    assert.equal(
-      featuredProjects.filter((project) => project.projectType === type).length,
-      2,
-    );
-  }
+test("selected products have complete cases and the leading stories have traceable proof and screens", () => {
   for (const project of featuredProjects) {
     assert.ok(project.clientSummary.trim());
     assert.ok(project.challenge.trim());
@@ -79,6 +73,25 @@ test("featured proof covers websites, web applications, and shipped iOS apps wit
     assert.ok(project.demonstrates.length >= 3);
     assert.ok(project.demoUrl);
     assert.ok(project.image);
+  }
+  for (const project of featuredProjects.slice(0, 3)) {
+    assert.equal(project.highlights.length, 3);
+    for (const item of project.highlights) {
+      assert.ok(item.title.trim());
+      assert.ok(item.text.trim());
+      assert.ok(project.sources.includes(item.source));
+    }
+    assert.ok(project.gallery.length >= 2);
+    for (const frame of project.gallery) {
+      assert.ok(frame.label.trim());
+      assert.ok(frame.caption.trim());
+      for (const image of [frame, frame.companion].filter(Boolean)) {
+        assert.ok(image.imageAlt.trim());
+        assert.ok(image.width > 0 && image.height > 0);
+        assert.ok(existsSync(new URL(`../${image.image}`, import.meta.url)));
+        assert.ok(project.sources.includes(image.sourceUrl));
+      }
+    }
   }
 });
 
@@ -113,7 +126,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
       assert.equal(new URL(link).protocol, "https:");
     }
     if (project.image) {
-      assert.match(project.image, /^\.\/assets\/[a-z]+\.(webp|svg)$/);
+      assert.match(project.image, /^\.\/assets\/[a-z0-9-]+\.(webp|svg)$/);
       assert.ok(
         existsSync(new URL(`../${project.image}`, import.meta.url)),
         `${project.id}: missing ${project.image}`,

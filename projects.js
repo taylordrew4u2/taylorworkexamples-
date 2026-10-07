@@ -1,6 +1,5 @@
-// Public project inventory verified against GitHub on 2026-10-06.
-// Featured client-facing examples and live links verified on 2026-10-07.
-// Sources stay alongside each entry so portfolio claims remain traceable.
+// Public catalog and featured engineering claims verified on 2026-10-07.
+// Source links and screenshot provenance stay alongside each project.
 export const email = "taylordrew4u@gmail.com";
 
 // experiment marks focused utilities and development projects for the tools filter.
@@ -21,9 +20,9 @@ export const projects = [
     repoUrl: "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow",
     demoUrl: "https://icanrunashow.com",
     demoLabel: "Live site",
-    image: "./assets/showrunner.webp",
+    image: "./assets/showrunner-live-timer.webp",
     imageAlt:
-      "I Can Run A Show live control interface with a countdown and soundboard",
+      "I Can Run A Show live cue timer with performer soundboard and running order",
     portrait: false,
     tone: "sage",
     badge: "LIVE WEB APP",
@@ -32,9 +31,15 @@ export const projects = [
       "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow",
       "https://api.github.com/repos/taylordrew4u2/Showrunner-ICanRunAShow",
       "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/README.md",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/api/sign.ts",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/api/_lib/showWrites.ts",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/demo.gif",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/desktop-show.png",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/contracts.png",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/schedule.png",
+      "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/src/utils/encryption.ts",
     ],
-    clientSummary:
-      "A web application for event producers to manage performers, schedules, contracts, music, and live show cues.",
+    clientSummary: "Book performers, collect signatures, and run a live show.",
     demonstrates: [
       "Application workflow design",
       "Offline-capable interfaces",
@@ -46,6 +51,72 @@ export const projects = [
       "Bring booking, paperwork, and live show operation into one interface that can work without a reliable venue connection.",
     build:
       "A React and TypeScript PWA with encrypted persistence, on-device schedule import, contract signing, and a full-screen cue timer and soundboard.",
+    highlights: [
+      {
+        title: "Live cues, even offline",
+        text: "Run timed cues and walk-on music on your phone.",
+        source:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/README.md",
+      },
+      {
+        title: "Account-free contract signing",
+        text: "Collect timestamped signatures linked to the exact document.",
+        source:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/api/sign.ts",
+      },
+      {
+        title: "Encrypted storage",
+        text: "Encrypt uploads and reject saves from outdated tabs.",
+        source:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/api/_lib/showWrites.ts",
+      },
+    ],
+    gallery: [
+      {
+        label: "Live controls",
+        image: "./assets/showrunner-live-timer.webp",
+        imageAlt: "Live show timer, soundboard, and performer running order",
+        width: 960,
+        height: 600,
+        portrait: false,
+        caption: "Running app · Sample data",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/demo.gif",
+      },
+      {
+        label: "Show workspace",
+        image: "./assets/showrunner-overview.webp",
+        imageAlt: "Show lineup, readiness checklist, flyer, and running order",
+        width: 1600,
+        height: 1125,
+        portrait: false,
+        caption: "Production-build screenshot of a sample show workspace.",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/desktop-show.png",
+      },
+      {
+        label: "Contracts & cues",
+        image: "./assets/showrunner-contracts.webp",
+        imageAlt: "Signed and pending performer contracts",
+        width: 660,
+        height: 1431,
+        portrait: true,
+        caption:
+          "Performer agreements and timed cues from the running app, using sample data.",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/contracts.png",
+        companion: {
+          image: "./assets/showrunner-schedule.webp",
+          imageAlt: "Show schedule with timed cues and running order",
+          width: 660,
+          height: 1431,
+          sourceUrl:
+            "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/docs/screenshots/schedule.png",
+        },
+      },
+    ],
+    notes:
+      "Screens show the running app with sample show data. A production workspace requires signing in.",
   },
   {
     id: "The-Bit-Binder",
@@ -63,16 +134,17 @@ export const projects = [
       "Vision",
     ],
     features: [
-      "On-device transcription and OCR import",
-      "Reviewable multi-format import pipeline",
+      "Audio recording and speech transcription",
+      "Reviewable document, image, and text import",
       "Private iCloud sync, backups, and trash recovery",
       "Writing assistant with local and optional AI backends",
     ],
     repoUrl: "https://github.com/taylordrew4u2/The-Bit-Binder",
     demoUrl: "https://apps.apple.com/us/app/the-bitbinder/id6756085897",
     demoLabel: "App Store",
-    image: "./assets/bitbinder.webp",
-    imageAlt: "The BitBinder iPhone home screen",
+    image: "./assets/bitbinder-legacy-home.webp",
+    imageAlt:
+      "The BitBinder native iPhone home screen from an earlier App Store release",
     portrait: true,
     tone: "peach",
     badge: "APP STORE",
@@ -81,9 +153,14 @@ export const projects = [
       "https://github.com/taylordrew4u2/The-Bit-Binder",
       "https://api.github.com/repos/taylordrew4u2/The-Bit-Binder",
       "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/README.md",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/thebitbinder/Services/ImportReviewViewModel.swift",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/thebitbinder/thebitbinderApp.swift",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-home.png",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-roast-target.png",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-settings.png",
     ],
     clientSummary:
-      "An iOS app for comedians to capture material, record and transcribe sets, import notes, and build performance set lists.",
+      "Capture ideas, transcribe recordings, import notes, and build set lists.",
     demonstrates: [
       "Native iOS development",
       "Audio recording and transcription",
@@ -96,6 +173,62 @@ export const projects = [
       "Organize material spread across notes, recordings, photos, and PDFs in a single native app.",
     build:
       "A SwiftUI app with SwiftData and CloudKit, audio recording, speech recognition, OCR and document import, a review queue, and set-list tools.",
+    highlights: [
+      {
+        title: "Reviewable imports",
+        text: "Extract text from documents and images, then review it.",
+        source:
+          "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/thebitbinder/Services/ImportReviewViewModel.swift",
+      },
+      {
+        title: "Native audio tools",
+        text: "Record sets and turn audio into searchable writing material.",
+        source:
+          "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/README.md",
+      },
+      {
+        title: "Cloud storage and recovery",
+        text: "Private iCloud storage, backups, and recoverable trash.",
+        source:
+          "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/thebitbinder/thebitbinderApp.swift",
+      },
+    ],
+    gallery: [
+      {
+        label: "Capture & writing",
+        image: "./assets/bitbinder-legacy-home.webp",
+        imageAlt:
+          "BitBinder home with capture, writing, and record-set entry points",
+        width: 600,
+        height: 1299,
+        portrait: true,
+        caption: "Earlier App Store release · Workflow from current source",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-home.png",
+        workflow: [
+          "Document or image",
+          "Extract text",
+          "Review material",
+          "Writing library",
+          "Add to set list",
+        ],
+      },
+      {
+        label: "Sync & recovery",
+        image: "./assets/bitbinder-legacy-settings.webp",
+        imageAlt:
+          "BitBinder settings with iCloud sync, privacy, and trash controls",
+        width: 600,
+        height: 1299,
+        portrait: true,
+        caption:
+          "Earlier App Store settings screen. Current import and transcription workflows are described from the source.",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-settings.png",
+      },
+    ],
+    notes:
+      "Images are from an earlier App Store release. They show capture and settings screens; import review and transcription capabilities are verified from the current source. Speech recognition may use Apple services depending on availability.",
   },
   {
     id: "the-trip-handler",
@@ -119,9 +252,9 @@ export const projects = [
     repoUrl: "https://github.com/taylordrew4u2/the-trip-handler",
     demoUrl: "https://the-trip-handler.vercel.app",
     demoLabel: "Live site",
-    image: "./assets/triphandler.webp",
+    image: "./assets/triphandler-overview.webp",
     imageAlt:
-      "The Trip Handler trip dashboard with shared planning information",
+      "Trip Handler member dashboard showing a sample trip and payment status",
     portrait: false,
     tone: "blue",
     badge: "LIVE WEB APP",
@@ -130,9 +263,15 @@ export const projects = [
       "https://github.com/taylordrew4u2/the-trip-handler",
       "https://api.github.com/repos/taylordrew4u2/the-trip-handler",
       "https://github.com/taylordrew4u2/the-trip-handler/blob/main/README.md",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/lib/authz.ts",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/app/api/webhooks/stripe/route.ts",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/dashboard.png",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/my-trips.png",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/meals.png",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/main/app/actions/payments.ts",
     ],
     clientSummary:
-      "A web application for organizers to invite a group, approve participants, plan a trip, and collect payments.",
+      "Invite participants, coordinate a group trip, and collect payments.",
     demonstrates: [
       "Authentication and permissions",
       "Multi-step approval workflows",
@@ -144,18 +283,79 @@ export const projects = [
       "Coordinate applications, lodging, meals, schedules, expenses, and participant payments in one shared trip workspace.",
     build:
       "A Next.js application with private invitations, organizer approvals, PostgreSQL and Prisma, lodging and itinerary tools, and Stripe Checkout with signed webhooks.",
+    highlights: [
+      {
+        title: "Permissions and approvals",
+        text: "Server checks control membership and access to each trip.",
+        source:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/lib/authz.ts",
+      },
+      {
+        title: "Shared planning",
+        text: "Coordinate beds, meal votes, and itineraries using shared data.",
+        source:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/README.md",
+      },
+      {
+        title: "Stripe payments",
+        text: "Server-priced checkout and verified payment events update participant status.",
+        source:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/app/api/webhooks/stripe/route.ts",
+      },
+    ],
+    gallery: [
+      {
+        label: "Trip dashboard",
+        image: "./assets/triphandler-overview.webp",
+        imageAlt:
+          "Member dashboard for a sample cabin trip with payment-due action",
+        width: 1600,
+        height: 1000,
+        portrait: false,
+        caption: "Running app · Seeded demo trip",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/dashboard.png",
+      },
+      {
+        label: "Approvals",
+        image: "./assets/triphandler-approvals.webp",
+        imageAlt:
+          "Organizer dashboard with trip invitations, applicants, and payment statuses",
+        width: 1600,
+        height: 1000,
+        portrait: false,
+        caption:
+          "Organizer invitations and applicant statuses, shown with seeded demo data.",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/my-trips.png",
+      },
+      {
+        label: "Shared plans",
+        image: "./assets/triphandler-meals.webp",
+        imageAlt: "Trip meal plans with voting bars and dietary tags",
+        width: 1600,
+        height: 1000,
+        portrait: false,
+        caption:
+          "Meal plans, votes, and dietary needs from a seeded demo trip.",
+        sourceUrl:
+          "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/meals.png",
+      },
+    ],
+    notes:
+      "Screenshots come from the running application with seeded demo data. The public site leads to sign-in; screenshots do not represent a real payment transaction.",
   },
   {
     id: "Role-Call",
     title: "RoleCall",
     category: "web",
     summary:
-      "A full-stack filmmaking workspace that turns screenplays into cast and shot lists, then brings the crew together to plan roles and schedules.",
+      "A full-stack filmmaking workspace that turns screenplays into cast and shot lists, then brings the crew together with project roles and published production documents.",
     stack: ["Next.js", "TypeScript", "Clerk", "Drizzle", "PostgreSQL"],
     features: [
       "Script-to-cast and shot-list workflows",
       "Project invites and access control",
-      "Shared roles and shoot scheduling",
+      "Draft-to-published screenplay workflow",
     ],
     repoUrl: "https://github.com/taylordrew4u2/Role-Call",
     demoUrl: "https://rolecall.space",
@@ -171,6 +371,20 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/Role-Call",
       "https://github.com/taylordrew4u2/Role-Call/blob/main/README.md",
     ],
+    clientSummary:
+      "A filmmaking workspace for turning scripts into cast and shot lists, managing project roles, and publishing approved drafts.",
+    projectType: "Web application",
+    demonstrates: [
+      "Script-processing workflows",
+      "Team permissions",
+      "Draft publication",
+    ],
+    challenge:
+      "Move a filmmaking team from screenplay text to a shared plan for casting, shots, crew roles, and scheduling.",
+    build:
+      "A Next.js application with screenplay parsing, shot-list generation, Clerk sign-in, project membership and roles, and PostgreSQL persistence.",
+    notes:
+      "The image is a repository UI preview, not a running-app screenshot. The public marketing site is live; the production workspace requires signing in.",
   },
   {
     id: "Bill-Spilt",
@@ -187,8 +401,9 @@ export const projects = [
     repoUrl: "https://github.com/taylordrew4u2/Bill-Spilt",
     demoUrl: "https://billspilt.com",
     demoLabel: "Live site",
-    image: "./assets/billspilt.webp",
-    imageAlt: "BillSpilt household balances screen on a phone",
+    image: "./assets/billspilt-overview.webp",
+    imageAlt:
+      "BillSpilt household balances with demonstration roommate expenses",
     portrait: true,
     tone: "yellow",
     badge: "LIVE WEB APP",
@@ -198,6 +413,18 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/Bill-Spilt",
       "https://github.com/taylordrew4u2/Bill-Spilt/blob/main/README.md",
     ],
+    clientSummary:
+      "An installable expense app for roommates to split costs, track balances, and plan settlement payments—even offline.",
+    projectType: "Web application",
+    demonstrates: [
+      "Offline data and sync",
+      "Expense calculations",
+      "Payment-link workflows",
+    ],
+    challenge:
+      "Keep household expenses, unequal splits, and outstanding balances understandable across several roommates and devices.",
+    build:
+      "A Next.js PWA with local Dexie storage, a sync queue, PostgreSQL, balance calculations, and settlement suggestions with payment links.",
   },
   {
     id: "MyGigCalendar",
@@ -221,8 +448,9 @@ export const projects = [
     repoUrl: "https://github.com/taylordrew4u2/MyGigCalendar",
     demoUrl: "https://apps.apple.com/us/app/my-gig-calendar/id6760590068",
     demoLabel: "App Store",
-    image: "./assets/gigcalendar.webp",
-    imageAlt: "My Gig Calendar public calendar on a phone",
+    image: "./assets/gigcalendar-native-calendar.webp",
+    imageAlt:
+      "My Gig Calendar native iPhone calendar with upcoming performance dates",
     portrait: true,
     tone: "blue",
     badge: "APP STORE",
@@ -762,11 +990,11 @@ export const projects = [
 ];
 
 const featuredIds = [
-  "markvegas",
-  "The-Bit-Binder",
-  "PinsAndNeedlesComedyWebsite",
   "Showrunner-ICanRunAShow",
+  "The-Bit-Binder",
   "the-trip-handler",
+  "Bill-Spilt",
+  "Role-Call",
   "MyGigCalendar",
 ];
 export const featuredProjects = featuredIds.map((id) =>

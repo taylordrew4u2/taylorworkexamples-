@@ -10,6 +10,25 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     /Websites\.\s+Apps/i,
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
+  await expect(page.locator(".case-study")).toHaveCount(3);
+  await expect(page.locator(".case-study .project-title")).toHaveText([
+    "I Can Run A Show",
+    "The BitBinder",
+    "The Trip Handler",
+  ]);
+  await expect(page.locator(".supporting-grid .project-title")).toHaveText([
+    "BillSpilt",
+    "RoleCall",
+    "My Gig Calendar",
+  ]);
+  for (const story of await page.locator(".case-study").all()) {
+    await expect(story.locator(".case-highlights li")).toHaveCount(3);
+    for (const highlight of await story.locator(".case-highlights li").all()) {
+      await expect(highlight).toBeVisible();
+      await expect(highlight.locator("strong")).toHaveText(/\S/);
+      await expect(highlight.locator("p")).toHaveText(/\S/);
+    }
+  }
   for (const image of await page.locator("#featured-projects img").all()) {
     await image.scrollIntoViewIfNeeded();
     await expect
@@ -26,28 +45,15 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     ),
   ).toBe(true);
   expect(errors).toEqual([]);
-  if (testInfo.project.name === "desktop") {
-    for (const row of await page.locator(".project-row").all()) {
-      const tracks = await row.locator(".project-card").evaluateAll((cards) =>
-        [".project-visual", ".project-tags", ".project-links"].map(
-          (selector) => ({
-            selector,
-            tops: cards.map(
-              (card) =>
-                card.querySelector(selector).getBoundingClientRect().top,
-            ),
-          }),
-        ),
-      );
-      for (const { selector, tops } of tracks) {
-        expect(tops, `Both cards have a ${selector} track`).toHaveLength(2);
-        expect(
-          Math.abs(tops[0] - tops[1]),
-          `Peer ${selector} top alignment`,
-        ).toBeLessThanOrEqual(1);
-      }
-    }
-  }
+  const calendarCard = page.locator(".supporting-card").filter({
+    has: page.getByRole("button", { name: "My Gig Calendar", exact: true }),
+  });
+  await expect(calendarCard.locator("img")).toHaveAttribute("src", /gigcalendar-native-calendar\.webp/);
+  await expect(calendarCard.locator("img")).toHaveAttribute("alt", /native iPhone/i);
+  const roleCard = page.locator(".supporting-card").filter({
+    has: page.getByRole("button", { name: "RoleCall", exact: true }),
+  });
+  await expect(roleCard.locator(".visual-badge")).toHaveText("UI PREVIEW");
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -56,7 +62,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}-intro.png`),
   });
-  const controls = page.locator(".project-visual");
+  const controls = page.locator(".case-study .project-visual");
   async function expectStaticControlOnHover(control) {
     await control.scrollIntoViewIfNeeded();
     await page.mouse.move(0, 0);
@@ -92,22 +98,27 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     await control.scrollIntoViewIfNeeded();
     await page.mouse.move(0, 0);
     const restingTransform = await control
-      .locator("img")
+      .locator(".primary-screen")
       .evaluate((element) => getComputedStyle(element).transform);
     await expectStaticControlOnHover(control);
     expect(
       await control
-        .locator("img")
+        .locator(".primary-screen")
         .evaluate((element) => getComputedStyle(element).transform),
     ).toBe(restingTransform);
   }
 });
 
-test("all projects are visible and filters, searches, empty state, and reset work together", async ({
+test("archive opens and filters, searches, empty state, and reset work together", async ({
   page,
 }) => {
   await page.goto("/");
   await expect(page.locator("#project-archive")).toBeVisible();
+  const archive = page.locator(".archive-disclosure");
+  await expect(archive).not.toHaveAttribute("open", "");
+  await expect(page.getByRole("searchbox")).toBeHidden();
+  await archive.locator("summary").click();
+  await expect(archive).toHaveAttribute("open", "");
   const total = await page.locator(".archive-card").count();
   expect(total).toBe(24);
   await page.locator('[data-filter="ios"]').click();
@@ -145,6 +156,8 @@ test("all projects are visible and filters, searches, empty state, and reset wor
     "true",
   );
   await expect(page.locator(".archive-card")).toHaveCount(total);
+  await archive.locator("summary").click();
+  await expect(page.getByRole("searchbox")).toBeHidden();
 });
 
 test("project dialog keeps background controls inactive, closes with Escape, and restores the trigger", async ({
@@ -285,8 +298,9 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   page,
 }, testInfo) => {
   await page.goto("/");
+  await page.locator(".archive-disclosure summary").click();
   await page
-    .getByRole("button", { name: "Explore Pins & Needles Comedy", exact: true })
+    .getByRole("button", { name: "Pins & Needles Comedy", exact: true })
     .click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(
@@ -299,7 +313,7 @@ test("case studies show the need, build evidence, and a project-specific inquiry
     dialog.getByRole("heading", { name: "What I built", exact: true }),
   ).toBeVisible();
   for (const paragraph of await dialog.locator(".dialog-case p").all()) {
-    expect((await paragraph.textContent()).trim().length).toBeGreaterThan(30);
+    await expect(paragraph).toHaveText(/\S/);
   }
 
   const technicalDetails = dialog.locator(".technical-details");
@@ -335,4 +349,36 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   await page.screenshot({
     path: testInfo.outputPath(`case-study-${testInfo.project.name}.png`),
   });
+});
+
+test("lead galleries change real images, captions, and selection without opening a modal", async ({
+  page,
+}) => {
+  await page.goto("/");
+  for (const story of await page.locator(".case-study").all()) {
+    const choices = story.locator("[data-gallery]");
+    const title = (await story.locator(".project-title").textContent()).trim();
+    await expect(choices).toHaveAccessibleName(`Choose screen from ${title}`);
+    const count = await choices.locator("option").count();
+    expect(count).toBeGreaterThanOrEqual(2);
+    await expect(choices).toHaveValue("0");
+    const initialSource = await story.locator(".primary-screen").getAttribute("src");
+    const initialCaption = await story.locator(".screen-caption").textContent();
+    await expect(story.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
+    for (let index = 1; index < count; index += 1) {
+      await choices.selectOption(String(index));
+      await expect(choices).toHaveValue(String(index));
+      expect(await story.locator(".primary-screen").getAttribute("src")).not.toBe(initialSource);
+      expect(await story.locator(".screen-caption").textContent()).not.toBe(initialCaption);
+      for (const image of await story.locator(".case-screen img").all()) {
+        await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+      }
+      await expect(page.getByRole("dialog")).toBeHidden();
+    }
+    await choices.selectOption("0");
+    await expect(story.locator(".primary-screen")).toHaveAttribute("src", initialSource);
+    await expect(story.locator(".screen-caption")).toHaveText(initialCaption);
+    await expect(choices).toHaveValue("0");
+  }
+  await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toContainText(/earlier App Store release/i);
 });

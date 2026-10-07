@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=6";
+} from "./projects.js?v=7";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -59,25 +59,64 @@ const liveLink = (project) =>
     ? `<a href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "Live site")} <span aria-hidden="true">↗</span></a>`
     : "";
 
-function featuredCard(project, index) {
+function previewImages(frame) {
+  const workflow = frame.workflow
+    ? `<span class="screen-workflow"><span class="workflow-label">Import workflow</span><span class="workflow-steps" role="list">${frame.workflow.map((step) => `<span class="workflow-step" role="listitem">${escape(step)}</span>`).join("")}</span><span class="workflow-source">From the current source</span></span>`
+    : "";
+  return `<img class="primary-screen" src="${escape(frame.image)}" alt="${escape(frame.imageAlt)}" width="${frame.width || (frame.portrait ? 600 : 1280)}" height="${frame.height || (frame.portrait ? 1299 : 800)}" loading="lazy" decoding="async">${frame.companion ? `<img class="companion-screen" src="${escape(frame.companion.image)}" alt="${escape(frame.companion.imageAlt)}" width="${frame.companion.width || 600}" height="${frame.companion.height || 1299}" loading="lazy" decoding="async">` : ""}${workflow}`;
+}
+
+function productStory(project, index) {
+  const views = project.gallery || [
+    {
+      image: project.image,
+      imageAlt: project.imageAlt,
+      portrait: project.portrait,
+      label: "Overview",
+      caption: project.imageAlt,
+    },
+  ];
+  const frame = views[0];
+  const highlights = (project.highlights || [])
+    .map(
+      (item) =>
+        `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
+    )
+    .join("");
+  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}">${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-choices"><label for="screens-${escape(project.id)}">Choose screen</label><select id="screens-${escape(project.id)}" data-gallery="${escape(project.id)}" aria-label="Choose screen from ${escape(project.title)}">${views.map((view, viewIndex) => `<option value="${viewIndex}">${escape(view.label)}</option>`).join("")}</select></div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div></article>`;
+}
+
+function supportingCard(project, index) {
   const preview = project.image
-    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 260 : 960}" height="${project.portrait ? 563 : 600}" loading="lazy" decoding="async">`
-    : `<div class="concept-preview" aria-hidden="true">${escape(project.title)}</div>`;
-  return `<article class="project-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType || labels[project.category])}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
+    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 600 : 1280}" height="${project.portrait ? 1300 : 800}" loading="lazy" decoding="async">`
+    : "";
+  return `<article class="project-card supporting-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 function archiveCard(project) {
   return `<article class="archive-card"><div class="archive-description"><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p></div><div><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span></div><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
-$("#featured-projects").innerHTML = Array.from(
-  { length: 3 },
-  (_, row) =>
-    `<div class="project-row">${featuredProjects
-      .slice(row * 2, row * 2 + 2)
-      .map((project, column) => featuredCard(project, row * 2 + column))
-      .join("")}</div>`,
-).join("");
+$("#featured-projects").innerHTML =
+  `<div class="product-stories">${featuredProjects.slice(0, 3).map(productStory).join("")}</div><div class="supporting-section"><h3 class="supporting-title">More selected projects</h3><div class="supporting-grid">${featuredProjects
+    .slice(3)
+    .map((project, index) => supportingCard(project, index + 3))
+    .join("")}</div></div>`;
+
+$("#featured-projects").addEventListener("change", (event) => {
+  const choice = event.target.closest("[data-gallery]");
+  if (!choice) return;
+  const project = projects.find((item) => item.id === choice.dataset.gallery);
+  const frame = project?.gallery?.[Number(choice.value)];
+  if (!frame) return;
+  const story = choice.closest(".case-study");
+  const screen = story.querySelector(".case-screen");
+  screen.classList.toggle("portrait", frame.portrait === true);
+  screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
+  screen.innerHTML = `${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
+  story.querySelector(".screen-caption").textContent = frame.caption;
+});
+
 $("#year").textContent = new Date().getFullYear();
 
 let activeFilter = "all";

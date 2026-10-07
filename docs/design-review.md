@@ -1,28 +1,39 @@
 # Portfolio design review — October 7, 2026
 
-This was a polish of the existing dark, lime, violet, and cobalt portfolio for prospective website and app clients. The existing typography and real project imagery were retained. No framework migration or new design-system purchase was needed.
+The user needed stronger evidence of their work when approaching companies about websites and apps. The revision replaces six equal-weight previews with three expanded product stories: I Can Run A Show, The BitBinder, and The Trip Handler. BillSpilt, RoleCall, and My Gig Calendar form a compact supporting row. The complete 24-project catalog remains searchable behind an accessible native disclosure. The dark, lime, violet, and cobalt design, email contact, and single identity byline are retained.
 
-The introduction now explains the offering briefly and names email as the action. The single identity byline follows the introduction. Featured projects share title, summary, capability, and action tracks using CSS subgrid; capability pills keep their intrinsic height. Source links sit below the live example and case-study actions. The footer address is secondary to its email action.
+The trade-off is deliberate: deeper projects get more room; browsing every project takes one additional click. Real product screens and specific implemented behavior are more useful to this audience than a fixed website/web-app/iOS quota. No new framework, icon pack, or purchased design system was introduced.
 
-Lengths use rem, with device breakpoints remaining in px. Layout spacing follows a four-pixel rhythm. Hover changes screenshots inside stationary controls, and reduced motion preserves the screenshots' static positioning. Phone and coarse-pointer controls have expanded touch areas. Search keeps its accessible name and a 44-pixel input height.
+## Content and imagery
 
-## Evidence
+Three brief capability points are visible in each lead story. Source links in `projects.js` trace the claims to public implementation files. A labeled native screen selector changes each preview and caption without opening a dialog. The live example and project details remain beside the story; longer descriptions, technology details, and source code are available in the project dialog.
 
-- Matching before/after renders at 390×844, 1440×1000, and 1728×1000; expanded case-study renders on phone and desktop.
-- All six featured entries, 24 archive entries, technical disclosures, and source links preserved. Project data is unchanged from the preceding version.
-- Space Grotesk loaded at all intended weights. Minimum sampled text contrast was 7.11:1.
-- Nine data checks and browser coverage for render/overflow, filtering/search, dialogs/focus, email drafts, clipboard fallback, navigation, card alignment, and hover/reduced motion.
-- Better Design's comprehension check passed for the actual 35-word introduction with two actions. This is a text check, not user research or visual approval.
-- Better Design's geometry inspection returned `completed` for all required widths, using five complete, unfiltered captured states. Screenshots received a separate visual review.
+Showrunner uses real production-build screens with sample data, including an active cue timer, soundboard, and performer agreements. Trip Handler uses running-app screens of seeded demo trips; no payment transaction was performed. My Gig Calendar now shows its populated native iPhone calendar rather than its public fan website. RoleCall remains explicitly labeled UI PREVIEW.
+
+BitBinder's publicly available images are from an earlier App Store release and do not show its current transcription or import-review interfaces. A clearly labeled diagram explains the source-verified document/image import path beside one authentic screen. Audio transcription is a separate path; the diagram does not imply that audio imports pass through document review. This remains a visual evidence limitation, not a claim of a newly captured app screen.
+
+## Render and interaction evidence
+
+Matching before/after default renders at 390×844, 1440×1000, and 1728×1000 compare the earlier grid with the expanded stories. Each lead's gallery states received separate screenshots and source comparisons. A 1440×1150 proof shows the introduction and complete first story. The supporting cards share title, description, capability, and action tracks. Explicit case rows prevent a tall screenshot from separating its title from its proof points.
+
+Nine data checks pass. Sixteen browser scenarios cover preview loading, overflow, visible proof, accurate native/preview imagery, screen selection, the archive disclosure, search/filters, dialogs, focus restoration, email drafts, clipboard fallback, navigation, hover stability, and reduced motion. Layout-dependent render checks were repeated after the final spacing fixes. Fonts load with system fallbacks; lengths use rem except device queries, and touch controls are at least 44 pixels.
+
+## Better Design review
+
+Better Design's text check passed for the actual 34-word introduction with two actions. Its first product-story checks prompted shorter copy and replacing multiple gallery buttons with one labeled selector. The three on-page capability points are retained to fulfill the user's request for evidence of their best work. The tool's estimated reading-time heuristic still treats a detailed portfolio story as longer than a 15-second task screen. This is not a claim of a clean automated comprehension pass for every case story, user research, conversion improvement, or Better Design certification.
+
+The rendered geometry review and independent screenshot review are recorded below. Source review alone is not visual approval. Complete default, expanded archive, gallery, and expanded dialog states were captured; no shortened DOM fixture stands in for the portfolio.
 
 ## Geometry finding disposition
 
-The automated spacing report retains heuristic findings and is not a clean automated pass. Its 80-item output cap also truncates repeated findings. Independent review applied the rule exceptions and checked the rendered layout:
+Better Design returned `completed`, captured all required widths, and reviewed nine complete rendered states (231–663 visible elements). Its six-state input limit required separate batches; per-state reviews provide more specific evidence. There were no critical geometry findings. Output caps still truncate repeated findings, including 35 in the open desktop archive; this is not a clean automated score.
 
-- Small project-title controls duplicate a large preview or a 44-pixel Details control for the same action, allowed by `rule/touch-target-min-44px`.
-- Compact fine-pointer desktop links are covered by expanded controls on coarse-pointer devices; the touch-target rule applies to touch devices.
-- Portraits deliberately crop within their preview frames; full images are available in the project dialog, allowed by `rule/no-unintended-overflow`.
-- Absolutely positioned preview badges/arrows and nonvisual live-status text are not flow siblings. Their reported gap differences are capture-scope false positives.
-- The real search and archive-link target-size issues were corrected. Services use an explicit text/icon grid, eliminating the asymmetric-inset trigger.
+The remaining heuristic families were checked against source and screenshots:
 
-No supported serious or critical defect remained after the source, interaction, and screenshot reviews. This review does not claim conversion gains, client outcomes, or a Better Design certification.
+- Native screen selectors reserve additional right padding for their platform caret. The deliberate asymmetry is documented here and preserves readable labels.
+- Preview badges, arrows, and screen-reader-only live-status text are positioned outside normal flow; their measured sibling gaps do not describe actual content spacing.
+- Fine-pointer desktop links have compact targets. Phone and coarse-pointer layouts expand them to 44 pixels. Small title triggers duplicate large previews or full-sized Details controls for the same action.
+- The dialog's same-color inner header is not a distinct nested rounded surface; its square corners are clipped within the parent dialog.
+- Actual excessive case-header and supporting-card gaps were fixed in the source and rechecked in fresh renders.
+
+Independent source and screenshot reviews verify the supported fixes and intentional treatments. Automated findings, the missing current BitBinder workflow screenshot, and the case-story reading-time heuristic remain disclosed rather than represented as tool certification.
