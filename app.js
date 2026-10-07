@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=5";
+} from "./projects.js?v=6";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -63,14 +63,21 @@ function featuredCard(project, index) {
   const preview = project.image
     ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 260 : 960}" height="${project.portrait ? 563 : 600}" loading="lazy" decoding="async">`
     : `<div class="concept-preview" aria-hidden="true">${escape(project.title)}</div>`;
-  return `<article class="project-card"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="project-meta"><span class="mono project-category">${escape(project.projectType || labels[project.category])}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
+  return `<article class="project-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType || labels[project.category])}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 function archiveCard(project) {
   return `<article class="archive-card"><div class="archive-description"><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p></div><div><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span></div><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
-$("#featured-projects").innerHTML = featuredProjects.map(featuredCard).join("");
+$("#featured-projects").innerHTML = Array.from(
+  { length: 3 },
+  (_, row) =>
+    `<div class="project-row">${featuredProjects
+      .slice(row * 2, row * 2 + 2)
+      .map((project, column) => featuredCard(project, row * 2 + column))
+      .join("")}</div>`,
+).join("");
 $("#year").textContent = new Date().getFullYear();
 
 let activeFilter = "all";
@@ -123,7 +130,7 @@ document.addEventListener("click", (event) => {
     : "";
   const technical = `<div class="technical-content"><div class="project-tags">${tags(project.stack)}</div><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul><a class="text-link" href="${escape(project.repoUrl)}" ${external}>View source code <span aria-hidden="true">↗</span></a></div>`;
   $("#dialog-content").innerHTML =
-    `<p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="dialog-summary">${escape(project.clientSummary || project.summary)}</p>${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Discuss something similar <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source"><a href="${escape(source)}" ${external}>Project documentation ↗</a></p>`;
+    `<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.clientSummary || project.summary)}</p>${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source"><a href="${escape(source)}" ${external}>Project documentation ↗</a></p>`;
   dialog.showModal();
   dialog.scrollTop = 0;
 });

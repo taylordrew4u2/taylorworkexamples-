@@ -26,6 +26,28 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     ),
   ).toBe(true);
   expect(errors).toEqual([]);
+  if (testInfo.project.name === "desktop") {
+    for (const row of await page.locator(".project-row").all()) {
+      const tracks = await row.locator(".project-card").evaluateAll((cards) =>
+        [".project-visual", ".project-tags", ".project-links"].map(
+          (selector) => ({
+            selector,
+            tops: cards.map(
+              (card) =>
+                card.querySelector(selector).getBoundingClientRect().top,
+            ),
+          }),
+        ),
+      );
+      for (const { selector, tops } of tracks) {
+        expect(tops, `Both cards have a ${selector} track`).toHaveLength(2);
+        expect(
+          Math.abs(tops[0] - tops[1]),
+          `Peer ${selector} top alignment`,
+        ).toBeLessThanOrEqual(1);
+      }
+    }
+  }
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -34,6 +56,25 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}-intro.png`),
   });
+  const controls = page.locator(".project-visual");
+  async function expectStaticControlOnHover(control) {
+    await control.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    const before = await control.boundingBox();
+    await control.hover();
+    const after = await control.boundingBox();
+    expect(before).not.toBeNull();
+    expect(after).not.toBeNull();
+    for (const edge of ["x", "y", "width", "height"]) {
+      expect(
+        Math.abs(after[edge] - before[edge]),
+        `Hover keeps control ${edge} stable`,
+      ).toBeLessThanOrEqual(0.01);
+    }
+  }
+  for (const index of [0, 1]) {
+    await expectStaticControlOnHover(controls.nth(index));
+  }
   await page.emulateMedia({ reducedMotion: "reduce" });
   expect(
     await page.evaluate(() => ({
@@ -46,6 +87,20 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       ).transitionDuration,
     })),
   ).toEqual({ scroll: "auto", imageTransition: "0s", cardTransition: "0s" });
+  for (const index of [0, 1]) {
+    const control = controls.nth(index);
+    await control.scrollIntoViewIfNeeded();
+    await page.mouse.move(0, 0);
+    const restingTransform = await control
+      .locator("img")
+      .evaluate((element) => getComputedStyle(element).transform);
+    await expectStaticControlOnHover(control);
+    expect(
+      await control
+        .locator("img")
+        .evaluate((element) => getComputedStyle(element).transform),
+    ).toBe(restingTransform);
+  }
 });
 
 test("all projects are visible and filters, searches, empty state, and reset work together", async ({
@@ -264,7 +319,7 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   );
 
   const inquiry = dialog.getByRole("link", {
-    name: "Discuss something similar",
+    name: "Email about a similar project",
   });
   const draft = new URL(await inquiry.getAttribute("href"));
   expect(draft.pathname).toBe("taylordrew4u@gmail.com");
