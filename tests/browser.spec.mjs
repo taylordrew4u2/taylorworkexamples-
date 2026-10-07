@@ -7,7 +7,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    /Selected\s+work/i,
+    /Websites\.\s+Apps/i,
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
   for (const image of await page.locator("#featured-projects img").all()) {
@@ -38,8 +38,12 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   expect(
     await page.evaluate(() => ({
       scroll: getComputedStyle(document.documentElement).scrollBehavior,
-      imageTransition: getComputedStyle(document.querySelector(".project-visual img")).transitionDuration,
-      cardTransition: getComputedStyle(document.querySelector(".project-visual")).transitionDuration,
+      imageTransition: getComputedStyle(
+        document.querySelector(".project-visual img"),
+      ).transitionDuration,
+      cardTransition: getComputedStyle(
+        document.querySelector(".project-visual"),
+      ).transitionDuration,
     })),
   ).toEqual({ scroll: "auto", imageTransition: "0s", cardTransition: "0s" });
 });
@@ -182,4 +186,98 @@ test("navigation opens, closes on selection, and handles Escape on phones", asyn
   await page.keyboard.press("Escape");
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   await expect(menu).toBeFocused();
+});
+
+test("project and service inquiry links prepare the correct email drafts", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const generalLinks = page.locator('.enquiry-link[data-enquiry="general"]');
+  await expect(generalLinks).toHaveCount(3);
+  for (const link of await generalLinks.all()) {
+    const draft = new URL(await link.getAttribute("href"));
+    expect(draft.protocol).toBe("mailto:");
+    expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+    expect(draft.searchParams.get("subject")).toBe("Website or app project");
+    expect(draft.searchParams.get("body")).toContain(
+      "I'm looking for help with a website or app.",
+    );
+    expect(draft.searchParams.get("body")).toContain(
+      "Company/project:\nWhat I need:\nExisting website (if any):\nTarget launch date:",
+    );
+  }
+
+  const services = [
+    ["website", "Website project", "a website"],
+    ["web-app", "Web application project", "a web application"],
+    ["ios", "iOS app project", "an iOS app"],
+  ];
+  await expect(page.locator(".service-item")).toHaveCount(3);
+  for (const [topic, subject, description] of services) {
+    const service = page.locator(`.service-item[data-enquiry="${topic}"]`);
+    await service.scrollIntoViewIfNeeded();
+    await expect(service).toBeVisible();
+    const draft = new URL(await service.getAttribute("href"));
+    expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+    expect(draft.searchParams.get("subject")).toBe(subject);
+    expect(draft.searchParams.get("body")).toContain(
+      `I'm looking for help with ${description}.`,
+    );
+  }
+});
+
+test("case studies show the need, build evidence, and a project-specific inquiry", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Explore Pins & Needles Comedy", exact: true })
+    .click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(
+    "Pins & Needles Comedy",
+  );
+  await expect(
+    dialog.getByRole("heading", { name: "The need", exact: true }),
+  ).toBeVisible();
+  await expect(
+    dialog.getByRole("heading", { name: "What I built", exact: true }),
+  ).toBeVisible();
+  for (const paragraph of await dialog.locator(".dialog-case p").all()) {
+    expect((await paragraph.textContent()).trim().length).toBeGreaterThan(30);
+  }
+
+  const technicalDetails = dialog.locator(".technical-details");
+  await expect(technicalDetails.locator(".technical-content")).toBeHidden();
+  await technicalDetails.locator("summary").click();
+  await expect(technicalDetails).toHaveAttribute("open", "");
+  await expect(technicalDetails.locator(".technical-content")).toBeVisible();
+  expect(await technicalDetails.locator(".tag").allTextContents()).toEqual(
+    expect.arrayContaining(["Next.js", "TypeScript"]),
+  );
+  expect(await technicalDetails.locator("li").count()).toBeGreaterThan(0);
+  await expect(
+    technicalDetails.getByRole("link", { name: "View source code" }),
+  ).toHaveAttribute(
+    "href",
+    "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
+  );
+
+  const inquiry = dialog.getByRole("link", {
+    name: "Discuss something similar",
+  });
+  const draft = new URL(await inquiry.getAttribute("href"));
+  expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+  expect(draft.searchParams.get("subject")).toBe(
+    "Project inspired by Pins & Needles Comedy",
+  );
+  expect(draft.searchParams.get("body")).toContain(
+    "I saw Pins & Needles Comedy in your portfolio and would like to discuss something similar.",
+  );
+  expect([...draft.searchParams.keys()]).toEqual(["subject", "body"]);
+  await inquiry.scrollIntoViewIfNeeded();
+  await expect(inquiry).toBeVisible();
+  await page.screenshot({
+    path: testInfo.outputPath(`case-study-${testInfo.project.name}.png`),
+  });
 });

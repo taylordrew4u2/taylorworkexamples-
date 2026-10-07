@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=4";
+} from "./projects.js?v=5";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -15,6 +15,32 @@ const escape = (value) =>
       ],
   );
 const external = 'target="_blank" rel="noopener noreferrer"';
+function enquiryURL(topic = "general", reference = "") {
+  const topics = {
+    general: "website or app",
+    website: "website",
+    "web-app": "web application",
+    ios: "iOS app",
+  };
+  const selected = topics[topic] || topics.general;
+  const subjects = {
+    general: "Website or app project",
+    website: "Website project",
+    "web-app": "Web application project",
+    ios: "iOS app project",
+  };
+  const subject = reference
+    ? `Project inspired by ${reference}`
+    : subjects[topic] || subjects.general;
+  const introduction = reference
+    ? `I saw ${reference} in your portfolio and would like to discuss something similar.`
+    : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
+  const body = `Hi Taylor,\n\n${introduction}\n\nCompany/project:\nWhat I need:\nExisting website (if any):\nTarget launch date:\n\nThanks!`;
+  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+document.querySelectorAll(".enquiry-link").forEach((link) => {
+  link.href = enquiryURL(link.dataset.enquiry);
+});
 const labels = {
   web: "WEB DEVELOPMENT",
   ios: "NATIVE iOS",
@@ -37,7 +63,7 @@ function featuredCard(project, index) {
   const preview = project.image
     ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 260 : 960}" height="${project.portrait ? 563 : 600}" loading="lazy" decoding="async">`
     : `<div class="concept-preview" aria-hidden="true">${escape(project.title)}</div>`;
-  return `<article class="project-card"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 4)}</div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a>${liveLink(project)}</div></article>`;
+  return `<article class="project-card"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge || labels[project.category])}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="project-meta"><span class="mono project-category">${escape(project.projectType || labels[project.category])}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 function archiveCard(project) {
@@ -92,8 +118,12 @@ document.addEventListener("click", (event) => {
     : "";
   const source =
     project.sources.find((url) => url.includes("/blob/")) || project.repoUrl;
+  const caseStudy = project.challenge
+    ? `<div class="dialog-case"><section><h3>The need</h3><p>${escape(project.challenge)}</p></section><section><h3>What I built</h3><p>${escape(project.build)}</p></section></div>`
+    : "";
+  const technical = `<div class="technical-content"><div class="project-tags">${tags(project.stack)}</div><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul><a class="text-link" href="${escape(project.repoUrl)}" ${external}>View source code <span aria-hidden="true">↗</span></a></div>`;
   $("#dialog-content").innerHTML =
-    `<p class="mono dialog-category">${labels[project.category]}</p><h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="dialog-summary">${escape(project.summary)}</p><div class="project-tags">${tags(project.stack)}</div>${image}<div class="dialog-detail"><h3>Inside the build</h3><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul></div>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark" href="${escape(project.repoUrl)}" ${external}>Explore the source <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "Visit live site")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">Want the architecture, setup, and trade-offs? <a href="${escape(source)}" ${external}>Read the project documentation ↗</a></p>`;
+    `<p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="dialog-summary">${escape(project.clientSummary || project.summary)}</p>${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Discuss something similar <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source"><a href="${escape(source)}" ${external}>Project documentation ↗</a></p>`;
   dialog.showModal();
   dialog.scrollTop = 0;
 });

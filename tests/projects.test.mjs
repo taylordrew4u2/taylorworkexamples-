@@ -49,11 +49,11 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   assert.deepEqual(
     featuredProjects.map((project) => project.id),
     [
-      "Showrunner-ICanRunAShow",
+      "markvegas",
       "The-Bit-Binder",
+      "PinsAndNeedlesComedyWebsite",
+      "Showrunner-ICanRunAShow",
       "the-trip-handler",
-      "Role-Call",
-      "Bill-Spilt",
       "MyGigCalendar",
     ],
   );
@@ -62,6 +62,23 @@ test("featured work is ordered and points to the canonical catalog entries", () 
       project,
       projects.find((entry) => entry.id === project.id),
     );
+  }
+});
+
+test("featured proof covers websites, web applications, and shipped iOS apps with complete case studies", () => {
+  for (const type of ["Website", "Web application", "iOS app"]) {
+    assert.equal(
+      featuredProjects.filter((project) => project.projectType === type).length,
+      2,
+    );
+  }
+  for (const project of featuredProjects) {
+    assert.ok(project.clientSummary.trim());
+    assert.ok(project.challenge.trim());
+    assert.ok(project.build.trim());
+    assert.ok(project.demonstrates.length >= 3);
+    assert.ok(project.demoUrl);
+    assert.ok(project.image);
   }
 });
 

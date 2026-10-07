@@ -1,6 +1,6 @@
 # Taylor Drew — Developer Portfolio
 
-A responsive portfolio for Taylor Drew's full stack, native iOS, desktop, and audio work. Six featured projects appear above an always-visible searchable list of all 24 public project repositories. Contact is by email: **taylordrew4u@gmail.com**.
+A portfolio for prospective website and app clients. Six working examples show two websites, two web applications, and two native iOS apps, followed by three service offerings. Each featured project explains the need, what was built, and the capabilities demonstrated. The full 24-project archive remains available. Contact is by email: **taylordrew4u@gmail.com**.
 
 ## Run locally
 
@@ -26,7 +26,7 @@ npm run preview
 
 ## Update the portfolio
 
-- **Projects:** edit `projects.js`. Each entry contains a summary, technology stack, engineering features, source repository, optional working demo, and content sources. `featuredProjects` controls the six cards on the home page.
+- **Projects:** edit `projects.js`. Each entry contains a summary, technology stack, engineering features, source repository, optional working demo, and content sources. Featured examples also have `clientSummary`, `projectType`, `demonstrates`, `challenge`, and `build` fields. The featured selection includes website, web application, and iOS examples.
 - **Previews:** place images in `assets/` and use a relative `./assets/…` path. Preserve the image's aspect ratio and provide an accurate `imageAlt`. Set `portrait: true` for phone screens. Label concept images as UI previews.
 - **Writing and contact:** edit `index.html`; keep the exported `email` in `projects.js`, all email links, and structured metadata consistent.
 - **Design:** edit `styles.css`. Reduced motion, keyboard focus, mobile navigation, and native dialogs are included.
@@ -45,4 +45,6 @@ Descriptions and stacks are based on [Taylor's GitHub profile](https://github.co
 
 Project screenshots were extracted from [the profile's demonstration GIFs](https://github.com/taylordrew4u2/taylordrew4u2/tree/main/assets), preserving their aspect ratios. The Trip Handler screenshot comes from its [project documentation](https://github.com/taylordrew4u2/the-trip-handler/tree/main/docs/screenshots). RoleCall's SVG is a [repository UI preview](https://github.com/taylordrew4u2/Role-Call/tree/main/docs/screenshots) and is labeled accordingly. The BitBinder images originate from its App Store screenshot walkthrough; My Gig Calendar shows its public fan calendar. The illustrated avatar is from the public GitHub profile.
 
-The visual layout uses a dark background, electric lime accents, oversized Space Grotesk typography, and an asymmetric project grid. Real screenshots sit against violet, cobalt, and lime panels. A compact project list and email contact follow the featured work. Fonts use system fallbacks, and motion respects reduced-motion preferences. Email links open the visitor's mail app; the copy button uses the browser clipboard with a selection fallback. No analytics or contact-form submission service is included.
+The Mark Vegas preview was captured from its live public website on October 7, 2026. The Pins & Needles preview comes from its repository's real homepage screenshot. Featured demonstrations were verified on that date. Project descriptions explain implemented features; they do not claim paying-client relationships, testimonials, revenue gains, or time savings.
+
+The visual layout uses a dark background, electric lime accents, oversized Space Grotesk typography, and an asymmetric project grid. Real screenshots sit against violet, cobalt, and lime panels. Fonts use system fallbacks, and motion respects reduced-motion preferences. General, service-specific, and project-specific inquiry links prepare an email draft with a subject and a short project brief. They do not send email automatically. The plain email link and clipboard button remain available. No analytics or contact-form submission service is included.

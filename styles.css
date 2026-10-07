@@ -154,6 +154,21 @@ input {
 .menu-toggle {
   display: none;
 }
+.site-header nav .nav-contact {
+  color: var(--paper);
+  background: var(--accent);
+  padding: 11px 15px;
+  border-radius: 5px;
+}
+.site-header nav .nav-contact span {
+  color: var(--paper);
+}
+.site-header nav .nav-contact::after {
+  display: none;
+}
+.site-header nav .nav-contact:hover {
+  background: #e2ff8b;
+}
 .intro {
   padding: 66px 0 62px;
   position: relative;
@@ -174,7 +189,14 @@ input {
   font-size: 16px;
   line-height: 1.6;
   color: var(--muted);
-  max-width: 490px;
+  max-width: 620px;
+}
+.intro-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 26px;
 }
 .intro-info {
   position: absolute;
@@ -201,6 +223,55 @@ input {
 }
 .work-section {
   padding-bottom: 72px;
+}
+.services-section {
+  border-top: 1px solid var(--line);
+  padding: 24px 0 31px;
+}
+.services-section > .eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 32px;
+  margin-top: 21px;
+}
+.service-item {
+  display: block;
+  position: relative;
+  padding-right: 28px;
+}
+.service-number {
+  color: var(--accent);
+  font-size: 9px;
+}
+.service-item h3 {
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  margin: 10px 0 9px;
+}
+.service-item p {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  max-width: 310px;
+}
+.service-arrow {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  font-size: 22px;
+  color: var(--accent);
+  transition: transform 0.2s;
+}
+.service-item:hover h3 {
+  color: var(--accent);
+}
+.service-item:hover .service-arrow {
+  transform: translate(3px, -3px);
 }
 .section-heading {
   display: flex;
@@ -434,6 +505,14 @@ input {
 .project-links .case-link {
   color: var(--accent);
 }
+.project-links .source-link {
+  color: var(--muted);
+  font-size: 11px;
+}
+.capability-tags .tag {
+  font-size: 11px;
+  line-height: 1.4;
+}
 .concept-preview {
   font-size: 25px;
   padding: 24px;
@@ -603,8 +682,19 @@ input {
   color: var(--muted);
   font-size: 10px;
 }
+.contact-heading {
+  font-size: clamp(28px, 3.6vw, 46px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+.contact-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 640px;
+}
 .email-link {
-  font-size: clamp(24px, 3.9vw, 53px);
+  font-size: clamp(18px, 2.3vw, 30px);
   font-weight: 500;
   letter-spacing: -0.045em;
   color: var(--accent);
@@ -727,6 +817,44 @@ dialog::backdrop {
   font-size: 14px;
   line-height: 1.75;
 }
+.dialog-case {
+  display: grid;
+  gap: 21px;
+  margin-top: 25px;
+}
+.dialog-case h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.dialog-case p {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+.technical-details {
+  margin-top: 25px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding-block: 15px;
+}
+.technical-details summary {
+  cursor: pointer;
+  font-size: 13px;
+}
+.technical-content .project-tags {
+  margin-top: 17px;
+}
+.technical-content ul {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+  padding-left: 19px;
+  margin-block: 17px;
+}
+.technical-content .text-link {
+  color: var(--accent);
+}
 .dialog-preview {
   display: flex;
   justify-content: center;
@@ -833,7 +961,17 @@ dialog::backdrop {
     width: calc(100% - 48px);
   }
   .site-header nav {
-    gap: 20px;
+    gap: 17px;
+  }
+  .site-header nav .nav-contact {
+    font-size: 11px;
+    padding: 10px 11px;
+  }
+  .services-grid {
+    gap: 22px;
+  }
+  .service-item h3 {
+    font-size: 18px;
   }
   .intro h1 {
     font-size: 10vw;
@@ -963,6 +1101,59 @@ dialog::backdrop {
     font-size: 13px;
     max-width: 370px;
   }
+  .intro-actions {
+    gap: 17px;
+    margin-top: 22px;
+  }
+  .intro-actions .button {
+    padding: 13px 15px;
+    font-size: 12px;
+    gap: 15px;
+  }
+  .intro-actions .text-link {
+    font-size: 11px;
+  }
+  .services-section {
+    padding: 22px 0 18px;
+  }
+  .services-section > .eyebrow {
+    font-size: 9px;
+  }
+  .services-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 12px;
+  }
+  .service-item {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) 24px;
+    gap: 6px 8px;
+    border-bottom: 1px solid var(--line);
+    padding: 17px 0;
+  }
+  .service-item:last-child {
+    border-bottom: 0;
+  }
+  .service-number {
+    align-self: center;
+  }
+  .service-item h3 {
+    font-size: 20px;
+    margin: 0;
+    grid-column: 2;
+  }
+  .service-item p {
+    grid-column: 2;
+    max-width: none;
+    font-size: 12px;
+  }
+  .service-arrow {
+    position: static;
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    font-size: 21px;
+  }
   .intro-info {
     flex-wrap: wrap;
     gap: 12px 17px;
@@ -1072,6 +1263,15 @@ dialog::backdrop {
   }
   .footer-contact {
     gap: 16px;
+  }
+  .contact-description {
+    font-size: 13px;
+  }
+  .contact-description br {
+    display: none;
+  }
+  .dialog-case p {
+    font-size: 13px;
   }
   .footer-meta {
     font-size: 10px;

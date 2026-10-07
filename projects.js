@@ -1,9 +1,9 @@
 // Public project inventory verified against GitHub on 2026-10-06.
+// Featured client-facing examples and live links verified on 2026-10-07.
 // Sources stay alongside each entry so portfolio claims remain traceable.
 export const email = "taylordrew4u@gmail.com";
 
 // experiment marks focused utilities and development projects for the tools filter.
-// Platform categories remain web, ios, or desktop, independently of that filter.
 export const projects = [
   {
     id: "Showrunner-ICanRunAShow",
@@ -23,7 +23,7 @@ export const projects = [
     demoLabel: "Live site",
     image: "./assets/showrunner.webp",
     imageAlt:
-      "I Can Run A Show desktop interface with a show lineup and running order",
+      "I Can Run A Show live control interface with a countdown and soundboard",
     portrait: false,
     tone: "sage",
     badge: "LIVE WEB APP",
@@ -33,6 +33,19 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/Showrunner-ICanRunAShow",
       "https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/main/README.md",
     ],
+    clientSummary:
+      "A web application for event producers to manage performers, schedules, contracts, music, and live show cues.",
+    demonstrates: [
+      "Application workflow design",
+      "Offline-capable interfaces",
+      "Client-side data encryption",
+      "Contract-signing and API workflows",
+    ],
+    projectType: "Web application",
+    challenge:
+      "Bring booking, paperwork, and live show operation into one interface that can work without a reliable venue connection.",
+    build:
+      "A React and TypeScript PWA with encrypted persistence, on-device schedule import, contract signing, and a full-screen cue timer and soundboard.",
   },
   {
     id: "The-Bit-Binder",
@@ -59,7 +72,7 @@ export const projects = [
     demoUrl: "https://apps.apple.com/us/app/the-bitbinder/id6756085897",
     demoLabel: "App Store",
     image: "./assets/bitbinder.webp",
-    imageAlt: "The BitBinder home screen on iPhone",
+    imageAlt: "The BitBinder iPhone home screen",
     portrait: true,
     tone: "peach",
     badge: "APP STORE",
@@ -69,6 +82,20 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/The-Bit-Binder",
       "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/README.md",
     ],
+    clientSummary:
+      "An iOS app for comedians to capture material, record and transcribe sets, import notes, and build performance set lists.",
+    demonstrates: [
+      "Native iOS development",
+      "Audio recording and transcription",
+      "On-device text import",
+      "Private cloud sync",
+      "App Store delivery",
+    ],
+    projectType: "iOS app",
+    challenge:
+      "Organize material spread across notes, recordings, photos, and PDFs in a single native app.",
+    build:
+      "A SwiftUI app with SwiftData and CloudKit, audio recording, speech recognition, OCR and document import, a review queue, and set-list tools.",
   },
   {
     id: "the-trip-handler",
@@ -93,7 +120,8 @@ export const projects = [
     demoUrl: "https://the-trip-handler.vercel.app",
     demoLabel: "Live site",
     image: "./assets/triphandler.webp",
-    imageAlt: "The Trip Handler group-trip dashboard",
+    imageAlt:
+      "The Trip Handler trip dashboard with shared planning information",
     portrait: false,
     tone: "blue",
     badge: "LIVE WEB APP",
@@ -103,6 +131,19 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/the-trip-handler",
       "https://github.com/taylordrew4u2/the-trip-handler/blob/main/README.md",
     ],
+    clientSummary:
+      "A web application for organizers to invite a group, approve participants, plan a trip, and collect payments.",
+    demonstrates: [
+      "Authentication and permissions",
+      "Multi-step approval workflows",
+      "Database-backed coordination",
+      "Stripe payment integration",
+    ],
+    projectType: "Web application",
+    challenge:
+      "Coordinate applications, lodging, meals, schedules, expenses, and participant payments in one shared trip workspace.",
+    build:
+      "A Next.js application with private invitations, organizer approvals, PostgreSQL and Prisma, lodging and itinerary tools, and Stripe Checkout with signed webhooks.",
   },
   {
     id: "Role-Call",
@@ -181,7 +222,7 @@ export const projects = [
     demoUrl: "https://apps.apple.com/us/app/my-gig-calendar/id6760590068",
     demoLabel: "App Store",
     image: "./assets/gigcalendar.webp",
-    imageAlt: "My Gig Calendar public fan calendar displayed on a phone",
+    imageAlt: "My Gig Calendar public calendar on a phone",
     portrait: true,
     tone: "blue",
     badge: "APP STORE",
@@ -191,6 +232,20 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/MyGigCalendar",
       "https://github.com/taylordrew4u2/MyGigCalendar/blob/main/README.md",
     ],
+    clientSummary:
+      "An iOS app for live performers to manage their gigs, publish dates for fans, and create promotional flyers.",
+    demonstrates: [
+      "Native iOS development",
+      "Device and cloud sync",
+      "Public web integration",
+      "Calendar feeds",
+      "App Store delivery",
+    ],
+    projectType: "iOS app",
+    challenge:
+      "Let a performer manage gig information across their devices, a fan calendar, calendar subscriptions, and promotional assets.",
+    build:
+      "A SwiftUI app using Core Data and CloudKit, a public web calendar, an iCalendar feed, and flyer generation.",
   },
   {
     id: "bleepkit",
@@ -330,18 +385,32 @@ export const projects = [
     ],
     repoUrl: "https://github.com/taylordrew4u2/markvegas",
     demoUrl: "https://markvegas.vercel.app",
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
+    demoLabel: "Live website",
+    image: "./assets/markvegas.webp",
+    imageAlt:
+      "The live Mark Vegas portfolio website showing artwork in its media grid",
     portrait: false,
-    tone: "dark",
-    badge: "LIVE WEB APP",
+    tone: "sage",
+    badge: "LIVE WEBSITE",
     experiment: false,
     sources: [
       "https://github.com/taylordrew4u2/markvegas",
       "https://api.github.com/repos/taylordrew4u2/markvegas",
       "https://github.com/taylordrew4u2/markvegas/blob/main/README.md",
     ],
+    clientSummary:
+      "An editable portfolio website for an animator to present image and video work, a profile, and contact details.",
+    demonstrates: [
+      "Visual website design",
+      "Owner-editable content",
+      "Image and video uploads",
+      "Database-backed site features",
+    ],
+    projectType: "Website",
+    challenge:
+      "Present visual work while giving the site owner control over their profile, portfolio, and theme.",
+    build:
+      "An editorial media grid with a password-protected admin, portfolio editing, Turso data storage, and Vercel Blob uploads.",
   },
   {
     id: "micro-short-website",
@@ -463,18 +532,32 @@ export const projects = [
     ],
     repoUrl: "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
     demoUrl: "https://pinsandneedlescomedy.com",
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
+    demoLabel: "Live website",
+    image: "./assets/pinsneedles.webp",
+    imageAlt:
+      "The Pins & Needles Comedy homepage with show branding and navigation",
     portrait: false,
-    tone: "lavender",
-    badge: "LIVE WEB APP",
+    tone: "peach",
+    badge: "LIVE WEBSITE",
     experiment: false,
     sources: [
       "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
       "https://api.github.com/repos/taylordrew4u2/PinsAndNeedlesComedyWebsite",
       "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/main/README.md",
     ],
+    clientSummary:
+      "A website for a live comedy show, with editable public content and tools for producers to manage audience submissions during the show.",
+    demonstrates: [
+      "Public website development",
+      "Admin content editing",
+      "Audience submission workflows",
+      "Live dashboard and display integration",
+    ],
+    projectType: "Website",
+    challenge:
+      "Connect a public show website to private producer controls and a public live audience display.",
+    build:
+      "A Next.js website with an admin, scheduled submission access, a show-control dashboard, and a separate projector display.",
   },
   {
     id: "CONTROLLEREVENT",
@@ -679,11 +762,11 @@ export const projects = [
 ];
 
 const featuredIds = [
-  "Showrunner-ICanRunAShow",
+  "markvegas",
   "The-Bit-Binder",
+  "PinsAndNeedlesComedyWebsite",
+  "Showrunner-ICanRunAShow",
   "the-trip-handler",
-  "Role-Call",
-  "Bill-Spilt",
   "MyGigCalendar",
 ];
 export const featuredProjects = featuredIds.map((id) =>
