@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=8";
+} from "./projects.js?v=9";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -83,7 +83,7 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}">${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-choices"><label for="screens-${escape(project.id)}">Choose screen</label><select id="screens-${escape(project.id)}" data-gallery="${escape(project.id)}" aria-label="Choose screen from ${escape(project.title)}">${views.map((view, viewIndex) => `<option value="${viewIndex}">${escape(view.label)}</option>`).join("")}</select></div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div></article>`;
+  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-toolbar"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
@@ -103,17 +103,20 @@ $("#featured-projects").innerHTML =
     .map((project, index) => supportingCard(project, index + 3))
     .join("")}</div></div>`;
 
-$("#featured-projects").addEventListener("change", (event) => {
+$("#featured-projects").addEventListener("click", (event) => {
   const choice = event.target.closest("[data-gallery]");
   if (!choice) return;
   const project = projects.find((item) => item.id === choice.dataset.gallery);
-  const frame = project?.gallery?.[Number(choice.value)];
+  const frame = project?.gallery?.[Number(choice.dataset.screen)];
   if (!frame) return;
   const story = choice.closest(".case-study");
+  story.querySelectorAll("[data-gallery]").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button === choice));
+  });
   const screen = story.querySelector(".case-screen");
   screen.classList.toggle("portrait", frame.portrait === true);
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
-  screen.innerHTML = `${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
+  screen.innerHTML = `<span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;
 });
 

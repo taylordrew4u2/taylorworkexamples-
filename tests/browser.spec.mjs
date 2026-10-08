@@ -7,7 +7,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    /Websites\.\s+Apps/i,
+    /From idea\s+to real life/i,
   );
   await expect(page.locator(".project-card")).toHaveCount(6);
   await expect(page.locator(".case-study")).toHaveCount(3);
@@ -29,7 +29,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       await expect(highlight.locator("p")).toHaveText(/\S/);
     }
   }
-  for (const image of await page.locator("#featured-projects img").all()) {
+  await expect(page.locator(".hero-stage img")).toHaveCount(2);
+  for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
     await image.scrollIntoViewIfNeeded();
     await expect
       .poll(() =>
@@ -106,6 +107,27 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
         .locator(".primary-screen")
         .evaluate((element) => getComputedStyle(element).transform),
     ).toBe(restingTransform);
+  }
+});
+
+test("hero previews open the matching website and native iPhone project", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const previews = [
+    ["View the Mark Vegas website project", "Mark Vegas Art Portfolio"],
+    ["View the My Gig Calendar iPhone app project", "My Gig Calendar"],
+  ];
+  const dialog = page.getByRole("dialog");
+  for (const [label, title] of previews) {
+    const trigger = page.getByRole("button", { name: label, exact: true });
+    await trigger.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(title);
+    await expect(page.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
   }
 });
 
@@ -364,29 +386,35 @@ test("lead galleries change real images, captions, and selection without opening
 }) => {
   await page.goto("/");
   for (const story of await page.locator(".case-study").all()) {
-    const choices = story.locator("[data-gallery]");
     const title = (await story.locator(".project-title").textContent()).trim();
-    await expect(choices).toHaveAccessibleName(`Choose screen from ${title}`);
-    const count = await choices.locator("option").count();
+    const group = story.getByRole("group", { name: `Screens from ${title}`, exact: true });
+    const choices = group.locator("button[data-gallery][data-screen]");
+    const count = await choices.count();
     expect(count).toBeGreaterThanOrEqual(2);
-    await expect(choices).toHaveValue("0");
+    await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     const initialSource = await story.locator(".primary-screen").getAttribute("src");
     const initialCaption = await story.locator(".screen-caption").textContent();
     await expect(story.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
     for (let index = 1; index < count; index += 1) {
-      await choices.selectOption(String(index));
-      await expect(choices).toHaveValue(String(index));
+      await choices.nth(index).click();
+      await expect(choices.nth(index)).toHaveAttribute("aria-pressed", "true");
+      await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "false");
+      await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
       expect(await story.locator(".primary-screen").getAttribute("src")).not.toBe(initialSource);
       expect(await story.locator(".screen-caption").textContent()).not.toBe(initialCaption);
       for (const image of await story.locator(".case-screen img").all()) {
         await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
       }
       await expect(page.getByRole("dialog")).toBeHidden();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     }
-    await choices.selectOption("0");
+    await choices.nth(0).click();
     await expect(story.locator(".primary-screen")).toHaveAttribute("src", initialSource);
     await expect(story.locator(".screen-caption")).toHaveText(initialCaption);
-    await expect(choices).toHaveValue("0");
+    await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
   }
   await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toContainText(/earlier App Store release/i);
 });

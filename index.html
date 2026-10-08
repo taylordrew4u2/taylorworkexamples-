@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#101014" />
+    <meta name="theme-color" content="#f8f9fc" />
     <meta
       name="description"
       content="Custom websites, web applications, and native iOS apps for businesses and teams. Explore working projects and discuss the problem you need solved."
@@ -19,8 +19,8 @@
     />
     <meta name="twitter:card" content="summary" />
     <title>Websites & apps — Development portfolio</title>
-    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=8" />
-    <link rel="stylesheet" href="./styles.css?v=8" />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg?v=9" />
+    <link rel="stylesheet" href="./styles.css?v=9" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -38,13 +38,13 @@
         ]
       }
     </script>
-    <script type="module" src="./app.js?v=8"></script>
+    <script type="module" src="./app.js?v=9"></script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <header class="site-header wrap">
       <a class="wordmark" href="#" aria-label="Portfolio, home"
-        >Work<span aria-hidden="true">.</span></a
+        >Work<span aria-hidden="true">↗</span></a
       >
       <button
         class="menu-toggle"
@@ -55,8 +55,8 @@
         <span></span><span></span>
       </button>
       <nav id="main-nav" aria-label="Main navigation">
-        <a href="#services">What I build</a>
         <a href="#work">Projects</a>
+        <a href="#services">What I build</a>
         <a
           href="https://github.com/taylordrew4u2"
           target="_blank"
@@ -67,47 +67,53 @@
           class="nav-contact enquiry-link"
           data-enquiry="general"
           href="mailto:taylordrew4u@gmail.com"
-          >Email about a project <span aria-hidden="true">↗</span></a
+          >Let’s talk <span aria-hidden="true">↗</span></a
         >
       </nav>
     </header>
     <main id="main">
       <section class="intro wrap" aria-labelledby="hero-title">
-        <div>
+        <div class="intro-copy">
+          <p class="hero-eyebrow"><span class="status-dot" aria-hidden="true"></span> Independent developer · New York</p>
           <h1 id="hero-title">
-            <span class="headline-first">Websites.</span>
-            <span class="headline-last"
-              >Apps<span aria-hidden="true">.</span></span
-            >
+            <span class="headline-first">From idea</span>
+            <span class="headline-last">to real life<span aria-hidden="true">.</span></span>
           </h1>
           <p class="intro-description">
-            Websites and apps for businesses and teams—bookings, payments, and
-            everyday work.
+            I build websites, web apps, and iPhone apps. Thoughtful on the outside.
+            Capable underneath.
           </p>
-          <p class="intro-byline">Taylor Drew / Website & app development</p>
           <div class="intro-actions">
+            <a class="button button-dark" href="#work">Explore my work <span aria-hidden="true">↓</span></a>
             <a
-              class="button button-dark enquiry-link"
+              class="text-link enquiry-link"
               data-enquiry="general"
               href="mailto:taylordrew4u@gmail.com"
-              >Email about your project <span aria-hidden="true">↗</span></a
-            ><a class="text-link" href="#work"
-              >See what I’ve built <span aria-hidden="true">↓</span></a
-            >
+              >Have a project? <span aria-hidden="true">↗</span></a>
           </div>
+          <p class="intro-byline">Taylor Drew · Full stack & iOS development</p>
         </div>
-        <div class="intro-info">
-          <p>New York City</p>
-          <p>
-            <span class="status-dot" aria-hidden="true"></span>Available for
-            project work
-          </p>
+        <div class="hero-stage" aria-label="Selected website and iPhone app previews">
+          <span class="hero-orbit" aria-hidden="true"></span>
+          <span class="hero-asterisk" aria-hidden="true">✳</span>
+          <button class="hero-web" data-project="markvegas" aria-label="View the Mark Vegas website project">
+            <span class="browser-bar" aria-hidden="true"><span class="browser-dots"><i></i><i></i><i></i></span><span>markvegas.vercel.app</span><span>↗</span></span>
+            <img src="./assets/markvegas.webp" alt="Mark Vegas website with an artwork gallery" width="1100" height="579" fetchpriority="high" decoding="async" />
+          </button>
+          <button class="hero-phone" data-project="MyGigCalendar" aria-label="View the My Gig Calendar iPhone app project">
+            <img src="./assets/gigcalendar-native-calendar.webp" alt="My Gig Calendar native iPhone app with scheduled shows" width="660" height="1434" decoding="async" />
+          </button>
+          <p class="hero-caption">Mark Vegas website · My Gig Calendar iOS app</p>
         </div>
       </section>
+      <div class="capability-strip wrap" aria-label="Development capabilities">
+        <span>From the first screen to the systems behind it.</span>
+        <p>Design <span aria-hidden="true">/</span> Development <span aria-hidden="true">/</span> Launch</p>
+      </div>
       <section id="work" class="work-section wrap" aria-labelledby="work-title">
         <div class="section-heading">
-          <h2 id="work-title">Selected work</h2>
-          <span class="section-count mono">03 PRODUCT STORIES</span>
+          <div><p class="eyebrow">A FEW THINGS I’VE BUILT</p><h2 id="work-title">The work speaks.</h2></div>
+          <span class="section-count mono">SELECTED / 01—06</span>
         </div>
         <div id="featured-projects" class="featured-grid"></div>
         <noscript
@@ -124,7 +130,7 @@
         class="services-section wrap"
         aria-labelledby="services-title"
       >
-        <h2 id="services-title" class="eyebrow">WHAT I CAN BUILD FOR YOU</h2>
+        <div class="services-heading"><p class="eyebrow">YOUR NEXT PROJECT</p><h2 id="services-title">What do you have in mind?</h2></div>
         <div class="services-grid">
           <a
             class="service-item enquiry-link"
@@ -244,7 +250,8 @@
     </main>
     <footer id="contact" class="site-footer wrap">
       <div class="footer-contact">
-        <h2 class="contact-heading">Tell me what you need built.</h2>
+        <p class="eyebrow">HAVE SOMETHING IN MIND?</p>
+        <h2 class="contact-heading">Let’s make<br />it happen<span aria-hidden="true">↗</span></h2>
         <p class="contact-description">
           Email your company name, the problem, budget range if known, and
           target date. We can discuss scope and pricing by email.
