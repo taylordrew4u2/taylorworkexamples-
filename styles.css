@@ -1895,7 +1895,7 @@ dialog::backdrop {
 }
 
 @media (pointer:coarse), (max-width:600px) {
-  .text-link, .copy-email, .project-title button, .archive-card h3 button, .project-links a, .project-links button, .filter {
+  .text-link, .copy-email, .project-title button, .archive-card h3 button, .project-links a, .project-links button, .technical-details summary, .filter {
     min-height: 2.75rem;
   }
   .project-title button, .archive-card h3 button {
