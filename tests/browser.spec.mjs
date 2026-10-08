@@ -260,6 +260,15 @@ test("project and service inquiry links prepare the correct email drafts", async
   page,
 }) => {
   await page.goto("/");
+  const inquiryPrompts = [
+    "Company/project:",
+    "The problem:",
+    "Who will use it:",
+    "What I need:",
+    "Existing website (if any):",
+    "Budget range (if known):",
+    "Target launch date:",
+  ].join("\n");
   const generalLinks = page.locator('.enquiry-link[data-enquiry="general"]');
   await expect(generalLinks).toHaveCount(3);
   for (const link of await generalLinks.all()) {
@@ -270,9 +279,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     expect(draft.searchParams.get("body")).toContain(
       "I'm looking for help with a website or app.",
     );
-    expect(draft.searchParams.get("body")).toContain(
-      "Company/project:\nWhat I need:\nExisting website (if any):\nTarget launch date:",
-    );
+    expect(draft.searchParams.get("body")).toContain(inquiryPrompts);
   }
 
   const services = [
@@ -291,6 +298,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     expect(draft.searchParams.get("body")).toContain(
       `I'm looking for help with ${description}.`,
     );
+    expect(draft.searchParams.get("body")).toContain(inquiryPrompts);
   }
 });
 

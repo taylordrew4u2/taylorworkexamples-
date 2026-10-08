@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=7";
+} from "./projects.js?v=8";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -35,7 +35,7 @@ function enquiryURL(topic = "general", reference = "") {
   const introduction = reference
     ? `I saw ${reference} in your portfolio and would like to discuss something similar.`
     : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
-  const body = `Hi Taylor,\n\n${introduction}\n\nCompany/project:\nWhat I need:\nExisting website (if any):\nTarget launch date:\n\nThanks!`;
+  const body = `Hi Taylor,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:\n\nThanks!`;
   return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 document.querySelectorAll(".enquiry-link").forEach((link) => {

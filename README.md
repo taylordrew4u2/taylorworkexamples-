@@ -1,6 +1,6 @@
 # Taylor Drew — Developer Portfolio
 
-A portfolio for prospective website and app clients. Three expanded product stories lead with I Can Run A Show, The BitBinder, and The Trip Handler, followed by BillSpilt, RoleCall, and My Gig Calendar. The lead stories show real product screens, three concrete capabilities, and source-based case details. All 24 projects remain available in an expandable, searchable archive. Contact is by email: **taylordrew4u@gmail.com**.
+A portfolio for prospective website and app clients. Three expanded product stories lead with I Can Run A Show, The BitBinder, and The Trip Handler, followed by BillSpilt, RoleCall, and My Gig Calendar. The lead stories show real product screens, three concrete capabilities, and source-based case details. All 24 projects remain available in an expandable, searchable archive. The offer is framed around business problems: a clear online presence, connected workflows, and native iPhone experiences. Contact is by email: **taylordrew4u@gmail.com**. Inquiry drafts ask for the problem, intended users, optional budget range, and timing; scope and pricing are discussed by email.
 
 ## Run locally
 

@@ -37,3 +37,11 @@ The remaining heuristic families were checked against source and screenshots:
 - Actual excessive case-header and supporting-card gaps were fixed in the source and rechecked in fresh renders.
 
 Independent source and screenshot reviews verify the supported fixes and intentional treatments. Automated findings, the missing current BitBinder workflow screenshot, and the case-story reading-time heuristic remain disclosed rather than represented as tool certification.
+
+## Business pitch update — October 8, 2026
+
+The user asked to apply the Investor Panel's four pitch prompts: problem, offer, target audience, and charging. The copy now identifies businesses and teams, connects the services to online presence and disconnected workflows, and invites a project brief. Existing service headings, project evidence, email-only contact, and the single name byline remain intact. No industry niche, rates, billing model, testimonials, or measured business outcomes were invented. Scope and pricing are discussed by email; a budget range is explicitly optional.
+
+General, service-specific, and project-specific email drafts now ask for the problem and intended users alongside the existing project, requested work, website, and launch date. This is a copy and inquiry update to the reviewed portfolio; it is not a new redesign or investor endorsement.
+
+The updated introduction and contact invitation passed the text clarity checks. Four focused desktop/phone browser checks passed for rendering and inquiry drafts. Fresh 390- and 1440-pixel screenshots confirm readable service/contact copy without horizontal overflow. The longer technical case stories retain the previously documented reading-time limitation.
