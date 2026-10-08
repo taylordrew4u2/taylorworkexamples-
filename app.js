@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=9";
+} from "./projects.js?v=10";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -88,13 +88,23 @@ function productStory(project, index) {
 
 function supportingCard(project, index) {
   const preview = project.image
-    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.portrait ? 600 : 1280}" height="${project.portrait ? 1300 : 800}" loading="lazy" decoding="async">`
+    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || (project.portrait ? 600 : 1280)}" height="${project.imageHeight || (project.portrait ? 1300 : 800)}" loading="lazy" decoding="async">`
     : "";
   return `<article class="project-card supporting-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}<a class="source-link" href="${escape(project.repoUrl)}" ${external}>Source code <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 function archiveCard(project) {
-  return `<article class="archive-card"><div class="archive-description"><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p></div><div><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span></div><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
+  const preview = project.image
+    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || 1280}" height="${project.imageHeight || 800}" loading="lazy" decoding="async">`
+    : `<span class="archive-placeholder" aria-hidden="true">${escape(project.title)}</span>`;
+  return `<article class="archive-card"><button class="archive-preview project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}">${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel || "Project preview")}</span></div><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}<a href="${escape(project.repoUrl)}" ${external}>Source <span aria-hidden="true">↗</span></a></div></article>`;
+}
+
+function dialogVisual(project, index = 0) {
+  const views = project.gallery || [{ image: project.image, imageAlt: project.imageAlt, width: project.imageWidth, height: project.imageHeight, portrait: project.portrait, caption: project.imageCaption || project.imageAlt, label: "Overview" }];
+  const frame = views[index];
+  if (!frame?.image) return "";
+  return `<section class="dialog-images" data-visual-project="${escape(project.id)}" aria-label="Images from ${escape(project.title)}"><div class="dialog-preview ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${escape(project.tone)}">${previewImages(frame)}</div>${views.length > 1 ? `<div class="screen-choices dialog-screen-choices" role="group" aria-label="Project images from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-dialog-screen="${viewIndex}" aria-pressed="${index === viewIndex}">${escape(view.label)}</button>`).join("")}</div>` : ""}<p class="dialog-image-caption" aria-live="polite">${escape(frame.caption || project.imageCaption || "")}</p><a class="image-original text-link" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a></section>`;
 }
 
 $("#featured-projects").innerHTML =
@@ -136,6 +146,14 @@ function renderArchive() {
 }
 renderArchive();
 
+function openLinkedArchive() {
+  if (window.location.hash === "#project-archive") {
+    $(".archive-disclosure").open = true;
+  }
+}
+openLinkedArchive();
+window.addEventListener("hashchange", openLinkedArchive);
+
 function setFilter(category) {
   activeFilter = category;
   document.querySelectorAll("[data-filter]").forEach((button) => {
@@ -162,9 +180,7 @@ document.addEventListener("click", (event) => {
   if (!trigger) return;
   const project = projects.find((item) => item.id === trigger.dataset.project);
   if (!project) return;
-  const image = project.image
-    ? `<div class="dialog-preview"><img src="${escape(project.image)}" alt="${escape(project.imageAlt)}"></div>`
-    : "";
+  const image = dialogVisual(project);
   const source =
     project.sources.find((url) => url.includes("/blob/")) || project.repoUrl;
   const caseStudy = project.challenge
@@ -175,6 +191,22 @@ document.addEventListener("click", (event) => {
     `<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.clientSummary || project.summary)}</p>${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source"><a href="${escape(source)}" ${external}>Project documentation ↗</a></p>`;
   dialog.showModal();
   dialog.scrollTop = 0;
+});
+$("#dialog-content").addEventListener("click", (event) => {
+  const choice = event.target.closest("[data-dialog-screen]");
+  if (!choice) return;
+  const area = choice.closest(".dialog-images");
+  const project = projects.find((item) => item.id === area.dataset.visualProject);
+  const index = Number(choice.dataset.dialogScreen);
+  const frame = project?.gallery?.[index];
+  if (!frame) return;
+  area.querySelectorAll("[data-dialog-screen]").forEach((button) => button.setAttribute("aria-pressed", String(button === choice)));
+  const preview = area.querySelector(".dialog-preview");
+  preview.classList.toggle("portrait", frame.portrait === true);
+  preview.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
+  preview.innerHTML = previewImages(frame);
+  area.querySelector(".dialog-image-caption").textContent = frame.caption;
+  area.querySelector(".image-original").href = frame.image;
 });
 $(".dialog-close").addEventListener("click", () => dialog.close());
 dialog.addEventListener("click", (event) => {

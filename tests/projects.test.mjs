@@ -1,12 +1,52 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import {
   email,
   projects,
   featuredProjects,
   filterProjects,
 } from "../projects.js";
+
+// Check the actual asset headers so stale dimensions cannot stretch a preview.
+function assetDimensions(image) {
+  const bytes = readFileSync(new URL(`../${image}`, import.meta.url));
+  if (image.endsWith(".svg")) {
+    const root = bytes.toString().match(/<svg\b[^>]*>/)?.[0];
+    assert.ok(root, `${image}: SVG root missing`);
+    const viewBox = root.match(/\bviewBox=["']([^"']+)["']/)?.[1]
+      .trim().split(/[\s,]+/).map(Number);
+    return viewBox?.length === 4
+      ? { width: viewBox[2], height: viewBox[3] }
+      : {
+          width: Number(root.match(/\bwidth=["']([\d.]+)/)?.[1]),
+          height: Number(root.match(/\bheight=["']([\d.]+)/)?.[1]),
+        };
+  }
+  if (image.endsWith(".png")) {
+    assert.equal(bytes.subarray(1, 4).toString(), "PNG");
+    return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
+  }
+  assert.equal(bytes.subarray(0, 4).toString(), "RIFF", `${image}: WebP header`);
+  assert.equal(bytes.subarray(8, 12).toString(), "WEBP", `${image}: WebP type`);
+  for (let offset = 12; offset + 8 <= bytes.length;) {
+    const type = bytes.subarray(offset, offset + 4).toString();
+    const size = bytes.readUInt32LE(offset + 4);
+    const data = offset + 8;
+    if (type === "VP8X") {
+      return { width: 1 + bytes.readUIntLE(data + 4, 3), height: 1 + bytes.readUIntLE(data + 7, 3) };
+    }
+    if (type === "VP8 ") {
+      return { width: bytes.readUInt16LE(data + 6) & 0x3fff, height: bytes.readUInt16LE(data + 8) & 0x3fff };
+    }
+    if (type === "VP8L") {
+      const dimensions = bytes.readUInt32LE(data + 1);
+      return { width: 1 + (dimensions & 0x3fff), height: 1 + ((dimensions >>> 14) & 0x3fff) };
+    }
+    offset = data + size + (size % 2);
+  }
+  assert.fail(`${image}: image dimensions missing`);
+}
 
 const expectedIds = [
   "Showrunner-ICanRunAShow",
@@ -35,7 +75,7 @@ const expectedIds = [
   "Role-Call",
 ];
 
-test("the catalog represents all 24 public projects once, excluding profile and portfolio repos", () => {
+test("the catalog represents all 24 owned projects once, excluding profile and portfolio repos", () => {
   assert.equal(projects.length, 24);
   assert.equal(new Set(projects.map((project) => project.id)).size, 24);
   assert.deepEqual(
@@ -126,7 +166,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
       assert.equal(new URL(link).protocol, "https:");
     }
     if (project.image) {
-      assert.match(project.image, /^\.\/assets\/[a-z0-9-]+\.(webp|svg)$/);
+      assert.match(project.image, /^\.\/assets\/[a-z0-9-]+\.(webp|png|svg)$/);
       assert.ok(
         existsSync(new URL(`../${project.image}`, import.meta.url)),
         `${project.id}: missing ${project.image}`,
@@ -136,7 +176,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
   }
 });
 
-test("App Store listings, RoleCall preview, and known unavailable demos are represented accurately", () => {
+test("App Store listings, RoleCall development captures, and known unavailable demos are represented accurately", () => {
   const find = (id) => projects.find((project) => project.id === id);
   for (const id of ["The-Bit-Binder", "MyGigCalendar"]) {
     assert.equal(new URL(find(id).demoUrl).hostname, "apps.apple.com");
@@ -144,8 +184,17 @@ test("App Store listings, RoleCall preview, and known unavailable demos are repr
     assert.equal(find(id).badge, "APP STORE");
   }
   assert.equal(find("Role-Call").demoUrl, "https://rolecall.space");
-  assert.equal(find("Role-Call").badge, "UI PREVIEW");
-  assert.match(find("Role-Call").imageAlt, /UI preview/);
+  const role = find("Role-Call");
+  assert.equal(role.badge, "DEV PREVIEW");
+  assert.equal(role.imageKind, "development-capture");
+  assert.match(role.imageAlt, /shot list.*fictional.*sample/i);
+  assert.match(role.imageCaption, /development capture.*actual.*component.*sample/i);
+  assert.deepEqual(role.gallery.map((frame) => frame.label), ["Shot list", "Script workspace"]);
+  for (const frame of role.gallery) {
+    assert.match(frame.image, /\.(webp|png)$/);
+    assert.match(frame.caption, /development capture.*actual.*sample/i);
+    assert.match(frame.sourceUrl, /\/components\/(ShotListBoard|ScriptWorkspace)\.tsx$/);
+  }
   for (const id of [
     "nycstandupopenmicmaster",
     "CONTROLLEREVENT",
@@ -153,8 +202,70 @@ test("App Store listings, RoleCall preview, and known unavailable demos are repr
   ]) {
     assert.equal(find(id).demoUrl, null);
   }
-  assert.match(find("usbmic").notes, /Physical-microphone validation/);
-  assert.match(find("mystorydailjournal").notes, /In development/);
+  assert.match(find("usbmic").notes, /physical[- ]microphone validation/i);
+  assert.match(`${find("mystorydailjournal").imageCaption} ${find("mystorydailjournal").notes}`,
+    /in development|no current runtime|runtime.*not verified/i);
+});
+
+test("all 24 projects have traceable covers and galleries with accurate asset dimensions", () => {
+  const imageKinds = new Set(["app-screenshot", "development-capture", "project-overview"]);
+  for (const project of projects) {
+    assert.ok(project.image, `${project.id}: cover required`);
+    assert.ok(imageKinds.has(project.imageKind), `${project.id}: image provenance kind required`);
+    assert.ok(project.imageLabel?.trim(), `${project.id}: visible image label required`);
+    assert.ok(project.imageCaption?.trim(), `${project.id}: capture disclosure required`);
+    assert.ok(project.gallery?.length >= 1, `${project.id}: at least one image view required`);
+    assert.equal(project.gallery[0].image, project.image, `${project.id}: cover matches its first view`);
+    assert.equal(new Set(project.gallery.map((frame) => frame.label)).size, project.gallery.length,
+      `${project.id}: gallery choices must be distinguishable`);
+    assert.deepEqual(assetDimensions(project.image), {
+      width: project.imageWidth,
+      height: project.imageHeight,
+    }, `${project.id}: cover dimensions match the file`);
+    for (const frame of project.gallery) {
+      assert.ok(frame.label?.trim(), `${project.id}: view label required`);
+      assert.ok(frame.caption?.trim(), `${project.id}: view disclosure required`);
+      assert.equal(typeof frame.portrait, "boolean", `${project.id}: view orientation declared`);
+      for (const image of [frame, frame.companion].filter(Boolean)) {
+        assert.match(image.image, /^\.\/assets\/[a-z0-9-]+\.(webp|png|svg)$/);
+        assert.ok(image.imageAlt?.trim(), `${project.id}: descriptive image alternative required`);
+        assert.ok(Number.isInteger(image.width) && image.width > 0);
+        assert.ok(Number.isInteger(image.height) && image.height > 0);
+        assert.deepEqual(assetDimensions(image.image), { width: image.width, height: image.height },
+          `${project.id}: ${image.image} dimensions match the file`);
+        assert.equal(new URL(image.sourceUrl).protocol, "https:");
+        assert.ok(project.sources.includes(image.sourceUrl), `${project.id}: image source listed in provenance`);
+      }
+    }
+    if (project.imageKind === "project-overview") {
+      assert.match(project.imageLabel, /source|overview/i);
+      assert.match(project.imageCaption, /overview.*source|source.*overview/i);
+      assert.match(project.image, /\.svg$/);
+      assert.ok(project.gallery.every((frame) => /source|overview/i.test(frame.caption)));
+    } else {
+      assert.match(project.image, /\.(webp|png)$/);
+    }
+    if (project.imageKind === "development-capture") {
+      assert.match(`${project.imageLabel} ${project.imageCaption}`, /development/i);
+      assert.ok(project.gallery.every((frame) =>
+        /development|sample|fictional|isolated|repository-default/i.test(`${frame.caption} ${project.notes || ""}`),
+      ), `${project.id}: each development view discloses its capture or sample context`);
+    }
+  }
+});
+
+test("limited capture states retain their user-facing disclosures", () => {
+  const find = (id) => projects.find((project) => project.id === id);
+  assert.match(find("dictype").imageCaption, /onboarding/i);
+  assert.match(find("dictype").imageCaption, /permissions were not granted/i);
+  assert.match(find("dictype").imageCaption, /dictation was not exercised/i);
+  assert.ok(find("usbmic").gallery.every((frame) => /virtual microphones/i.test(frame.caption)));
+  assert.match(find("mystorydailjournal").imageCaption, /in development/i);
+  assert.match(find("comedysub").imageCaption, /previously reviewed source/i);
+  const binder = find("The-Bit-Binder");
+  for (const frame of binder.gallery.filter((view) => view.workflow)) {
+    assert.match(frame.caption, /workflow.*source/i);
+  }
 });
 
 test("platform filters are case-insensitive and keep all three platforms populated", () => {

@@ -11,6 +11,7 @@ for (const name of [
   "styles.css",
   "app.js",
   "projects.js",
+  "visuals.js",
   "assets",
   ".nojekyll",
 ]) {

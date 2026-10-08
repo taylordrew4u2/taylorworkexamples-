@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">My Story: Daily Journal — project overview from source</title>
+<desc id="desc">Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests. IN DEVELOPMENT · Architecture summary; runtime not verified.</desc>
+<rect width="1600" height="1000" fill="#F3F6FD"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<rect x="72" y="48" width="13" height="35" rx="3" fill="#6552D9"/>
+<text x="106" y="76" font-size="29" font-weight="700" fill="#6552D9" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
+<text x="1528" y="76" font-size="27" font-weight="600" fill="#56647F" text-anchor="end">iOS · In development</text>
+<text x="72" y="193" font-size="76" font-weight="700" fill="#162747" text-anchor="start">My Story: Daily Journal</text>
+<text x="72" y="262" font-size="34" font-weight="400" fill="#52617C" text-anchor="start">A daily journal architecture for quick capture and context digests.</text>
+<rect x="72" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
+<circle cx="120" cy="373" r="23" fill="#6552D9" fill-opacity=".09"/>
+<text x="120" y="384" font-size="26" font-weight="700" fill="#6552D9" text-anchor="middle">01</text>
+<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#6552D9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 20h112l36 36v156H60z"/><path d="M172 20v36h36M88 98h92M88 130h76M88 162h56"/><path d="m174 172 40-40 16 16-40 40-23 7z" fill="#FFFFFF"/></g></g>
+<text x="108" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Quick capture</text>
+<text x="108" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Text, voice or tags</text>
+<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#6552D9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="576" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
+<circle cx="624" cy="373" r="23" fill="#6552D9" fill-opacity=".09"/>
+<text x="624" y="384" font-size="26" font-weight="700" fill="#6552D9" text-anchor="middle">02</text>
+<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#6552D9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M134 114 63 48M134 114l85-68M134 114l-11 90"/><circle cx="134" cy="114" r="36"/><circle cx="57" cy="42" r="23"/><circle cx="226" cy="42" r="23"/><circle cx="123" cy="210" r="23"/></g></g>
+<text x="612" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Daily context</text>
+<text x="612" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Optional signals</text>
+<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#6552D9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="1080" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
+<circle cx="1128" cy="373" r="23" fill="#6552D9" fill-opacity=".09"/>
+<text x="1128" y="384" font-size="26" font-weight="700" fill="#6552D9" text-anchor="middle">03</text>
+<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#6552D9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M49 58V20h150v172h-38M75 46h151v172H75z"/><path d="M104 92h92M104 130h76M104 168h56"/></g></g>
+<text x="1116" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Day record</text>
+<text x="1116" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Entries and digests</text>
+<path d="M72 829h1456" stroke="#6552D9" stroke-opacity=".22" stroke-width="2"/>
+<text x="72" y="886" font-size="29" font-weight="700" fill="#6552D9" text-anchor="start">IN DEVELOPMENT · Architecture summary; runtime not verified.</text>
+<text x="72" y="939" font-size="27" font-weight="400" fill="#52617C" text-anchor="start">Based on the previously reviewed repository spec, not a running-app capture.</text>
+</g></svg>

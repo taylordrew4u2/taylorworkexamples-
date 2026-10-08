@@ -1,5 +1,7 @@
 # Portfolio design review — October 7, 2026
 
+This record describes successive revisions. The v10 image update below is the current image/provenance record; earlier limitations and geometry findings are retained as history. They do not describe the current gallery.
+
 The user needed stronger evidence of their work when approaching companies about websites and apps. The revision replaces six equal-weight previews with three expanded product stories: I Can Run A Show, The BitBinder, and The Trip Handler. BillSpilt, RoleCall, and My Gig Calendar form a compact supporting row. The complete 24-project catalog remains searchable behind an accessible native disclosure. The dark, lime, violet, and cobalt design, email contact, and single identity byline are retained.
 
 The trade-off is deliberate: deeper projects get more room; browsing every project takes one additional click. Real product screens and specific implemented behavior are more useful to this audience than a fixed website/web-app/iOS quota. No new framework, icon pack, or purchased design system was introduced.
@@ -56,3 +58,14 @@ Selected work retains the same three lead cases and three supporting projects, a
 Independent screenshot and source review confirmed that the hierarchy and scan rhythm differ substantially from v8. Eighteen desktop and phone browser checks pass, covering the new hero previews and screen controls along with existing navigation, filters, dialogs, focus restoration, reduced motion, clipboard behavior, and email drafts. Thirty-nine complete rendered states at 390, 1440, and 1728 pixels fit their viewport without horizontal overflow. The review found a decorative hero label obscured by the overlapping frames; it was removed. Footer focus indicators now use white against cobalt so keyboard navigation remains visible.
 
 The earlier automated Better Design geometry receipts above describe v7, not this new composition. They are retained as history, not reused as certification for the redesign. Original screenshot provenance and the missing current BitBinder workflow screen remain documented. The new layout is visually checked and functionally tested; it does not establish measured conversion improvement or audience preference.
+
+
+## Full project imagery update — v10, October 8, 2026
+
+The user asked for better images of everything they built. The text-only archive becomes a visual grid with a cover for every one of the 24 projects. Each project detail offers its image gallery, accurate captions, and full-size originals. Search, filters, selected-case evidence, native dialog focus behavior, and email-only contact remain available. A direct link to `#project-archive` opens the complete collection.
+
+Seventeen covers are actual app, website, or development captures; seven are explicitly labeled source-derived overviews. Current native BitBinder captures replace the empty legacy home/settings and import illustration. Native Open Micer Timer screenshots replace the need for HTML replicas. RoleCall's old SVG preview is replaced by original script/shot-list components rendered with a fictional screenplay in a development harness. Other captures use original source views, published sample-data screenshots, or virtual microphone inputs, with those distinctions recorded in the captions. [Image evidence](image-evidence.md) records sources and limits by project.
+
+Image acquisition used isolated local copies and fresh simulator data. Original app repositories and real user data were not changed. No production form was submitted, email sent, payment made, or native permissions granted for dictation. The Mac lock prevented a Laugh Extractor window capture; its cover remains a labeled source overview. Unavailable source/runtime surfaces are described as such rather than illustrated as fabricated app screenshots.
+
+The image gallery preserves screenshot proportions, labels development and overview material, keeps full-resolution originals available, and retains keyboard focus while changing images. All 50 image references match their actual file dimensions. Eleven data tests and 24 desktop/phone browser scenarios pass. Sixty rendered states at 390, 1440, and 1728 pixels have no horizontal overflow or page errors. Phone landscape and paired-native galleries use shorter frames to avoid excess empty space; four affected phone checks and the final production build pass. Earlier Better Design geometry receipts are not reused as certification for v10.

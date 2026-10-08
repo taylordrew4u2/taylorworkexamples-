@@ -1,4 +1,41 @@
 import { test, expect } from "@playwright/test";
+import { projects } from "../projects.js";
+
+async function expectLoadedImageToFit(image, expected) {
+  await image.scrollIntoViewIfNeeded();
+  await expect.poll(() => image.evaluate((element) =>
+    element.complete && element.naturalWidth > 0 && element.naturalHeight > 0,
+  )).toBe(true);
+  await expect(image).toHaveAttribute("src", expected.image);
+  await expect(image).toHaveAttribute("alt", expected.imageAlt);
+  await expect(image).toHaveAttribute("width", String(expected.width));
+  await expect(image).toHaveAttribute("height", String(expected.height));
+  const geometry = await image.evaluate((element) => {
+    const frame = element.closest(".archive-preview, .dialog-preview, .case-screen, .project-visual");
+    const imageBox = element.getBoundingClientRect();
+    const frameBox = frame.getBoundingClientRect();
+    return {
+      naturalWidth: element.naturalWidth,
+      naturalHeight: element.naturalHeight,
+      fit: getComputedStyle(element).objectFit,
+      width: imageBox.width,
+      height: imageBox.height,
+      inside: imageBox.left >= frameBox.left - 1 &&
+        imageBox.right <= frameBox.right + 1 &&
+        imageBox.top >= frameBox.top - 1 &&
+        imageBox.bottom <= frameBox.bottom + 1,
+    };
+  });
+  expect(geometry.naturalWidth).toBe(expected.width);
+  expect(geometry.naturalHeight).toBe(expected.height);
+  expect(geometry.fit).toBe("contain");
+  expect(geometry.width).toBeGreaterThan(0);
+  expect(geometry.height).toBeGreaterThan(0);
+  expect(geometry.inside, `${expected.image} fits its preview frame`).toBe(true);
+  expect(await image.page().evaluate(() =>
+    document.documentElement.scrollWidth <= window.innerWidth,
+  )).toBe(true);
+}
 
 test("portfolio renders, previews load, and the page fits the viewport", async ({
   page,
@@ -54,7 +91,9 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const roleCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
-  await expect(roleCard.locator(".visual-badge")).toHaveText("UI PREVIEW");
+  await expect(roleCard.locator(".visual-badge")).toHaveText("DEV PREVIEW");
+  await expect(roleCard.locator("img")).toHaveAttribute("src", /rolecall-shots-capture\.(webp|png)$/);
+  await expect(roleCard.locator("img")).toHaveAttribute("alt", /shot list.*fictional.*sample/i);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -182,6 +221,91 @@ test("archive opens and filters, searches, empty state, and reset work together"
   await expect(page.getByRole("searchbox")).toBeHidden();
 });
 
+test("the archive deep link opens its images and filters on initial navigation", async ({ page }) => {
+  await page.goto("/#project-archive");
+  await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
+  await expect(page.getByRole("searchbox")).toBeVisible();
+  await expect(page.locator(".archive-card")).toHaveCount(24);
+  await expect(page.locator("#result-count")).toHaveText("24 OF 24 PROJECTS");
+});
+
+test("all 24 archive covers load, fit their frames, and disclose the kind of image", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/#project-archive");
+  await page.evaluate(() => document.fonts.ready);
+  await expect(page.locator(".archive-card")).toHaveCount(24);
+  await expect(page.locator(".archive-placeholder")).toHaveCount(0);
+  for (const project of projects) {
+    const preview = page.locator(`.archive-preview[data-project="${project.id}"]`);
+    const card = preview.locator("..");
+    await expect(preview).toHaveAccessibleName(`View images and details for ${project.title}`);
+    await expect(card.locator("h3")).toHaveText(project.title);
+    await expect(card.locator(".image-kind")).toHaveText(project.imageLabel);
+    await expect(preview.locator("img")).toHaveCount(1);
+    await expectLoadedImageToFit(preview.locator("img"), {
+      image: project.image,
+      imageAlt: project.imageAlt,
+      width: project.imageWidth,
+      height: project.imageHeight,
+    });
+    await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
+  }
+  expect(errors).toEqual([]);
+});
+
+test("every project dialog shows its images and keeps gallery, caption, full-size link, and focus in sync", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/#project-archive");
+  const dialog = page.getByRole("dialog");
+  for (const project of projects) {
+    const trigger = page.locator(`.archive-preview[data-project="${project.id}"]`);
+    await trigger.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    const images = dialog.getByRole("region", { name: `Images from ${project.title}`, exact: true });
+    await expect(images).toBeVisible();
+    const group = images.getByRole("group", { name: `Project images from ${project.title}`, exact: true });
+    const choices = group.locator("button[data-dialog-screen]");
+    await expect(choices).toHaveCount(project.gallery.length > 1 ? project.gallery.length : 0);
+    await expect(images.locator(".dialog-image-caption")).toHaveAttribute("aria-live", "polite");
+    await expect(images.locator(".primary-screen")).toHaveAttribute("src", project.gallery[0].image);
+    await expect(images.locator(".dialog-image-caption")).toHaveText(project.gallery[0].caption);
+    await expect(images.locator(".image-original")).toHaveAttribute("href", project.gallery[0].image);
+    if (project.gallery.length > 1) {
+      await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
+    }
+    for (let index = 0; index < project.gallery.length; index += 1) {
+      const frame = project.gallery[index];
+      if (project.gallery.length > 1) {
+        await choices.nth(index).click();
+        await expect(choices.nth(index)).toHaveText(frame.label);
+        await expect(choices.nth(index)).toHaveAttribute("aria-pressed", "true");
+        await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+        await expect(choices.nth(index)).toBeFocused();
+      }
+      await expectLoadedImageToFit(images.locator(".primary-screen"), frame);
+      await expect(images.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
+      if (frame.companion) {
+        await expectLoadedImageToFit(images.locator(".companion-screen"), frame.companion);
+      }
+      await expect(images.locator(".dialog-image-caption")).toHaveText(frame.caption);
+      await expect(images.getByRole("link", { name: "Open full-size image", exact: true })).toHaveAttribute("href", frame.image);
+      await expect(images.locator(".image-original")).toHaveAttribute("target", "_blank");
+      await expect(images.locator(".image-original")).toHaveAttribute("rel", /noopener/);
+      expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
+      await expect(page.locator("#result-count")).toHaveText("24 OF 24 PROJECTS");
+      await expect(page.locator("#project-search")).toHaveValue("");
+    }
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+  }
+  expect(errors).toEqual([]);
+});
+
 test("project dialog keeps background controls inactive, closes with Escape, and restores the trigger", async ({
   page,
 }) => {
@@ -211,6 +335,11 @@ test("project dialog keeps background controls inactive, closes with Escape, and
       ),
     ).toBe(true);
   }
+  await page.locator(".email-link").evaluate((element) => element.focus());
+  await expect(page.locator(".email-link")).not.toBeFocused();
+  expect(await dialog.evaluate((element) =>
+    document.activeElement === document.body || element.contains(document.activeElement),
+  )).toBe(true);
   await page.keyboard.press("Escape");
   await expect(dialog).toBeHidden();
   await expect(trigger).toBeFocused();
@@ -416,5 +545,7 @@ test("lead galleries change real images, captions, and selection without opening
     await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
     await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
   }
-  await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toContainText(/earlier App Store release/i);
+  await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toHaveText(
+    projects.find((project) => project.id === "The-Bit-Binder").gallery[0].caption,
+  );
 });

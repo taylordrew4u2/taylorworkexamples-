@@ -1,3 +1,5 @@
+import { projectVisuals } from "./visuals.js?v=10";
+
 // Public catalog and featured engineering claims verified on 2026-10-07.
 // Source links and screenshot provenance stay alongside each project.
 export const email = "taylordrew4u@gmail.com";
@@ -988,6 +990,17 @@ export const projects = [
     ],
   },
 ];
+
+// Keep visual evidence separate from the project copy and merge it into canonical entries.
+for (const project of projects) {
+  const visual = projectVisuals[project.id];
+  if (!visual) continue;
+  Object.assign(project, visual);
+  const visualSources = (project.gallery || []).flatMap((frame) =>
+    [frame.sourceUrl, frame.companion?.sourceUrl].filter(Boolean),
+  );
+  project.sources = [...new Set([...project.sources, ...visualSources])];
+}
 
 const featuredIds = [
   "Showrunner-ICanRunAShow",
