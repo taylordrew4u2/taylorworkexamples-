@@ -3,32 +3,32 @@
 <desc id="desc">Plan the day: Scheduled and open time; See Now / Next: Current block and timer; Map &amp; trip: Places and day density. SOURCE-DERIVED WORKFLOW · Today, Map and Trip views.</desc>
 <rect width="1600" height="1000" fill="#F3F6FD"/>
 <g font-family="Arial, Helvetica, sans-serif">
-<rect x="72" y="48" width="13" height="35" rx="3" fill="#2458EB"/>
-<text x="106" y="76" font-size="29" font-weight="700" fill="#2458EB" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
+<rect x="72" y="48" width="13" height="35" rx="3" fill="#0969DA"/>
+<text x="106" y="76" font-size="29" font-weight="700" fill="#0969DA" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
 <text x="1528" y="76" font-size="27" font-weight="600" fill="#56647F" text-anchor="end">iOS · Trip scheduling</text>
 <text x="72" y="193" font-size="76" font-weight="700" fill="#162747" text-anchor="start">StayBusy</text>
 <text x="72" y="262" font-size="34" font-weight="400" fill="#52617C" text-anchor="start">Make the current plan, the next stop and open time easy to find.</text>
 <rect x="72" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="120" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="120" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">01</text>
-<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M34 24v201M20 39h28M20 98h28M20 157h28M20 216h28"/><rect x="76" y="27" width="174" height="56" rx="9"/><rect x="76" y="103" width="174" height="48" rx="9" stroke-dasharray="10 12" stroke-opacity=".4"/><rect x="76" y="174" width="174" height="54" rx="9"/></g></g>
+<circle cx="120" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="120" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">01</text>
+<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M34 24v201M20 39h28M20 98h28M20 157h28M20 216h28"/><rect x="76" y="27" width="174" height="56" rx="9"/><rect x="76" y="103" width="174" height="48" rx="9" stroke-dasharray="10 12" stroke-opacity=".4"/><rect x="76" y="174" width="174" height="54" rx="9"/></g></g>
 <text x="108" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Plan the day</text>
 <text x="108" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Scheduled and open time</text>
-<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#2458EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#0969DA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="576" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="624" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="624" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">02</text>
-<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="101" cy="97" r="69"/><path d="M101 56v41l33 25M187 73h60M187 111h43M59 204h153m-21-21 21 21-21 21"/></g></g>
+<circle cx="624" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="624" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">02</text>
+<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="101" cy="97" r="69"/><path d="M101 56v41l33 25M187 73h60M187 111h43M59 204h153m-21-21 21 21-21 21"/></g></g>
 <text x="612" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">See Now / Next</text>
 <text x="612" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Current block and timer</text>
-<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#2458EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#0969DA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="1080" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="1128" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="1128" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">03</text>
-<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="m24 57 75-29 78 29 75-29v176l-75 29-78-29-75 29zM99 28v176M177 57v176" stroke-opacity=".35"/><path d="M105 105c0-48 73-48 73 0 0 28-36 63-36 63s-37-35-37-63z" fill="#FFFFFF"/><circle cx="142" cy="105" r="11"/></g></g>
+<circle cx="1128" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="1128" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">03</text>
+<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="m24 57 75-29 78 29 75-29v176l-75 29-78-29-75 29zM99 28v176M177 57v176" stroke-opacity=".35"/><path d="M105 105c0-48 73-48 73 0 0 28-36 63-36 63s-37-35-37-63z" fill="#FFFFFF"/><circle cx="142" cy="105" r="11"/></g></g>
 <text x="1116" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Map &amp; trip</text>
 <text x="1116" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Places and day density</text>
-<path d="M72 829h1456" stroke="#2458EB" stroke-opacity=".22" stroke-width="2"/>
-<text x="72" y="886" font-size="29" font-weight="700" fill="#2458EB" text-anchor="start">SOURCE-DERIVED WORKFLOW · Today, Map and Trip views.</text>
+<path d="M72 829h1456" stroke="#0969DA" stroke-opacity=".22" stroke-width="2"/>
+<text x="72" y="886" font-size="29" font-weight="700" fill="#0969DA" text-anchor="start">SOURCE-DERIVED WORKFLOW · Today, Map and Trip views.</text>
 <text x="72" y="939" font-size="27" font-weight="400" fill="#52617C" text-anchor="start">Source overview · The native app uses its own dark interface and design system.</text>
 </g></svg>

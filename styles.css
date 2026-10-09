@@ -4,7 +4,7 @@
   --ink: #151b2b;
   --muted: #606878;
   --line: #dce0e9;
-  --accent: #254bff;
+  --accent: #0969da;
   --surface: #ffffff;
   --sans: "DM Sans", Arial, sans-serif;
   --display: "Manrope", Arial, sans-serif;
@@ -243,7 +243,7 @@ button, a, input, select, summary {
   position: relative;
   aspect-ratio: 1.13;
   border-radius: 2rem;
-  background: #e7ecff;
+  background: #e7f1ff;
   isolation: isolate;
 }
 
@@ -253,7 +253,7 @@ button, a, input, select, summary {
   height: 82%;
   top: 9%;
   left: 9%;
-  border: 0.0625rem solid #bfcaff;
+  border: 0.0625rem solid #bad7fb;
   border-radius: 50%;
 }
 
@@ -450,19 +450,19 @@ button, a, input, select, summary {
 }
 
 .project-visual.sage {
-  background: #dde5fb;
+  background: #dcecff;
 }
 
 .project-visual.peach {
-  background: #233fc0;
+  background: #1558b0;
 }
 
 .project-visual.blue {
   background: #d7ebe8;
 }
 
-.project-visual.lavender {
-  background: #e9e3f7;
+.project-visual.slate {
+  background: #e5edf5;
 }
 
 .project-visual.yellow {
@@ -544,7 +544,7 @@ button, a, input, select, summary {
 }
 
 .peach .canvas-label {
-  color: #c9d3ff;
+  color: #c5e1ff;
 }
 
 .preview-arrow {
@@ -758,13 +758,13 @@ button, a, input, select, summary {
 .workflow-step:not(:last-child)::after {
   content: "↓";
   display: block;
-  color: #a9baff;
+  color: #a9d1ff;
   margin-top: 0.5rem;
   line-height: 1;
 }
 
 .workflow-source {
-  color: #d1d9ff;
+  color: #d1e6ff;
   font-size: 0.6875rem;
   line-height: 1.5;
 }
@@ -1181,7 +1181,7 @@ button, a, input, select, summary {
 
 .footer-contact .eyebrow {
   grid-column: 1 / -1;
-  color: #d9e0ff;
+  color: #d9eaff;
 }
 
 .contact-heading {
@@ -1201,7 +1201,7 @@ button, a, input, select, summary {
 
 .contact-description {
   grid-column: 2;
-  color: #e1e6ff;
+  color: #e1eeff;
   font-size: 0.875rem;
   line-height: 1.8;
   max-width: 30rem;
@@ -1230,7 +1230,7 @@ button, a, input, select, summary {
   grid-column: 2;
   justify-self: start;
   font-size: 0.6875rem;
-  color: #d9e0ff;
+  color: #d9eaff;
   background: none;
   border: 0;
   padding: 0;
@@ -1243,7 +1243,7 @@ button, a, input, select, summary {
   justify-content: space-between;
   gap: 1.5rem;
   font-size: 0.6875rem;
-  color: #d9e0ff;
+  color: #d9eaff;
   padding-top: 2rem;
   border-top: 0.0625rem solid #ffffff45;
   margin-top: 3rem;
@@ -1251,6 +1251,15 @@ button, a, input, select, summary {
 
 .footer-meta a {
   color: white;
+}
+
+.footer-identity {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.owner-credit {
+  color: inherit;
 }
 
 .footer-meta a span {
@@ -1421,7 +1430,7 @@ dialog::backdrop {
   max-width: 22%;
 }
 .dialog-preview.peach {
-  background: #233fc0;
+  background: #1558b0;
 }
 .dialog-preview .screen-workflow {
   flex-shrink: 0;
@@ -1476,10 +1485,10 @@ dialog::backdrop {
     color: var(--accent);
   }
   .button-dark:hover {
-    background: #193de4;
+    background: #0757b6;
   }
   .footer-contact > .button:hover {
-    background: #e7ecff;
+    background: #e7f1ff;
   }
   .project-visual:hover .preview-arrow {
     background: var(--ink);

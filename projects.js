@@ -1,4 +1,4 @@
-import { projectVisuals } from "./visuals.js?v=10";
+import { projectVisuals } from "./visuals.js?v=11";
 
 // Public catalog and featured engineering claims verified on 2026-10-07.
 // Source links and screenshot provenance stay alongside each project.
@@ -365,7 +365,7 @@ export const projects = [
     image: "./assets/rolecall.svg",
     imageAlt: "RoleCall dashboard UI preview with project and series cards",
     portrait: false,
-    tone: "lavender",
+    tone: "slate",
     badge: "UI PREVIEW",
     experiment: false,
     sources: [
@@ -520,7 +520,7 @@ export const projects = [
     image: null,
     imageAlt: "",
     portrait: false,
-    tone: "lavender",
+    tone: "slate",
     badge: "SOURCE AVAILABLE",
     experiment: true,
     sources: [
@@ -543,7 +543,7 @@ export const projects = [
     image: null,
     imageAlt: "",
     portrait: false,
-    tone: "lavender",
+    tone: "slate",
     badge: "SOURCE AVAILABLE",
     experiment: true,
     sources: [

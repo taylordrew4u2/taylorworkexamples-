@@ -3,32 +3,32 @@
 <desc id="desc">Apply: Validated public form; Review &amp; book: Applicant pipeline; Prepare lineup: Print and email drafts. SOURCE SUMMARY · Public form, admin pipeline and lineup preparation.</desc>
 <rect width="1600" height="1000" fill="#F3F6FD"/>
 <g font-family="Arial, Helvetica, sans-serif">
-<rect x="72" y="48" width="13" height="35" rx="3" fill="#2458EB"/>
-<text x="106" y="76" font-size="29" font-weight="700" fill="#2458EB" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
+<rect x="72" y="48" width="13" height="35" rx="3" fill="#0969DA"/>
+<text x="106" y="76" font-size="29" font-weight="700" fill="#0969DA" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
 <text x="1528" y="76" font-size="27" font-weight="600" fill="#56647F" text-anchor="end">Web · Submission workflow</text>
 <text x="72" y="193" font-size="69" font-weight="700" fill="#162747" text-anchor="start">Pins &amp; Needles Submissions</text>
 <text x="72" y="262" font-size="34" font-weight="400" fill="#52617C" text-anchor="start">From a public application to an organizer’s booked lineup.</text>
 <rect x="72" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="120" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="120" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">01</text>
-<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 20h112l36 36v156H60z"/><path d="M172 20v36h36M88 98h92M88 130h76M88 162h56"/><circle cx="202" cy="189" r="34" fill="#FFFFFF"/><path d="m186 189 11 11 23-26"/></g></g>
+<circle cx="120" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="120" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">01</text>
+<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 20h112l36 36v156H60z"/><path d="M172 20v36h36M88 98h92M88 130h76M88 162h56"/><circle cx="202" cy="189" r="34" fill="#FFFFFF"/><path d="m186 189 11 11 23-26"/></g></g>
 <text x="108" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Apply</text>
 <text x="108" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Validated public form</text>
-<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#2458EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#0969DA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="576" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="624" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="624" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">02</text>
-<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="29" width="186" height="44" rx="10"/><rect x="54" y="104" width="186" height="44" rx="10"/><rect x="30" y="179" width="186" height="44" rx="10"/><path d="M128 74v28m-10-9 10 10 10-10M149 149v28m-10-9 10 10 10-10"/></g></g>
+<circle cx="624" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="624" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">02</text>
+<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="29" width="186" height="44" rx="10"/><rect x="54" y="104" width="186" height="44" rx="10"/><rect x="30" y="179" width="186" height="44" rx="10"/><path d="M128 74v28m-10-9 10 10 10-10M149 149v28m-10-9 10 10 10-10"/></g></g>
 <text x="612" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Review &amp; book</text>
 <text x="612" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Applicant pipeline</text>
-<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#2458EB" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#0969DA" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="1080" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#DCE3F1" stroke-width="2"/>
-<circle cx="1128" cy="373" r="23" fill="#2458EB" fill-opacity=".09"/>
-<text x="1128" y="384" font-size="26" font-weight="700" fill="#2458EB" text-anchor="middle">03</text>
-<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#2458EB" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="28" width="198" height="192" rx="16"/><circle cx="79" cy="76" r="13"/><circle cx="79" cy="124" r="13"/><circle cx="79" cy="172" r="13"/><path d="M111 76h92M111 124h76M111 172h92"/></g></g>
+<circle cx="1128" cy="373" r="23" fill="#0969DA" fill-opacity=".09"/>
+<text x="1128" y="384" font-size="26" font-weight="700" fill="#0969DA" text-anchor="middle">03</text>
+<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#0969DA" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="40" y="28" width="198" height="192" rx="16"/><circle cx="79" cy="76" r="13"/><circle cx="79" cy="124" r="13"/><circle cx="79" cy="172" r="13"/><path d="M111 76h92M111 124h76M111 172h92"/></g></g>
 <text x="1116" y="679" font-size="43" font-weight="700" fill="#162747" text-anchor="start">Prepare lineup</text>
 <text x="1116" y="735" font-size="28" font-weight="400" fill="#52617C" text-anchor="start">Print and email drafts</text>
-<path d="M72 829h1456" stroke="#2458EB" stroke-opacity=".22" stroke-width="2"/>
-<text x="72" y="886" font-size="29" font-weight="700" fill="#2458EB" text-anchor="start">SOURCE SUMMARY · Public form, admin pipeline and lineup preparation.</text>
+<path d="M72 829h1456" stroke="#0969DA" stroke-opacity=".22" stroke-width="2"/>
+<text x="72" y="886" font-size="29" font-weight="700" fill="#0969DA" text-anchor="start">SOURCE SUMMARY · Public form, admin pipeline and lineup preparation.</text>
 <text x="72" y="939" font-size="27" font-weight="400" fill="#52617C" text-anchor="start">Previously reviewed source · Email drafts open in the organizer’s own mail client.</text>
 </g></svg>

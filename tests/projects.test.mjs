@@ -140,7 +140,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
     "sage",
     "peach",
     "blue",
-    "lavender",
+    "slate",
     "yellow",
     "dark",
   ]);

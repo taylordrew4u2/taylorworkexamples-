@@ -426,7 +426,7 @@ export const projectVisuals = {
     "notes": "Actual app captures use virtual microphone inputs. Physical microphone validation remains in progress."
   },
   "mystorydailjournal": {
-    "image": "./assets/mystorydailjournal-overview.svg",
+    "image": "./assets/mystorydailjournal-overview-teal.svg",
     "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -437,7 +437,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/mystorydailjournal-overview.svg",
+        "image": "./assets/mystorydailjournal-overview-teal.svg",
         "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
         "width": 1600,
         "height": 1000,
@@ -495,7 +495,7 @@ export const projectVisuals = {
     "notes": "ImportViewModel.swift imports Photos/Files video. EditorViewModel.swift extracts/transcribes audio, persists timed tokens and manual overrides, and rebuilds audio/caption/overlay preview layers."
   },
   "Laugh-Map": {
-    "image": "./assets/laugh-map-overview.svg",
+    "image": "./assets/laugh-map-overview-teal.svg",
     "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -506,7 +506,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/laugh-map-overview.svg",
+        "image": "./assets/laugh-map-overview-teal.svg",
         "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
         "width": 1600,
         "height": 1000,
@@ -546,7 +546,7 @@ export const projectVisuals = {
     "notes": "README documents the proportional Today timeline with OPEN gaps and pinned Now/Next; Map shows numbered located blocks; Trip shows scheduled-versus-open day density."
   },
   "HealYourHeart": {
-    "image": "./assets/healyourheart-overview.svg",
+    "image": "./assets/healyourheart-overview-teal.svg",
     "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -557,7 +557,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/healyourheart-overview.svg",
+        "image": "./assets/healyourheart-overview-teal.svg",
         "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
         "width": 1600,
         "height": 1000,
