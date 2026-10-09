@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">Heal Your Heart — project overview from source</title>
+<desc id="desc">Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress. SOURCE-DERIVED WORKFLOW · Daily lesson, action and saved reflection.</desc>
+<rect width="1600" height="1000" fill="#FFFFFF"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<rect x="72" y="48" width="13" height="35" rx="3" fill="#E32020"/>
+<text x="106" y="76" font-size="29" font-weight="700" fill="#E32020" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
+<text x="1528" y="76" font-size="27" font-weight="600" fill="#595959" text-anchor="end">iOS · Daily Journey</text>
+<text x="72" y="193" font-size="76" font-weight="700" fill="#111111" text-anchor="start">Heal Your Heart</text>
+<text x="72" y="262" font-size="34" font-weight="400" fill="#595959" text-anchor="start">A daily Journey with lessons, suggested actions and personal check-ins.</text>
+<rect x="72" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
+<circle cx="120" cy="373" r="23" fill="#F2F2F2"/>
+<text x="120" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">01</text>
+<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 20h112l36 36v156H60z"/><path d="M172 20v36h36M88 98h92M88 130h76M88 162h56"/></g></g>
+<text x="108" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Read a lesson</text>
+<text x="108" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">Daily Journey content</text>
+<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#E32020" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="576" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
+<circle cx="624" cy="373" r="23" fill="#F2F2F2"/>
+<text x="624" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">02</text>
+<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><circle cx="137" cy="125" r="79" stroke="#BFBFBF"/><circle cx="137" cy="125" r="39"/><path d="M137 10v53M137 187v53M22 125h53M199 125h53M108 125l22 23 48-52"/></g></g>
+<text x="612" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Try an action</text>
+<text x="612" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">A suggested next step</text>
+<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#E32020" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="1080" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
+<circle cx="1128" cy="373" r="23" fill="#F2F2F2"/>
+<text x="1128" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">03</text>
+<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M60 20h112l36 36v156H60z"/><path d="M172 20v36h36M88 98h92M88 130h76M88 162h56"/><circle cx="211" cy="195" r="37" fill="#FFFFFF"/><path d="m192 195 13 13 25-30"/></g></g>
+<text x="1116" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Save check-in</text>
+<text x="1116" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">Reflection and progress</text>
+<path d="M72 829h1456" stroke="#D6D6D6" stroke-width="2"/>
+<text x="72" y="886" font-size="29" font-weight="700" fill="#E32020" text-anchor="start">SOURCE-DERIVED WORKFLOW · Daily lesson, action and saved reflection.</text>
+<text x="72" y="939" font-size="27" font-weight="400" fill="#595959" text-anchor="start">Technical overview of the Journey flow; no clinical outcome is represented.</text>
+</g></svg>

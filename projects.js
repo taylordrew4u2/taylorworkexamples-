@@ -1,4 +1,4 @@
-import { projectVisuals } from "./visuals.js?v=11";
+import { projectVisuals } from "./visuals.js?v=12";
 
 // Public catalog and featured engineering claims verified on 2026-10-07.
 // Source links and screenshot provenance stay alongside each project.

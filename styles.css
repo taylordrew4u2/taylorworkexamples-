@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700;750&family=Manrope:wght@400;500;600;650;700;750;800&display=swap");
 :root {
-  --paper: #f8f9fc;
-  --ink: #151b2b;
-  --muted: #606878;
-  --line: #dce0e9;
-  --accent: #0969da;
+  --paper: #ffffff;
+  --ink: #111111;
+  --muted: #595959;
+  --line: #d6d6d6;
+  --accent: #e32020;
   --surface: #ffffff;
   --sans: "DM Sans", Arial, sans-serif;
   --display: "Manrope", Arial, sans-serif;
@@ -139,9 +139,16 @@ button, a, input, select, summary {
   letter-spacing: -0.07em;
 }
 
-.wordmark span {
-  color: var(--accent);
-  font-size: 1.5rem;
+.brand-symbol {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: none;
+  object-fit: contain;
+}
+
+.wordmark .brand-name {
+  color: inherit;
+  font: inherit;
 }
 
 .site-header nav {
@@ -243,7 +250,7 @@ button, a, input, select, summary {
   position: relative;
   aspect-ratio: 1.13;
   border-radius: 2rem;
-  background: #e7f1ff;
+  background: #f2f2f2;
   isolation: isolate;
 }
 
@@ -253,7 +260,7 @@ button, a, input, select, summary {
   height: 82%;
   top: 9%;
   left: 9%;
-  border: 0.0625rem solid #bad7fb;
+  border: 0.0625rem solid #d6d6d6;
   border-radius: 50%;
 }
 
@@ -272,8 +279,8 @@ button, a, input, select, summary {
   padding: 0;
   overflow: hidden;
   background: white;
-  border: 0.0625rem solid #c6cbd9;
-  box-shadow: 0 1.5rem 3rem #22307524;
+  border: 0.0625rem solid #d6d6d6;
+  box-shadow: 0 1.5rem 3rem #00000024;
 }
 
 .hero-web {
@@ -296,7 +303,7 @@ button, a, input, select, summary {
   gap: 0.75rem;
   height: 1.75rem;
   padding-inline: 0.625rem;
-  color: #6c7280;
+  color: #595959;
   background: #ffffff;
   font-size: 0.5rem;
 }
@@ -310,7 +317,7 @@ button, a, input, select, summary {
   width: 0.25rem;
   height: 0.25rem;
   border-radius: 50%;
-  background: #ccd0d9;
+  background: #d6d6d6;
 }
 
 .hero-phone {
@@ -318,7 +325,7 @@ button, a, input, select, summary {
   top: 13%;
   right: 5%;
   padding: 0.25rem;
-  border: 0.1875rem solid #20232b;
+  border: 0.1875rem solid #111111;
   border-radius: 1.5rem;
   transform: rotate(8deg);
 }
@@ -334,7 +341,7 @@ button, a, input, select, summary {
   bottom: 5%;
   width: 100%;
   padding-inline: 7%;
-  color: #56618a;
+  color: #595959;
   font-size: 0.625rem;
   line-height: 1.5;
 }
@@ -358,7 +365,7 @@ button, a, input, select, summary {
 }
 
 .capability-strip p span {
-  color: #969eb0;
+  color: #757575;
 }
 
 .work-section {
@@ -443,34 +450,34 @@ button, a, input, select, summary {
   padding: 0;
   position: relative;
   overflow: hidden;
-  background: #e2e8f5;
+  background: #f2f2f2;
   border: 0;
   border-radius: 1rem;
   transition: box-shadow 0.25s;
 }
 
 .project-visual.sage {
-  background: #dcecff;
+  background: #f2f2f2;
 }
 
 .project-visual.peach {
-  background: #1558b0;
+  background: #111111;
 }
 
 .project-visual.blue {
-  background: #d7ebe8;
+  background: #f2f2f2;
 }
 
 .project-visual.slate {
-  background: #e5edf5;
+  background: #f2f2f2;
 }
 
 .project-visual.yellow {
-  background: #e8edf4;
+  background: #f2f2f2;
 }
 
 .project-visual.dark {
-  background: #e2e8f5;
+  background: #f2f2f2;
 }
 
 .project-visual img {
@@ -479,7 +486,7 @@ button, a, input, select, summary {
   max-height: 85%;
   object-fit: contain;
   border-radius: 0.5rem;
-  box-shadow: 0 1.5rem 3.5rem #14224524;
+  box-shadow: 0 1.5rem 3.5rem #00000024;
   transition: none;
 }
 
@@ -540,11 +547,11 @@ button, a, input, select, summary {
   font-family: var(--mono);
   font-size: 0.6875rem;
   letter-spacing: 0.06em;
-  color: #526181;
+  color: #595959;
 }
 
 .peach .canvas-label {
-  color: #c5e1ff;
+  color: #e6e6e6;
 }
 
 .preview-arrow {
@@ -758,13 +765,13 @@ button, a, input, select, summary {
 .workflow-step:not(:last-child)::after {
   content: "↓";
   display: block;
-  color: #a9d1ff;
+  color: #e6e6e6;
   margin-top: 0.5rem;
   line-height: 1;
 }
 
 .workflow-source {
-  color: #d1e6ff;
+  color: #e6e6e6;
   font-size: 0.6875rem;
   line-height: 1.5;
 }
@@ -817,7 +824,7 @@ button, a, input, select, summary {
   left: 1rem;
   padding: 0.375rem 0.625rem;
   background: #fffffff2;
-  border: 0.0625rem solid #151b2b15;
+  border: 0.0625rem solid #11111115;
   border-radius: 2rem;
   color: var(--ink);
   font-size: 0.5625rem;
@@ -1161,7 +1168,7 @@ button, a, input, select, summary {
 }
 
 .site-footer {
-  background: var(--accent);
+  background: #111111;
   color: white;
   border-radius: 1.5rem 1.5rem 0 0;
   padding: 4rem;
@@ -1181,7 +1188,7 @@ button, a, input, select, summary {
 
 .footer-contact .eyebrow {
   grid-column: 1 / -1;
-  color: #d9eaff;
+  color: #e6e6e6;
 }
 
 .contact-heading {
@@ -1201,7 +1208,7 @@ button, a, input, select, summary {
 
 .contact-description {
   grid-column: 2;
-  color: #e1eeff;
+  color: #e6e6e6;
   font-size: 0.875rem;
   line-height: 1.8;
   max-width: 30rem;
@@ -1210,7 +1217,7 @@ button, a, input, select, summary {
 .footer-contact > .button {
   grid-column: 2;
   justify-self: start;
-  color: var(--accent);
+  color: #111111;
   background: white;
 }
 
@@ -1230,7 +1237,7 @@ button, a, input, select, summary {
   grid-column: 2;
   justify-self: start;
   font-size: 0.6875rem;
-  color: #d9eaff;
+  color: #e6e6e6;
   background: none;
   border: 0;
   padding: 0;
@@ -1240,10 +1247,11 @@ button, a, input, select, summary {
 
 .footer-meta {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: 1.5rem;
   font-size: 0.6875rem;
-  color: #d9eaff;
+  color: #e6e6e6;
   padding-top: 2rem;
   border-top: 0.0625rem solid #ffffff45;
   margin-top: 3rem;
@@ -1298,11 +1306,11 @@ dialog {
   border: 0.0625rem solid var(--line);
   border-radius: 1rem;
   padding: 0;
-  box-shadow: 0 1.5rem 5rem #12215040;
+  box-shadow: 0 1.5rem 5rem #00000040;
 }
 
 dialog::backdrop {
-  background: #10182b80;
+  background: #00000080;
   backdrop-filter: blur(0.375rem);
 }
 
@@ -1400,7 +1408,7 @@ dialog::backdrop {
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  background: #e7ecf5;
+  background: #f2f2f2;
   border-radius: 0.625rem;
   height: min(36rem, 64dvh);
   padding: 1.5rem;
@@ -1430,7 +1438,7 @@ dialog::backdrop {
   max-width: 22%;
 }
 .dialog-preview.peach {
-  background: #1558b0;
+  background: #111111;
 }
 .dialog-preview .screen-workflow {
   flex-shrink: 0;
@@ -1451,7 +1459,7 @@ dialog::backdrop {
 }
 
 .dialog-note {
-  background: #eff2f8;
+  background: #f2f2f2;
   padding: 1rem;
   border-radius: 0.625rem;
   color: var(--muted);
@@ -1485,10 +1493,10 @@ dialog::backdrop {
     color: var(--accent);
   }
   .button-dark:hover {
-    background: #0757b6;
+    background: #000000;
   }
   .footer-contact > .button:hover {
-    background: #e7f1ff;
+    background: #f2f2f2;
   }
   .project-visual:hover .preview-arrow {
     background: var(--ink);
@@ -1498,7 +1506,7 @@ dialog::backdrop {
     color: var(--accent);
   }
   .filter:hover:not(.active), .button-outline:hover, .dialog-close:hover {
-    background: #edf0f7;
+    background: #f2f2f2;
   }
   .copy-email:hover {
     color: white;
@@ -1677,6 +1685,10 @@ dialog::backdrop {
   .wordmark {
     font-size: 1.5rem;
   }
+  .brand-symbol {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
   .menu-toggle {
     display: flex;
     flex-direction: column;
@@ -1714,7 +1726,7 @@ dialog::backdrop {
     background: white;
     border: 0.0625rem solid var(--line);
     border-radius: 0.75rem;
-    box-shadow: 0 1rem 2rem #1826531a;
+    box-shadow: 0 1rem 2rem #0000001a;
   }
   .site-header nav.is-open {
     display: flex;

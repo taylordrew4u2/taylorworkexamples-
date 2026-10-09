@@ -73,3 +73,9 @@ The image gallery preserves screenshot proportions, labels development and overv
 ## 4u Digital identity and palette — v11, October 9, 2026
 
 The user named the portfolio **4u Digital**, under **taylordrew4u**, and requested that purple never be used. The header, page/social titles, organization metadata, inquiry greeting, and footer now use the brand, with a small owner credit. The portfolio's own palette uses blue, teal, and cool neutrals. Lavender project stages become slate, and violet workflow illustration accents become teal. Genuine project screenshots retain their original interfaces. Repository instructions preserve the branding and color preferences for future work.
+
+## Selected Open frame identity — v12, October 9, 2026
+
+The user selected the Open frame logo from the Creative Production board and limited the brand palette to black, white, and red. The selected frame-and-cursor mark now forms the header lockup and browser icon. Its background was removed with built-in Imagegen; proportion-preserving exports trim transparent margins and provide a 256px header asset and 64px icon. The brand name remains ordinary HTML text for exact spelling and accessibility.
+
+The site now uses pure white pages, black surfaces, neutral image stages, and red accents. The seven source workflow diagrams use the same palette with gray secondary strokes rather than translucent red. Their content and geometry remain unchanged. Original product screenshots retain their original interfaces and colors. The small owner credit, email-only contact, all project galleries, and existing interaction behavior remain available.

@@ -1,0 +1,83 @@
+{
+  "brand": "4u Digital",
+  "owner": "taylordrew4u",
+  "audience": "Companies considering a website, web application, or iPhone app",
+  "purpose": "Compare four distinct logo symbol directions before selecting one",
+  "palette": [
+    "#000000",
+    "#FFFFFF",
+    "#E32020"
+  ],
+  "avoid": [
+    "purple",
+    "violet",
+    "blue",
+    "teal",
+    "pink",
+    "orange",
+    "gradients",
+    "3D effects"
+  ],
+  "boardId": "eb648c42-507d-4c62-80cd-9bd49cae77f6",
+  "status": "complete",
+  "directions": [
+    {
+      "id": "4u-logo-01",
+      "title": "Explore logo ideas",
+      "caption": "01 \u2014 Shared-stroke 4u monogram. Bold, compact, and built for app icons.",
+      "family": "geometric monogram",
+      "prompt": "Use case: logo-brand. Create one polished original logo SYMBOL exploration for an independent website and native app developer whose brand is 4u Digital. Direction: a compact custom geometric ligature inspired by a numeral 4 joined to a lowercase u, sharing one strong structural stroke. The 4 is angular and red, the u is black with a purposeful rounded bottom; balanced negative space makes them read as one distinctive symbol. Strong engineered silhouette, minimal components, usable at favicon size, vector-like sharp edges. One large centered logo symbol on a plain white square canvas, generous clear space. No wordmark, no captions, no readable text, no tagline, no secondary marks, no contact sheet, no mockups. Flat colors ONLY pure black #000000, white #FFFFFF, and signal red #E32020. Never use purple, blue, teal, pink, orange, gradients, shadows, textures, glow or 3D. This is logo concept exploration, not a certified brand guideline."
+    },
+    {
+      "id": "4u-logo-02",
+      "title": "02 \u2014 Open frame",
+      "caption": "A precise open frame with a red cursor corner: a developer who turns ideas into usable products.",
+      "family": "architectural symbol",
+      "prompt": "Use case: logo-brand. Create one original refined logo SYMBOL for independent website/app developer 4u Digital. Direction: an architectural open rectangular frame built from two confident black L-shaped strokes, with a small red triangular cursor integrated into the open upper-right corner, forming a clever intentional negative-space passage. Precise proportion and distinctive optical balance, almost a builder's signature; emphatically not a generic monitor icon or ordinary external-link arrow. Thin-to-medium technical elegance, with enough stroke weight to work at small app/favicon sizes. One centered primary symbol on pure white square canvas with generous space. No text, no wordmark, no annotations, no variant collection, no device mockups. Flat black #000000, white #FFFFFF and signal red #E32020 ONLY. Never purple, violet, blue, teal, pink, orange. No gradients, shadows, realism, glow, texture or 3D. Crisp vector-like edges."
+    },
+    {
+      "id": "4u-logo-03",
+      "title": "03 \u2014 Four modules",
+      "caption": "Four ascending modules form a simple build mark\u2014progressing from a foundation to a red final piece.",
+      "family": "modular symbol",
+      "prompt": "Create one original flat logo symbol for app developer 4u Digital, an ASYMMETRIC ascending stair-step built from exactly four solid rectangular blocks of similar visual weight, three black #000000 and one signal red #E32020. All four blocks are simple filled rectangles with no legs, no hooks, no cross/rotational motif, no central spinning pinwheel, no puzzle pieces, no Windows grid. Compose a crisp compact stepped silhouette with a deliberate red terminal block at the upper-right, modular building-from-foundation meaning, balanced negative space and favicon readability. Pure white #FFFFFF square background; no text/wordmark, gradients, texture, shadows, 3D or other colors. No blue, teal, purple, violet, pink or orange. One centered primary symbol with clear margins."
+    },
+    {
+      "id": "4u-logo-04",
+      "title": "04 \u2014 Square to circle",
+      "caption": "A continuous red path moves from a square to a rounded loop: structure meeting human-friendly design.",
+      "family": "continuous-line symbol",
+      "prompt": "Use case: logo-brand. Create one original sophisticated logo SYMBOL for independent website and app developer 4u Digital. Direction: a single confident signal-red continuous path, medium-bold and perfectly smooth, that transitions from one squared architectural bend on the left into one elegant rounded open loop on the right. An inventive compact hybrid of engineering structure and approachable product design, memorable and legible as an app favicon. Avoid heart, infinity, chain-link, cloud, generic letter D, and abstract spaghetti shapes. Minimal single-color flowing symbol with careful proportions and a decisive open end, sharp vector-like cleanliness. One large centered symbol on pure white square canvas with generous margin. No text or wordmark, no extra symbols, no annotations, no variants, no mockups. Palette ONLY red #E32020, pure black #000000 if absolutely needed, pure white #FFFFFF. Absolutely no purple, violet, blue, teal, pink, orange, gradients, shadows, texture, 3D or glow."
+    }
+  ],
+  "generationMode": "built-in Codex Imagegen",
+  "files": [
+    {
+      "id": "4u-logo-01",
+      "source": "/Users/taylordrew/.codex/generated_images/01a1113c-4fb1-72b1-9252-57c83d1e02f6/exec-8d1624f5-8abb-4603-af0d-0c53bc57e8a9.png",
+      "name": "01-4u-monogram.png",
+      "path": "/Users/taylordrew/Documents/ChatGPT/taylorworkexamples-/design/4u-digital/logo-exploration/01-4u-monogram.png"
+    },
+    {
+      "id": "4u-logo-02",
+      "source": "/Users/taylordrew/.codex/generated_images/01a11757-1462-7623-a774-49a7a5e7b7d0/exec-abfaf5a8-5b56-4f97-926f-861a6f2d14c6.png",
+      "name": "02-open-frame.png",
+      "path": "/Users/taylordrew/Documents/ChatGPT/taylorworkexamples-/design/4u-digital/logo-exploration/02-open-frame.png"
+    },
+    {
+      "id": "4u-logo-03",
+      "source": "/Users/taylordrew/.codex/generated_images/01a1113b-d9d7-7513-8ba4-e728e7492d50/exec-558d33e6-1663-4270-895d-d6a588ef8594.png",
+      "name": "03-four-modules.png",
+      "path": "/Users/taylordrew/Documents/ChatGPT/taylorworkexamples-/design/4u-digital/logo-exploration/03-four-modules.png"
+    },
+    {
+      "id": "4u-logo-04",
+      "source": "/Users/taylordrew/.codex/generated_images/01a11757-1462-7623-a774-49a7a5e7b7d0/exec-3d99dfc4-3b48-4de2-a2ac-fed97688925f.png",
+      "name": "04-square-to-circle.png",
+      "path": "/Users/taylordrew/Documents/ChatGPT/taylorworkexamples-/design/4u-digital/logo-exploration/04-square-to-circle.png"
+    }
+  ],
+  "recommendedItem": "4u-logo-01",
+  "selectedItem": "4u-logo-02",
+  "selection": "User selected Open frame"
+}

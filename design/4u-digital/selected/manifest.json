@@ -1,0 +1,28 @@
+{
+  "brand": "4u Digital",
+  "selectedItem": "4u-logo-02",
+  "boardId": "eb648c42-507d-4c62-80cd-9bd49cae77f6",
+  "masterItem": "4u-open-frame-master",
+  "sourceImage": "/Users/taylordrew/.codex/generated_images/01a1113b-80b9-7590-a243-b59eddf73087/exec-5b79df04-1a36-42a0-bd90-77fa72740242.png",
+  "cropBounds": [
+    159,
+    103,
+    1151,
+    1109
+  ],
+  "transparentMargin": 50,
+  "processing": "Crop transparent margins, center with 5% margin, proportionally resample web exports; no repainting or geometry edits",
+  "exports": [
+    "design/4u-digital/selected/open-frame-master.png",
+    "assets/4u-digital-logo.png",
+    "assets/favicon.png"
+  ],
+  "palette": [
+    "black",
+    "white",
+    "red"
+  ],
+  "sourceConcept": "design/4u-digital/logo-exploration/02-open-frame.png",
+  "transparentBackground": true,
+  "generationPrompt": "Use case: background-extraction. This is the user\u2019s selected logo symbol for 4u Digital. Remove all white background and white inside the frame. Preserve the square open black frame, its thickness and edges, open upper-right gap, red cursor triangle, proportions, placement, and relationship between the frame and cursor. No redesign or added letters. Flat black #000000 and red #E32020, smooth sharp edges, true alpha transparency and close framing. No shadows, texture, gradients, or other colors."
+}
