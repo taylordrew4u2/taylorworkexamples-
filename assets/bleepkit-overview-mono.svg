@@ -3,32 +3,32 @@
 <desc id="desc">Import video: Photos or Files; Transcribe: Timed, editable words; Review &amp; censor: Captions, audio, overlays. SOURCE-DERIVED WORKFLOW · Import, transcription and editing services.</desc>
 <rect width="1600" height="1000" fill="#FFFFFF"/>
 <g font-family="Arial, Helvetica, sans-serif">
-<rect x="72" y="48" width="13" height="35" rx="3" fill="#E32020"/>
-<text x="106" y="76" font-size="29" font-weight="700" fill="#E32020" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
+<rect x="72" y="48" width="13" height="35" rx="3" fill="#111111"/>
+<text x="106" y="76" font-size="29" font-weight="700" fill="#595959" text-anchor="start" letter-spacing="1.2">PROJECT OVERVIEW / FROM SOURCE</text>
 <text x="1528" y="76" font-size="27" font-weight="600" fill="#595959" text-anchor="end">iOS · Video workflow</text>
 <text x="72" y="193" font-size="76" font-weight="700" fill="#111111" text-anchor="start">BleepKit</text>
 <text x="72" y="262" font-size="34" font-weight="400" fill="#595959" text-anchor="start">Turn a video’s speech into editable captions and censor layers.</text>
 <rect x="72" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
 <circle cx="120" cy="373" r="23" fill="#F2F2F2"/>
 <text x="120" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">01</text>
-<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="25" y="38" width="225" height="166" rx="15"/><path d="m109 77 65 44-65 45z"/><path d="M43 21h190M43 221h190"/></g></g>
+<g transform="translate(164,405) scale(.96)"><g fill="none" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="25" y="38" width="225" height="166" rx="15"/><path d="m109 77 65 44-65 45z"/><path d="M43 21h190M43 221h190"/></g></g>
 <text x="108" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Import video</text>
 <text x="108" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">Photos or Files</text>
-<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#E32020" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M534 549h26m-10-10 10 10-10 10" fill="none" stroke="#111111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="576" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
 <circle cx="624" cy="373" r="23" fill="#F2F2F2"/>
 <text x="624" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">02</text>
-<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M29 52h213M29 103h174M29 154h203M29 205h126"/><path d="M29 66h73M124 117h56M66 168h84" stroke-width="15" stroke="#A6A6A6"/></g></g>
+<g transform="translate(668,405) scale(.96)"><g fill="none" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M29 52h213M29 103h174M29 154h203M29 205h126"/><path d="M29 66h73M124 117h56M66 168h84" stroke-width="15" stroke="#A6A6A6"/></g></g>
 <text x="612" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Transcribe</text>
 <text x="612" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">Timed, editable words</text>
-<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#E32020" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M1038 549h26m-10-10 10 10-10 10" fill="none" stroke="#111111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="1080" y="324" width="448" height="455" rx="22" fill="#FFFFFF" stroke="#D6D6D6" stroke-width="2"/>
 <circle cx="1128" cy="373" r="23" fill="#F2F2F2"/>
 <text x="1128" y="384" font-size="26" font-weight="700" fill="#111111" text-anchor="middle">03</text>
-<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#E32020" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="28" width="224" height="168" rx="13"/><path d="M48 159h76M162 159h66M48 83h151"/><rect x="110" y="134" width="62" height="45" rx="7" fill="#E32020" stroke="none"/><path d="M54 219h168"/></g></g>
+<g transform="translate(1172,405) scale(.96)"><g fill="none" stroke="#111111" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><rect x="26" y="28" width="224" height="168" rx="13"/><path d="M48 159h76M162 159h66M48 83h151"/><rect x="110" y="134" width="62" height="45" rx="7" fill="#111111" stroke="none"/><path d="M54 219h168"/></g></g>
 <text x="1116" y="679" font-size="43" font-weight="700" fill="#111111" text-anchor="start">Review &amp; censor</text>
 <text x="1116" y="735" font-size="28" font-weight="400" fill="#595959" text-anchor="start">Captions, audio, overlays</text>
 <path d="M72 829h1456" stroke="#D6D6D6" stroke-width="2"/>
-<text x="72" y="886" font-size="29" font-weight="700" fill="#E32020" text-anchor="start">SOURCE-DERIVED WORKFLOW · Import, transcription and editing services.</text>
+<text x="72" y="886" font-size="29" font-weight="700" fill="#595959" text-anchor="start">SOURCE-DERIVED WORKFLOW · Import, transcription and editing services.</text>
 <text x="72" y="939" font-size="27" font-weight="400" fill="#595959" text-anchor="start">Technical overview of implemented code; no product interface is depicted.</text>
 </g></svg>

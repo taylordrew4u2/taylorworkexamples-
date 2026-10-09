@@ -1,0 +1,21 @@
+{
+  "brand": "4u Digital",
+  "selectedConcept": "4u-logo-02",
+  "activeItem": "4u-open-frame-mono",
+  "boardId": "eb648c42-507d-4c62-80cd-9bd49cae77f6",
+  "palette": [
+    "black",
+    "white",
+    "gray"
+  ],
+  "sourceImage": "/Users/taylordrew/.codex/generated_images/01a1113b-80b9-7590-a243-b59eddf73087/exec-dfe1c8dc-278a-4678-8626-0f863107c02e.png",
+  "sourceConcept": "design/4u-digital/selected/open-frame-master.png",
+  "generationMode": "built-in Imagegen edit",
+  "generationPrompt": "Change only the selected logo\u2019s red cursor to neutral gray #595959; preserve its black frame, geometry, proportions, placement and true transparency. No chromatic colors, added symbols or background.",
+  "processing": "Trim transparent margins, center with 5% transparent margin and proportionally resize web exports; no repainting.",
+  "exports": [
+    "design/4u-digital/selected/open-frame-mono-master.png",
+    "assets/4u-digital-logo-mono.png",
+    "assets/favicon-mono.png"
+  ]
+}

@@ -426,7 +426,7 @@ export const projectVisuals = {
     "notes": "Actual app captures use virtual microphone inputs. Physical microphone validation remains in progress."
   },
   "mystorydailjournal": {
-    "image": "./assets/mystorydailjournal-overview-red.svg",
+    "image": "./assets/mystorydailjournal-overview-mono.svg",
     "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -437,7 +437,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/mystorydailjournal-overview-red.svg",
+        "image": "./assets/mystorydailjournal-overview-mono.svg",
         "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
         "width": 1600,
         "height": 1000,
@@ -449,7 +449,7 @@ export const projectVisuals = {
     "notes": "Previously reviewed README snapshot and catalog from 2026-10-07. Public repository currently returns 404; no current runtime or source revision was verified."
   },
   "comedysub": {
-    "image": "./assets/comedysub-overview-red.svg",
+    "image": "./assets/comedysub-overview-mono.svg",
     "imageAlt": "Pins & Needles Submissions source-derived overview: Apply: Validated public form; Review & book: Applicant pipeline; Prepare lineup: Print and email drafts",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -460,7 +460,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/comedysub-overview-red.svg",
+        "image": "./assets/comedysub-overview-mono.svg",
         "imageAlt": "Pins & Needles Submissions source-derived overview: Apply: Validated public form; Review & book: Applicant pipeline; Prepare lineup: Print and email drafts",
         "width": 1600,
         "height": 1000,
@@ -472,7 +472,7 @@ export const projectVisuals = {
     "notes": "Previously reviewed README snapshot and catalog from 2026-10-07. README is currently unavailable; this is a source summary, not new runtime proof."
   },
   "bleepkit": {
-    "image": "./assets/bleepkit-overview-red.svg",
+    "image": "./assets/bleepkit-overview-mono.svg",
     "imageAlt": "BleepKit source-derived overview: Import video: Photos or Files; Transcribe: Timed, editable words; Review & censor: Captions, audio, overlays",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -483,7 +483,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/bleepkit-overview-red.svg",
+        "image": "./assets/bleepkit-overview-mono.svg",
         "imageAlt": "BleepKit source-derived overview: Import video: Photos or Files; Transcribe: Timed, editable words; Review & censor: Captions, audio, overlays",
         "width": 1600,
         "height": 1000,
@@ -495,7 +495,7 @@ export const projectVisuals = {
     "notes": "ImportViewModel.swift imports Photos/Files video. EditorViewModel.swift extracts/transcribes audio, persists timed tokens and manual overrides, and rebuilds audio/caption/overlay preview layers."
   },
   "Laugh-Map": {
-    "image": "./assets/laugh-map-overview-red.svg",
+    "image": "./assets/laugh-map-overview-mono.svg",
     "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -506,7 +506,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/laugh-map-overview-red.svg",
+        "image": "./assets/laugh-map-overview-mono.svg",
         "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
         "width": 1600,
         "height": 1000,
@@ -523,7 +523,7 @@ export const projectVisuals = {
     ]
   },
   "staybusy": {
-    "image": "./assets/staybusy-overview-red.svg",
+    "image": "./assets/staybusy-overview-mono.svg",
     "imageAlt": "StayBusy source-derived overview: Plan the day: Scheduled and open time; See Now / Next: Current block and timer; Map & trip: Places and day density",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -534,7 +534,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/staybusy-overview-red.svg",
+        "image": "./assets/staybusy-overview-mono.svg",
         "imageAlt": "StayBusy source-derived overview: Plan the day: Scheduled and open time; See Now / Next: Current block and timer; Map & trip: Places and day density",
         "width": 1600,
         "height": 1000,
@@ -546,7 +546,7 @@ export const projectVisuals = {
     "notes": "README documents the proportional Today timeline with OPEN gaps and pinned Now/Next; Map shows numbered located blocks; Trip shows scheduled-versus-open day density."
   },
   "HealYourHeart": {
-    "image": "./assets/healyourheart-overview-red.svg",
+    "image": "./assets/healyourheart-overview-mono.svg",
     "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -557,7 +557,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/healyourheart-overview-red.svg",
+        "image": "./assets/healyourheart-overview-mono.svg",
         "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
         "width": 1600,
         "height": 1000,
@@ -574,7 +574,7 @@ export const projectVisuals = {
     ]
   },
   "laugh-extractor": {
-    "image": "./assets/laugh-extractor-overview-red.svg",
+    "image": "./assets/laugh-extractor-overview-mono.svg",
     "imageAlt": "Laugh Extractor source-derived overview: Import a set: Video or audio files; Tune detection: Review candidate bursts; Export clips: Separate M4A or WAV files",
     "imageWidth": 1600,
     "imageHeight": 1000,
@@ -585,7 +585,7 @@ export const projectVisuals = {
     "gallery": [
       {
         "label": "Workflow overview",
-        "image": "./assets/laugh-extractor-overview-red.svg",
+        "image": "./assets/laugh-extractor-overview-mono.svg",
         "imageAlt": "Laugh Extractor source-derived overview: Import a set: Video or audio files; Tune detection: Review candidate bursts; Export clips: Separate M4A or WAV files",
         "width": 1600,
         "height": 1000,
