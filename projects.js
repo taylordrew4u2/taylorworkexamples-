@@ -1,6 +1,7 @@
-import { projectVisuals } from "./visuals.js?v=13";
+import { projectVisuals } from "./visuals.js?v=14";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=14";
 
-// Public catalog and featured engineering claims verified on 2026-10-07.
+// Public repository inventory refreshed on 2026-10-09; older completed work is retained.
 // Source links and screenshot provenance stay alongside each project.
 export const email = "taylordrew4u@gmail.com";
 
@@ -12,7 +13,7 @@ export const projects = [
     category: "web",
     summary:
       "A live-show workspace for booking performers, collecting signed contracts, and running cue timers and walk-on music from a phone.",
-    stack: ["React", "TypeScript", "Vite", "Turso", "PWA", "Web Crypto"],
+    stack: ["React", "TypeScript", "Vite", "Turso", "PWA", "crypto-js"],
     features: [
       "Offline show planning and full-screen live mode",
       "On-device photo, PDF, and text schedule import",
@@ -140,6 +141,7 @@ export const projects = [
       "Reviewable document, image, and text import",
       "Private iCloud sync, backups, and trash recovery",
       "Writing assistant with local and optional AI backends",
+      "Siri and Shortcuts capture with library search",
     ],
     repoUrl: "https://github.com/taylordrew4u2/The-Bit-Binder",
     demoUrl: "https://apps.apple.com/us/app/the-bitbinder/id6756085897",
@@ -160,6 +162,7 @@ export const projects = [
       "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-home.png",
       "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-roast-target.png",
       "https://github.com/taylordrew4u2/The-Bit-Binder/blob/main/docs/media/screenshot-settings.png",
+      "https://github.com/taylordrew4u2/The-Bit-Binder/blob/48e78c25d1d46bd8443cc19c7df37754d0570a8d/thebitbinder/AppIntents/BitBinderIntents.swift",
     ],
     clientSummary:
       "Capture ideas, transcribe recordings, import notes, and build set lists.",
@@ -245,10 +248,13 @@ export const projects = [
       "PostgreSQL",
       "Stripe",
       "NextAuth",
+      "Resend",
     ],
     features: [
       "Invite links and approval workflow",
-      "Beds, meals, itinerary, and expense coordination",
+      "Bedmate approvals and phased meal voting",
+      "Itinerary comments and shared-board reactions",
+      "Email notifications and expense coordination",
       "Stripe Checkout and signed webhook handling",
     ],
     repoUrl: "https://github.com/taylordrew4u2/the-trip-handler",
@@ -271,6 +277,8 @@ export const projects = [
       "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/my-trips.png",
       "https://github.com/taylordrew4u2/the-trip-handler/blob/main/docs/screenshots/meals.png",
       "https://github.com/taylordrew4u2/the-trip-handler/blob/main/app/actions/payments.ts",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/app/actions/meals.ts",
+      "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/app/actions/sleeping.ts",
     ],
     clientSummary:
       "Invite participants, coordinate a group trip, and collect payments.",
@@ -284,7 +292,7 @@ export const projects = [
     challenge:
       "Coordinate applications, lodging, meals, schedules, expenses, and participant payments in one shared trip workspace.",
     build:
-      "A Next.js application with private invitations, organizer approvals, PostgreSQL and Prisma, lodging and itinerary tools, and Stripe Checkout with signed webhooks.",
+      "A Next.js application with private invitations, organizer and bedmate approvals, meal voting, shared discussions, PostgreSQL and Prisma, and Stripe Checkout with signed webhooks.",
     highlights: [
       {
         title: "Permissions and approvals",
@@ -294,7 +302,7 @@ export const projects = [
       },
       {
         title: "Shared planning",
-        text: "Coordinate beds, meal votes, and itineraries using shared data.",
+        text: "Agree on bedmates, vote on meals, and discuss the itinerary.",
         source:
           "https://github.com/taylordrew4u2/the-trip-handler/blob/main/README.md",
       },
@@ -757,8 +765,9 @@ export const projects = [
     stack: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
     features: [
       "Public show page and editable content",
-      "Live control center",
-      "Audience submissions and stage workflow",
+      "Producer queues and synchronized projector display",
+      "Timed performer sets and question slots",
+      "Scheduled audience submissions and drink-menu modes",
     ],
     repoUrl: "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
     demoUrl: "https://pinsandneedlescomedy.com",
@@ -774,9 +783,12 @@ export const projects = [
       "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
       "https://api.github.com/repos/taylordrew4u2/PinsAndNeedlesComedyWebsite",
       "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/main/README.md",
+      "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/src/app/admin/run-show/ControlCenter.tsx",
+      "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/src/lib/segment.ts",
+      "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/src/app/bad-decisions/page.tsx",
     ],
     clientSummary:
-      "A website for a live comedy show, with editable public content and tools for producers to manage audience submissions during the show.",
+      "A live comedy website with audience submissions, timed performer sets, producer controls, and a synchronized projector display.",
     demonstrates: [
       "Public website development",
       "Admin content editing",
@@ -787,7 +799,7 @@ export const projects = [
     challenge:
       "Connect a public show website to private producer controls and a public live audience display.",
     build:
-      "A Next.js website with an admin, scheduled submission access, a show-control dashboard, and a separate projector display.",
+      "A Next.js website with editable show content, scheduled audience submissions, producer selection queues, timed sets and question slots, drink-menu modes, and a synchronized projector display.",
   },
   {
     id: "CONTROLLEREVENT",
@@ -853,6 +865,7 @@ export const projects = [
     features: [
       "Independent-clock drift correction",
       "Multitrack recording and live monitoring",
+      "Headphone output routing and aligned recording stems",
       "Crash recovery and loudness export",
     ],
     repoUrl: "https://github.com/taylordrew4u2/usbmic",
@@ -869,9 +882,12 @@ export const projects = [
       "https://github.com/taylordrew4u2/usbmic",
       "https://api.github.com/repos/taylordrew4u2/usbmic",
       "https://github.com/taylordrew4u2/usbmic/blob/main/README.md",
+      "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/Source/Core/OutputDeviceSelector.cpp",
+      "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/Source/Core/StemAligner.h",
+      "https://github.com/taylordrew4u2/usbmic/releases/tag/v1.13.25",
     ],
     notes:
-      "Release candidate. Physical-microphone validation is still in progress.",
+      "Source reviewed at v1.13.25. Physical-microphone validation is still in progress.",
   },
   {
     id: "staybusy",
@@ -901,8 +917,8 @@ export const projects = [
     ],
   },
   {
-    id: "taylosite",
-    title: "Personal website",
+    id: "taylordrewwebsite",
+    title: "Retro desktop website",
     category: "web",
     summary:
       "A retro desktop-window personal website with a full admin panel for editing copy, links, photos, dates, and colors.",
@@ -912,8 +928,8 @@ export const projects = [
       "Editable site content and media",
       "Desktop-window interaction design",
     ],
-    repoUrl: "https://github.com/taylordrew4u2/taylosite",
-    demoUrl: "https://taylordrewcomedy.com",
+    repoUrl: "https://github.com/taylordrew4u2/taylordrewwebsite",
+    demoUrl: "https://www.taylordrew4u.com",
     demoLabel: "Live site",
     image: null,
     imageAlt: "",
@@ -922,9 +938,9 @@ export const projects = [
     badge: "LIVE WEB APP",
     experiment: false,
     sources: [
-      "https://github.com/taylordrew4u2/taylosite",
-      "https://api.github.com/repos/taylordrew4u2/taylosite",
-      "https://github.com/taylordrew4u2/taylosite/blob/main/README.md",
+      "https://github.com/taylordrew4u2/taylordrewwebsite",
+      "https://api.github.com/repos/taylordrew4u2/taylordrewwebsite",
+      "https://github.com/taylordrew4u2/taylordrewwebsite/blob/main/README.md",
     ],
   },
   {
@@ -1000,6 +1016,25 @@ for (const project of projects) {
     [frame.sourceUrl, frame.companion?.sourceUrl].filter(Boolean),
   );
   project.sources = [...new Set([...project.sources, ...visualSources])];
+}
+
+// Publish only current public source links; retain earlier work without dead links.
+for (const project of projects) {
+  const repository = publicRepositories[project.id];
+  project.repositoryVerifiedAt = repositoryVerifiedAt;
+  project.sourceAvailable = Boolean(repository);
+  project.repositoryArchived = repository?.archived || false;
+  project.repositoryHead = repository?.headSha || null;
+  project.repositoryUpdatedAt = repository?.pushedAt || null;
+  project.documentationUrl = repository
+    ? `${repository.repoUrl}${repository.readmeAvailable ? "#readme" : ""}`
+    : null;
+  if (!repository) {
+    if (project.badge === "SOURCE AVAILABLE") project.badge = "EARLIER WORK";
+    project.notes = [project.notes, "Earlier work. Its repository is not currently publicly available. The project description is retained from the earlier source review."].filter(Boolean).join(" ");
+  } else if (repository.archived) {
+    project.notes = [project.notes, "The source repository is archived; this remains a completed work example."].filter(Boolean).join(" ");
+  }
 }
 
 const featuredIds = [

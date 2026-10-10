@@ -7,6 +7,7 @@ import {
   featuredProjects,
   filterProjects,
 } from "../projects.js";
+import { publicRepositories, repositoryVerifiedAt } from "../repository-state.js";
 
 // Check the actual asset headers so stale dimensions cannot stretch a preview.
 function assetDimensions(image) {
@@ -57,7 +58,7 @@ const expectedIds = [
   "MyGigCalendar",
   "Bill-Spilt",
   "bleepkit",
-  "taylosite",
+  "taylordrewwebsite",
   "PinsAndNeedlesComedyWebsite",
   "Open-Micer-Timer",
   "vlognudge",
@@ -103,6 +104,24 @@ test("featured work is ordered and points to the canonical catalog entries", () 
       projects.find((entry) => entry.id === project.id),
     );
   }
+});
+
+test("current public GitHub projects have canonical source links and older work has availability labels", () => {
+  assert.equal(repositoryVerifiedAt, "2026-10-09");
+  assert.equal(Object.keys(publicRepositories).length, 16);
+  for (const [id, repository] of Object.entries(publicRepositories)) {
+    const project = projects.find((entry) => entry.id === id);
+    assert.ok(project, `${id}: current GitHub project must be represented`);
+    assert.equal(project.repoUrl, repository.repoUrl);
+    assert.equal(project.sourceAvailable, true);
+    assert.equal(project.repositoryArchived, repository.archived);
+    assert.match(project.repositoryHead, /^[a-f0-9]{40}$/);
+  }
+  const older = projects.filter((project) => !project.sourceAvailable);
+  assert.equal(older.length, 8);
+  assert.ok(older.every((project) => /not currently publicly available/.test(project.notes)));
+  assert.equal(projects.find((project) => project.id === "tlcmassagewellness").repositoryArchived, true);
+  assert.equal(projects.some((project) => project.id === "taylosite"), false);
 });
 
 test("selected products have complete cases and the leading stories have traceable proof and screens", () => {

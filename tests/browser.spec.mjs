@@ -249,9 +249,55 @@ test("all 24 archive covers load, fit their frames, and disclose the kind of ima
       width: project.imageWidth,
       height: project.imageHeight,
     });
-    await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
+    if (project.sourceAvailable === false) {
+      await expect(card.locator(".source-note")).toHaveText("Source not public");
+      await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveCount(0);
+    } else {
+      await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
+    }
   }
   expect(errors).toEqual([]);
+});
+
+test("unavailable source stays noninteractive while live-site and public source links remain available", async ({ page }) => {
+  const earlierProject = projects.find((project) => project.id === "markvegas");
+  const publicProject = projects.find((project) => project.id === "Showrunner-ICanRunAShow");
+  expect(earlierProject.sourceAvailable).toBe(false);
+  expect(earlierProject.demoUrl).toBe("https://markvegas.vercel.app");
+  expect(publicProject.sourceAvailable).toBe(true);
+  expect(publicProject.repoUrl).toBe("https://github.com/taylordrew4u2/Showrunner-ICanRunAShow");
+
+  await page.goto("/#project-archive");
+  const earlierPreview = page.locator(`.archive-preview[data-project="${earlierProject.id}"]`);
+  const earlierCard = earlierPreview.locator("..");
+  await expect(earlierCard.locator(".source-note")).toHaveText("Source not public");
+  await expect(earlierCard.locator('a[href*="github.com"]')).toHaveCount(0);
+
+  await earlierPreview.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(earlierProject.title);
+  await expect(dialog.locator(".dialog-source .source-note")).toHaveText("Source not public");
+  await dialog.locator(".technical-details summary").click();
+  await expect(dialog.locator(".technical-content .source-note")).toBeVisible();
+  await expect(dialog.locator(".technical-content .source-note")).toHaveText("Source not public");
+  await expect(dialog.locator('a[href*="github.com"]')).toHaveCount(0);
+  const liveSite = dialog.getByRole("link", { name: earlierProject.demoLabel, exact: true });
+  await expect(liveSite).toBeVisible();
+  await expect(liveSite).toHaveAttribute("href", earlierProject.demoUrl);
+  await expect(liveSite).toHaveAttribute("target", "_blank");
+  await expect(liveSite).toHaveAttribute("rel", /noopener/);
+  await page.keyboard.press("Escape");
+
+  const publicPreview = page.locator(`.archive-preview[data-project="${publicProject.id}"]`);
+  const publicCard = publicPreview.locator("..");
+  await expect(publicCard.locator(".source-note")).toHaveCount(0);
+  await expect(publicCard.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
+  await publicPreview.click();
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(publicProject.title);
+  await expect(dialog.locator(".source-note")).toHaveCount(0);
+  await expect(dialog.getByRole("link", { name: "Project documentation", exact: true })).toHaveAttribute("href", publicProject.documentationUrl);
+  await dialog.locator(".technical-details summary").click();
+  await expect(dialog.getByRole("link", { name: "View source code", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
 });
 
 test("every project dialog shows its images and keeps gallery, caption, full-size link, and focus in sync", async ({ page }) => {

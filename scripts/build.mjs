@@ -12,6 +12,7 @@ for (const name of [
   "app.js",
   "projects.js",
   "visuals.js",
+  "repository-state.js",
   "assets",
   ".nojekyll",
 ]) {

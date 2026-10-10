@@ -1,4 +1,4 @@
-// Image evidence, source links, and accurate capture labels. Updated 2026-10-08.
+// Image evidence, source links, and accurate capture labels. Updated 2026-10-09.
 export const projectVisuals = {
   "Showrunner-ICanRunAShow": {
     "image": "./assets/showrunner-workspace-hd.webp",
@@ -59,26 +59,26 @@ export const projectVisuals = {
   },
   "The-Bit-Binder": {
     "image": "./assets/bitbinder-native-library.webp",
-    "imageAlt": "Current BitBinder joke library with three fictional sample jokes and a hit marker.",
+    "imageAlt": "BitBinder joke library with three fictional sample jokes and a hit marker.",
     "imageWidth": 960,
     "imageHeight": 2087,
     "portrait": true,
     "imageKind": "development-capture",
     "imageLabel": "Native development preview",
-    "imageCaption": "Current BitBinder joke library with three fictional sample jokes and a hit marker.",
+    "imageCaption": "Native development capture · Oct 8, 2026 · Fictional joke library",
     "gallery": [
       {
         "label": "Library & writing",
         "image": "./assets/bitbinder-native-library.webp",
-        "imageAlt": "Current BitBinder joke library with three fictional sample jokes and a hit marker.",
+        "imageAlt": "BitBinder joke library with three fictional sample jokes and a hit marker.",
         "width": 960,
         "height": 2087,
         "portrait": true,
-        "caption": "Current BitBinder joke library with three fictional sample jokes and a hit marker.",
+        "caption": "Native development capture · Oct 8, 2026 · Fictional joke library",
         "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96",
         "companion": {
           "image": "./assets/bitbinder-native-writing.webp",
-          "imageAlt": "Current BitBinder writing editor displaying a fictional sample joke.",
+          "imageAlt": "BitBinder writing editor displaying a fictional sample joke.",
           "width": 960,
           "height": 2087,
           "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
@@ -87,65 +87,92 @@ export const projectVisuals = {
       {
         "label": "Writing editor",
         "image": "./assets/bitbinder-native-writing.webp",
-        "imageAlt": "Current BitBinder writing editor displaying a fictional sample joke.",
+        "imageAlt": "BitBinder writing editor displaying a fictional sample joke.",
         "width": 960,
         "height": 2087,
         "portrait": true,
-        "caption": "Current BitBinder writing editor displaying a fictional sample joke.",
+        "caption": "Native development capture · Oct 8, 2026 · Fictional writing sample",
         "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
       },
       {
         "label": "Set rehearsal",
         "image": "./assets/bitbinder-native-setlist.webp",
-        "imageAlt": "Current BitBinder set rehearsal with a fictional five-minute set and ordered material.",
+        "imageAlt": "BitBinder rehearsal with a fictional five-minute set and ordered material.",
         "width": 960,
         "height": 2087,
         "portrait": true,
-        "caption": "Current BitBinder set rehearsal with a fictional five-minute set and ordered material.",
+        "caption": "Native development capture · Oct 8, 2026 · Fictional set rehearsal",
         "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
       }
     ],
-    "notes": "Current native SwiftUI screens captured with fictional writing and a set list in an isolated local model store. The original library, writing, and rehearsal views are unchanged. Cloud syncing and transcription were not exercised by these captures."
+    "notes": "Native development captures from Oct 8, 2026, use the source at revision 4328005 with an in-memory store, three fictional jokes, and one fictional set. They do not demonstrate cloud sync or transcription. Current implementation details were reviewed separately at revision 48e78c2."
   },
   "the-trip-handler": {
-    "image": "./assets/triphandler-meals.webp",
-    "imageAlt": "Trip Handler populated meal planning with votes and dietary tags",
+    "image": "./assets/triphandler-meals-current.webp",
+    "imageAlt": "Trip Handler meal polls with participant votes, dietary tags, and cooking roles",
     "imageWidth": 1600,
     "imageHeight": 1000,
     "portrait": false,
     "imageKind": "app-screenshot",
     "imageLabel": "App screenshot",
-    "imageCaption": "Running app · Meal votes and dietary needs for a seeded demo trip",
+    "imageCaption": "Running app · Meal voting with seeded demo data",
     "gallery": [
       {
-        "label": "Shared plans",
-        "image": "./assets/triphandler-meals.webp",
-        "imageAlt": "Trip Handler populated meal planning with votes and dietary tags",
+        "label": "Meal voting",
+        "image": "./assets/triphandler-meals-current.webp",
+        "imageAlt": "Trip Handler meal polls with participant votes, dietary tags, and cooking roles",
         "width": 1600,
         "height": 1000,
         "portrait": false,
-        "caption": "Running app · Meal votes and dietary needs for a seeded demo trip",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/HEAD/docs/screenshots/meals.png"
+        "caption": "Running app · Meal voting with seeded demo data",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/meals.png"
       },
       {
         "label": "Approvals",
-        "image": "./assets/triphandler-approvals.webp",
+        "image": "./assets/triphandler-approvals-current.webp",
         "imageAlt": "Trip Handler organizer invitations, applications, and payment statuses",
         "width": 1600,
         "height": 1000,
         "portrait": false,
-        "caption": "Running app · Invitations and applicant statuses with seeded sample data",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/HEAD/docs/screenshots/my-trips.png"
+        "caption": "Running app · Invitations and applicants with seeded demo data",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/my-trips.png"
       },
       {
-        "label": "Trip dashboard",
-        "image": "./assets/triphandler-overview.webp",
-        "imageAlt": "Trip Handler sample trip dashboard and participant actions",
+        "label": "Shared board",
+        "image": "./assets/triphandler-board-current.webp",
+        "imageAlt": "Trip Handler shared posts with participant reactions",
         "width": 1600,
         "height": 1000,
         "portrait": false,
-        "caption": "Running app · Seeded demo trip overview",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/HEAD/docs/screenshots/dashboard.png"
+        "caption": "Running app · Shared posts and reactions with seeded demo data",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/board.png"
+      },
+      {
+        "label": "Itinerary",
+        "image": "./assets/triphandler-itinerary-current.webp",
+        "imageAlt": "Trip Handler day-by-day itinerary with times, locations, and comment controls",
+        "width": 1600,
+        "height": 1000,
+        "portrait": false,
+        "caption": "Running app · Itinerary and comments with seeded demo data",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/itinerary.png"
+      },
+      {
+        "label": "On mobile",
+        "image": "./assets/triphandler-dashboard-mobile-current.webp",
+        "imageAlt": "Trip Handler mobile participant dashboard for a seeded demo trip",
+        "width": 780,
+        "height": 1328,
+        "portrait": true,
+        "caption": "Running app · Mobile dashboard and bed assignments with seeded demo data",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/dashboard-mobile.png",
+        "companion": {
+          "image": "./assets/triphandler-sleeping-mobile-current.webp",
+          "imageAlt": "Trip Handler mobile sleeping assignments with rooms and bed claims",
+          "width": 780,
+          "height": 1328,
+          "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/sleeping-mobile.png"
+        }
       }
     ],
     "notes": "Screenshots come from the running application with seeded demo data. The public site leads to sign-in; screenshots do not represent a real payment transaction."
@@ -186,22 +213,22 @@ export const projectVisuals = {
   },
   "Bill-Spilt": {
     "image": "./assets/billspilt-overview.webp",
-    "imageAlt": "BillSpilt household balances with fictional roommate expenses",
+    "imageAlt": "BillSpilt household admin view with fictional roommate expenses and balances",
     "imageWidth": 660,
     "imageHeight": 1428,
     "portrait": true,
     "imageKind": "app-screenshot",
     "imageLabel": "App screenshot",
-    "imageCaption": "Running app · Fictional roommate expenses and balances",
+    "imageCaption": "Running app · Household admin view · Fictional expenses and balances",
     "gallery": [
       {
         "label": "Balances",
         "image": "./assets/billspilt-overview.webp",
-        "imageAlt": "BillSpilt household balances with fictional roommate expenses",
+        "imageAlt": "BillSpilt household admin view with fictional roommate expenses and balances",
         "width": 660,
         "height": 1428,
         "portrait": true,
-        "caption": "Running app · Fictional roommate expenses and balances",
+        "caption": "Running app · Household admin view · Fictional expenses and balances",
         "sourceUrl": "https://github.com/taylordrew4u2/Bill-Spilt/blob/HEAD/docs/screenshots/home-balances.png"
       },
       {
@@ -351,79 +378,99 @@ export const projectVisuals = {
     "notes": "Published screenshots use fictional open-mic listings for demonstration."
   },
   "PinsAndNeedlesComedyWebsite": {
-    "image": "./assets/pinsandneedlescomedywebsite-home.webp",
+    "image": "./assets/pinsandneedles-home-current.webp",
     "imageAlt": "Pins and Needles Comedy homepage with show branding and navigation",
     "imageWidth": 1400,
     "imageHeight": 748,
     "portrait": false,
     "imageKind": "app-screenshot",
     "imageLabel": "Website screenshot",
-    "imageCaption": "Published website screenshot · Public show branding and navigation",
+    "imageCaption": "Repository website capture · Public show page",
     "gallery": [
       {
         "label": "Public website",
-        "image": "./assets/pinsandneedlescomedywebsite-home.webp",
+        "image": "./assets/pinsandneedles-home-current.webp",
         "imageAlt": "Pins and Needles Comedy homepage with show branding and navigation",
         "width": 1400,
         "height": 748,
         "portrait": false,
-        "caption": "Published website screenshot · Public show branding and navigation",
-        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/HEAD/docs/images/home.png"
+        "caption": "Repository website capture · Public show page",
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/home.png"
       },
       {
         "label": "Control center",
-        "image": "./assets/pinsandneedlescomedywebsite-control-center.webp",
-        "imageAlt": "Pins and Needles Comedy website control center",
+        "image": "./assets/pinsandneedles-control-current.webp",
+        "imageAlt": "Pins and Needles producer control center with an audience question queue and synchronized projector preview",
         "width": 1400,
         "height": 1100,
         "portrait": false,
-        "caption": "Repository screenshot · Show control-center interface",
-        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/HEAD/docs/images/control-center.png"
+        "caption": "Repository website capture · Producer control center",
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/control-center.png"
+      },
+      {
+        "label": "Audience countdown",
+        "image": "./assets/pinsandneedles-audience-current.webp",
+        "imageAlt": "Pins and Needles mobile audience page counting down to submission opening",
+        "width": 390,
+        "height": 844,
+        "portrait": true,
+        "caption": "Repository website capture · Audience submission countdown",
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/bad-decisions.png"
       }
     ]
   },
   "usbmic": {
-    "image": "./assets/usbmic-recording.webp",
-    "imageAlt": "SobStage recording in progress with virtual microphones and take information",
+    "image": "./assets/sobstage-recording-current.webp",
+    "imageAlt": "SobStage recording with virtual microphone channels, elapsed time, and file information",
     "imageWidth": 1180,
     "imageHeight": 603,
     "portrait": false,
     "imageKind": "app-screenshot",
     "imageLabel": "App screenshot",
-    "imageCaption": "Actual application screenshot from the repository, captured under Xvfb with virtual microphones.",
+    "imageCaption": "Repository app capture · Virtual microphones · Recording a demo take",
     "gallery": [
       {
         "label": "Recording",
-        "image": "./assets/usbmic-recording.webp",
-        "imageAlt": "SobStage recording in progress with virtual microphones and take information",
+        "image": "./assets/sobstage-recording-current.webp",
+        "imageAlt": "SobStage recording with virtual microphone channels, elapsed time, and file information",
         "width": 1180,
         "height": 603,
         "portrait": false,
-        "caption": "Actual application screenshot from the repository, captured under Xvfb with virtual microphones.",
-        "sourceUrl": "https://raw.githubusercontent.com/taylordrew4u2/usbmic/main/docs/images/recording.png"
+        "caption": "Repository app capture · Virtual microphones · Recording a demo take",
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recording.png"
       },
       {
-        "label": "Settings",
-        "image": "./assets/usbmic-settings.webp",
-        "imageAlt": "SobStage settings for destination, backup, sample rate and buffer size",
-        "width": 1192,
+        "label": "Take alerts",
+        "image": "./assets/sobstage-mid-take-alert-current.webp",
+        "imageAlt": "SobStage alerts for simulated microphone and camera interruptions",
+        "width": 1180,
         "height": 420,
         "portrait": false,
-        "caption": "Actual application screenshot from the repository, captured under Xvfb with virtual microphones.",
-        "sourceUrl": "https://raw.githubusercontent.com/taylordrew4u2/usbmic/main/docs/images/settings.png"
+        "caption": "Repository app capture · Virtual microphones · Simulated input interruptions",
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/mid-take-alert.png"
+      },
+      {
+        "label": "Saved take",
+        "image": "./assets/sobstage-saved-take-current.webp",
+        "imageAlt": "SobStage saved demo-take report with audio files and a silent-take warning",
+        "width": 1180,
+        "height": 603,
+        "portrait": false,
+        "caption": "Repository app capture · Virtual microphones · Saved demo files and warning",
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/saved-take.png"
       },
       {
         "label": "Recovery",
-        "image": "./assets/usbmic-recovered.webp",
-        "imageAlt": "SobStage recovery dialog listing an automatically repaired demo take",
+        "image": "./assets/sobstage-recovered-current.webp",
+        "imageAlt": "SobStage recovery dialog for a repaired demo take",
         "width": 720,
         "height": 570,
         "portrait": false,
-        "caption": "Actual application screenshot from the repository, captured under Xvfb with virtual microphones.",
-        "sourceUrl": "https://raw.githubusercontent.com/taylordrew4u2/usbmic/main/docs/images/recovered.png"
+        "caption": "Repository app capture · Virtual microphones · Simulated crash recovery",
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recovered.png"
       }
     ],
-    "notes": "Actual app captures use virtual microphone inputs. Physical microphone validation remains in progress."
+    "notes": "Repository app captures use virtual microphones and display an earlier UI version. The v1.13.25 source includes headphone output routing and recording-stem alignment. Physical microphone validation remains in progress."
   },
   "mystorydailjournal": {
     "image": "./assets/mystorydailjournal-overview-mono.svg",
@@ -682,9 +729,9 @@ export const projectVisuals = {
     ],
     "notes": "Real native app captures from an isolated simulator. The countdown was started through the original interface; the yellow screen shows its final-minute cue."
   },
-  "taylosite": {
+  "taylordrewwebsite": {
     "image": "./assets/taylosite-capture.webp",
-    "imageAlt": "Personal website retro desktop with browser-like content and assistant windows",
+    "imageAlt": "Retro desktop website with browser-like content and assistant windows",
     "imageWidth": 1440,
     "imageHeight": 900,
     "portrait": false,
@@ -695,12 +742,12 @@ export const projectVisuals = {
       {
         "label": "Desktop website",
         "image": "./assets/taylosite-capture.webp",
-        "imageAlt": "Personal website retro desktop with browser-like content and assistant windows",
+        "imageAlt": "Retro desktop website with browser-like content and assistant windows",
         "width": 1440,
         "height": 900,
         "portrait": false,
         "caption": "Development capture · Retro desktop, assistant, and photo windows",
-        "sourceUrl": "https://github.com/taylordrew4u2/taylosite/blob/9938dd84487780d2df51a1a33960de0e7b2b76a1/lib/render.js"
+        "sourceUrl": "https://github.com/taylordrew4u2/taylordrewwebsite/blob/9938dd84487780d2df51a1a33960de0e7b2b76a1/lib/render.js"
       }
     ],
     "notes": "Captured from the actual local website build with repository-default text and the existing portfolio portrait. This is a development example, not a live booking schedule."
