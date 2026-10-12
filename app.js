@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=18";
+} from "./projects.js?v=19";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -17,17 +17,19 @@ const escape = (value) =>
 const external = 'target="_blank" rel="noopener noreferrer"';
 function enquiryURL(topic = "general", reference = "") {
   const topics = {
-    general: "website or app",
+    general: "website, app, or business software",
     website: "website",
     "web-app": "web application",
     ios: "iOS app",
+    software: "custom app or business software",
   };
   const selected = topics[topic] || topics.general;
   const subjects = {
-    general: "Website or app project",
+    general: "Website, app, or software project",
     website: "Website project",
     "web-app": "Web application project",
     ios: "iOS app project",
+    software: "Custom app or software project",
   };
   const subject = reference
     ? `Project inspired by ${reference}`
@@ -105,10 +107,15 @@ function productStory(project, index) {
 }
 
 function supportingCard(project, index) {
-  const preview = project.image
+  const hasGallery = project.id === "MyGigCalendar" && project.gallery.length > 1;
+  const frame = project.gallery[0];
+  const preview = hasGallery ? previewImages(frame) : project.image
     ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || (project.portrait ? 600 : 1280)}" height="${project.imageHeight || (project.portrait ? 1300 : 800)}" loading="lazy" decoding="async">`
     : "";
-  return `<article class="project-card supporting-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></article>`;
+  const gallery = hasGallery
+    ? `<div class="supporting-gallery"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${project.gallery.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div>`
+    : "";
+  return `<article ${hasGallery ? 'id="my-gig-calendar-showcase"' : ""} class="project-card supporting-card ${hasGallery ? "has-gallery" : ""}" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual ${hasGallery ? "supporting-screen" : ""} ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${gallery}</article>`;
 }
 
 function archiveCard(project) {
@@ -135,14 +142,14 @@ $("#featured-projects").addEventListener("click", (event) => {
   const project = projects.find((item) => item.id === choice.dataset.gallery);
   const frame = project?.gallery?.[Number(choice.dataset.screen)];
   if (!frame) return;
-  const story = choice.closest(".case-study");
+  const story = choice.closest(".case-study, .supporting-card.has-gallery");
   story.querySelectorAll("[data-gallery]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button === choice));
   });
-  const screen = story.querySelector(".case-screen");
+  const screen = story.querySelector(".case-screen, .supporting-screen");
   screen.classList.toggle("portrait", frame.portrait === true);
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
-  screen.innerHTML = `<span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
+  screen.innerHTML = `${story.classList.contains("case-study") ? `<span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>` : `<span class="visual-badge mono">${escape(project.badge)}</span>`}${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;
 });
 

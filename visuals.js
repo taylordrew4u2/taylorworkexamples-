@@ -283,9 +283,86 @@ export const projectVisuals = {
         "portrait": true,
         "caption": "My Gig Calendar native gig details for a fictional Friday Night Live show.",
         "sourceUrl": "https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/02-gig-details.png"
+      },
+      {
+        "label": "Product overview",
+        "image": "./assets/my-gig-calendar/banner-1920x1080.png",
+        "imageAlt": "My Gig Calendar supplied product banner with app icon, a native calendar, and the public fan calendar.",
+        "width": 1920,
+        "height": 1080,
+        "portrait": false,
+        "caption": "Supplied product artwork · Calendar, promotional flyers, and fan calendar.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/banner-1920x1080.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Every gig",
+        "image": "./assets/my-gig-calendar/01-every-gig.png",
+        "imageAlt": "My Gig Calendar supplied promotional image showing its native calendar and sample gigs.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Every gig in one calendar.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/01-every-gig.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Poster scan",
+        "image": "./assets/my-gig-calendar/02-poster-scan.png",
+        "imageAlt": "My Gig Calendar supplied promotional image showing poster text scanning and extracted show details.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Poster scanning with example show details.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/02-poster-scan.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Flyer studio",
+        "image": "./assets/my-gig-calendar/03-flyer-studio.png",
+        "imageAlt": "My Gig Calendar supplied promotional image showing its flyer editor and social format choices.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Flyer studio with sample performance dates.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/03-flyer-studio.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Fan calendar",
+        "image": "./assets/my-gig-calendar/04-fans.png",
+        "imageAlt": "My Gig Calendar supplied promotional image showing its public fan calendar and calendar subscription options.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Public fan calendar and subscription options.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/04-fans.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Siri & Shortcuts",
+        "image": "./assets/my-gig-calendar/05-siri.png",
+        "imageAlt": "My Gig Calendar supplied promotional image illustrating Siri and Shortcuts with a sample gig confirmation.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Siri and Shortcuts feature illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/05-siri.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Features",
+        "image": "./assets/my-gig-calendar/06-features.png",
+        "imageAlt": "My Gig Calendar supplied feature overview with its icon, sync, offline, scanning, calendar, and voice features.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · App feature overview.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/06-features.png",
+        "sourceKind": "owner-supplied-product-artwork"
       }
     ],
-    "notes": "Native app screenshots with fictional sample content, published in the project repository."
+    "notes": "The first two views are native app screenshots with fictional sample content published in the project repository. Seven additional product images were supplied by the owner on October 12, 2026 and are labeled as product artwork; they are separate from runtime capture evidence."
   },
   "micro-short-website": {
     "image": "./assets/microshort-capture.webp",

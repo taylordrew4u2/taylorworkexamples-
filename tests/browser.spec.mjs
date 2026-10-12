@@ -262,6 +262,123 @@ test("hero previews open the matching website and native iPhone project", async 
   }
 });
 
+test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
+  await page.goto("/");
+  const services = page.locator("#services");
+  await expect(services).toBeVisible();
+  expect(await services.evaluate((element) => Boolean(
+    element.compareDocumentPosition(document.querySelector("#work")) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "Services precede the selected work").toBe(true);
+  await expect(services.locator("article.service-item")).toHaveCount(3);
+
+  const examples = [
+    ["website", "PinsAndNeedlesComedyWebsite", "See Pins & Needles website project"],
+    ["web-app", "the-trip-handler", "See The Trip Handler project"],
+    ["software", "MyGigCalendar", "See My Gig Calendar app project"],
+  ];
+  const dialog = page.getByRole("dialog");
+  for (const [service, id, name] of examples) {
+    const item = services.locator(`article.service-item[data-service="${service}"]`);
+    const project = projects.find((entry) => entry.id === id);
+    const trigger = item.getByRole("button", { name, exact: true });
+    await expect(trigger).toHaveClass(/service-proof/);
+    await expect(trigger).toHaveAttribute("data-project", project.id);
+    await expect(item.locator(".service-inquiry")).toHaveAttribute("data-enquiry", service);
+    await trigger.scrollIntoViewIfNeeded();
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+  }
+});
+
+test("the process and native FAQs explain scope and work with the keyboard", async ({ page }) => {
+  await page.goto("/");
+  const process = page.locator("ol.process-steps");
+  await expect(process).toBeVisible();
+  await expect(process.locator("li")).toHaveCount(3);
+  await expect(process.locator("li h3")).toHaveText([
+    "Tell me the problem",
+    "Agree scope and price",
+    "Build, review, launch",
+  ]);
+  for (const step of await process.locator("li").all()) {
+    await expect(step).toBeVisible();
+    await expect(step.locator("p")).toHaveText(/\S/);
+  }
+  expect(await process.evaluate((element) => Boolean(
+    document.querySelector("#work").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "The process follows the selected work").toBe(true);
+
+  const faqSection = page.locator("#project-faq");
+  await expect(faqSection.locator("details.faq-item")).toHaveCount(3);
+  await expect(faqSection.locator(".faq-item:not(details)")).toHaveCount(0);
+  expect(await faqSection.evaluate((element) => Boolean(
+    element.compareDocumentPosition(document.querySelector("#contact")) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "Project questions precede contact").toBe(true);
+  const answers = [
+    ["What if my idea isn’t finished?", "That’s fine. Start with the problem you want to solve. We can work out the details together."],
+    ["How is pricing worked out?", "Pricing depends on scope, features, and complexity. We’ll agree what’s included and the price before building."],
+    ["What happens after launch?", "We’ll discuss who maintains it and any hosting/service costs when defining the project."],
+  ];
+  for (const [question, answer] of answers) {
+    const faq = faqSection.locator("details.faq-item").filter({ has: page.locator("summary", { hasText: question }) });
+    const summary = faq.locator("summary");
+    const content = faq.locator("p");
+    await expect(summary).toHaveText(question);
+    await expect(content).toHaveText(answer);
+    await expect(faq).not.toHaveAttribute("open", "");
+    await expect(content).toBeHidden();
+    await summary.scrollIntoViewIfNeeded();
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(summary).toBeFocused();
+    await expect(faq).toHaveAttribute("open", "");
+    await expect(content).toBeVisible();
+    await page.keyboard.press("Space");
+    await expect(summary).toBeFocused();
+    await expect(faq).not.toHaveAttribute("open", "");
+    await expect(content).toBeHidden();
+  }
+  await expect(page.getByRole("dialog")).toBeHidden();
+});
+
+test("service choices, open FAQs, and the supporting gallery fit narrow and tablet viewports", async ({ page }) => {
+  const calendar = projects.find((project) => project.id === "MyGigCalendar");
+  for (const width of [320, 768, 1024]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+    for (const summary of await page.locator("#project-faq .faq-item summary").all()) {
+      await summary.click();
+    }
+    await expect(page.locator("#project-faq details[open]")).toHaveCount(3);
+    const card = page.locator(`.supporting-card[data-supporting-id="${calendar.id}"]`);
+    const choices = card.locator(".supporting-gallery button[data-screen]");
+    await choices.last().click();
+    await expect(choices.last()).toHaveAttribute("aria-pressed", "true");
+    await expectLoadedImageToFit(card.locator(".supporting-screen .primary-screen"), calendar.gallery.at(-1));
+    const fit = await page.evaluate(() => {
+      const controls = document.querySelectorAll(
+        "#services .service-actions > *, .process-steps > li, #project-faq summary, .supporting-gallery button",
+      );
+      return {
+        page: document.documentElement.scrollWidth <= window.innerWidth,
+        controls: [...controls].every((element) => {
+          const box = element.getBoundingClientRect();
+          return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
+        }),
+      };
+    });
+    expect(fit, `Engagement sections fit the ${width}px viewport`).toEqual({ page: true, controls: true });
+    await expect(page.getByRole("dialog")).toBeHidden();
+  }
+});
+
 test("archive opens and filters, searches, empty state, and reset work together", async ({
   page,
 }) => {
@@ -591,10 +708,10 @@ test("project and service inquiry links prepare the correct email drafts", async
     const draft = new URL(await link.getAttribute("href"));
     expect(draft.protocol).toBe("mailto:");
     expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-    expect(draft.searchParams.get("subject")).toBe("Website or app project");
+    expect(draft.searchParams.get("subject")).toBe("Website, app, or software project");
     expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
-      "I'm looking for help with a website or app.",
+      "I'm looking for help with a website, app, or business software.",
     );
     expect(draft.searchParams.get("body")).toContain(inquiryPrompts);
   }
@@ -602,14 +719,15 @@ test("project and service inquiry links prepare the correct email drafts", async
   const services = [
     ["website", "Website project", "a website"],
     ["web-app", "Web application project", "a web application"],
-    ["ios", "iOS app project", "an iOS app"],
+    ["software", "Custom app or software project", "a custom app or business software"],
   ];
   await expect(page.locator(".service-item")).toHaveCount(3);
   for (const [topic, subject, description] of services) {
-    const service = page.locator(`.service-item[data-enquiry="${topic}"]`);
+    const service = page.locator(`.service-item[data-service="${topic}"] .service-inquiry.enquiry-link[data-enquiry="${topic}"]`);
     await service.scrollIntoViewIfNeeded();
     await expect(service).toBeVisible();
     const draft = new URL(await service.getAttribute("href"));
+    expect(draft.protocol).toBe("mailto:");
     expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
     expect(draft.searchParams.get("subject")).toBe(subject);
     expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
@@ -617,6 +735,7 @@ test("project and service inquiry links prepare the correct email drafts", async
       `I'm looking for help with ${description}.`,
     );
     expect(draft.searchParams.get("body")).toContain(inquiryPrompts);
+    expect([...draft.searchParams.keys()]).toEqual(["subject", "body"]);
   }
 });
 
@@ -716,4 +835,51 @@ test("lead galleries change real images, captions, and selection without opening
   await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toHaveText(
     projects.find((project) => project.id === "The-Bit-Binder").gallery[0].caption,
   );
+});
+
+test("My Gig Calendar changes its on-page images, captions, and selection without opening a modal", async ({ page }) => {
+  const project = projects.find((entry) => entry.id === "MyGigCalendar");
+  expect(project.gallery.length).toBeGreaterThan(1);
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  const card = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
+  const screen = card.locator(".supporting-screen");
+  const gallery = card.locator(".supporting-gallery");
+  const group = gallery.getByRole("group", { name: `Screens from ${project.title}`, exact: true });
+  const choices = group.locator("button[data-gallery][data-screen]");
+  const caption = gallery.locator(".screen-caption");
+  await expect(card).toBeVisible();
+  await expect(screen).toHaveAttribute("data-project", project.id);
+  await expect(choices).toHaveCount(project.gallery.length);
+  await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
+  await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
+  await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+  await expect(caption).toHaveAttribute("aria-live", "polite");
+  await expect(screen.locator(".primary-screen")).toHaveAttribute("src", project.gallery[0].image);
+  await expect(caption).toHaveText(project.gallery[0].caption);
+
+  for (let index = 0; index < project.gallery.length; index += 1) {
+    const frame = project.gallery[index];
+    const choice = choices.nth(index);
+    await choice.scrollIntoViewIfNeeded();
+    await choice.focus();
+    await page.keyboard.press(index % 2 === 0 ? "Enter" : "Space");
+    await expect(choice).toBeFocused();
+    await expect(choice).toHaveAttribute("aria-pressed", "true");
+    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+    await expect(caption).toHaveText(frame.caption);
+    await expectLoadedImageToFit(screen.locator(".primary-screen"), frame);
+    await expect(screen.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
+    if (frame.companion) {
+      await expectLoadedImageToFit(screen.locator(".companion-screen"), frame.companion);
+    }
+    await expect(page.getByRole("dialog")).toBeHidden();
+  }
+  await choices.nth(0).click();
+  await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
+  await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
+  await expect(screen.locator(".primary-screen")).toHaveAttribute("src", project.gallery[0].image);
+  await expect(caption).toHaveText(project.gallery[0].caption);
+  expect(errors).toEqual([]);
 });

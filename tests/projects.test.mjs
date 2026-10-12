@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import {
   email,
   projects,
@@ -212,7 +213,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
       assert.equal(new URL(link).protocol, "https:");
     }
     if (project.image) {
-      assert.match(project.image, /^\.\/assets\/[a-z0-9-]+\.(webp|png|svg)$/);
+      assert.match(project.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg)$/);
       assert.ok(
         existsSync(new URL(`../${project.image}`, import.meta.url)),
         `${project.id}: missing ${project.image}`,
@@ -317,7 +318,7 @@ test("all 16 public projects have traceable covers and galleries with accurate a
       assert.ok(frame.caption?.trim(), `${project.id}: view disclosure required`);
       assert.equal(typeof frame.portrait, "boolean", `${project.id}: view orientation declared`);
       for (const image of [frame, frame.companion].filter(Boolean)) {
-        assert.match(image.image, /^\.\/assets\/[a-z0-9-]+\.(webp|png|svg)$/);
+        assert.match(image.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg)$/);
         assert.ok(image.imageAlt?.trim(), `${project.id}: descriptive image alternative required`);
         assert.ok(Number.isInteger(image.width) && image.width > 0);
         assert.ok(Number.isInteger(image.height) && image.height > 0);
@@ -341,6 +342,33 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         /development|sample|fictional|isolated|repository-default/i.test(`${frame.caption} ${project.notes || ""}`),
       ), `${project.id}: each development view discloses its capture or sample context`);
     }
+  }
+});
+
+test("My Gig Calendar keeps its native cover and all seven unaltered supplied product images", () => {
+  const calendar = projects.find((project) => project.id === "MyGigCalendar");
+  assert.equal(calendar.image, "./assets/gigcalendar-native-calendar.webp");
+  assert.equal(calendar.gallery.length, 9);
+  assert.ok(calendar.gallery.slice(0, 2).every((frame) => /native/i.test(frame.caption) && !frame.sourceKind));
+  const expectedArtwork = {
+    "banner-1920x1080.png": "3d5797b60c00d03be95778317dbf2ad12f7eb41618d9ce938c310e16e222986f",
+    "01-every-gig.png": "c69db9ee63294c90b35a20084706c7b48cd81625b22f71c8d266b2832b63d309",
+    "02-poster-scan.png": "682d60f1c8bccec66c333c416758bcd48179de6ab61c88a5a80b00b8afed74ed",
+    "03-flyer-studio.png": "7d064745a44233e98a93453619ee053d11b17519e5bdd9a89cb403e490ebdd66",
+    "04-fans.png": "8ea891cdb8f3868498fef84d9e32388befc37b0fcd2a061f701137910ccdfa0f",
+    "05-siri.png": "e487549d633c93f89da0c1d1472ca58cce65632803321d3174a97a2a23224270",
+    "06-features.png": "2cd0b49191fae139ea49f98c535b5c746e4363bd7fe99fbfb1fa84190625c221",
+  };
+  const artwork = calendar.gallery.slice(2);
+  assert.deepEqual(artwork.map((frame) => frame.image).sort(),
+    Object.keys(expectedArtwork).map((name) => `./assets/my-gig-calendar/${name}`).sort());
+  for (const frame of artwork) {
+    assert.equal(frame.sourceKind, "owner-supplied-product-artwork");
+    assert.match(frame.caption, /^Supplied product artwork/);
+    const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
+    const name = frame.image.split("/").at(-1);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), expectedArtwork[name],
+      `${name}: original supplied pixels must remain unchanged`);
   }
 });
 
