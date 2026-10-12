@@ -533,6 +533,8 @@ test("removed repositories stay out of archive, search and hero while public sou
 });
 
 test("every project dialog shows its images and keeps gallery, caption, full-size link, and focus in sync", async ({ page }) => {
+  // This serial catalog sweep loads every gallery, including full-resolution supplied artwork.
+  test.setTimeout(60_000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/#project-archive");

@@ -1786,6 +1786,9 @@ dialog::backdrop {
   .supporting-card.has-gallery > .project-visual {
     height: 36rem;
   }
+  .supporting-card.has-gallery > .project-visual:not(.portrait) {
+    height: 20rem;
+  }
   .supporting-card.has-gallery > .project-identity {
     margin-top: 1.25rem;
   }

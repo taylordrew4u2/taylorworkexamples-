@@ -14,4 +14,4 @@ The initial cover and first two gallery entries remain the repository's native c
 | 05-siri.png | 1320 × 2868 | e487549d633c93f89da0c1d1472ca58cce65632803321d3174a97a2a23224270 |
 | 06-features.png | 1320 × 2868 | 2cd0b49191fae139ea49f98c535b5c746e4363bd7fe99fbfb1fa84190625c221 |
 
-The source folder also contains a 6.2 GB, 5,824-second open-mic performance recording. It was inspected via three local preview frames. It does not show the app interface. The original recording was not copied into the portfolio or uploaded; inclusion of a performance excerpt was asked as a separate scope choice.
+The user confirmed that only the seven product images should be included. The source folder also contains a 6.2 GB, 5,824-second open-mic performance recording. It was inspected via three local preview frames and does not show the app interface. The recording was not copied into the portfolio or uploaded.
