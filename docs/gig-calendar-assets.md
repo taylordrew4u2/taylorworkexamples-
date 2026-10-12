@@ -2,7 +2,7 @@
 
 The user requested adding the product visuals supplied in `/Users/taylordrew/Downloads/gig/` to the My Gig Calendar showcase while the client-engagement revision was in progress. Seven PNG files were copied byte-for-byte into `assets/my-gig-calendar/`. No image was generated, cropped, recolored, resized, or reconstructed. Their original colors, proportions, text, and full-resolution pixels are retained.
 
-The initial cover and first two gallery entries remain the repository's native calendar and gig-detail captures. The seven supplied files extend the gallery to nine choices. Their captions explicitly identify product artwork. The new artwork is supplied by the owner and is not attributed to a repository capture or presented as a fresh runtime validation. A full-size link exposes every original file.
+The supplied Product overview banner is the main/default showcase image and first gallery choice. The repository's native Calendar and Gig details captures follow it in their original relative order, then the remaining six supplied files, for nine choices. The cover and supplied-file captions explicitly identify product artwork. All seven supplied files have `sourceKind: "owner-supplied-product-artwork"`; their canonical source links use `https://customtechbuilt4u.com/assets/my-gig-calendar/`, including the default [banner](https://customtechbuilt4u.com/assets/my-gig-calendar/banner-1920x1080.png). The artwork is supplied by the owner and is not attributed to a repository capture or presented as a fresh runtime validation. A full-size link exposes every original file.
 
 | File | Dimensions | SHA-256 |
 | --- | --- | --- |

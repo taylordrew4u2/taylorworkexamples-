@@ -2,7 +2,7 @@
 
 The nine PNG files supplied in `/Users/taylordrew/Downloads/bb/` are included under the same filenames in `assets/bitbinder/`. They are copied byte-for-byte: no resizing, cropping, recoloring, reconstruction, or image generation is part of this portfolio update. Their original colors, proportions, text, and full-resolution pixels are retained. The file sizes, PNG dimensions, and SHA-256 values below were read from the supplied originals.
 
-The three existing native development captures remain first in the gallery: Library & writing, Writing editor, and Set rehearsal. The nine supplied promotional images follow them, making 12 views in total. These files have `sourceKind: "owner-supplied-product-artwork"`, and their captions identify them as supplied product artwork. Their canonical source links and full-size links point to the original files served from `https://customtechbuilt4u.com/assets/bitbinder/`.
+The supplied Product overview banner is the main/default showcase image and first gallery choice. The three existing native development captures follow it in their original relative order: Library & writing, Writing editor, and Set rehearsal. The remaining eight supplied promotional images follow those captures, making 12 views in total. The cover is labeled supplied product artwork, and all nine supplied files have `sourceKind: "owner-supplied-product-artwork"` with captions identifying them as supplied product artwork. Their canonical source links and full-size links point to the original files served from `https://customtechbuilt4u.com/assets/bitbinder/`.
 
 | Gallery label | Original file | Size (bytes) | Dimensions | SHA-256 |
 | --- | --- | ---: | --- | --- |

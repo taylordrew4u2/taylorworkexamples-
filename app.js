@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=24";
+} from "./projects.js?v=25";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -156,10 +156,10 @@ function changeShowcaseImage(event) {
   story.querySelector(".showcase-original").href = frame.image;
   if (story.classList.contains("archive-card")) {
     const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
-    story.querySelector(".image-kind").textContent = suppliedArtwork ? "Supplied product artwork" : project.imageLabel;
+    story.querySelector(".image-kind").textContent = suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel;
     story.querySelector(".preview-context").textContent = suppliedArtwork
       ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : project.previewContext;
+      : frame.previewContext || project.previewContext;
   }
 }
 $("#featured-projects").addEventListener("click", changeShowcaseImage);

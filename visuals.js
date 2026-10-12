@@ -58,15 +58,26 @@ export const projectVisuals = {
     "notes": "Screens show the running app with sample show data. A production workspace requires signing in."
   },
   "The-Bit-Binder": {
-    "image": "./assets/bitbinder-native-library.webp",
-    "imageAlt": "BitBinder joke library with three fictional sample jokes and a hit marker.",
-    "imageWidth": 960,
-    "imageHeight": 2087,
-    "portrait": true,
-    "imageKind": "development-capture",
-    "imageLabel": "Native development preview",
-    "imageCaption": "Native development capture · Oct 8, 2026 · Fictional joke library",
+    "image": "./assets/bitbinder/banner-1920x1080.png",
+    "imageAlt": "BitBinder supplied product banner with its app icon, notebook home, and example joke library.",
+    "imageWidth": 1920,
+    "imageHeight": 1080,
+    "portrait": false,
+    "imageKind": "product-artwork",
+    "imageLabel": "Supplied product artwork",
+    "imageCaption": "Supplied product artwork · Notebook, writing, recording, imports, and set lists.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/bitbinder/banner-1920x1080.png",
+        "imageAlt": "BitBinder supplied product banner with its app icon, notebook home, and example joke library.",
+        "width": 1920,
+        "height": 1080,
+        "portrait": false,
+        "caption": "Supplied product artwork · Notebook, writing, recording, imports, and set lists.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/banner-1920x1080.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
       {
         "label": "Library & writing",
         "image": "./assets/bitbinder-native-library.webp",
@@ -82,7 +93,9 @@ export const projectVisuals = {
           "width": 960,
           "height": 2087,
           "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
-        }
+        },
+        "imageLabel": "Native development preview",
+        "previewContext": "Native development capture · Fictional sample"
       },
       {
         "label": "Writing editor",
@@ -92,7 +105,9 @@ export const projectVisuals = {
         "height": 2087,
         "portrait": true,
         "caption": "Native development capture · Oct 8, 2026 · Fictional writing sample",
-        "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
+        "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96",
+        "imageLabel": "Native development preview",
+        "previewContext": "Native development capture · Fictional sample"
       },
       {
         "label": "Set rehearsal",
@@ -102,18 +117,9 @@ export const projectVisuals = {
         "height": 2087,
         "portrait": true,
         "caption": "Native development capture · Oct 8, 2026 · Fictional set rehearsal",
-        "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
-      },
-      {
-        "label": "Product overview",
-        "image": "./assets/bitbinder/banner-1920x1080.png",
-        "imageAlt": "BitBinder supplied product banner with its app icon, notebook home, and example joke library.",
-        "width": 1920,
-        "height": 1080,
-        "portrait": false,
-        "caption": "Supplied product artwork · Notebook, writing, recording, imports, and set lists.",
-        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/banner-1920x1080.png",
-        "sourceKind": "owner-supplied-product-artwork"
+        "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96",
+        "imageLabel": "Native development preview",
+        "previewContext": "Native development capture · Fictional sample"
       },
       {
         "label": "Every bit",
@@ -204,7 +210,8 @@ export const projectVisuals = {
         "sourceKind": "owner-supplied-product-artwork"
       }
     ],
-    "notes": "Native development captures from Oct 8, 2026, use the source at revision 4328005 with an in-memory store, three fictional jokes, and one fictional set. They do not demonstrate cloud sync or transcription. Current implementation details were reviewed separately at revision 48e78c2. The nine owner-supplied product artworks illustrate features and example content; they are not fresh native captures or new validation of transcription, AI output, or cloud behavior."
+    "notes": "Native development captures from Oct 8, 2026, use the source at revision 4328005 with an in-memory store, three fictional jokes, and one fictional set. They do not demonstrate cloud sync or transcription. Current implementation details were reviewed separately at revision 48e78c2. The nine owner-supplied product artworks illustrate features and example content; they are not fresh native captures or new validation of transcription, AI output, or cloud behavior.",
+    "previewContext": "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
   },
   "the-trip-handler": {
     "image": "./assets/triphandler-meals-current.webp",
@@ -354,35 +361,15 @@ export const projectVisuals = {
     "notes": "Screens use fictional household data. No money was transferred."
   },
   "MyGigCalendar": {
-    "image": "./assets/gigcalendar-native-calendar.webp",
-    "imageAlt": "My Gig Calendar native iPhone calendar with fictional example gigs.",
-    "imageWidth": 960,
-    "imageHeight": 2086,
-    "portrait": true,
-    "imageKind": "app-screenshot",
-    "imageLabel": "Native app screenshot",
-    "imageCaption": "My Gig Calendar native iPhone calendar with fictional example gigs.",
+    "image": "./assets/my-gig-calendar/banner-1920x1080.png",
+    "imageAlt": "My Gig Calendar supplied product banner with app icon, a native calendar, and the public fan calendar.",
+    "imageWidth": 1920,
+    "imageHeight": 1080,
+    "portrait": false,
+    "imageKind": "product-artwork",
+    "imageLabel": "Supplied product artwork",
+    "imageCaption": "Supplied product artwork · Calendar, promotional flyers, and fan calendar.",
     "gallery": [
-      {
-        "label": "Calendar",
-        "image": "./assets/gigcalendar-native-calendar.webp",
-        "imageAlt": "My Gig Calendar native iPhone calendar with fictional example gigs.",
-        "width": 960,
-        "height": 2086,
-        "portrait": true,
-        "caption": "My Gig Calendar native iPhone calendar with fictional example gigs.",
-        "sourceUrl": "https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/01-calendar.png"
-      },
-      {
-        "label": "Gig details",
-        "image": "./assets/gigcalendar-details.webp",
-        "imageAlt": "My Gig Calendar native gig details for a fictional Friday Night Live show.",
-        "width": 960,
-        "height": 2086,
-        "portrait": true,
-        "caption": "My Gig Calendar native gig details for a fictional Friday Night Live show.",
-        "sourceUrl": "https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/02-gig-details.png"
-      },
       {
         "label": "Product overview",
         "image": "./assets/my-gig-calendar/banner-1920x1080.png",
@@ -393,6 +380,30 @@ export const projectVisuals = {
         "caption": "Supplied product artwork · Calendar, promotional flyers, and fan calendar.",
         "sourceUrl": "https://customtechbuilt4u.com/assets/my-gig-calendar/banner-1920x1080.png",
         "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Calendar",
+        "image": "./assets/gigcalendar-native-calendar.webp",
+        "imageAlt": "My Gig Calendar native iPhone calendar with fictional example gigs.",
+        "width": 960,
+        "height": 2086,
+        "portrait": true,
+        "caption": "My Gig Calendar native iPhone calendar with fictional example gigs.",
+        "sourceUrl": "https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/01-calendar.png",
+        "imageLabel": "Native app screenshot",
+        "previewContext": "Native app · Sample gigs"
+      },
+      {
+        "label": "Gig details",
+        "image": "./assets/gigcalendar-details.webp",
+        "imageAlt": "My Gig Calendar native gig details for a fictional Friday Night Live show.",
+        "width": 960,
+        "height": 2086,
+        "portrait": true,
+        "caption": "My Gig Calendar native gig details for a fictional Friday Night Live show.",
+        "sourceUrl": "https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/02-gig-details.png",
+        "imageLabel": "Native app screenshot",
+        "previewContext": "Native app · Sample gigs"
       },
       {
         "label": "Every gig",
@@ -461,7 +472,8 @@ export const projectVisuals = {
         "sourceKind": "owner-supplied-product-artwork"
       }
     ],
-    "notes": "The first two views are native app screenshots with fictional sample content published in the project repository. Seven additional product images were supplied by the owner on October 12, 2026 and are labeled as product artwork; they are separate from runtime capture evidence."
+    "notes": "The first two views are native app screenshots with fictional sample content published in the project repository. Seven additional product images were supplied by the owner on October 12, 2026 and are labeled as product artwork; they are separate from runtime capture evidence.",
+    "previewContext": "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
   },
   "micro-short-website": {
     "image": "./assets/microshort-capture.webp",

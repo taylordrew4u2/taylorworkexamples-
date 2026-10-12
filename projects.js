@@ -1,6 +1,6 @@
-import { projectVisuals } from "./visuals.js?v=24";
-import { projectIdentities } from "./identities.js?v=24";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=24";
+import { projectVisuals } from "./visuals.js?v=25";
+import { projectIdentities } from "./identities.js?v=25";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=25";
 
 // The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.
@@ -791,6 +791,7 @@ for (const project of projects) {
   if (!visual) continue;
   Object.assign(project, visual);
   Object.assign(project, projectIdentities[project.id]);
+  if (visual.previewContext) project.previewContext = visual.previewContext;
   const visualSources = (project.gallery || []).flatMap((frame) =>
     [frame.sourceUrl, frame.companion?.sourceUrl].filter(Boolean),
   );

@@ -63,10 +63,10 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
   await expect(card.locator(".screen-caption")).toHaveText(frame.caption);
   if (screenSelector === ".archive-preview") {
     const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
-    await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : project.imageLabel);
+    await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel);
     await expect(card.locator(".preview-context")).toHaveText(suppliedArtwork
       ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : project.previewContext);
+      : frame.previewContext || project.previewContext);
   }
   const original = card.locator(".showcase-original");
   await expect(original).toHaveAttribute("href", frame.image);
@@ -213,8 +213,13 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const calendarCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "My Gig Calendar", exact: true }),
   });
-  await expect(calendarCard.locator(".project-visual img")).toHaveAttribute("src", /gigcalendar-native-calendar\.webp/);
-  await expect(calendarCard.locator(".project-visual img")).toHaveAttribute("alt", /native iPhone/i);
+  await expect(calendarCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/my-gig-calendar/banner-1920x1080.png");
+  await expect(calendarCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
+  const binderCard = page.locator('.case-study[data-case-id="The-Bit-Binder"]');
+  await expect(binderCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/bitbinder/banner-1920x1080.png");
+  await expect(binderCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
+  await expect(page.locator(".hero-phone img")).toHaveAttribute("src", "./assets/gigcalendar-native-calendar.webp");
+  await expect(page.locator(".hero-phone img")).toHaveAttribute("alt", /native iPhone/i);
   const roleCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
@@ -296,6 +301,50 @@ test("hero previews open the matching website and native iPhone project", async 
     await expect(trigger).toBeFocused();
   }
 });
+
+for (const [id, banner] of [
+  ["The-Bit-Binder", "./assets/bitbinder/banner-1920x1080.png"],
+  ["MyGigCalendar", "./assets/my-gig-calendar/banner-1920x1080.png"],
+]) {
+  const project = projects.find((entry) => entry.id === id);
+  test(`${project.title} opens with its supplied banner across selected work, archive, and project details`, async ({ page }) => {
+    await page.goto("/#project-archive");
+    const card = id === "The-Bit-Binder"
+      ? page.locator(`.case-study[data-case-id="${id}"]`)
+      : page.locator(`.supporting-card[data-supporting-id="${id}"]`);
+    const screenSelector = id === "The-Bit-Binder" ? ".case-screen" : ".supporting-screen";
+    const archiveCard = page.locator(`.archive-card[data-showcase-id="${id}"]`);
+    const frame = project.gallery[0];
+    expect(frame.image).toBe(banner);
+    expect(frame.width).toBe(1920);
+    expect(frame.height).toBe(1080);
+    expect(frame.portrait).toBe(false);
+    expect(frame.sourceKind).toBe("owner-supplied-product-artwork");
+    for (const [showcase, screen] of [[card, screenSelector], [archiveCard, ".archive-preview"]]) {
+      await expect(showcase.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
+      await expect(showcase.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
+      await expectInlineGalleryFrame(showcase, project, frame, screen);
+    }
+    await expect(page.locator(".hero-phone img")).toHaveAttribute("src", "./assets/gigcalendar-native-calendar.webp");
+    const trigger = card.getByRole("button", { name: `Explore ${project.title}`, exact: true });
+    await trigger.click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await expectLoadedImageToFit(dialog.locator(".primary-screen"), frame);
+    await expect(dialog.locator(".companion-screen")).toHaveCount(0);
+    await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveCount(1);
+    await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
+    await expect(dialog.locator(".dialog-image-caption")).toHaveText(frame.caption);
+    await expect(dialog.locator(".image-original")).toHaveAttribute("href", banner);
+    await expect(dialog.locator(".image-original")).toHaveAttribute("target", "_blank");
+    await expect(dialog.locator(".image-original")).toHaveAttribute("rel", /noopener/);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+  });
+}
 
 test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
   await page.goto("/");
@@ -858,7 +907,7 @@ for (const project of featuredProjects.slice(0, 3)) {
     if (isBitBinder) {
       expect(count).toBe(12);
       await expect(choices.filter({ hasText: /Product overview|Every bit|Import material|Joke library|Record & transcribe|Set lists|Brainstorm|BitBuddy|Roast mode/ })).toHaveCount(9);
-      expect(project.gallery.slice(3).map((frame) => frame.label)).toEqual([
+      expect(project.gallery.filter((frame) => frame.sourceKind === "owner-supplied-product-artwork").map((frame) => frame.label)).toEqual([
         "Product overview", "Every bit", "Import material", "Joke library",
         "Record & transcribe", "Set lists", "Brainstorm", "BitBuddy", "Roast mode",
       ]);

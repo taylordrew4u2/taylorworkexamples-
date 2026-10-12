@@ -146,6 +146,7 @@ test("the homepage hero uses the public Pins & Needles website and no removed pr
   assert.match(hero, /class="hero-web" data-project="PinsAndNeedlesComedyWebsite"/);
   assert.ok(hero.includes(website.image), "Hero website image must match the public project");
   assert.match(hero, /Pins &amp; Needles website|Pins & Needles website/);
+  assert.match(hero, /class="hero-phone" data-project="MyGigCalendar"[\s\S]*?src="\.\/assets\/gigcalendar-native-calendar\.webp"/);
   assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);
   for (const id of removedIds) {
     assert.ok(!hero.includes(`data-project="${id}"`), `${id}: removed from hero`);
@@ -299,7 +300,7 @@ test("App Store listings, RoleCall development captures, and known unavailable d
 });
 
 test("all 16 public projects have traceable covers and galleries with accurate asset dimensions", () => {
-  const imageKinds = new Set(["app-screenshot", "development-capture", "project-overview"]);
+  const imageKinds = new Set(["app-screenshot", "development-capture", "project-overview", "product-artwork"]);
   for (const project of projects) {
     assert.ok(project.image, `${project.id}: cover required`);
     assert.ok(imageKinds.has(project.imageKind), `${project.id}: image provenance kind required`);
@@ -342,14 +343,49 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         /development|sample|fictional|isolated|repository-default/i.test(`${frame.caption} ${project.notes || ""}`),
       ), `${project.id}: each development view discloses its capture or sample context`);
     }
+    if (project.imageKind === "product-artwork") {
+      assert.ok(["The-Bit-Binder", "MyGigCalendar"].includes(project.id));
+      assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
+      assert.equal(project.gallery[0].label, "Product overview");
+      assert.equal(project.imageLabel, "Supplied product artwork");
+      assert.equal(project.imageCaption, project.gallery[0].caption);
+      assert.match(project.imageCaption, /^Supplied product artwork/);
+      assert.match(project.previewContext, /owner-supplied.*promotional artwork/i);
+      assert.equal(project.imageWidth, 1920);
+      assert.equal(project.imageHeight, 1080);
+      assert.equal(project.portrait, false);
+    }
   }
 });
 
-test("My Gig Calendar keeps its native cover and all seven unaltered supplied product images", () => {
+test("My Gig Calendar uses its supplied banner as cover and keeps its native views and all seven unaltered product images", () => {
   const calendar = projects.find((project) => project.id === "MyGigCalendar");
-  assert.equal(calendar.image, "./assets/gigcalendar-native-calendar.webp");
+  assert.equal(calendar.image, "./assets/my-gig-calendar/banner-1920x1080.png");
   assert.equal(calendar.gallery.length, 9);
-  assert.ok(calendar.gallery.slice(0, 2).every((frame) => /native/i.test(frame.caption) && !frame.sourceKind));
+  assert.equal(calendar.gallery[0].label, "Product overview");
+  const native = calendar.gallery.filter((frame) => frame.sourceKind !== "owner-supplied-product-artwork");
+  assert.deepEqual(native.map((frame) => ({
+    label: frame.label, image: frame.image, caption: frame.caption,
+    width: frame.width, height: frame.height, portrait: frame.portrait,
+  })), [
+    {
+      label: "Calendar", image: "./assets/gigcalendar-native-calendar.webp",
+      caption: "My Gig Calendar native iPhone calendar with fictional example gigs.",
+      width: 960, height: 2086, portrait: true,
+    },
+    {
+      label: "Gig details", image: "./assets/gigcalendar-details.webp",
+      caption: "My Gig Calendar native gig details for a fictional Friday Night Live show.",
+      width: 960, height: 2086, portrait: true,
+    },
+  ]);
+  assert.ok(native.every((frame) => !frame.sourceKind));
+  assert.ok(native.every((frame) => frame.imageLabel === "Native app screenshot" &&
+    frame.previewContext === "Native app · Sample gigs"));
+  assert.deepEqual(calendar.gallery.map((frame) => frame.label), [
+    "Product overview", "Calendar", "Gig details", "Every gig", "Poster scan",
+    "Flyer studio", "Fan calendar", "Siri & Shortcuts", "Features",
+  ]);
   const expectedArtwork = {
     "banner-1920x1080.png": "3d5797b60c00d03be95778317dbf2ad12f7eb41618d9ce938c310e16e222986f",
     "01-every-gig.png": "c69db9ee63294c90b35a20084706c7b48cd81625b22f71c8d266b2832b63d309",
@@ -359,9 +395,9 @@ test("My Gig Calendar keeps its native cover and all seven unaltered supplied pr
     "05-siri.png": "e487549d633c93f89da0c1d1472ca58cce65632803321d3174a97a2a23224270",
     "06-features.png": "2cd0b49191fae139ea49f98c535b5c746e4363bd7fe99fbfb1fa84190625c221",
   };
-  const artwork = calendar.gallery.slice(2);
-  assert.deepEqual(artwork.map((frame) => frame.image).sort(),
-    Object.keys(expectedArtwork).map((name) => `./assets/my-gig-calendar/${name}`).sort());
+  const artwork = calendar.gallery.filter((frame) => frame.sourceKind === "owner-supplied-product-artwork");
+  assert.deepEqual(artwork.map((frame) => frame.image),
+    Object.keys(expectedArtwork).map((name) => `./assets/my-gig-calendar/${name}`));
   for (const frame of artwork) {
     assert.equal(frame.sourceKind, "owner-supplied-product-artwork");
     assert.match(frame.caption, /^Supplied product artwork/);
@@ -372,12 +408,14 @@ test("My Gig Calendar keeps its native cover and all seven unaltered supplied pr
   }
 });
 
-test("The BitBinder keeps its three native views followed by all nine unaltered supplied product images", () => {
+test("The BitBinder uses its supplied banner as cover and keeps its three native views and all nine unaltered product images", () => {
   const binder = projects.find((project) => project.id === "The-Bit-Binder");
-  assert.equal(binder.image, "./assets/bitbinder-native-library.webp");
-  assert.equal(binder.imageKind, "development-capture");
+  assert.equal(binder.image, "./assets/bitbinder/banner-1920x1080.png");
+  assert.equal(binder.imageKind, "product-artwork");
   assert.equal(binder.gallery.length, 12);
-  assert.deepEqual(binder.gallery.slice(0, 3).map((frame) => ({
+  assert.equal(binder.gallery[0].label, "Product overview");
+  const native = binder.gallery.filter((frame) => frame.sourceKind !== "owner-supplied-product-artwork");
+  assert.deepEqual(native.map((frame) => ({
     label: frame.label, image: frame.image, caption: frame.caption,
     width: frame.width, height: frame.height, portrait: frame.portrait,
   })), [
@@ -397,12 +435,14 @@ test("The BitBinder keeps its three native views followed by all nine unaltered 
       width: 960, height: 2087, portrait: true,
     },
   ]);
-  assert.ok(binder.gallery.slice(0, 3).every((frame) => !frame.sourceKind));
-  assert.equal(binder.gallery[0].companion.image, "./assets/bitbinder-native-writing.webp");
-  assert.equal(binder.gallery[0].companion.width, 960);
-  assert.equal(binder.gallery[0].companion.height, 2087);
-  assert.equal(binder.gallery[1].companion, undefined);
-  assert.equal(binder.gallery[2].companion, undefined);
+  assert.ok(native.every((frame) => !frame.sourceKind));
+  assert.ok(native.every((frame) => frame.imageLabel === "Native development preview" &&
+    frame.previewContext === "Native development capture · Fictional sample"));
+  assert.equal(native[0].companion.image, "./assets/bitbinder-native-writing.webp");
+  assert.equal(native[0].companion.width, 960);
+  assert.equal(native[0].companion.height, 2087);
+  assert.equal(native[1].companion, undefined);
+  assert.equal(native[2].companion, undefined);
 
   const expectedArtwork = [
     ["banner-1920x1080.png", "Product overview", "ed9135937396cf4830bb4b4ded886c62d3b47a6ec5d1356253e19c653294cc73"],
@@ -415,9 +455,13 @@ test("The BitBinder keeps its three native views followed by all nine unaltered 
     ["07-bitbuddy.png", "BitBuddy", "1359e4e9ea28e4b378e928f9a8c4e96719f034a0395df3664e373ef1086d2410"],
     ["08-roast-mode.png", "Roast mode", "f5f2896eeddf8e3a3e40bf832ba62376147922a730597a1e593dd438d1082c5c"],
   ];
-  const artwork = binder.gallery.slice(3);
+  const artwork = binder.gallery.filter((frame) => frame.sourceKind === "owner-supplied-product-artwork");
   assert.deepEqual(artwork.map((frame) => [frame.image, frame.label]),
     expectedArtwork.map(([name, label]) => [`./assets/bitbinder/${name}`, label]));
+  assert.deepEqual(binder.gallery.map((frame) => frame.label), [
+    "Product overview", ...native.map((frame) => frame.label),
+    ...expectedArtwork.slice(1).map(([, label]) => label),
+  ]);
   for (const [index, frame] of artwork.entries()) {
     const [name, , sha256] = expectedArtwork[index];
     assert.equal(frame.sourceKind, "owner-supplied-product-artwork");
@@ -443,11 +487,14 @@ test("limited capture states retain their user-facing disclosures", () => {
   assert.match(find("usbmic").previewContext, /virtual microphone demo/i);
   assert.match(find("dictype").previewContext, /onboarding.*permissions pending/i);
   assert.match(find("bleepkit").previewContext, /workflow overview.*source/i);
-  for (const id of ["The-Bit-Binder", "Role-Call"]) {
-    assert.match(find(id).previewContext, /development capture.*fictional/i);
-  }
+  assert.match(find("Role-Call").previewContext, /development capture.*fictional/i);
   assert.match(find("tlcmassagewellness").previewContext, /development capture.*sample/i);
   const binder = find("The-Bit-Binder");
+  assert.match(binder.previewContext, /owner-supplied.*promotional artwork/i);
+  assert.ok(binder.gallery.filter((view) => !view.sourceKind).every((frame) =>
+    /development capture.*fictional/i.test(frame.previewContext)));
+  assert.ok(binder.gallery.filter((view) => !view.sourceKind).every((frame) =>
+    /native development capture.*Oct 8, 2026.*fictional/i.test(frame.caption)));
   for (const frame of binder.gallery.filter((view) => view.workflow)) {
     assert.match(frame.caption, /workflow.*source/i);
   }
