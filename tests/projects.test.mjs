@@ -8,6 +8,7 @@ import {
   filterProjects,
 } from "../projects.js";
 import { publicRepositories, repositoryVerifiedAt } from "../repository-state.js";
+import { projectIdentities } from "../identities.js";
 
 // Check the actual asset headers so stale dimensions cannot stretch a preview.
 function assetDimensions(image) {
@@ -221,6 +222,58 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
   }
 });
 
+test("every public project has a purpose, three distinct workflows, and a visible capture context", () => {
+  assert.deepEqual(Object.keys(projectIdentities).sort(), projects.map((project) => project.id).sort());
+  for (const project of projects) {
+    assert.ok(project.purpose?.trim(), `${project.id}: plain-language purpose required`);
+    assert.equal(project.workflows?.length, 3, `${project.id}: three workflow labels required`);
+    assert.ok(project.workflows.every((workflow) => typeof workflow === "string" && workflow.trim()));
+    assert.equal(new Set(project.workflows).size, 3, `${project.id}: workflows must be distinguishable`);
+    assert.ok(project.previewContext?.trim(), `${project.id}: capture context required`);
+  }
+});
+
+test("all 15 genuine project icons match their asset dimensions and have primary source provenance", () => {
+  const withIcons = projects.filter((project) => project.icon);
+  const iconKinds = new Set(["brand-mark", "app-icon", "ios-app-icon", "desktop-app-icon", "favicon"]);
+  assert.equal(withIcons.length, 15);
+  for (const project of withIcons) {
+    assert.match(project.icon, /^\.\/assets\/project-icons\/[a-z0-9-]+\.(png|svg)$/);
+    assert.ok(existsSync(new URL(`../${project.icon}`, import.meta.url)), `${project.id}: icon file required`);
+    assert.ok(Number.isInteger(project.iconWidth) && project.iconWidth > 0);
+    assert.ok(Number.isInteger(project.iconHeight) && project.iconHeight > 0);
+    assert.deepEqual(assetDimensions(project.icon), {
+      width: project.iconWidth,
+      height: project.iconHeight,
+    }, `${project.id}: icon dimensions match the file`);
+    assert.ok(iconKinds.has(project.iconKind), `${project.id}: authentic icon type required`);
+    assert.ok(project.iconNotes?.trim(), `${project.id}: icon origin documented`);
+    assert.ok(project.sources.includes(project.iconSource), `${project.id}: icon source included in project provenance`);
+    const source = new URL(project.iconSource);
+    assert.equal(source.protocol, "https:");
+    if (project.id === "taylordrewwebsite") {
+      assert.equal(source.href, "https://www.taylordrew4u.com/favicon.svg");
+    } else {
+      assert.ok(["github.com", "raw.githubusercontent.com"].includes(source.hostname));
+      const segments = decodeURIComponent(source.pathname).split("/").filter(Boolean);
+      assert.equal(segments[0], "taylordrew4u2");
+      assert.equal(segments[1], project.id);
+      assert.ok(segments.some((segment) => /^[a-f0-9]{40}$/.test(segment)), `${project.id}: icon source pinned to a revision`);
+    }
+  }
+});
+
+test("the film website uses neutral initials rather than an invented project logo", () => {
+  const withoutIcons = projects.filter((project) => !project.icon);
+  assert.deepEqual(withoutIcons.map((project) => project.id), ["micro-short-website"]);
+  const film = withoutIcons[0];
+  assert.equal(film.icon, null);
+  assert.equal(film.iconFallback, "MS");
+  assert.equal(film.iconKind, "neutral-initials");
+  assert.equal(film.iconSource, undefined);
+  assert.match(film.iconNotes, /not an official project logo/i);
+});
+
 test("App Store listings, RoleCall development captures, and known unavailable demos are represented accurately", () => {
   const find = (id) => projects.find((project) => project.id === id);
   for (const id of ["The-Bit-Binder", "MyGigCalendar"]) {
@@ -297,6 +350,13 @@ test("limited capture states retain their user-facing disclosures", () => {
   assert.match(find("dictype").imageCaption, /permissions were not granted/i);
   assert.match(find("dictype").imageCaption, /dictation was not exercised/i);
   assert.ok(find("usbmic").gallery.every((frame) => /virtual microphones/i.test(frame.caption)));
+  assert.match(find("usbmic").previewContext, /virtual microphone demo/i);
+  assert.match(find("dictype").previewContext, /onboarding.*permissions pending/i);
+  assert.match(find("bleepkit").previewContext, /workflow overview.*source/i);
+  for (const id of ["The-Bit-Binder", "Role-Call"]) {
+    assert.match(find(id).previewContext, /development capture.*fictional/i);
+  }
+  assert.match(find("tlcmassagewellness").previewContext, /development capture.*sample/i);
   const binder = find("The-Bit-Binder");
   for (const frame of binder.gallery.filter((view) => view.workflow)) {
     assert.match(frame.caption, /workflow.*source/i);
@@ -351,6 +411,13 @@ test("search finds names, repository names, summaries, stacks, and categories wi
     filterProjects(projects, "all", "no-project-matches-this"),
     [],
   );
+});
+
+test("search finds client-facing purposes and workflows even when their terms are absent from the technical summary", () => {
+  for (const query of ["REPAYMENTS", "pay whom", "whom repayments"]) {
+    assert.deepEqual(filterProjects(projects, "all", query).map((project) => project.id), ["Bill-Spilt"]);
+  }
+  assert.deepEqual(filterProjects(projects, "ios", "repayments"), []);
 });
 
 test("category and search compose, with all search terms required and no catalog mutation", () => {

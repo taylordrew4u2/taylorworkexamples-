@@ -1,5 +1,6 @@
-import { projectVisuals } from "./visuals.js?v=15";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=15";
+import { projectVisuals } from "./visuals.js?v=16";
+import { projectIdentities } from "./identities.js?v=16";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=16";
 
 // The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.
@@ -789,10 +790,11 @@ for (const project of projects) {
   const visual = projectVisuals[project.id];
   if (!visual) continue;
   Object.assign(project, visual);
+  Object.assign(project, projectIdentities[project.id]);
   const visualSources = (project.gallery || []).flatMap((frame) =>
     [frame.sourceUrl, frame.companion?.sourceUrl].filter(Boolean),
   );
-  project.sources = [...new Set([...project.sources, ...visualSources])];
+  project.sources = [...new Set([...project.sources, ...visualSources, project.iconSource].filter(Boolean))];
 }
 
 // Attach verified public repository status to the visible catalog.
@@ -838,6 +840,8 @@ export function filterProjects(collection, category = "all", query = "") {
       project.id,
       project.title,
       project.summary,
+      project.purpose || "",
+      ...(project.workflows || []),
       project.category,
       ...project.stack,
     ]

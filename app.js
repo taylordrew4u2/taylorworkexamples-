@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=15";
+} from "./projects.js?v=16";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -63,6 +63,20 @@ const liveLink = (project) =>
     ? `<a href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "Live site")} <span aria-hidden="true">↗</span></a>`
     : "";
 
+function projectIcon(project) {
+  return `<span class="project-icon-frame" aria-hidden="true">${project.icon
+    ? `<img class="project-icon" src="${escape(project.icon)}" alt="" width="${project.iconWidth}" height="${project.iconHeight}" loading="lazy" decoding="async">`
+    : `<span class="project-initials">${escape(project.iconFallback || project.title.slice(0, 2))}</span>`}</span>`;
+}
+
+function projectHeading(project, className = "project-title") {
+  return `<div class="project-identity">${projectIcon(project)}<h3 class="${className}"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3></div>`;
+}
+
+function projectWorkflows(project) {
+  return `<ul class="project-workflows" aria-label="What ${escape(project.title)} does">${project.workflows.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>`;
+}
+
 function previewImages(frame) {
   const workflow = frame.workflow
     ? `<span class="screen-workflow"><span class="workflow-label">Import workflow</span><span class="workflow-steps" role="list">${frame.workflow.map((step) => `<span class="workflow-step" role="listitem">${escape(step)}</span>`).join("")}</span><span class="workflow-source">From the current source</span></span>`
@@ -87,21 +101,19 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-toolbar"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-toolbar"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
   const preview = project.image
     ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || (project.portrait ? 600 : 1280)}" height="${project.imageHeight || (project.portrait ? 1300 : 800)}" loading="lazy" decoding="async">`
     : "";
-  return `<article class="project-card supporting-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><h3 class="project-title"><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></article>`;
+  return `<article class="project-card supporting-card" data-card-index="${index + 1}"><button class="project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></article>`;
 }
 
 function archiveCard(project) {
-  const preview = project.image
-    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || 1280}" height="${project.imageHeight || 800}" loading="lazy" decoding="async">`
-    : `<span class="archive-placeholder" aria-hidden="true">${escape(project.title)}</span>`;
-  return `<article class="archive-card"><button class="archive-preview project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}">${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel || "Project preview")}</span></div><h3><button data-project="${escape(project.id)}">${escape(project.title)}</button></h3><p>${escape(project.summary)}</p><div class="project-tags">${tags(project.stack, 3)}</div></div><div class="project-links">${detailsButton(project, "Details", "case-link")}${sourceLink(project)}</div></article>`;
+  const preview = `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async">`;
+  return `<article class="archive-card"><div class="archive-intro">${projectHeading(project)}<p class="archive-purpose">${escape(project.purpose)}</p></div><button class="archive-preview project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}">${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel)}</span></div><p class="preview-context">${escape(project.previewContext)}</p>${projectWorkflows(project)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Details", "case-link")}${sourceLink(project)}</div></article>`;
 }
 
 function dialogVisual(project, index = 0) {
@@ -191,7 +203,7 @@ document.addEventListener("click", (event) => {
     : "";
   const technical = `<div class="technical-content"><div class="project-tags">${tags(project.stack)}</div><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>${sourceLink(project, "View source code", "text-link")}</div>`;
   $("#dialog-content").innerHTML =
-    `<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.clientSummary || project.summary)}</p>${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
+    `<div class="project-identity dialog-identity">${projectIcon(project)}<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2></div><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
   dialog.showModal();
   dialog.scrollTop = 0;
 });

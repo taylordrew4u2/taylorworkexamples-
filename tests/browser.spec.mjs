@@ -48,6 +48,64 @@ async function expectLoadedImageToFit(image, expected) {
   )).toBe(true);
 }
 
+async function expectProjectIcon(scope, project) {
+  const frame = scope.locator(".project-identity .project-icon-frame");
+  await expect(frame).toHaveCount(1);
+  await expect(frame).toBeVisible();
+  await expect(frame).toHaveAttribute("aria-hidden", "true");
+  await expect(frame).toHaveCSS("filter", "none");
+  const icon = frame.locator("img.project-icon");
+  if (!project.icon) {
+    await expect(icon).toHaveCount(0);
+    await expect(frame.locator(".project-initials")).toHaveText(project.iconFallback);
+    const color = await frame.locator(".project-initials").evaluate((element) => getComputedStyle(element).color);
+    const channels = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    expect(channels, "Fallback initials use a neutral color").not.toBeNull();
+    expect(new Set(channels.slice(1).map(Number)).size).toBe(1);
+    return;
+  }
+  await expect(icon).toHaveCount(1);
+  await expect(frame.locator(".project-initials")).toHaveCount(0);
+  await icon.scrollIntoViewIfNeeded();
+  await expect.poll(() => icon.evaluate((element) =>
+    element.complete && element.naturalWidth > 0 && element.naturalHeight > 0,
+  )).toBe(true);
+  await expect(icon).toHaveAttribute("src", project.icon);
+  await expect(icon).toHaveAttribute("alt", "");
+  await expect(icon).toHaveAttribute("width", String(project.iconWidth));
+  await expect(icon).toHaveAttribute("height", String(project.iconHeight));
+  await expect(icon).toHaveCSS("object-fit", "contain");
+  await expect(icon).toHaveCSS("filter", "none");
+  const geometry = await icon.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const frameBox = element.closest(".project-icon-frame").getBoundingClientRect();
+    return {
+      width: box.width,
+      height: box.height,
+      naturalWidth: element.naturalWidth,
+      naturalHeight: element.naturalHeight,
+      inside: box.left >= frameBox.left - 1 && box.right <= frameBox.right + 1 &&
+        box.top >= frameBox.top - 1 && box.bottom <= frameBox.bottom + 1,
+    };
+  });
+  expect(geometry.width).toBeGreaterThan(0);
+  expect(geometry.height).toBeGreaterThan(0);
+  expect(geometry.inside, `${project.title}: complete icon fits its frame`).toBe(true);
+  if (project.icon.endsWith(".png")) {
+    expect(geometry.naturalWidth).toBe(project.iconWidth);
+    expect(geometry.naturalHeight).toBe(project.iconHeight);
+  }
+}
+
+async function expectProjectWorkflows(scope, project) {
+  const workflows = scope.getByRole("list", { name: `What ${project.title} does`, exact: true });
+  await expect(workflows).toBeVisible();
+  await expect(workflows.locator("li")).toHaveText(project.workflows);
+  for (const workflow of await workflows.locator("li").all()) {
+    await expect(workflow).toBeVisible();
+  }
+}
+
 test("portfolio renders, previews load, and the page fits the viewport", async ({
   page,
 }, testInfo) => {
@@ -97,14 +155,14 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const calendarCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "My Gig Calendar", exact: true }),
   });
-  await expect(calendarCard.locator("img")).toHaveAttribute("src", /gigcalendar-native-calendar\.webp/);
-  await expect(calendarCard.locator("img")).toHaveAttribute("alt", /native iPhone/i);
+  await expect(calendarCard.locator(".project-visual img")).toHaveAttribute("src", /gigcalendar-native-calendar\.webp/);
+  await expect(calendarCard.locator(".project-visual img")).toHaveAttribute("alt", /native iPhone/i);
   const roleCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
   await expect(roleCard.locator(".visual-badge")).toHaveText("DEV PREVIEW");
-  await expect(roleCard.locator("img")).toHaveAttribute("src", /rolecall-shots-capture\.(webp|png)$/);
-  await expect(roleCard.locator("img")).toHaveAttribute("alt", /shot list.*fictional.*sample/i);
+  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("src", /rolecall-shots-capture\.(webp|png)$/);
+  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("alt", /shot list.*fictional.*sample/i);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -212,6 +270,12 @@ test("archive opens and filters, searches, empty state, and reset work together"
   await search.fill("showrunner");
   await expect(page.locator(".archive-card")).toHaveCount(1);
   await expect(page.locator(".archive-card h3")).toHaveText("I Can Run A Show");
+  await search.fill("repayments");
+  await expect(page.locator(".archive-card")).toHaveCount(1);
+  await expect(page.locator(".archive-card h3")).toHaveText("BillSpilt");
+  await expect(page.locator('.archive-preview[data-project="Bill-Spilt"]')).toBeVisible();
+  await expect(page.locator(".archive-card .project-workflows")).toContainText("Plan repayments");
+  await expect(page.locator("#result-count")).toHaveText("1 OF 16 PROJECTS");
   await search.fill("a-project-that-does-not-exist-9238");
   await expect(
     page.getByRole("heading", { name: "No projects found." }),
@@ -240,7 +304,7 @@ test("the archive deep link opens its images and filters on initial navigation",
   await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
 });
 
-test("all 16 public archive covers load, fit their frames, and disclose the kind of image", async ({ page }) => {
+test("all 16 archive projects explain their purpose and workflows with genuine icons and accurately labeled covers", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/#project-archive");
@@ -252,6 +316,12 @@ test("all 16 public archive covers load, fit their frames, and disclose the kind
     const card = preview.locator("..");
     await expect(preview).toHaveAccessibleName(`View images and details for ${project.title}`);
     await expect(card.locator("h3")).toHaveText(project.title);
+    await expectProjectIcon(card, project);
+    await expect(card.locator(".archive-purpose")).toBeVisible();
+    await expect(card.locator(".archive-purpose")).toHaveText(project.purpose);
+    await expectProjectWorkflows(card, project);
+    await expect(card.locator(".preview-context")).toBeVisible();
+    await expect(card.locator(".preview-context")).toHaveText(project.previewContext);
     await expect(card.locator(".image-kind")).toHaveText(project.imageLabel);
     await expect(preview.locator("img")).toHaveCount(1);
     await expectLoadedImageToFit(preview.locator("img"), {
@@ -263,6 +333,14 @@ test("all 16 public archive covers load, fit their frames, and disclose the kind
     expect(project.sourceAvailable).toBe(true);
     await expect(card.locator(".source-note")).toHaveCount(0);
     await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
+    if (project.demoUrl) {
+      const liveLink = card.getByRole("link", { name: project.demoLabel, exact: true });
+      await expect(liveLink).toBeVisible();
+      await expect(liveLink).toHaveAttribute("href", project.demoUrl);
+      await expect(liveLink).toHaveAttribute("target", "_blank");
+      await expect(liveLink).toHaveAttribute("rel", /noopener/);
+    }
+    await expect(card.locator(".project-links > a")).toHaveCount(project.demoUrl ? 2 : 1);
   }
   expect(errors).toEqual([]);
 });
@@ -299,6 +377,7 @@ test("removed repositories stay out of archive, search and hero while public sou
   const publicCard = publicPreview.locator("..");
   await expect(publicCard.locator(".source-note")).toHaveCount(0);
   await expect(publicCard.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
+  await expect(publicCard.getByRole("link", { name: publicProject.demoLabel, exact: true })).toHaveAttribute("href", publicProject.demoUrl);
   await publicPreview.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(publicProject.title);
@@ -324,6 +403,10 @@ test("every project dialog shows its images and keeps gallery, caption, full-siz
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
     await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await expectProjectIcon(dialog, project);
+    await expect(dialog.locator(".dialog-summary")).toBeVisible();
+    await expect(dialog.locator(".dialog-summary")).toHaveText(project.purpose);
+    await expectProjectWorkflows(dialog, project);
     const images = dialog.getByRole("region", { name: `Images from ${project.title}`, exact: true });
     await expect(images).toBeVisible();
     const group = images.getByRole("group", { name: `Project images from ${project.title}`, exact: true });

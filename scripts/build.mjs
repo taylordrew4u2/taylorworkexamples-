@@ -13,6 +13,7 @@ for (const name of [
   "app.js",
   "projects.js",
   "visuals.js",
+  "identities.js",
   "repository-state.js",
   ".nojekyll",
 ]) {
@@ -22,6 +23,7 @@ for (const name of [
 // Package only the current portfolio's images and branding assets.
 const assets = new Set(projects.flatMap((project) => [
   project.image,
+  project.icon,
   ...project.gallery.flatMap((frame) => [frame.image, frame.companion?.image]),
 ]).filter(Boolean));
 const html = await readFile(path.join(root, "index.html"), "utf8");
@@ -30,6 +32,8 @@ for (const match of html.matchAll(/(?:src|href)="(\.\/assets\/[^"?]+)(?:\?[^\"]*
 }
 await mkdir(path.join(output, "assets"));
 for (const asset of assets) {
-  await cp(path.join(root, asset), path.join(output, asset));
+  const destination = path.join(output, asset);
+  await mkdir(path.dirname(destination), { recursive: true });
+  await cp(path.join(root, asset), destination);
 }
 console.log("Portfolio built in dist/");
