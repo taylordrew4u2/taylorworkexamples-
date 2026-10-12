@@ -61,6 +61,13 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
     await expectLoadedImageToFit(screen.locator(".companion-screen"), frame.companion);
   }
   await expect(card.locator(".screen-caption")).toHaveText(frame.caption);
+  if (screenSelector === ".archive-preview") {
+    const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
+    await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : project.imageLabel);
+    await expect(card.locator(".preview-context")).toHaveText(suppliedArtwork
+      ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
+      : project.previewContext);
+  }
   const original = card.locator(".showcase-original");
   await expect(original).toHaveAttribute("href", frame.image);
   await expect(original).toHaveAttribute("target", "_blank");
