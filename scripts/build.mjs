@@ -1,6 +1,7 @@
-import { cp, mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, readFile, rm } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { projects } from "../projects.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -13,9 +14,22 @@ for (const name of [
   "projects.js",
   "visuals.js",
   "repository-state.js",
-  "assets",
   ".nojekyll",
 ]) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
+}
+
+// Package only the current portfolio's images and branding assets.
+const assets = new Set(projects.flatMap((project) => [
+  project.image,
+  ...project.gallery.flatMap((frame) => [frame.image, frame.companion?.image]),
+]).filter(Boolean));
+const html = await readFile(path.join(root, "index.html"), "utf8");
+for (const match of html.matchAll(/(?:src|href)="(\.\/assets\/[^"?]+)(?:\?[^\"]*)?"/g)) {
+  assets.add(match[1]);
+}
+await mkdir(path.join(output, "assets"));
+for (const asset of assets) {
+  await cp(path.join(root, asset), path.join(output, asset));
 }
 console.log("Portfolio built in dist/");

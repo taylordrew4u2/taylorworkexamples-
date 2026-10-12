@@ -1,7 +1,7 @@
-import { projectVisuals } from "./visuals.js?v=14";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=14";
+import { projectVisuals } from "./visuals.js?v=15";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=15";
 
-// Public repository inventory refreshed on 2026-10-09; older completed work is retained.
+// The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.
 export const email = "taylordrew4u@gmail.com";
 
@@ -538,119 +538,6 @@ export const projects = [
     ],
   },
   {
-    id: "HealYourHeart",
-    title: "Heal Your Heart",
-    category: "ios",
-    summary:
-      "A native iOS project for guided spoken exercises using Apple on-device frameworks.",
-    stack: ["Swift"],
-    features: ["Guided spoken exercises", "Apple on-device processing"],
-    repoUrl: "https://github.com/taylordrew4u2/HealYourHeart",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "slate",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/HealYourHeart",
-      "https://api.github.com/repos/taylordrew4u2/HealYourHeart",
-      "https://github.com/taylordrew4u2/HealYourHeart/blob/main/README.md",
-    ],
-  },
-  {
-    id: "laugh-extractor",
-    title: "Laugh Extractor",
-    category: "desktop",
-    summary:
-      "A macOS audio tool that extracts clean audience laughter from a stand-up recording into separate files.",
-    stack: ["Swift"],
-    features: [
-      "Audience-laughter detection",
-      "Separate audio file per laugh",
-      "Local processing and export formats",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/laugh-extractor",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "yellow",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/laugh-extractor",
-      "https://api.github.com/repos/taylordrew4u2/laugh-extractor",
-      "https://github.com/taylordrew4u2/laugh-extractor/blob/main/README.md",
-    ],
-  },
-  {
-    id: "Laugh-Map",
-    title: "Laugh Map",
-    category: "ios",
-    summary:
-      "An iOS app that lines up on-device Whisper transcription with audience response in a recorded stand-up set.",
-    stack: ["Swift", "Whisper", "C", "C++"],
-    features: ["On-device set transcription", "Audience-response alignment"],
-    repoUrl: "https://github.com/taylordrew4u2/Laugh-Map",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "blue",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/Laugh-Map",
-      "https://api.github.com/repos/taylordrew4u2/Laugh-Map",
-    ],
-  },
-  {
-    id: "markvegas",
-    title: "Mark Vegas Art Portfolio",
-    category: "web",
-    summary:
-      "An editorial portfolio for an animator with a media mosaic, editable profile, portfolio management, and theme controls.",
-    stack: ["HTML", "CSS", "JavaScript", "Turso", "Vercel Blob"],
-    features: [
-      "Image and video portfolio CRUD",
-      "Password-protected admin",
-      "Theme selection and direct media uploads",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/markvegas",
-    demoUrl: "https://markvegas.vercel.app",
-    demoLabel: "Live website",
-    image: "./assets/markvegas.webp",
-    imageAlt:
-      "The live Mark Vegas portfolio website showing artwork in its media grid",
-    portrait: false,
-    tone: "sage",
-    badge: "LIVE WEBSITE",
-    experiment: false,
-    sources: [
-      "https://github.com/taylordrew4u2/markvegas",
-      "https://api.github.com/repos/taylordrew4u2/markvegas",
-      "https://github.com/taylordrew4u2/markvegas/blob/main/README.md",
-    ],
-    clientSummary:
-      "An editable portfolio website for an animator to present image and video work, a profile, and contact details.",
-    demonstrates: [
-      "Visual website design",
-      "Owner-editable content",
-      "Image and video uploads",
-      "Database-backed site features",
-    ],
-    projectType: "Website",
-    challenge:
-      "Present visual work while giving the site owner control over their profile, portfolio, and theme.",
-    build:
-      "An editorial media grid with a password-protected admin, portfolio editing, Turso data storage, and Vercel Blob uploads.",
-  },
-  {
     id: "micro-short-website",
     title: "Micro-short Film Website",
     category: "web",
@@ -676,35 +563,6 @@ export const projects = [
       "https://api.github.com/repos/taylordrew4u2/micro-short-website",
       "https://github.com/taylordrew4u2/micro-short-website/blob/main/README.md",
     ],
-  },
-  {
-    id: "mystorydailjournal",
-    title: "My Story: Daily Journal",
-    category: "ios",
-    summary:
-      "A native journaling project built around daily records, fast capture, context signals, and a product spec maintained in the repository.",
-    stack: ["Swift", "SwiftUI", "CloudKit"],
-    features: [
-      "Daily journal and capture workflows",
-      "Context-based digest generation",
-      "Documented build milestones",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/mystorydailjournal",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "peach",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/mystorydailjournal",
-      "https://api.github.com/repos/taylordrew4u2/mystorydailjournal",
-      "https://github.com/taylordrew4u2/mystorydailjournal/blob/main/README.md",
-    ],
-    notes:
-      "In development. The repository documents uncompiled areas and remaining implementation work.",
   },
   {
     id: "nycstandupopenmicmaster",
@@ -802,60 +660,6 @@ export const projects = [
       "A Next.js website with editable show content, scheduled audience submissions, producer selection queues, timed sets and question slots, drink-menu modes, and a synchronized projector display.",
   },
   {
-    id: "CONTROLLEREVENT",
-    title: "Pins & Needles Show Controller",
-    category: "desktop",
-    summary:
-      "A live audio controller and run-of-show manager with performer cues, countdowns, and an optional public web viewer.",
-    stack: ["TypeScript", "CSS", "JavaScript"],
-    features: [
-      "Performer library and lineup builder",
-      "Live audio and countdown control",
-      "Optional audience-facing web viewer",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/CONTROLLEREVENT",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "sage",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/CONTROLLEREVENT",
-      "https://api.github.com/repos/taylordrew4u2/CONTROLLEREVENT",
-      "https://github.com/taylordrew4u2/CONTROLLEREVENT/blob/main/README.md",
-    ],
-  },
-  {
-    id: "comedysub",
-    title: "Pins & Needles Submissions",
-    category: "web",
-    summary:
-      "A full-stack submission and booking platform where comedians apply through a public form and organizers manage applicants and lineups.",
-    stack: ["Next.js", "React", "TypeScript", "PostgreSQL", "Vercel Blob"],
-    features: [
-      "Validated public application form",
-      "Admin applicant pipeline and lineup booking",
-      "Printable lineup and email drafts",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/comedysub",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "blue",
-    badge: "SOURCE AVAILABLE",
-    experiment: false,
-    sources: [
-      "https://github.com/taylordrew4u2/comedysub",
-      "https://api.github.com/repos/taylordrew4u2/comedysub",
-      "https://github.com/taylordrew4u2/comedysub/blob/main/README.md",
-    ],
-  },
-  {
     id: "usbmic",
     title: "SobStage",
     category: "desktop",
@@ -888,33 +692,6 @@ export const projects = [
     ],
     notes:
       "Source reviewed at v1.13.25. Physical-microphone validation is still in progress.",
-  },
-  {
-    id: "staybusy",
-    title: "StayBusy",
-    category: "ios",
-    summary:
-      "An ADHD-first solo-trip schedule app with a clear Now / Next view, visible open time, and a day-by-day itinerary.",
-    stack: ["Swift", "SwiftUI", "SwiftData", "MapKit"],
-    features: [
-      "Proportional daily timeline",
-      "Map pins and leave-by details",
-      "Multi-day trip density overview",
-    ],
-    repoUrl: "https://github.com/taylordrew4u2/staybusy",
-    demoUrl: null,
-    demoLabel: "Live site",
-    image: null,
-    imageAlt: "",
-    portrait: false,
-    tone: "peach",
-    badge: "SOURCE AVAILABLE",
-    experiment: true,
-    sources: [
-      "https://github.com/taylordrew4u2/staybusy",
-      "https://api.github.com/repos/taylordrew4u2/staybusy",
-      "https://github.com/taylordrew4u2/staybusy/blob/main/README.md",
-    ],
   },
   {
     id: "taylordrewwebsite",
@@ -1005,7 +782,7 @@ export const projects = [
       "https://github.com/taylordrew4u2/vlognudge/blob/main/README.md",
     ],
   },
-];
+].filter((project) => Object.hasOwn(publicRepositories, project.id));
 
 // Keep visual evidence separate from the project copy and merge it into canonical entries.
 for (const project of projects) {
@@ -1018,7 +795,7 @@ for (const project of projects) {
   project.sources = [...new Set([...project.sources, ...visualSources])];
 }
 
-// Publish only current public source links; retain earlier work without dead links.
+// Attach verified public repository status to the visible catalog.
 for (const project of projects) {
   const repository = publicRepositories[project.id];
   project.repositoryVerifiedAt = repositoryVerifiedAt;
@@ -1029,10 +806,7 @@ for (const project of projects) {
   project.documentationUrl = repository
     ? `${repository.repoUrl}${repository.readmeAvailable ? "#readme" : ""}`
     : null;
-  if (!repository) {
-    if (project.badge === "SOURCE AVAILABLE") project.badge = "EARLIER WORK";
-    project.notes = [project.notes, "Earlier work. Its repository is not currently publicly available. The project description is retained from the earlier source review."].filter(Boolean).join(" ");
-  } else if (repository.archived) {
+  if (repository.archived) {
     project.notes = [project.notes, "The source repository is archived; this remains a completed work example."].filter(Boolean).join(" ");
   }
 }
@@ -1047,7 +821,7 @@ const featuredIds = [
 ];
 export const featuredProjects = featuredIds.map((id) =>
   projects.find((project) => project.id === id),
-);
+).filter(Boolean);
 
 /** Return projects matching a platform (or tools) and every search term. */
 export function filterProjects(collection, category = "all", query = "") {

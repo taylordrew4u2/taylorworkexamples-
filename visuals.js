@@ -1,4 +1,4 @@
-// Image evidence, source links, and accurate capture labels. Updated 2026-10-09.
+// Image evidence, source links, and accurate capture labels. Public-only catalog updated 2026-10-12.
 export const projectVisuals = {
   "Showrunner-ICanRunAShow": {
     "image": "./assets/showrunner-workspace-hd.webp",
@@ -287,29 +287,6 @@ export const projectVisuals = {
     ],
     "notes": "Native app screenshots with fictional sample content, published in the project repository."
   },
-  "markvegas": {
-    "image": "./assets/markvegas.webp",
-    "imageAlt": "The live Mark Vegas portfolio website showing artwork in its media grid",
-    "imageWidth": 1100,
-    "imageHeight": 579,
-    "portrait": false,
-    "imageKind": "app-screenshot",
-    "imageLabel": "Website screenshot",
-    "imageCaption": "Public website capture · Artwork portfolio",
-    "gallery": [
-      {
-        "image": "./assets/markvegas.webp",
-        "imageAlt": "The live Mark Vegas portfolio website showing artwork in its media grid",
-        "width": 1100,
-        "height": 579,
-        "portrait": false,
-        "caption": "Public website capture · Artwork portfolio",
-        "label": "Overview",
-        "sourceUrl": "https://markvegas.vercel.app"
-      }
-    ],
-    "notes": "Public website screenshot captured on October 7, 2026. The website implementation is shown; the artwork belongs to the artist."
-  },
   "micro-short-website": {
     "image": "./assets/microshort-capture.webp",
     "imageAlt": "Micro-short Film Website cinematic homepage with navigation and film title",
@@ -472,52 +449,6 @@ export const projectVisuals = {
     ],
     "notes": "Repository app captures use virtual microphones and display an earlier UI version. The v1.13.25 source includes headphone output routing and recording-stem alignment. Physical microphone validation remains in progress."
   },
-  "mystorydailjournal": {
-    "image": "./assets/mystorydailjournal-overview-mono.svg",
-    "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. IN DEVELOPMENT · Architecture summary; runtime not verified. Based on the previously reviewed repository spec, not a running-app capture.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/mystorydailjournal-overview-mono.svg",
-        "imageAlt": "My Story: Daily Journal source-derived overview: Quick capture: Text, voice or tags; Daily context: Optional signals; Day record: Entries and digests",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. IN DEVELOPMENT · Architecture summary; runtime not verified. Based on the previously reviewed repository spec, not a running-app capture.",
-        "sourceUrl": "https://github.com/taylordrew4u2/mystorydailjournal/blob/main/README.md"
-      }
-    ],
-    "notes": "Previously reviewed README snapshot and catalog from 2026-10-07. Public repository currently returns 404; no current runtime or source revision was verified."
-  },
-  "comedysub": {
-    "image": "./assets/comedysub-overview-mono.svg",
-    "imageAlt": "Pins & Needles Submissions source-derived overview: Apply: Validated public form; Review & book: Applicant pipeline; Prepare lineup: Print and email drafts",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE SUMMARY · Public form, admin pipeline and lineup preparation. Previously reviewed source · Email drafts open in the organizer’s own mail client.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/comedysub-overview-mono.svg",
-        "imageAlt": "Pins & Needles Submissions source-derived overview: Apply: Validated public form; Review & book: Applicant pipeline; Prepare lineup: Print and email drafts",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. SOURCE SUMMARY · Public form, admin pipeline and lineup preparation. Previously reviewed source · Email drafts open in the organizer’s own mail client.",
-        "sourceUrl": "https://github.com/taylordrew4u2/comedysub/blob/main/README.md"
-      }
-    ],
-    "notes": "Previously reviewed README snapshot and catalog from 2026-10-07. README is currently unavailable; this is a source summary, not new runtime proof."
-  },
   "bleepkit": {
     "image": "./assets/bleepkit-overview-mono.svg",
     "imageAlt": "BleepKit source-derived overview: Import video: Photos or Files; Transcribe: Timed, editable words; Review & censor: Captions, audio, overlays",
@@ -540,108 +471,6 @@ export const projectVisuals = {
       }
     ],
     "notes": "ImportViewModel.swift imports Photos/Files video. EditorViewModel.swift extracts/transcribes audio, persists timed tokens and manual overrides, and rebuilds audio/caption/overlay preview layers."
-  },
-  "Laugh-Map": {
-    "image": "./assets/laugh-map-overview-mono.svg",
-    "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Transcription, detection and time alignment. Whisper transcription with Apple Speech fallback · Detection is heuristic.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/laugh-map-overview-mono.svg",
-        "imageAlt": "Laugh Map source-derived overview: Recorded set: Extract audio; Transcript: Timed speech segments; Match response: Review detected events",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Transcription, detection and time alignment. Whisper transcription with Apple Speech fallback · Detection is heuristic.",
-        "sourceUrl": "https://github.com/taylordrew4u2/Laugh-Map/blob/68dfa3b5def9180ce6dc6bc2f4884be9384d0b6f/Laugh%20Map/AnalysisServices.swift"
-      }
-    ],
-    "notes": "AnalysisCoordinator extracts audio, tries Whisper then Apple Speech, detects amplitude-based laugh events, matches timed transcript segments and builds a report. ReportViewModel lets users mark false positives.",
-    "summary": "An iOS app that aligns a recorded stand-up set’s transcript with detected audience response.",
-    "features": [
-      "Whisper transcription with Apple Speech fallback",
-      "Audience-response time alignment"
-    ]
-  },
-  "staybusy": {
-    "image": "./assets/staybusy-overview-mono.svg",
-    "imageAlt": "StayBusy source-derived overview: Plan the day: Scheduled and open time; See Now / Next: Current block and timer; Map & trip: Places and day density",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Today, Map and Trip views. Source overview · The native app uses its own dark interface and design system.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/staybusy-overview-mono.svg",
-        "imageAlt": "StayBusy source-derived overview: Plan the day: Scheduled and open time; See Now / Next: Current block and timer; Map & trip: Places and day density",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Today, Map and Trip views. Source overview · The native app uses its own dark interface and design system.",
-        "sourceUrl": "https://github.com/taylordrew4u2/staybusy/blob/4bb94be80b556cc463400f7ab72b038335d9c50f/README.md"
-      }
-    ],
-    "notes": "README documents the proportional Today timeline with OPEN gaps and pinned Now/Next; Map shows numbered located blocks; Trip shows scheduled-versus-open day density."
-  },
-  "HealYourHeart": {
-    "image": "./assets/healyourheart-overview-mono.svg",
-    "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Daily lesson, action and saved reflection. Technical overview of the Journey flow; no clinical outcome is represented.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/healyourheart-overview-mono.svg",
-        "imageAlt": "Heal Your Heart source-derived overview: Read a lesson: Daily Journey content; Try an action: A suggested next step; Save check-in: Reflection and progress",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Daily lesson, action and saved reflection. Technical overview of the Journey flow; no clinical outcome is represented.",
-        "sourceUrl": "https://github.com/taylordrew4u2/HealYourHeart/blob/478973721e86082ebd1a5b27ab4b674e2b138d5e/heal/JourneyContent.swift"
-      }
-    ],
-    "notes": "JourneyContent.swift supplies lesson, action and check-in for each day. ContentView.swift JourneyDayDetail presents them, saves text keyed by day, and marks Journey days complete. Verified from the current local clone.",
-    "summary": "A native iOS app with a daily reflection journey, suggested actions, and saved check-ins.",
-    "features": [
-      "Daily lessons and suggested reflection actions",
-      "Saved journal check-ins and progress"
-    ]
-  },
-  "laugh-extractor": {
-    "image": "./assets/laugh-extractor-overview-mono.svg",
-    "imageAlt": "Laugh Extractor source-derived overview: Import a set: Video or audio files; Tune detection: Review candidate bursts; Export clips: Separate M4A or WAV files",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
-    "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Local analysis and one file per selected burst. Source overview · Detection quality depends on the recording and chosen thresholds.",
-    "gallery": [
-      {
-        "label": "Workflow overview",
-        "image": "./assets/laugh-extractor-overview-mono.svg",
-        "imageAlt": "Laugh Extractor source-derived overview: Import a set: Video or audio files; Tune detection: Review candidate bursts; Export clips: Separate M4A or WAV files",
-        "width": 1600,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Local analysis and one file per selected burst. Source overview · Detection quality depends on the recording and chosen thresholds.",
-        "sourceUrl": "https://github.com/taylordrew4u2/laugh-extractor/blob/f7e85aba861660710433bfc7656d755fcaf134c7/README.md"
-      }
-    ],
-    "notes": "Current README documents file import, local SoundAnalysis classification, adjustable segmenter thresholds, selected burst review and separate M4A/WAV exports. Native build was compiled; this graphic is not a runtime capture."
   },
   "vlognudge": {
     "image": "./assets/vlognudge-home.webp",
@@ -774,49 +603,6 @@ export const projectVisuals = {
       }
     ],
     "notes": "Actual native onboarding capture. Permissions were not granted and dictation was not exercised."
-  },
-  "CONTROLLEREVENT": {
-    "image": "./assets/controller-live-loaded.webp",
-    "imageAlt": "Pins & Needles Controller timer, lineup position and audio controls for a saved sample show",
-    "imageWidth": 1440,
-    "imageHeight": 900,
-    "portrait": false,
-    "imageKind": "development-capture",
-    "imageLabel": "Development preview",
-    "imageCaption": "Local development capture of the original desktop renderer using sample data. No native integration or audio playback was exercised.",
-    "gallery": [
-      {
-        "label": "Live controls",
-        "image": "./assets/controller-live-loaded.webp",
-        "imageAlt": "Pins & Needles Controller timer, lineup position and audio controls for a saved sample show",
-        "width": 1440,
-        "height": 900,
-        "portrait": false,
-        "caption": "Local development capture of the original desktop renderer using sample data. No native integration or audio playback was exercised.",
-        "sourceUrl": "https://github.com/taylordrew4u2/CONTROLLEREVENT/blob/5d838cc8fa164d1647e6e5f56d6702e0d7b47701/src/App.tsx"
-      },
-      {
-        "label": "Lineup builder",
-        "image": "./assets/controller-builder.webp",
-        "imageAlt": "Pins & Needles Controller lineup builder with four example performers",
-        "width": 1440,
-        "height": 900,
-        "portrait": false,
-        "caption": "Local development capture of the original desktop renderer using sample data. No native integration or audio playback was exercised.",
-        "sourceUrl": "https://github.com/taylordrew4u2/CONTROLLEREVENT/blob/5d838cc8fa164d1647e6e5f56d6702e0d7b47701/src/App.tsx"
-      },
-      {
-        "label": "Performer library",
-        "image": "./assets/controller-library.webp",
-        "imageAlt": "Pins & Needles Controller performer library with original example performers",
-        "width": 1440,
-        "height": 1000,
-        "portrait": false,
-        "caption": "Local development capture of the original desktop renderer using sample data. No native integration or audio playback was exercised.",
-        "sourceUrl": "https://github.com/taylordrew4u2/CONTROLLEREVENT/blob/5d838cc8fa164d1647e6e5f56d6702e0d7b47701/src/App.tsx"
-      }
-    ],
-    "notes": "Local development capture of the original desktop renderer using sample data. No native integration or audio playback was exercised."
   },
   "tlcmassagewellness": {
     "image": "./assets/tlc-homepage.webp",

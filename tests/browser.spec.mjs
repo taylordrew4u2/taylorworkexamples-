@@ -1,6 +1,17 @@
 import { test, expect } from "@playwright/test";
 import { projects } from "../projects.js";
 
+const removedProjectIds = [
+  "HealYourHeart",
+  "laugh-extractor",
+  "Laugh-Map",
+  "markvegas",
+  "mystorydailjournal",
+  "CONTROLLEREVENT",
+  "comedysub",
+  "staybusy",
+];
+
 async function expectLoadedImageToFit(image, expected) {
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((element) =>
@@ -154,7 +165,7 @@ test("hero previews open the matching website and native iPhone project", async 
 }) => {
   await page.goto("/");
   const previews = [
-    ["View the Mark Vegas website project", "Mark Vegas Art Portfolio"],
+    ["View the Pins & Needles website project", "Pins & Needles Comedy"],
     ["View the My Gig Calendar iPhone app project", "My Gig Calendar"],
   ];
   const dialog = page.getByRole("dialog");
@@ -181,7 +192,7 @@ test("archive opens and filters, searches, empty state, and reset work together"
   await archive.locator("summary").click();
   await expect(archive).toHaveAttribute("open", "");
   const total = await page.locator(".archive-card").count();
-  expect(total).toBe(24);
+  expect(total).toBe(16);
   await page.locator('[data-filter="ios"]').click();
   await expect(page.locator('[data-filter="ios"]')).toHaveAttribute(
     "aria-pressed",
@@ -225,16 +236,16 @@ test("the archive deep link opens its images and filters on initial navigation",
   await page.goto("/#project-archive");
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
   await expect(page.getByRole("searchbox")).toBeVisible();
-  await expect(page.locator(".archive-card")).toHaveCount(24);
-  await expect(page.locator("#result-count")).toHaveText("24 OF 24 PROJECTS");
+  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
 });
 
-test("all 24 archive covers load, fit their frames, and disclose the kind of image", async ({ page }) => {
+test("all 16 public archive covers load, fit their frames, and disclose the kind of image", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/#project-archive");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator(".archive-card")).toHaveCount(24);
+  await expect(page.locator(".archive-card")).toHaveCount(16);
   await expect(page.locator(".archive-placeholder")).toHaveCount(0);
   for (const project of projects) {
     const preview = page.locator(`.archive-preview[data-project="${project.id}"]`);
@@ -249,55 +260,57 @@ test("all 24 archive covers load, fit their frames, and disclose the kind of ima
       width: project.imageWidth,
       height: project.imageHeight,
     });
-    if (project.sourceAvailable === false) {
-      await expect(card.locator(".source-note")).toHaveText("Source not public");
-      await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveCount(0);
-    } else {
-      await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
-    }
+    expect(project.sourceAvailable).toBe(true);
+    await expect(card.locator(".source-note")).toHaveCount(0);
+    await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
   }
   expect(errors).toEqual([]);
 });
 
-test("unavailable source stays noninteractive while live-site and public source links remain available", async ({ page }) => {
-  const earlierProject = projects.find((project) => project.id === "markvegas");
-  const publicProject = projects.find((project) => project.id === "Showrunner-ICanRunAShow");
-  expect(earlierProject.sourceAvailable).toBe(false);
-  expect(earlierProject.demoUrl).toBe("https://markvegas.vercel.app");
+test("removed repositories stay out of archive, search and hero while public source and live-site links remain available", async ({ page }) => {
+  const publicProject = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
   expect(publicProject.sourceAvailable).toBe(true);
-  expect(publicProject.repoUrl).toBe("https://github.com/taylordrew4u2/Showrunner-ICanRunAShow");
+  expect(publicProject.repoUrl).toBe("https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite");
+  expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
-  const earlierPreview = page.locator(`.archive-preview[data-project="${earlierProject.id}"]`);
-  const earlierCard = earlierPreview.locator("..");
-  await expect(earlierCard.locator(".source-note")).toHaveText("Source not public");
-  await expect(earlierCard.locator('a[href*="github.com"]')).toHaveCount(0);
-
-  await earlierPreview.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(earlierProject.title);
-  await expect(dialog.locator(".dialog-source .source-note")).toHaveText("Source not public");
-  await dialog.locator(".technical-details summary").click();
-  await expect(dialog.locator(".technical-content .source-note")).toBeVisible();
-  await expect(dialog.locator(".technical-content .source-note")).toHaveText("Source not public");
-  await expect(dialog.locator('a[href*="github.com"]')).toHaveCount(0);
-  const liveSite = dialog.getByRole("link", { name: earlierProject.demoLabel, exact: true });
-  await expect(liveSite).toBeVisible();
-  await expect(liveSite).toHaveAttribute("href", earlierProject.demoUrl);
-  await expect(liveSite).toHaveAttribute("target", "_blank");
-  await expect(liveSite).toHaveAttribute("rel", /noopener/);
-  await page.keyboard.press("Escape");
+  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator(".source-note")).toHaveCount(0);
+  await expect(page.locator(".hero-web")).toHaveAttribute("data-project", publicProject.id);
+  await expect(page.locator(".hero-web img")).toHaveAttribute("src", publicProject.image);
+  await expect(page.locator(".hero-stage")).not.toContainText(/Mark Vegas/i);
+  for (const id of removedProjectIds) {
+    await expect(page.locator(`[data-project="${id}"]`)).toHaveCount(0);
+  }
+  for (const asset of ["markvegas.webp", "controller-live-loaded.webp", "staybusy-overview-mono.svg"]) {
+    const response = await page.request.get(`/assets/${asset}`);
+    expect(response.status(), `${asset}: removed project media is not deployed`).toBe(404);
+  }
+  const search = page.getByRole("searchbox");
+  for (const id of removedProjectIds) {
+    await search.fill(id);
+    await expect(page.locator(".archive-card")).toHaveCount(0);
+    await expect(page.locator("#result-count")).toHaveText("0 OF 16 PROJECTS");
+  }
+  await search.fill("");
+  await expect(page.locator(".archive-card")).toHaveCount(16);
 
   const publicPreview = page.locator(`.archive-preview[data-project="${publicProject.id}"]`);
   const publicCard = publicPreview.locator("..");
   await expect(publicCard.locator(".source-note")).toHaveCount(0);
   await expect(publicCard.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
   await publicPreview.click();
+  const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(publicProject.title);
   await expect(dialog.locator(".source-note")).toHaveCount(0);
   await expect(dialog.getByRole("link", { name: "Project documentation", exact: true })).toHaveAttribute("href", publicProject.documentationUrl);
   await dialog.locator(".technical-details summary").click();
   await expect(dialog.getByRole("link", { name: "View source code", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
+  const liveSite = dialog.getByRole("link", { name: publicProject.demoLabel, exact: true });
+  await expect(liveSite).toBeVisible();
+  await expect(liveSite).toHaveAttribute("href", publicProject.demoUrl);
+  await expect(liveSite).toHaveAttribute("target", "_blank");
+  await expect(liveSite).toHaveAttribute("rel", /noopener/);
 });
 
 test("every project dialog shows its images and keeps gallery, caption, full-size link, and focus in sync", async ({ page }) => {
@@ -342,7 +355,7 @@ test("every project dialog shows its images and keeps gallery, caption, full-siz
       await expect(images.locator(".image-original")).toHaveAttribute("target", "_blank");
       await expect(images.locator(".image-original")).toHaveAttribute("rel", /noopener/);
       expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
-      await expect(page.locator("#result-count")).toHaveText("24 OF 24 PROJECTS");
+      await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
       await expect(page.locator("#project-search")).toHaveValue("");
     }
     await page.keyboard.press("Escape");

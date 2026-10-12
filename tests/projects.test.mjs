@@ -62,23 +62,26 @@ const expectedIds = [
   "PinsAndNeedlesComedyWebsite",
   "Open-Micer-Timer",
   "vlognudge",
-  "CONTROLLEREVENT",
-  "staybusy",
-  "Laugh-Map",
   "dictype",
-  "laugh-extractor",
-  "markvegas",
   "tlcmassagewellness",
-  "mystorydailjournal",
-  "comedysub",
-  "HealYourHeart",
   "the-trip-handler",
   "Role-Call",
 ];
 
-test("the catalog represents all 24 owned projects once, excluding profile and portfolio repos", () => {
-  assert.equal(projects.length, 24);
-  assert.equal(new Set(projects.map((project) => project.id)).size, 24);
+const removedIds = [
+  "HealYourHeart",
+  "laugh-extractor",
+  "Laugh-Map",
+  "markvegas",
+  "mystorydailjournal",
+  "CONTROLLEREVENT",
+  "comedysub",
+  "staybusy",
+];
+
+test("the catalog represents all 16 public projects once, excluding profile and portfolio repos", () => {
+  assert.equal(projects.length, 16);
+  assert.equal(new Set(projects.map((project) => project.id)).size, 16);
   assert.deepEqual(
     projects.map((project) => project.id).sort(),
     expectedIds.sort(),
@@ -106,9 +109,13 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("current public GitHub projects have canonical source links and older work has availability labels", () => {
-  assert.equal(repositoryVerifiedAt, "2026-10-09");
+test("the public-only catalog matches the October 12 GitHub inventory and canonical source links", () => {
+  assert.equal(repositoryVerifiedAt, "2026-10-12");
   assert.equal(Object.keys(publicRepositories).length, 16);
+  assert.deepEqual(
+    projects.map((project) => project.id).sort(),
+    Object.keys(publicRepositories).sort(),
+  );
   for (const [id, repository] of Object.entries(publicRepositories)) {
     const project = projects.find((entry) => entry.id === id);
     assert.ok(project, `${id}: current GitHub project must be represented`);
@@ -117,11 +124,30 @@ test("current public GitHub projects have canonical source links and older work 
     assert.equal(project.repositoryArchived, repository.archived);
     assert.match(project.repositoryHead, /^[a-f0-9]{40}$/);
   }
-  const older = projects.filter((project) => !project.sourceAvailable);
-  assert.equal(older.length, 8);
-  assert.ok(older.every((project) => /not currently publicly available/.test(project.notes)));
+  assert.ok(projects.every((project) => project.sourceAvailable === true));
   assert.equal(projects.find((project) => project.id === "tlcmassagewellness").repositoryArchived, true);
   assert.equal(projects.some((project) => project.id === "taylosite"), false);
+});
+
+test("removed repositories cannot appear in the catalog or search results", () => {
+  for (const id of removedIds) {
+    assert.equal(projects.some((project) => project.id === id), false, `${id}: removed from catalog`);
+    assert.deepEqual(filterProjects(projects, "all", id), [], `${id}: removed from search`);
+  }
+});
+
+test("the homepage hero uses the public Pins & Needles website and no removed projects", () => {
+  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const website = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
+  const hero = html.match(/<div class="hero-stage"[\s\S]*?<\/section>/)?.[0];
+  assert.ok(hero, "Hero previews must be present");
+  assert.match(hero, /class="hero-web" data-project="PinsAndNeedlesComedyWebsite"/);
+  assert.ok(hero.includes(website.image), "Hero website image must match the public project");
+  assert.match(hero, /Pins &amp; Needles website|Pins & Needles website/);
+  assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);
+  for (const id of removedIds) {
+    assert.ok(!hero.includes(`data-project="${id}"`), `${id}: removed from hero`);
+  }
 });
 
 test("selected products have complete cases and the leading stories have traceable proof and screens", () => {
@@ -214,19 +240,11 @@ test("App Store listings, RoleCall development captures, and known unavailable d
     assert.match(frame.caption, /development capture.*actual.*sample/i);
     assert.match(frame.sourceUrl, /\/components\/(ShotListBoard|ScriptWorkspace)\.tsx$/);
   }
-  for (const id of [
-    "nycstandupopenmicmaster",
-    "CONTROLLEREVENT",
-    "comedysub",
-  ]) {
-    assert.equal(find(id).demoUrl, null);
-  }
+  assert.equal(find("nycstandupopenmicmaster").demoUrl, null);
   assert.match(find("usbmic").notes, /physical[- ]microphone validation/i);
-  assert.match(`${find("mystorydailjournal").imageCaption} ${find("mystorydailjournal").notes}`,
-    /in development|no current runtime|runtime.*not verified/i);
 });
 
-test("all 24 projects have traceable covers and galleries with accurate asset dimensions", () => {
+test("all 16 public projects have traceable covers and galleries with accurate asset dimensions", () => {
   const imageKinds = new Set(["app-screenshot", "development-capture", "project-overview"]);
   for (const project of projects) {
     assert.ok(project.image, `${project.id}: cover required`);
@@ -279,8 +297,6 @@ test("limited capture states retain their user-facing disclosures", () => {
   assert.match(find("dictype").imageCaption, /permissions were not granted/i);
   assert.match(find("dictype").imageCaption, /dictation was not exercised/i);
   assert.ok(find("usbmic").gallery.every((frame) => /virtual microphones/i.test(frame.caption)));
-  assert.match(find("mystorydailjournal").imageCaption, /in development/i);
-  assert.match(find("comedysub").imageCaption, /previously reviewed source/i);
   const binder = find("The-Bit-Binder");
   for (const frame of binder.gallery.filter((view) => view.workflow)) {
     assert.match(frame.caption, /workflow.*source/i);
@@ -288,11 +304,11 @@ test("limited capture states retain their user-facing disclosures", () => {
 });
 
 test("platform filters are case-insensitive and keep all three platforms populated", () => {
-  assert.equal(filterProjects(projects).length, 24);
+  assert.equal(filterProjects(projects).length, 16);
   for (const [category, count] of [
-    ["web", 11],
-    ["ios", 9],
-    ["desktop", 4],
+    ["web", 9],
+    ["ios", 5],
+    ["desktop", 2],
   ]) {
     const results = filterProjects(projects, category.toUpperCase());
     assert.equal(results.length, count);
@@ -330,7 +346,7 @@ test("search finds names, repository names, summaries, stacks, and categories wi
       .filter((project) => project.category === "desktop")
       .every((project) => desktopSearch.includes(project)),
   );
-  assert.equal(filterProjects(projects, "all", "   ").length, 24);
+  assert.equal(filterProjects(projects, "all", "   ").length, 16);
   assert.deepEqual(
     filterProjects(projects, "all", "no-project-matches-this"),
     [],

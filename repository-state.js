@@ -1,5 +1,5 @@
-// Public GitHub inventory checked on 2026-10-09. This is a build-time snapshot.
-export const repositoryVerifiedAt = "2026-10-09";
+// Public GitHub inventory checked on 2026-10-12. This is a build-time snapshot.
+export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
   "Bill-Spilt": {
     "repoUrl": "https://github.com/taylordrew4u2/Bill-Spilt",
@@ -107,7 +107,7 @@ export const publicRepositories = {
     "homepage": "https://taylordrewcomedy.com",
     "defaultBranch": "main",
     "headSha": "9938dd84487780d2df51a1a33960de0e7b2b76a1",
-    "pushedAt": "2026-10-03T14:45:17Z",
+    "pushedAt": "2026-10-10T13:49:30Z",
     "archived": false,
     "readmeAvailable": true
   },
@@ -146,8 +146,8 @@ export const publicRepositories = {
     "description": "SobStage \u2014 cross-platform desktop app that aggregates up to 8 USB mics, records each to its own file plus a summed mix, and feeds one low-latency monitor mix to the room",
     "homepage": "",
     "defaultBranch": "main",
-    "headSha": "5c64a7da3ef2a47603c17564e66f4610da8f3154",
-    "pushedAt": "2026-10-09T20:33:40Z",
+    "headSha": "d436566608aef36974e99f98657910b2700c6400",
+    "pushedAt": "2026-10-12T04:03:48Z",
     "archived": false,
     "readmeAvailable": true
   },
