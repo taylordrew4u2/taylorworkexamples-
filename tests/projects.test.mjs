@@ -372,6 +372,68 @@ test("My Gig Calendar keeps its native cover and all seven unaltered supplied pr
   }
 });
 
+test("The BitBinder keeps its three native views followed by all nine unaltered supplied product images", () => {
+  const binder = projects.find((project) => project.id === "The-Bit-Binder");
+  assert.equal(binder.image, "./assets/bitbinder-native-library.webp");
+  assert.equal(binder.imageKind, "development-capture");
+  assert.equal(binder.gallery.length, 12);
+  assert.deepEqual(binder.gallery.slice(0, 3).map((frame) => ({
+    label: frame.label, image: frame.image, caption: frame.caption,
+    width: frame.width, height: frame.height, portrait: frame.portrait,
+  })), [
+    {
+      label: "Library & writing", image: "./assets/bitbinder-native-library.webp",
+      caption: "Native development capture · Oct 8, 2026 · Fictional joke library",
+      width: 960, height: 2087, portrait: true,
+    },
+    {
+      label: "Writing editor", image: "./assets/bitbinder-native-writing.webp",
+      caption: "Native development capture · Oct 8, 2026 · Fictional writing sample",
+      width: 960, height: 2087, portrait: true,
+    },
+    {
+      label: "Set rehearsal", image: "./assets/bitbinder-native-setlist.webp",
+      caption: "Native development capture · Oct 8, 2026 · Fictional set rehearsal",
+      width: 960, height: 2087, portrait: true,
+    },
+  ]);
+  assert.ok(binder.gallery.slice(0, 3).every((frame) => !frame.sourceKind));
+  assert.equal(binder.gallery[0].companion.image, "./assets/bitbinder-native-writing.webp");
+  assert.equal(binder.gallery[0].companion.width, 960);
+  assert.equal(binder.gallery[0].companion.height, 2087);
+  assert.equal(binder.gallery[1].companion, undefined);
+  assert.equal(binder.gallery[2].companion, undefined);
+
+  const expectedArtwork = [
+    ["banner-1920x1080.png", "Product overview", "ed9135937396cf4830bb4b4ded886c62d3b47a6ec5d1356253e19c653294cc73"],
+    ["01-every-bit.png", "Every bit", "7165d87af8d6886ef811202adb1c0c8241c00eca94569280686fa787c7b00cfa"],
+    ["02-import.png", "Import material", "eef534c2a6f79973b126afd3fa808b753b5c5b18d95456477708e39b328e1ec3"],
+    ["03-joke-library.png", "Joke library", "a5e6d5a6eb1ddd9469d8d65505563473e57d92c1cf8ba4666e923080fd67fcd2"],
+    ["04-record-transcribe.png", "Record & transcribe", "57e085c85d3e1654790087c328a6bd9ce29f59235aaf17795ecc4eed92188bd5"],
+    ["05-set-lists.png", "Set lists", "a2bb56a3418d56dfa75d927e22390b1650cba9d81ff8d0d577681338aad52f4c"],
+    ["06-brainstorm.png", "Brainstorm", "ad4a5e00c7700a6d7d0fb61c5151123eb8b473465ea0d0ce3618b2f27f24c26b"],
+    ["07-bitbuddy.png", "BitBuddy", "1359e4e9ea28e4b378e928f9a8c4e96719f034a0395df3664e373ef1086d2410"],
+    ["08-roast-mode.png", "Roast mode", "f5f2896eeddf8e3a3e40bf832ba62376147922a730597a1e593dd438d1082c5c"],
+  ];
+  const artwork = binder.gallery.slice(3);
+  assert.deepEqual(artwork.map((frame) => [frame.image, frame.label]),
+    expectedArtwork.map(([name, label]) => [`./assets/bitbinder/${name}`, label]));
+  for (const [index, frame] of artwork.entries()) {
+    const [name, , sha256] = expectedArtwork[index];
+    assert.equal(frame.sourceKind, "owner-supplied-product-artwork");
+    assert.match(frame.caption, /^Supplied product artwork/);
+    assert.equal(frame.width, index === 0 ? 1920 : 1320);
+    assert.equal(frame.height, index === 0 ? 1080 : 2868);
+    assert.equal(frame.portrait, index !== 0);
+    assert.equal(frame.companion, undefined);
+    assert.equal(frame.sourceUrl, `https://customtechbuilt4u.com/assets/bitbinder/${name}`);
+    assert.ok(binder.sources.includes(frame.sourceUrl));
+    const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
+      `${name}: original supplied pixels must remain unchanged`);
+  }
+});
+
 test("limited capture states retain their user-facing disclosures", () => {
   const find = (id) => projects.find((project) => project.id === id);
   assert.match(find("dictype").imageCaption, /onboarding/i);

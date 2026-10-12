@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { projects } from "../projects.js";
+import { projects, featuredProjects } from "../projects.js";
 
 const removedProjectIds = [
   "HealYourHeart",
@@ -836,18 +836,33 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   });
 });
 
-test("lead galleries change real images, captions, and selection without opening a modal", async ({
-  page,
-}) => {
-  await page.goto("/");
-  for (const story of await page.locator(".case-study").all()) {
-    const id = await story.getAttribute("data-case-id");
-    const project = projects.find((entry) => entry.id === id);
+for (const project of featuredProjects.slice(0, 3)) {
+  test(`${project.title} lead gallery changes real images, captions, and selection without opening a modal`, async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const isBitBinder = project.id === "The-Bit-Binder";
+    await page.goto(isBitBinder ? "/#the-bit-binder-showcase" : "/");
+    const story = page.locator(`.case-study[data-case-id="${project.id}"]`);
+    if (isBitBinder) {
+      await expect(story).toHaveAttribute("id", "the-bit-binder-showcase");
+      expect(new URL(page.url()).hash).toBe("#the-bit-binder-showcase");
+      await expect(story).toBeInViewport();
+    }
     const title = (await story.locator(".project-title").textContent()).trim();
     const group = story.getByRole("group", { name: `Screens from ${title}`, exact: true });
     const choices = group.locator("button[data-gallery][data-screen]");
     const count = await choices.count();
     expect(count).toBeGreaterThanOrEqual(2);
+    await expect(choices).toHaveCount(project.gallery.length);
+    await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
+    if (isBitBinder) {
+      expect(count).toBe(12);
+      await expect(choices.filter({ hasText: /Product overview|Every bit|Import material|Joke library|Record & transcribe|Set lists|Brainstorm|BitBuddy|Roast mode/ })).toHaveCount(9);
+      expect(project.gallery.slice(3).map((frame) => frame.label)).toEqual([
+        "Product overview", "Every bit", "Import material", "Joke library",
+        "Record & transcribe", "Set lists", "Brainstorm", "BitBuddy", "Roast mode",
+      ]);
+    }
     await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
     await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -856,7 +871,10 @@ test("lead galleries change real images, captions, and selection without opening
     await expect(story.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
     await expectInlineGalleryFrame(story, project, project.gallery[0], ".case-screen");
     for (let index = 1; index < count; index += 1) {
-      await choices.nth(index).click();
+      const choice = choices.nth(index);
+      await choice.scrollIntoViewIfNeeded();
+      await choice.focus();
+      await page.keyboard.press(index % 2 === 0 ? "Enter" : "Space");
       await expect(choices.nth(index)).toHaveAttribute("aria-pressed", "true");
       await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "false");
       await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
@@ -876,11 +894,12 @@ test("lead galleries change real images, captions, and selection without opening
     await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
     await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
     await expectInlineGalleryFrame(story, project, project.gallery[0], ".case-screen");
-  }
-  await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toHaveText(
-    projects.find((project) => project.id === "The-Bit-Binder").gallery[0].caption,
-  );
-});
+    await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toHaveText(
+      projects.find((entry) => entry.id === "The-Bit-Binder").gallery[0].caption,
+    );
+    expect(errors).toEqual([]);
+  });
+}
 
 test("My Gig Calendar changes its on-page images, captions, and selection without opening a modal", async ({ page }) => {
   const project = projects.find((entry) => entry.id === "MyGigCalendar");

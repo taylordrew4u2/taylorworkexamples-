@@ -8,6 +8,8 @@ Three business scenarios precede selected work: a useful public website, connect
 
 My Gig Calendar has a wider supporting showcase, directly addressable with `#my-gig-calendar-showcase`, with on-page image choices as well as its project dialog. Its two original native captures remain first, followed by seven original supplied promotional images. Captions identify the supplied artwork separately from runtime captures; the full-size originals stay available. See [the supplied asset record](docs/gig-calendar-assets.md). The open-mic performance video is not embedded as an app demonstration.
 
+The BitBinder gallery retains its three native development views first, followed by nine supplied promotional images for 12 choices. Original PNGs in `assets/bitbinder/` preserve the supplied bytes, colors, and proportions. Captions distinguish this product artwork from runtime captures; full-size files remain available. See [the BitBinder asset record](docs/bitbinder-assets.md) for the filenames, dimensions, sizes, hashes, and feature-validation limits.
+
 ## Run locally
 
 Requires Node.js 20 or newer.

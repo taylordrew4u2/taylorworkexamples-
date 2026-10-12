@@ -103,9 +103,108 @@ export const projectVisuals = {
         "portrait": true,
         "caption": "Native development capture · Oct 8, 2026 · Fictional set rehearsal",
         "sourceUrl": "https://github.com/taylordrew4u2/The-Bit-Binder/tree/432800504d6d7f894870e7e1896e0413b0befa96"
+      },
+      {
+        "label": "Product overview",
+        "image": "./assets/bitbinder/banner-1920x1080.png",
+        "imageAlt": "BitBinder supplied product banner with its app icon, notebook home, and example joke library.",
+        "width": 1920,
+        "height": 1080,
+        "portrait": false,
+        "caption": "Supplied product artwork · Notebook, writing, recording, imports, and set lists.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/banner-1920x1080.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Every bit",
+        "image": "./assets/bitbinder/01-every-bit.png",
+        "imageAlt": "BitBinder supplied product artwork showing the notebook home, capture actions, and example joke and set counts.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Every bit in one notebook with example library counts.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/01-every-bit.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Import material",
+        "image": "./assets/bitbinder/02-import.png",
+        "imageAlt": "BitBinder supplied product artwork illustrating handwritten-note import and a review screen with example jokes.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Import review illustrated with example handwritten notes and jokes.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/02-import.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Joke library",
+        "image": "./assets/bitbinder/03-joke-library.png",
+        "imageAlt": "BitBinder product artwork showing a searchable joke library with example jokes, category filters, tags, and hit stars.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Joke library, tags, and hit stars with example material.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/03-joke-library.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Record & transcribe",
+        "image": "./assets/bitbinder/04-record-transcribe.png",
+        "imageAlt": "BitBinder product artwork showing an example open-mic recording, playback waveform, and transcript review inside a phone frame.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Recording and transcript review illustration with sample material.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/04-record-transcribe.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Set lists",
+        "image": "./assets/bitbinder/05-set-lists.png",
+        "imageAlt": "BitBinder product artwork showing an ordered six-joke set list, estimated runtime, and a drag-to-reorder feature callout.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Set-list ordering and estimated runtime with example jokes.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/05-set-lists.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Brainstorm",
+        "image": "./assets/bitbinder/06-brainstorm.png",
+        "imageAlt": "BitBinder product artwork showing colored idea notes and a Promote to Joke feature callout inside a phone frame.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Idea notes and the promote-to-joke workflow illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/06-brainstorm.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "BitBuddy",
+        "image": "./assets/bitbinder/07-bitbuddy.png",
+        "imageAlt": "BitBinder product artwork illustrating a BitBuddy conversation with joke-tag suggestions and a save confirmation.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · BitBuddy writing-assistant conversation illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/07-bitbuddy.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Roast mode",
+        "image": "./assets/bitbinder/08-roast-mode.png",
+        "imageAlt": "BitBinder product artwork showing a sample roast target, descriptive traits, and an organized list of roast jokes.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Roast-target details and example joke organization.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/bitbinder/08-roast-mode.png",
+        "sourceKind": "owner-supplied-product-artwork"
       }
     ],
-    "notes": "Native development captures from Oct 8, 2026, use the source at revision 4328005 with an in-memory store, three fictional jokes, and one fictional set. They do not demonstrate cloud sync or transcription. Current implementation details were reviewed separately at revision 48e78c2."
+    "notes": "Native development captures from Oct 8, 2026, use the source at revision 4328005 with an in-memory store, three fictional jokes, and one fictional set. They do not demonstrate cloud sync or transcription. Current implementation details were reviewed separately at revision 48e78c2. The nine owner-supplied product artworks illustrate features and example content; they are not fresh native captures or new validation of transcription, AI output, or cloud behavior."
   },
   "the-trip-handler": {
     "image": "./assets/triphandler-meals-current.webp",

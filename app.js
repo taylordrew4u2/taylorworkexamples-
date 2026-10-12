@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=23";
+} from "./projects.js?v=24";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -104,13 +104,14 @@ function productStory(project, index) {
     },
   ];
   const frame = views[0];
+  const anchor = project.id === "The-Bit-Binder" ? 'id="the-bit-binder-showcase"' : "";
   const highlights = (project.highlights || [])
     .map(
       (item) =>
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${showcaseGallery(project, frame, "screen-toolbar")}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${showcaseGallery(project, frame, "screen-toolbar")}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
