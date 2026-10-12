@@ -1,6 +1,6 @@
-import { projectVisuals } from "./visuals.js?v=16";
-import { projectIdentities } from "./identities.js?v=16";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=16";
+import { projectVisuals } from "./visuals.js?v=17";
+import { projectIdentities } from "./identities.js?v=17";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=17";
 
 // The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.

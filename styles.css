@@ -134,14 +134,14 @@ button, a, input, select, summary {
   align-items: center;
   gap: 0.5rem;
   font-family: var(--display);
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.07em;
 }
 
 .brand-symbol {
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 2.5rem;
+  height: 2.5rem;
   flex: none;
   object-fit: contain;
 }
@@ -179,36 +179,28 @@ button, a, input, select, summary {
 
 .intro {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1fr);
-  gap: 3rem;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: 3.5rem;
   align-items: center;
   padding-block: 2.5rem 3rem;
 }
 
-.hero-eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 2rem;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 0.5rem;
-  height: 0.5rem;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--accent);
+.hero-tagline {
+  font-size: 1rem;
+  font-weight: 650;
+  line-height: 1.5;
+  color: var(--ink);
+  margin-bottom: 1.5rem;
 }
 
 .intro h1 {
   font-family: var(--display);
-  font-size: clamp(3.5rem, 5.6vw, 5.5rem);
-  letter-spacing: -0.07em;
+  font-size: clamp(2.75rem, 4.3vw, 4.25rem);
+  max-width: 13.5ch;
+  letter-spacing: -0.055em;
   font-weight: 750;
-  line-height: 1.06;
+  line-height: 1.08;
+  text-wrap: balance;
 }
 
 .intro h1 span {
@@ -219,16 +211,20 @@ button, a, input, select, summary {
   color: var(--accent);
 }
 
-.headline-last span {
-  display: inline !important;
+.intro-descriptor {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 550;
+  max-width: 36rem;
+  margin-top: 1.5rem;
 }
 
 .intro-description {
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.75;
   color: var(--muted);
-  max-width: 26rem;
-  margin-top: 1.75rem;
+  max-width: 36rem;
+  margin-top: 1rem;
 }
 
 .intro-actions {
@@ -237,13 +233,6 @@ button, a, input, select, summary {
   flex-wrap: wrap;
   gap: 1.5rem;
   margin-top: 2rem;
-}
-
-.intro-byline {
-  margin-top: 2rem;
-  color: var(--muted);
-  font-size: 0.6875rem;
-  line-height: 1.6;
 }
 
 .hero-stage {
@@ -1521,7 +1510,7 @@ dialog::backdrop {
     gap: 2rem;
   }
   .intro h1 {
-    font-size: clamp(3rem, 5.5vw, 4.5rem);
+    font-size: clamp(2.5rem, 4.3vw, 3rem);
   }
   .case-screen.project-visual {
     height: 35rem;
@@ -1551,23 +1540,17 @@ dialog::backdrop {
   }
 }
 
-@media (max-width:800px) {
-  .wrap {
-    width: calc(100% - 3rem);
-  }
-  .site-header nav {
-    gap: 1.5rem;
-  }
+@media (max-width:980px) {
   .intro {
     grid-template-columns: 1fr;
     padding-block: 2rem 2.5rem;
     gap: 2.5rem;
   }
   .intro-copy {
-    max-width: 36rem;
+    max-width: 44rem;
   }
   .intro h1 {
-    font-size: clamp(3.5rem, 8.5vw, 5rem);
+    font-size: clamp(2.75rem, 5.5vw, 3.5rem);
   }
   .hero-stage {
     max-width: 40rem;
@@ -1586,6 +1569,15 @@ dialog::backdrop {
   }
   .hero-asterisk {
     font-size: 6rem;
+  }
+}
+
+@media (max-width:800px) {
+  .wrap {
+    width: calc(100% - 3rem);
+  }
+  .site-header nav {
+    gap: 1.5rem;
   }
   .capability-strip {
     align-items: flex-start;
@@ -1683,7 +1675,7 @@ dialog::backdrop {
     min-height: 5rem;
   }
   .wordmark {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
   .brand-symbol {
     width: 2.25rem;
@@ -1741,17 +1733,24 @@ dialog::backdrop {
     padding-block: 1.5rem 2rem;
     gap: 2rem;
   }
-  .hero-eyebrow {
-    font-size: 0.6875rem;
-    margin-bottom: 1.5rem;
+  .hero-tagline {
+    font-size: 0.875rem;
+    margin-bottom: 1.125rem;
   }
   .intro h1 {
-    font-size: clamp(2.75rem, 11.5vw, 4rem);
+    font-size: clamp(2.25rem, 9.8vw, 3rem);
+    max-width: 14ch;
+    letter-spacing: -0.045em;
+    line-height: 1.12;
+  }
+  .intro-descriptor {
+    font-size: 1rem;
+    margin-top: 1.25rem;
   }
   .intro-description {
     font-size: 0.9375rem;
-    margin-top: 1.25rem;
-    max-width: 22rem;
+    margin-top: 0.875rem;
+    max-width: 30rem;
   }
   .intro-actions {
     margin-top: 1.5rem;
@@ -1764,10 +1763,6 @@ dialog::backdrop {
   }
   .intro-actions .text-link {
     font-size: 0.75rem;
-  }
-  .intro-byline {
-    margin-top: 1.5rem;
-    font-size: 0.625rem;
   }
   .hero-stage {
     aspect-ratio: 1.05;

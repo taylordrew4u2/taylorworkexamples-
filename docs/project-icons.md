@@ -42,7 +42,7 @@ The **MS** initials are a neutral portfolio identifier, not an official film log
 
 ## Color and display policy
 
-Project icons preserve their original colors and proportions. No icon was generated, repainted, recolored, cropped, or reconstructed for this portfolio. Native PNG resizing is the proportional reduction described above. Page styling and 4u Digital branding remain black, white, and gray; authentic project icon colors remain visible, as do genuine project screenshot colors. Do not apply a monochrome filter to these assets.
+Project icons preserve their original colors and proportions. No icon was generated, repainted, recolored, cropped, or reconstructed for this portfolio. Native PNG resizing is the proportional reduction described above. Page styling and Built4U branding remain black, white, and gray; authentic project icon colors remain visible, as do genuine project screenshot colors. Do not apply a monochrome filter to these assets.
 
 Icons identify a project and are separate from screenshot evidence. Their presence does not imply a live deployment, App Store listing, client relationship, or additional runtime validation. Public-source status still comes from [`repository-state.js`](../repository-state.js), and screenshot provenance remains in [the image evidence record](image-evidence.md).
 

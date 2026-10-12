@@ -112,9 +112,32 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText(
-    /From idea\s+to real life/i,
+  await expect(page).toHaveTitle("Built4U — Custom tech. Built for you.");
+  await expect(page.getByRole("link", { name: "Built4U, home", exact: true })).toBeVisible();
+  const headline = page.getByRole("heading", { level: 1 });
+  await expect(headline).toHaveText("You know your business. I’ll build the technology.");
+  await expect(headline).toBeVisible();
+  await expect(page.locator(".hero-tagline")).toHaveText("Custom tech. Built for you.");
+  await expect(page.locator(".hero-tagline")).toBeVisible();
+  await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
+  await expect(page.locator(".intro-descriptor")).toBeVisible();
+  await expect(page.locator(".intro-description")).toHaveText(
+    "Need an app, a complete website, or software that makes running your business easier? I design, code, and build it from start to finish. You don’t need a technical background—or a finished plan—to get started.",
   );
+  await expect(page.locator(".intro-description")).toBeVisible();
+  await expect(page.locator(".footer-identity")).toContainText("Built4U");
+  await expect(page.locator(".owner-credit")).toHaveText("by taylordrew4u");
+  expect(await headline.evaluate((element) => {
+    const headlineBox = element.getBoundingClientRect();
+    const copy = element.closest(".intro-copy");
+    const copyBox = copy.getBoundingClientRect();
+    const descriptorBox = copy.querySelector(".intro-descriptor").getBoundingClientRect();
+    const content = document.createRange();
+    content.selectNodeContents(element);
+    return descriptorBox.top >= headlineBox.bottom && [...content.getClientRects()].every((box) =>
+      box.left >= copyBox.left - 1 && box.right <= copyBox.right + 1,
+    );
+  }), "Long headline stays within its copy column").toBe(true);
   await expect(page.locator(".project-card")).toHaveCount(6);
   await expect(page.locator(".case-study")).toHaveCount(3);
   await expect(page.locator(".case-study .project-title")).toHaveText([
@@ -569,6 +592,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     expect(draft.protocol).toBe("mailto:");
     expect(draft.pathname).toBe("taylordrew4u@gmail.com");
     expect(draft.searchParams.get("subject")).toBe("Website or app project");
+    expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
       "I'm looking for help with a website or app.",
     );
@@ -588,6 +612,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     const draft = new URL(await service.getAttribute("href"));
     expect(draft.pathname).toBe("taylordrew4u@gmail.com");
     expect(draft.searchParams.get("subject")).toBe(subject);
+    expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
       `I'm looking for help with ${description}.`,
     );
@@ -641,6 +666,7 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   expect(draft.searchParams.get("subject")).toBe(
     "Project inspired by Pins & Needles Comedy",
   );
+  expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
   expect(draft.searchParams.get("body")).toContain(
     "I saw Pins & Needles Comedy in your portfolio and would like to discuss something similar.",
   );

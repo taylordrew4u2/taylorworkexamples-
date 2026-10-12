@@ -31,4 +31,4 @@ SobStage's recording, interruption alerts, saved-take report, and crash-recovery
 
 BillSpilt's balances cover shows a household admin view with fictional expenses. Admins can see household amounts; ordinary member views receive restricted figures. My Gig Calendar and VlogNudge publish native sample-data screenshots. Open Micer Timer is a real simulator capture of its original countdown interface, started through the UI. DicType shows native onboarding with permissions pending, not successful dictation. TLC shows default content and temporary storage; no booking request was sent. The retro desktop website's existing development capture remains valid at 9938dd8, with the renamed canonical repository taylordrewwebsite.
 
-BleepKit’s source overview depicts its editing workflow and does not claim a runtime capture. All work retains its original colors; the monochrome palette applies to 4u Digital’s page accents and custom workflow illustration.
+BleepKit’s source overview depicts its editing workflow and does not claim a runtime capture. All work retains its original colors; the monochrome palette applies to Built4U’s page accents and custom workflow illustration.
