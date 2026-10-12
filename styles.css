@@ -503,6 +503,9 @@ button, a, input, select, summary {
   object-fit: contain;
   transform: none;
 }
+.case-screen.project-visual:not(.portrait) img {
+  height: auto;
+}
 
 .case-screen.sage img {
   width: min(100%, 60rem);
@@ -1258,6 +1261,9 @@ button, a, input, select, summary {
 .archive-preview.paired:not(.portrait) .primary-screen {
   width: 74%;
   max-width: 74%;
+}
+.archive-preview.paired:not(.portrait) img {
+  height: auto;
 }
 .archive-preview.paired:not(.portrait) .companion-screen {
   width: auto;
