@@ -1,6 +1,6 @@
 # Portfolio image evidence — October 12, 2026
 
-All 16 currently public GitHub projects have traceable covers and explicit capture types. There are 41 gallery views and 45 image references including paired companions. Galleries preserve original proportions and provide full-size links. Sample records are fictional. Development captures use original app interfaces or components in isolated builds. BleepKit uses an explicitly labeled source workflow overview rather than a runtime screen. Projects without a current public repository are excluded from the portfolio, its search, and its opening previews.
+All 16 currently public GitHub projects have traceable covers and explicit capture types. There are 48 gallery views and 52 image references including paired companions. Galleries preserve original proportions and provide full-size links. Sample records are fictional. Development captures use original app interfaces or components in isolated builds. My Gig Calendar also includes seven unaltered owner-supplied product artworks, identified individually in their captions and [asset record](gig-calendar-assets.md). BleepKit uses an explicitly labeled source workflow overview rather than a runtime screen. Projects without a current public repository are excluded from the portfolio, its search, and its opening previews.
 
 | Project | Cover type | Cover source | Gallery views |
 | --- | --- | --- | --- |
@@ -9,7 +9,7 @@ All 16 currently public GitHub projects have traceable covers and explicit captu
 | The Trip Handler | App screenshot | [Source](https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/meals.png) | 5 |
 | RoleCall | Development preview | [Source](https://github.com/taylordrew4u2/Role-Call/blob/921e9d94d18dbfee7a7a2580c8f05918daad9c3a/components/ShotListBoard.tsx) | 2 |
 | BillSpilt | App screenshot | [Source](https://github.com/taylordrew4u2/Bill-Spilt/blob/HEAD/docs/screenshots/home-balances.png) | 3 |
-| My Gig Calendar | Native app screenshot | [Source](https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/01-calendar.png) | 2 |
+| My Gig Calendar | Native app screenshot | [Source](https://github.com/taylordrew4u2/MyGigCalendar/blob/886328d476853c1f982dfbbabced62ac484f46ee/AppStore/screenshots/en-US/iphone-6.9/01-calendar.png) | 9 |
 | BleepKit | Source overview | [Source](https://github.com/taylordrew4u2/bleepkit/blob/cfd67a5f4d48eec2a943dd55715aeb0288babf7b/bleepkit/ViewModels/EditorViewModel.swift) | 1 |
 | DicType | App screenshot | [Source](https://github.com/taylordrew4u2/dictype/blob/9af75740e3caf861b999396b372caea58ae1f96b/DicType/Sources/DicType/RootView.swift) | 1 |
 | Micro-short Film Website | Website screenshot | [Source](https://github.com/taylordrew4u2/micro-short-website/blob/HEAD/index.html) | 1 |

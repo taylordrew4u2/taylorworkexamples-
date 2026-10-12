@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=20";
+} from "./projects.js?v=21";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
@@ -86,6 +86,13 @@ function previewImages(frame) {
   return `<img class="primary-screen" src="${escape(frame.image)}" alt="${escape(frame.imageAlt)}" width="${frame.width || (frame.portrait ? 600 : 1280)}" height="${frame.height || (frame.portrait ? 1299 : 800)}" loading="lazy" decoding="async">${frame.companion ? `<img class="companion-screen" src="${escape(frame.companion.image)}" alt="${escape(frame.companion.imageAlt)}" width="${frame.companion.width || 600}" height="${frame.companion.height || 1299}" loading="lazy" decoding="async">` : ""}${workflow}`;
 }
 
+function showcaseGallery(project, frame, className) {
+  const choices = project.gallery.length > 1
+    ? `<div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${project.gallery.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div>`
+    : "";
+  return `<div class="${className}">${choices}<p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p><a class="showcase-original" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a></div>`;
+}
+
 function productStory(project, index) {
   const views = project.gallery || [
     {
@@ -103,24 +110,18 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}</div></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="screen-toolbar"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${showcaseGallery(project, frame, "screen-toolbar")}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button></div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
-  const hasGallery = project.id === "MyGigCalendar" && project.gallery.length > 1;
   const frame = project.gallery[0];
-  const preview = hasGallery ? previewImages(frame) : project.image
-    ? `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth || (project.portrait ? 600 : 1280)}" height="${project.imageHeight || (project.portrait ? 1300 : 800)}" loading="lazy" decoding="async">`
-    : "";
-  const gallery = hasGallery
-    ? `<div class="supporting-gallery"><div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${project.gallery.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div><p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p></div>`
-    : "";
-  return `<article ${hasGallery ? 'id="my-gig-calendar-showcase"' : ""} class="project-card supporting-card ${hasGallery ? "has-gallery" : ""}" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual ${hasGallery ? "supporting-screen" : ""} ${escape(project.tone)} ${project.portrait ? "portrait" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${gallery}</article>`;
+  const anchor = project.id === "MyGigCalendar" ? 'id="my-gig-calendar-showcase"' : `id="${escape(project.id.toLowerCase())}-showcase"`;
+  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${projectWorkflows(project)}<div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}</div>${showcaseGallery(project, frame, "supporting-gallery")}</article>`;
 }
 
 function archiveCard(project) {
-  const preview = `<img src="${escape(project.image)}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async">`;
-  return `<article class="archive-card"><div class="archive-intro">${projectHeading(project)}<p class="archive-purpose">${escape(project.purpose)}</p></div><button class="archive-preview project-visual ${escape(project.tone)} ${project.portrait ? "portrait" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}">${preview}<span class="preview-arrow" aria-hidden="true">↗</span></button><div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel)}</span></div><p class="preview-context">${escape(project.previewContext)}</p>${projectWorkflows(project)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Details", "case-link")}${sourceLink(project)}</div></article>`;
+  const frame = project.gallery[0];
+  return `<article class="archive-card" data-showcase-id="${escape(project.id)}"><div class="archive-intro">${projectHeading(project)}<p class="archive-purpose">${escape(project.purpose)}</p></div><button class="archive-preview project-visual ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "archive-gallery")}<div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel)}</span></div><p class="preview-context">${escape(project.previewContext)}</p>${projectWorkflows(project)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Details", "case-link")}${sourceLink(project)}</div></article>`;
 }
 
 function dialogVisual(project, index = 0) {
@@ -136,22 +137,25 @@ $("#featured-projects").innerHTML =
     .map((project, index) => supportingCard(project, index + 3))
     .join("")}</div></div>`;
 
-$("#featured-projects").addEventListener("click", (event) => {
+function changeShowcaseImage(event) {
   const choice = event.target.closest("[data-gallery]");
   if (!choice) return;
   const project = projects.find((item) => item.id === choice.dataset.gallery);
   const frame = project?.gallery?.[Number(choice.dataset.screen)];
   if (!frame) return;
-  const story = choice.closest(".case-study, .supporting-card.has-gallery");
+  const story = choice.closest(".case-study, .supporting-card.has-gallery, .archive-card");
   story.querySelectorAll("[data-gallery]").forEach((button) => {
     button.setAttribute("aria-pressed", String(button === choice));
   });
-  const screen = story.querySelector(".case-screen, .supporting-screen");
+  const screen = story.querySelector(".case-screen, .supporting-screen, .archive-preview");
   screen.classList.toggle("portrait", frame.portrait === true);
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
-  screen.innerHTML = `${story.classList.contains("case-study") ? `<span class="canvas-label" aria-hidden="true">${escape(project.title)} / ${escape(project.projectType)}</span>` : `<span class="visual-badge mono">${escape(project.badge)}</span>`}${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
+  screen.innerHTML = `<span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;
-});
+  story.querySelector(".showcase-original").href = frame.image;
+}
+$("#featured-projects").addEventListener("click", changeShowcaseImage);
+$("#archive-projects").addEventListener("click", changeShowcaseImage);
 
 $("#year").textContent = new Date().getFullYear();
 
