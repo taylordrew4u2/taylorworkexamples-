@@ -1,10 +1,10 @@
-import { projectVisuals } from "./visuals.js?v=17";
-import { projectIdentities } from "./identities.js?v=17";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=17";
+import { projectVisuals } from "./visuals.js?v=18";
+import { projectIdentities } from "./identities.js?v=18";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=18";
 
 // The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.
-export const email = "taylordrew4u@gmail.com";
+export const email = "admin@customtechbuilt4u.com";
 
 // experiment marks focused utilities and development projects for the tools filter.
 export const projects = [

@@ -1,6 +1,7 @@
 # Portfolio preferences
 
 - Use **Built4U** as the public portfolio brand, with exact casing and a small **by taylordrew4u** owner credit. The primary public address is **https://customtechbuilt4u.com/**.
+- Use **admin@customtechbuilt4u.com** for all Built4U business email communication, portfolio contact links, inquiry drafts, clipboard content, and structured metadata.
 - Use the approved tagline **Custom tech. Built for you.** and descriptor **Apps, websites, and software for your business.** Keep the service offer clear in the opening screen.
 - Use the selected **Open frame** logo in `assets/4u-digital-logo-mono.png`; the current transparent master is `design/4u-digital/selected/open-frame-mono-master.png`, with its export record in `mono-manifest.json`.
 - Use only black, white, and gray for new Built4U branding and future portfolio styling or custom illustrations. Never use red, purple, violet, lavender, lilac, magenta, blue, teal, or other chromatic accents. Keep project previews and galleries in their original full colors. Never apply grayscale or other recoloring filters to the work.

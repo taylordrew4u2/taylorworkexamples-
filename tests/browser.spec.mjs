@@ -521,14 +521,14 @@ test("email copy succeeds and explains the fallback when clipboard is unavailabl
   await page.goto("/");
   await expect(page.locator(".email-link")).toHaveAttribute(
     "href",
-    "mailto:taylordrew4u@gmail.com",
+    "mailto:admin@customtechbuilt4u.com",
   );
   await page.getByRole("button", { name: "Copy email address" }).click();
   await expect(page.locator("#copy-status")).toHaveText(
     "Email address copied to clipboard.",
   );
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-    "taylordrew4u@gmail.com",
+    "admin@customtechbuilt4u.com",
   );
   await page.evaluate(() =>
     Object.defineProperty(navigator.clipboard, "writeText", {
@@ -542,7 +542,7 @@ test("email copy succeeds and explains the fallback when clipboard is unavailabl
     "Clipboard unavailable.",
   );
   expect(await page.evaluate(() => window.getSelection().toString())).toBe(
-    "taylordrew4u@gmail.com",
+    "admin@customtechbuilt4u.com",
   );
 });
 
@@ -590,7 +590,7 @@ test("project and service inquiry links prepare the correct email drafts", async
   for (const link of await generalLinks.all()) {
     const draft = new URL(await link.getAttribute("href"));
     expect(draft.protocol).toBe("mailto:");
-    expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+    expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
     expect(draft.searchParams.get("subject")).toBe("Website or app project");
     expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
@@ -610,7 +610,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     await service.scrollIntoViewIfNeeded();
     await expect(service).toBeVisible();
     const draft = new URL(await service.getAttribute("href"));
-    expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+    expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
     expect(draft.searchParams.get("subject")).toBe(subject);
     expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
@@ -662,7 +662,7 @@ test("case studies show the need, build evidence, and a project-specific inquiry
     name: "Email about a similar project",
   });
   const draft = new URL(await inquiry.getAttribute("href"));
-  expect(draft.pathname).toBe("taylordrew4u@gmail.com");
+  expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
   expect(draft.searchParams.get("subject")).toBe(
     "Project inspired by Pins & Needles Comedy",
   );

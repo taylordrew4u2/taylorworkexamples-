@@ -87,7 +87,7 @@ test("the catalog represents all 16 public projects once, excluding profile and 
     projects.map((project) => project.id).sort(),
     expectedIds.sort(),
   );
-  assert.equal(email, "taylordrew4u@gmail.com");
+  assert.equal(email, "admin@customtechbuilt4u.com");
 });
 
 test("featured work is ordered and points to the canonical catalog entries", () => {
