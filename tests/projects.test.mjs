@@ -138,22 +138,28 @@ test("removed repositories cannot appear in the catalog or search results", () =
   }
 });
 
-test("the homepage hero uses the public Showrunner workspace with a separate verified product identity", () => {
+test("the homepage hero uses the BitBinder and My Gig Calendar supplied banners without extra visible copy", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-  const project = projects.find((project) => project.id === "Showrunner-ICanRunAShow");
   const hero = html.match(/<div class="hero-stage"[\s\S]*?<\/section>/)?.[0];
-  assert.ok(hero, "Hero preview must be present");
-  assert.equal(project.sourceAvailable, true);
-  assert.match(hero, /class="hero-project" data-project="Showrunner-ICanRunAShow" aria-label="View the I Can Run A Show project"/);
-  assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 1);
-  assert.ok(hero.includes(`class="hero-project-screen" src="${project.image}" alt="${project.imageAlt}" width="2400" height="1688"`),
-    "The opening workspace uses the authentic cover and its actual dimensions");
-  assert.ok(hero.includes(`class="hero-project-icon" src="${project.icon}" alt="" width="100" height="100"`),
-    "The opening card includes the verified Showrunner icon");
-  assert.match(hero, /class="hero-project-info"[\s\S]*?class="hero-project-copy"[\s\S]*?<strong>I Can Run A Show<\/strong>/);
-  assert.match(hero, /Plan shows, book performers, and run live cues\./);
-  assert.match(hero, /Web application · Sample workspace/);
-  assert.doesNotMatch(hero, /hero-web|hero-phone|hero-orbit|hero-asterisk/);
+  assert.ok(hero, "Hero banners must be present");
+  assert.match(hero, /aria-label="Featured app previews"/);
+  const buttons = [...hero.matchAll(/<button class="hero-project" data-project="([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/button>/g)];
+  assert.deepEqual(buttons.map(([, id, label]) => [id, label]), [
+    ["The-Bit-Binder", "View the BitBinder project"],
+    ["MyGigCalendar", "View the My Gig Calendar project"],
+  ]);
+  assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 2);
+  assert.equal([...hero.matchAll(/<img\b/g)].length, 2);
+  for (const [, id, , contents] of buttons) {
+    const project = projects.find((entry) => entry.id === id);
+    assert.equal(project.sourceAvailable, true);
+    assert.ok(contents.includes(`class="hero-project-screen" src="${project.image}" alt="${project.imageAlt}" width="1920" height="1080"`),
+      `${id}: opening artwork matches the supplied banner cover and its actual dimensions`);
+    assert.match(project.image, /\/banner-1920x1080\.png$/);
+    assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
+    assert.equal(contents.replace(/<img\b[^>]*>/g, "").trim(), "", `${id}: only the banner is inside its button`);
+  }
+  assert.doesNotMatch(hero, /hero-web|hero-phone|hero-orbit|hero-asterisk|hero-project-info|hero-project-icon|hero-project-copy|hero-project-arrow/);
   assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);
   for (const id of removedIds) {
     assert.ok(!hero.includes(`data-project="${id}"`), `${id}: removed from hero`);
@@ -351,7 +357,7 @@ test("all 16 public projects have traceable covers and galleries with accurate a
       ), `${project.id}: each development view discloses its capture or sample context`);
     }
     if (project.imageKind === "product-artwork") {
-      assert.ok(["The-Bit-Binder", "MyGigCalendar"].includes(project.id));
+      assert.ok(["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"].includes(project.id));
       assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
       assert.equal(project.gallery[0].label, "Product overview");
       assert.equal(project.imageLabel, "Supplied product artwork");
@@ -479,6 +485,72 @@ test("The BitBinder uses its supplied banner as cover and keeps its three native
     assert.equal(frame.companion, undefined);
     assert.equal(frame.sourceUrl, `https://customtechbuilt4u.com/assets/bitbinder/${name}`);
     assert.ok(binder.sources.includes(frame.sourceUrl));
+    const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
+      `${name}: original supplied pixels must remain unchanged`);
+  }
+});
+
+test("Open Micer Timer uses its supplied banner and keeps three native countdown views plus all seven original product images", () => {
+  const timer = projects.find((project) => project.id === "Open-Micer-Timer");
+  assert.equal(timer.image, "./assets/open-micer-timer/banner-1920x1080.png");
+  assert.equal(timer.imageKind, "product-artwork");
+  assert.equal(timer.imageWidth, 1920);
+  assert.equal(timer.imageHeight, 1080);
+  assert.equal(timer.portrait, false);
+  assert.equal(timer.gallery.length, 10);
+  assert.deepEqual(timer.gallery.map((frame) => frame.label), [
+    "Product overview", "Final-minute cue", "Running countdown", "Ready",
+    "On the clock", "Hands-free", "Final minute", "Time’s up", "Set lengths", "Any screen",
+  ]);
+  const native = timer.gallery.filter((frame) => frame.sourceKind !== "owner-supplied-product-artwork");
+  assert.deepEqual(native.map((frame) => ({
+    label: frame.label, image: frame.image, imageAlt: frame.imageAlt,
+    caption: frame.caption, width: frame.width, height: frame.height, portrait: frame.portrait,
+  })), [
+    {
+      label: "Final-minute cue", image: "./assets/open-micer-timer-final-minute.webp",
+      imageAlt: "Open Micer Timer native simulator showing the final-minute visual cue during an actual countdown.",
+      caption: "Open Micer Timer native simulator showing the final-minute visual cue during an actual countdown.",
+      width: 960, height: 2087, portrait: true,
+    },
+    {
+      label: "Running countdown", image: "./assets/open-micer-timer-countdown.webp",
+      imageAlt: "Open Micer Timer native simulator running a configured 75-second countdown.",
+      caption: "Open Micer Timer native simulator running a configured 75-second countdown.",
+      width: 960, height: 2087, portrait: true,
+    },
+    {
+      label: "Ready", image: "./assets/open-micer-timer-ready.webp",
+      imageAlt: "Open Micer Timer native iPhone simulator screen ready for a five-minute set.",
+      caption: "Open Micer Timer native iPhone simulator screen ready for a five-minute set.",
+      width: 960, height: 2087, portrait: true,
+    },
+  ]);
+  assert.ok(native.every((frame) => !frame.sourceKind && !frame.companion &&
+    frame.imageLabel === "Native app screenshot" && frame.previewContext === "Native countdown capture"));
+  const expectedArtwork = [
+    ["banner-1920x1080.png", "Product overview", "a7710f13e1a19f4f6c994afae83818f3cbee4fc5e94e6e37d25086b3105d47c2"],
+    ["01-on-the-clock.png", "On the clock", "82aa937954871ec89e3371a316a11d91fbb75f3a386eb4498d77fedadcce8932"],
+    ["02-hands-free.png", "Hands-free", "ac5fc6be1382e32b28bd1375b57d8879774d40c9ccf4275116f236de02922ec9"],
+    ["03-final-minute.png", "Final minute", "dd4208e4732d3c1ce813cd8cb048c98b40f7c2dd47377b4ed65cd1e8ce4ea75f"],
+    ["04-times-up.png", "Time’s up", "6e1aff348e1be35fc0f3386607fd9f902a92237f867bd3a9e91f37e38715e51c"],
+    ["05-any-length.png", "Set lengths", "e0889dd92cbf6b643b11c1c27769f402e8085043ae6177c69de39ad830b3b6e3"],
+    ["06-any-screen.png", "Any screen", "7e953c0cdc825f11a5da3ef946b9d4784f4fee3f75fce795b0cdac9638fc1aac"],
+  ];
+  const artwork = timer.gallery.filter((frame) => frame.sourceKind === "owner-supplied-product-artwork");
+  assert.deepEqual(artwork.map((frame) => [frame.image, frame.label]),
+    expectedArtwork.map(([name, label]) => [`./assets/open-micer-timer/${name}`, label]));
+  for (const [index, frame] of artwork.entries()) {
+    const [name, , sha256] = expectedArtwork[index];
+    assert.equal(frame.sourceKind, "owner-supplied-product-artwork");
+    assert.match(frame.caption, /^Supplied product artwork/);
+    assert.equal(frame.width, index === 0 ? 1920 : 1320);
+    assert.equal(frame.height, index === 0 ? 1080 : 2868);
+    assert.equal(frame.portrait, index !== 0);
+    assert.equal(frame.companion, undefined);
+    assert.equal(frame.sourceUrl, `https://customtechbuilt4u.com/assets/open-micer-timer/${name}`);
+    assert.ok(timer.sources.includes(frame.sourceUrl));
     const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
       `${name}: original supplied pixels must remain unchanged`);

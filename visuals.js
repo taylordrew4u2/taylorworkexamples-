@@ -704,15 +704,26 @@ export const projectVisuals = {
     "notes": "Native app screenshots with fictional sample content, published in the project repository."
   },
   "Open-Micer-Timer": {
-    "image": "./assets/open-micer-timer-final-minute.webp",
-    "imageAlt": "Open Micer Timer native simulator showing the final-minute visual cue during an actual countdown.",
-    "imageWidth": 960,
-    "imageHeight": 2087,
-    "portrait": true,
-    "imageKind": "app-screenshot",
-    "imageLabel": "Native app screenshot",
-    "imageCaption": "Open Micer Timer native simulator showing the final-minute visual cue during an actual countdown.",
+    "image": "./assets/open-micer-timer/banner-1920x1080.png",
+    "imageAlt": "Open Micer Timer supplied product artwork with its app icon and illustrated black countdown and yellow final-minute phone displays.",
+    "imageWidth": 1920,
+    "imageHeight": 1080,
+    "portrait": false,
+    "imageKind": "product-artwork",
+    "imageLabel": "Supplied product artwork",
+    "imageCaption": "Supplied product artwork · Open Micer Timer overview with countdown and final-minute illustrations.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/open-micer-timer/banner-1920x1080.png",
+        "imageAlt": "Open Micer Timer supplied product artwork with its app icon and illustrated black countdown and yellow final-minute phone displays.",
+        "width": 1920,
+        "height": 1080,
+        "portrait": false,
+        "caption": "Supplied product artwork · Open Micer Timer overview with countdown and final-minute illustrations.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/banner-1920x1080.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
       {
         "label": "Final-minute cue",
         "image": "./assets/open-micer-timer-final-minute.webp",
@@ -721,7 +732,9 @@ export const projectVisuals = {
         "height": 2087,
         "portrait": true,
         "caption": "Open Micer Timer native simulator showing the final-minute visual cue during an actual countdown.",
-        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590"
+        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590",
+        "imageLabel": "Native app screenshot",
+        "previewContext": "Native countdown capture"
       },
       {
         "label": "Running countdown",
@@ -731,7 +744,9 @@ export const projectVisuals = {
         "height": 2087,
         "portrait": true,
         "caption": "Open Micer Timer native simulator running a configured 75-second countdown.",
-        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590"
+        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590",
+        "imageLabel": "Native app screenshot",
+        "previewContext": "Native countdown capture"
       },
       {
         "label": "Ready",
@@ -741,10 +756,79 @@ export const projectVisuals = {
         "height": 2087,
         "portrait": true,
         "caption": "Open Micer Timer native iPhone simulator screen ready for a five-minute set.",
-        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590"
+        "sourceUrl": "https://github.com/taylordrew4u2/Open-Micer-Timer/tree/4f0271b019682f54a00fcaa561b6e2b99a590590",
+        "imageLabel": "Native app screenshot",
+        "previewContext": "Native countdown capture"
+      },
+      {
+        "label": "On the clock",
+        "image": "./assets/open-micer-timer/01-on-the-clock.png",
+        "imageAlt": "Open Micer Timer supplied product artwork showing a five-minute timer ready to start inside a phone frame.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Five-minute timer ready-state illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/01-on-the-clock.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Hands-free",
+        "image": "./assets/open-micer-timer/02-hands-free.png",
+        "imageAlt": "Open Micer Timer supplied product artwork showing a running 3:27 timer and a play/pause remote-control feature callout.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Running timer and remote play/pause control illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/02-hands-free.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Final minute",
+        "image": "./assets/open-micer-timer/03-final-minute.png",
+        "imageAlt": "Open Micer Timer supplied product artwork showing a yellow final-minute countdown with 42 seconds remaining.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Yellow final-minute countdown illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/03-final-minute.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Time’s up",
+        "image": "./assets/open-micer-timer/04-times-up.png",
+        "imageAlt": "Open Micer Timer supplied product artwork showing a red zero-minute countdown and time-up cue inside a phone frame.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Red time-up cue illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/04-times-up.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Set lengths",
+        "image": "./assets/open-micer-timer/05-any-length.png",
+        "imageAlt": "Open Micer Timer supplied product artwork illustrating eight example set lengths from one minute to sixty minutes.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Example set-length options illustration.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/05-any-length.png",
+        "sourceKind": "owner-supplied-product-artwork"
+      },
+      {
+        "label": "Any screen",
+        "image": "./assets/open-micer-timer/06-any-screen.png",
+        "imageAlt": "Open Micer Timer supplied product artwork pairing a large running timer display with a phone showing the yellow final-minute countdown.",
+        "width": 1320,
+        "height": 2868,
+        "portrait": true,
+        "caption": "Supplied product artwork · Large-screen and phone countdown illustrations.",
+        "sourceUrl": "https://customtechbuilt4u.com/assets/open-micer-timer/06-any-screen.png",
+        "sourceKind": "owner-supplied-product-artwork"
       }
     ],
-    "notes": "Real native app captures from an isolated simulator. The countdown was started through the original interface; the yellow screen shows its final-minute cue."
+    "notes": "Real native app captures from an isolated simulator. The countdown was started through the original interface; the yellow screen shows its final-minute cue. Seven owner-supplied product images added on October 13, 2026 are labeled as promotional artwork; they are separate from native runtime capture evidence and do not establish new remote-control or device validation.",
+    "previewContext": "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
   },
   "taylordrewwebsite": {
     "image": "./assets/taylosite-capture.webp",

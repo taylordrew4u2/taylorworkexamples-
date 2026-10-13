@@ -141,76 +141,73 @@ async function expectProjectWorkflows(scope, project) {
   }
 }
 
+const heroPreviews = [
+  ["The-Bit-Binder", "View the BitBinder project"],
+  ["MyGigCalendar", "View the My Gig Calendar project"],
+];
+
 async function expectHeroPreview(page) {
-  const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
   const stage = page.locator(".hero-stage");
-  const trigger = stage.getByRole("button", { name: "View the I Can Run A Show project", exact: true });
-  const image = trigger.locator(".hero-project-screen");
-  const info = trigger.locator(".hero-project-info");
-  const icon = info.locator("img.hero-project-icon");
-  await expect(stage.locator("button[data-project]")).toHaveCount(1);
-  await expect(trigger).toHaveAttribute("data-project", project.id);
-  await expect(stage.locator(".hero-web, .hero-phone, .hero-orbit, .hero-asterisk")).toHaveCount(0);
-  await expect(image).toHaveCount(1);
-  await image.scrollIntoViewIfNeeded();
-  await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-  await expect(image).toHaveAttribute("src", project.image);
-  await expect(image).toHaveAttribute("alt", project.imageAlt);
-  await expect(image).toHaveAttribute("width", "2400");
-  await expect(image).toHaveAttribute("height", "1688");
-  await expect(image).toHaveCSS("object-fit", "contain");
-  await expect(image).toHaveCSS("filter", "none");
-  await expect(image).toHaveCSS("mix-blend-mode", "normal");
-  await expect(image).toHaveCSS("opacity", "1");
-  await expect(image).toHaveCSS("transform", "none");
-  await expect(trigger).toHaveCSS("transform", "none");
-  await expect(trigger).toHaveCSS("filter", "none");
+  await expect(stage).toHaveAttribute("aria-label", "Featured app previews");
+  await expect(stage.locator("button.hero-project")).toHaveCount(2);
+  expect(await stage.locator("button.hero-project").evaluateAll((buttons) =>
+    buttons.map((button) => button.dataset.project),
+  )).toEqual(heroPreviews.map(([id]) => id));
+  await expect(stage.locator("img.hero-project-screen")).toHaveCount(2);
+  await expect(stage.locator("img")).toHaveCount(2);
+  await expect(stage.locator(
+    ".hero-web, .hero-phone, .hero-orbit, .hero-asterisk, .hero-project-info, .hero-project-icon, .hero-project-copy, .hero-project-arrow",
+  )).toHaveCount(0);
+  expect((await stage.innerText()).trim(), "The artwork has no added visible text or labels").toBe("");
   await expect(stage).toHaveCSS("filter", "none");
-  await expect(info.locator(".hero-project-copy strong")).toHaveText(project.title);
-  await expect(info.locator(".hero-project-copy > span")).toHaveText("Plan shows, book performers, and run live cues.");
-  await expect(info.locator(".hero-project-copy small")).toHaveText("Web application · Sample workspace");
-  await expect(icon).toHaveCount(1);
-  await expect(icon).toHaveAttribute("src", project.icon);
-  await expect(icon).toHaveAttribute("alt", "");
-  await expect(icon).toHaveAttribute("width", String(project.iconWidth));
-  await expect(icon).toHaveAttribute("height", String(project.iconHeight));
-  await expect(icon).toHaveCSS("object-fit", "contain");
-  await expect(icon).toHaveCSS("filter", "none");
-  await expect.poll(() => icon.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-  const geometry = await trigger.evaluate((element) => {
-    const button = element.getBoundingClientRect();
-    const screen = element.querySelector(".hero-project-screen");
-    const screenBox = screen.getBoundingClientRect();
-    const info = element.querySelector(".hero-project-info");
-    const infoBox = info.getBoundingClientRect();
-    const textBoxes = [...info.querySelectorAll(".hero-project-copy > *")].flatMap((text) => {
-      const range = document.createRange();
-      range.selectNodeContents(text);
-      return [...range.getClientRects()];
+  for (const [id, label] of heroPreviews) {
+    const project = projects.find((entry) => entry.id === id);
+    const trigger = stage.getByRole("button", { name: label, exact: true });
+    const image = trigger.locator("img.hero-project-screen");
+    await expect(trigger).toHaveAttribute("data-project", project.id);
+    await expect(image).toHaveCount(1);
+    expect(await trigger.evaluate((element) => element.children.length === 1 &&
+      element.firstElementChild.matches("img.hero-project-screen")),
+    `${project.title}: the banner is the only content inside its control`).toBe(true);
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+    await expect(image).toHaveAttribute("src", project.image);
+    await expect(image).toHaveAttribute("alt", project.imageAlt);
+    await expect(image).toHaveAttribute("width", "1920");
+    await expect(image).toHaveAttribute("height", "1080");
+    await expect(image).toHaveCSS("object-fit", "contain");
+    await expect(image).toHaveCSS("filter", "none");
+    await expect(image).toHaveCSS("mix-blend-mode", "normal");
+    await expect(image).toHaveCSS("opacity", "1");
+    await expect(image).toHaveCSS("transform", "none");
+    await expect(trigger).toHaveCSS("transform", "none");
+    await expect(trigger).toHaveCSS("filter", "none");
+    const geometry = await trigger.evaluate((element) => {
+      const button = element.getBoundingClientRect();
+      const screen = element.querySelector(".hero-project-screen");
+      const screenBox = screen.getBoundingClientRect();
+      return {
+        naturalWidth: screen.naturalWidth,
+        naturalHeight: screen.naturalHeight,
+        aspectError: Math.abs(screenBox.height - screenBox.width * 1080 / 1920),
+        wholeScreenInside: screenBox.width > 0 && screenBox.height > 0 &&
+          screenBox.left >= button.left - 1 && screenBox.right <= button.right + 1 &&
+          screenBox.top >= button.top - 1 && screenBox.bottom <= button.bottom + 1,
+        fitsViewport: button.left >= -1 && button.right <= window.innerWidth + 1 &&
+          document.documentElement.scrollWidth <= window.innerWidth,
+      };
     });
-    const inside = (box) => box.width > 0 && box.height > 0 &&
-      box.left >= button.left - 1 && box.right <= button.right + 1 &&
-      box.top >= button.top - 1 && box.bottom <= button.bottom + 1;
-    return {
-      naturalWidth: screen.naturalWidth,
-      naturalHeight: screen.naturalHeight,
-      aspectError: Math.abs(screenBox.height - screenBox.width * 1688 / 2400),
-      wholeScreenInside: inside(screenBox),
-      infoBelowScreen: infoBox.top >= screenBox.bottom - 1,
-      textBelowScreen: textBoxes.length > 0 && textBoxes.every((box) => box.top >= screenBox.bottom - 1),
-      infoInside: inside(infoBox),
-      textInside: textBoxes.every(inside),
-      iconInside: inside(info.querySelector(".hero-project-icon").getBoundingClientRect()),
-      fitsViewport: button.left >= -1 && button.right <= window.innerWidth + 1 &&
-        document.documentElement.scrollWidth <= window.innerWidth,
-    };
-  });
-  expect(geometry.naturalWidth).toBe(2400);
-  expect(geometry.naturalHeight).toBe(1688);
-  expect(geometry.aspectError, "The workspace keeps its original upright proportions").toBeLessThanOrEqual(1);
-  for (const key of ["wholeScreenInside", "infoBelowScreen", "textBelowScreen", "infoInside", "textInside", "iconInside", "fitsViewport"]) {
-    expect(geometry[key], `Opening product preview: ${key}`).toBe(true);
+    expect(geometry.naturalWidth).toBe(1920);
+    expect(geometry.naturalHeight).toBe(1080);
+    expect(geometry.aspectError, `${project.title}: the banner keeps its original upright proportions`).toBeLessThanOrEqual(1);
+    expect(geometry.wholeScreenInside, `${project.title}: the complete banner fits its control`).toBe(true);
+    expect(geometry.fitsViewport, `${project.title}: the banner fits the viewport`).toBe(true);
   }
+  expect(await stage.locator(".hero-project").evaluateAll((buttons) => {
+    const first = buttons[0].getBoundingClientRect();
+    const second = buttons[1].getBoundingClientRect();
+    return second.top >= first.bottom - 1;
+  }), "Both opening banners remain separate without overlap").toBe(true);
 }
 
 test("portfolio renders, previews load, and the page fits the viewport", async ({
@@ -265,8 +262,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       await expect(highlight.locator("p")).toHaveText(/\S/);
     }
   }
-  await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(1);
-  await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(1);
+  await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(2);
+  await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(0);
   await expect(page.locator(".hero-stage img")).toHaveCount(2);
   for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
     await image.scrollIntoViewIfNeeded();
@@ -292,7 +289,11 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const binderCard = page.locator('.case-study[data-case-id="The-Bit-Binder"]');
   await expect(binderCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/bitbinder/banner-1920x1080.png");
   await expect(binderCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(page.locator(".hero-project-screen")).toHaveAttribute("src", "./assets/showrunner-workspace-hd.webp");
+  for (const [id] of heroPreviews) {
+    await expect(page.locator(`.hero-project[data-project="${id}"] .hero-project-screen`)).toHaveAttribute(
+      "src", projects.find((entry) => entry.id === id).image,
+    );
+  }
   const roleCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
@@ -354,26 +355,31 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   }
 });
 
-test("the opening workspace stays upright, keeps its text below the image, and opens the matching project", async ({ page }) => {
+test("the opening banners stay complete and separate, and each opens its matching project", async ({ page }) => {
   await page.goto("/");
   await expectHeroPreview(page);
-  const trigger = page.getByRole("button", { name: "View the I Can Run A Show project", exact: true });
   const dialog = page.getByRole("dialog");
-  await trigger.focus();
-  await page.keyboard.press("Enter");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText("I Can Run A Show");
-  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-  await trigger.locator(".hero-project-info").click();
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText("I Can Run A Show");
-  await expect(page.getByRole("button", { name: "Close project details" })).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
+  for (const [id, label] of heroPreviews) {
+    const project = projects.find((entry) => entry.id === id);
+    const trigger = page.getByRole("button", { name: label, exact: true });
+    await trigger.focus();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await expect(dialog.locator(".primary-screen")).toHaveAttribute("src", project.image);
+    await expect(dialog.locator(".dialog-image-caption")).toHaveText(project.gallery[0].caption);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+    await trigger.locator(".hero-project-screen").click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(trigger).toBeFocused();
+  }
 });
 
 for (const [id, banner] of [
@@ -418,6 +424,59 @@ for (const [id, banner] of [
     await expect(trigger).toBeFocused();
   });
 }
+
+test("Open Micer Timer opens with its supplied banner and distinguishes its preserved native countdown views", async ({ page }) => {
+  const project = projects.find((entry) => entry.id === "Open-Micer-Timer");
+  await page.goto("/#project-archive");
+  const card = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
+  const choices = card.locator("button[data-gallery][data-screen]");
+  const banner = project.gallery[0];
+  expect(banner.image).toBe("./assets/open-micer-timer/banner-1920x1080.png");
+  expect(banner.width).toBe(1920);
+  expect(banner.height).toBe(1080);
+  expect(banner.sourceKind).toBe("owner-supplied-product-artwork");
+  await expect(choices).toHaveCount(10);
+  await expect(choices).toHaveText([
+    "Product overview", "Final-minute cue", "Running countdown", "Ready",
+    "On the clock", "Hands-free", "Final minute", "Time’s up", "Set lengths", "Any screen",
+  ]);
+  await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
+  await expectInlineGalleryFrame(card, project, banner, ".archive-preview");
+  await expect(page.locator(`.hero-project[data-project="${project.id}"]`)).toHaveCount(0);
+  await expect(page.locator(`#featured-projects [data-case-id="${project.id}"], #featured-projects [data-supporting-id="${project.id}"]`)).toHaveCount(0);
+
+  const native = project.gallery.find((frame) => frame.label === "Running countdown");
+  const nativeChoice = choices.filter({ hasText: /^Running countdown$/ });
+  await nativeChoice.scrollIntoViewIfNeeded();
+  await nativeChoice.focus();
+  await page.keyboard.press("Enter");
+  await expect(nativeChoice).toBeFocused();
+  await expect(nativeChoice).toHaveAttribute("aria-pressed", "true");
+  await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
+  await expectInlineGalleryFrame(card, project, native, ".archive-preview");
+  await expect(card.locator(".image-kind")).toHaveText("Native app screenshot");
+  await expect(card.locator(".preview-context")).toHaveText("Native countdown capture");
+  await choices.first().focus();
+  await page.keyboard.press("Space");
+  await expect(choices.first()).toBeFocused();
+  await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
+  await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
+  await expectInlineGalleryFrame(card, project, banner, ".archive-preview");
+
+  const trigger = card.locator(".archive-preview");
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+  await expectLoadedImageToFit(dialog.locator(".primary-screen"), banner);
+  await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
+  await expect(dialog.locator(".dialog-image-caption")).toHaveText(banner.caption);
+  await expect(dialog.locator(".image-original")).toHaveAttribute("href", banner.image);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
 
 test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
   await page.goto("/");
@@ -653,9 +712,11 @@ test("removed repositories stay out of archive, search and hero while public sou
   await page.goto("/#project-archive");
   await expect(page.locator(".archive-card")).toHaveCount(16);
   await expect(page.locator(".source-note")).toHaveCount(0);
-  const heroProject = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
-  await expect(page.locator(".hero-project")).toHaveAttribute("data-project", heroProject.id);
-  await expect(page.locator(".hero-project-screen")).toHaveAttribute("src", heroProject.image);
+  await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
+  for (const [id] of heroPreviews) {
+    const heroProject = projects.find((entry) => entry.id === id);
+    await expect(page.locator(`.hero-project[data-project="${id}"] .hero-project-screen`)).toHaveAttribute("src", heroProject.image);
+  }
   await expect(page.locator(".hero-stage")).not.toContainText(/Mark Vegas/i);
   for (const id of removedProjectIds) {
     await expect(page.locator(`[data-project="${id}"]`)).toHaveCount(0);

@@ -236,6 +236,8 @@ button, a, input, select, summary {
 }
 
 .hero-stage {
+  display: grid;
+  gap: 1rem;
   min-width: 0;
 }
 
@@ -253,50 +255,9 @@ button, a, input, select, summary {
 .hero-project-screen {
   width: 100%;
   height: auto;
-  aspect-ratio: 2400 / 1688;
+  aspect-ratio: 1920 / 1080;
   object-fit: contain;
-  border-radius: 0.9375rem 0.9375rem 0 0;
-}
-
-.hero-project-info {
-  display: grid;
-  grid-template-columns: 2.75rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-  padding: 1.5rem;
-}
-
-.hero-project-icon {
-  width: 2.75rem;
-  height: 2.75rem;
-  object-fit: contain;
-}
-
-.hero-project-copy {
-  display: grid;
-  gap: 0.375rem;
-  line-height: 1.5;
-}
-
-.hero-project-copy strong {
-  font-family: var(--display);
-  font-size: 1.25rem;
-  font-weight: 750;
-  letter-spacing: -0.035em;
-}
-
-.hero-project-copy > span {
-  font-size: 0.8125rem;
-}
-
-.hero-project-copy small {
-  color: var(--muted);
-  font-size: 0.6875rem;
-}
-
-.hero-project-arrow {
-  font-size: 1.5rem;
+  border-radius: 0.9375rem;
 }
 
 .capability-strip {
@@ -1955,21 +1916,6 @@ dialog::backdrop {
     gap: 1rem;
   }
   .intro-actions .text-link {
-    font-size: 0.75rem;
-  }
-  .hero-project-info {
-    grid-template-columns: 2.25rem minmax(0, 1fr) auto;
-    gap: 0.75rem;
-    padding: 1rem;
-  }
-  .hero-project-icon {
-    width: 2.25rem;
-    height: 2.25rem;
-  }
-  .hero-project-copy strong {
-    font-size: 1rem;
-  }
-  .hero-project-copy > span {
     font-size: 0.75rem;
   }
   .capability-strip {
