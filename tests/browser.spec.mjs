@@ -141,6 +141,78 @@ async function expectProjectWorkflows(scope, project) {
   }
 }
 
+async function expectHeroPreview(page) {
+  const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
+  const stage = page.locator(".hero-stage");
+  const trigger = stage.getByRole("button", { name: "View the I Can Run A Show project", exact: true });
+  const image = trigger.locator(".hero-project-screen");
+  const info = trigger.locator(".hero-project-info");
+  const icon = info.locator("img.hero-project-icon");
+  await expect(stage.locator("button[data-project]")).toHaveCount(1);
+  await expect(trigger).toHaveAttribute("data-project", project.id);
+  await expect(stage.locator(".hero-web, .hero-phone, .hero-orbit, .hero-asterisk")).toHaveCount(0);
+  await expect(image).toHaveCount(1);
+  await image.scrollIntoViewIfNeeded();
+  await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+  await expect(image).toHaveAttribute("src", project.image);
+  await expect(image).toHaveAttribute("alt", project.imageAlt);
+  await expect(image).toHaveAttribute("width", "2400");
+  await expect(image).toHaveAttribute("height", "1688");
+  await expect(image).toHaveCSS("object-fit", "contain");
+  await expect(image).toHaveCSS("filter", "none");
+  await expect(image).toHaveCSS("mix-blend-mode", "normal");
+  await expect(image).toHaveCSS("opacity", "1");
+  await expect(image).toHaveCSS("transform", "none");
+  await expect(trigger).toHaveCSS("transform", "none");
+  await expect(trigger).toHaveCSS("filter", "none");
+  await expect(stage).toHaveCSS("filter", "none");
+  await expect(info.locator(".hero-project-copy strong")).toHaveText(project.title);
+  await expect(info.locator(".hero-project-copy > span")).toHaveText("Plan shows, book performers, and run live cues.");
+  await expect(info.locator(".hero-project-copy small")).toHaveText("Web application · Sample workspace");
+  await expect(icon).toHaveCount(1);
+  await expect(icon).toHaveAttribute("src", project.icon);
+  await expect(icon).toHaveAttribute("alt", "");
+  await expect(icon).toHaveAttribute("width", String(project.iconWidth));
+  await expect(icon).toHaveAttribute("height", String(project.iconHeight));
+  await expect(icon).toHaveCSS("object-fit", "contain");
+  await expect(icon).toHaveCSS("filter", "none");
+  await expect.poll(() => icon.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+  const geometry = await trigger.evaluate((element) => {
+    const button = element.getBoundingClientRect();
+    const screen = element.querySelector(".hero-project-screen");
+    const screenBox = screen.getBoundingClientRect();
+    const info = element.querySelector(".hero-project-info");
+    const infoBox = info.getBoundingClientRect();
+    const textBoxes = [...info.querySelectorAll(".hero-project-copy > *")].flatMap((text) => {
+      const range = document.createRange();
+      range.selectNodeContents(text);
+      return [...range.getClientRects()];
+    });
+    const inside = (box) => box.width > 0 && box.height > 0 &&
+      box.left >= button.left - 1 && box.right <= button.right + 1 &&
+      box.top >= button.top - 1 && box.bottom <= button.bottom + 1;
+    return {
+      naturalWidth: screen.naturalWidth,
+      naturalHeight: screen.naturalHeight,
+      aspectError: Math.abs(screenBox.height - screenBox.width * 1688 / 2400),
+      wholeScreenInside: inside(screenBox),
+      infoBelowScreen: infoBox.top >= screenBox.bottom - 1,
+      textBelowScreen: textBoxes.length > 0 && textBoxes.every((box) => box.top >= screenBox.bottom - 1),
+      infoInside: inside(infoBox),
+      textInside: textBoxes.every(inside),
+      iconInside: inside(info.querySelector(".hero-project-icon").getBoundingClientRect()),
+      fitsViewport: button.left >= -1 && button.right <= window.innerWidth + 1 &&
+        document.documentElement.scrollWidth <= window.innerWidth,
+    };
+  });
+  expect(geometry.naturalWidth).toBe(2400);
+  expect(geometry.naturalHeight).toBe(1688);
+  expect(geometry.aspectError, "The workspace keeps its original upright proportions").toBeLessThanOrEqual(1);
+  for (const key of ["wholeScreenInside", "infoBelowScreen", "textBelowScreen", "infoInside", "textInside", "iconInside", "fitsViewport"]) {
+    expect(geometry[key], `Opening product preview: ${key}`).toBe(true);
+  }
+}
+
 test("portfolio renders, previews load, and the page fits the viewport", async ({
   page,
 }, testInfo) => {
@@ -193,6 +265,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       await expect(highlight.locator("p")).toHaveText(/\S/);
     }
   }
+  await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(1);
+  await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(1);
   await expect(page.locator(".hero-stage img")).toHaveCount(2);
   for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
     await image.scrollIntoViewIfNeeded();
@@ -218,8 +292,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const binderCard = page.locator('.case-study[data-case-id="The-Bit-Binder"]');
   await expect(binderCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/bitbinder/banner-1920x1080.png");
   await expect(binderCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(page.locator(".hero-phone img")).toHaveAttribute("src", "./assets/gigcalendar-native-calendar.webp");
-  await expect(page.locator(".hero-phone img")).toHaveAttribute("alt", /native iPhone/i);
+  await expect(page.locator(".hero-project-screen")).toHaveAttribute("src", "./assets/showrunner-workspace-hd.webp");
   const roleCard = page.locator(".supporting-card").filter({
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
@@ -281,25 +354,26 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   }
 });
 
-test("hero previews open the matching website and native iPhone project", async ({
-  page,
-}) => {
+test("the opening workspace stays upright, keeps its text below the image, and opens the matching project", async ({ page }) => {
   await page.goto("/");
-  const previews = [
-    ["View the Pins & Needles website project", "Pins & Needles Comedy"],
-    ["View the My Gig Calendar iPhone app project", "My Gig Calendar"],
-  ];
+  await expectHeroPreview(page);
+  const trigger = page.getByRole("button", { name: "View the I Can Run A Show project", exact: true });
   const dialog = page.getByRole("dialog");
-  for (const [label, title] of previews) {
-    const trigger = page.getByRole("button", { name: label, exact: true });
-    await trigger.click();
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(title);
-    await expect(page.getByRole("button", { name: "Close project details" })).toBeFocused();
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
-    await expect(trigger).toBeFocused();
-  }
+  await trigger.focus();
+  await page.keyboard.press("Enter");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText("I Can Run A Show");
+  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+  await trigger.locator(".hero-project-info").click();
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText("I Can Run A Show");
+  await expect(page.getByRole("button", { name: "Close project details" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
 });
 
 for (const [id, banner] of [
@@ -325,7 +399,6 @@ for (const [id, banner] of [
       await expect(showcase.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
       await expectInlineGalleryFrame(showcase, project, frame, screen);
     }
-    await expect(page.locator(".hero-phone img")).toHaveAttribute("src", "./assets/gigcalendar-native-calendar.webp");
     const trigger = card.getByRole("button", { name: `Explore ${project.title}`, exact: true });
     await trigger.click();
     const dialog = page.getByRole("dialog");
@@ -580,8 +653,9 @@ test("removed repositories stay out of archive, search and hero while public sou
   await page.goto("/#project-archive");
   await expect(page.locator(".archive-card")).toHaveCount(16);
   await expect(page.locator(".source-note")).toHaveCount(0);
-  await expect(page.locator(".hero-web")).toHaveAttribute("data-project", publicProject.id);
-  await expect(page.locator(".hero-web img")).toHaveAttribute("src", publicProject.image);
+  const heroProject = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
+  await expect(page.locator(".hero-project")).toHaveAttribute("data-project", heroProject.id);
+  await expect(page.locator(".hero-project-screen")).toHaveAttribute("src", heroProject.image);
   await expect(page.locator(".hero-stage")).not.toContainText(/Mark Vegas/i);
   for (const id of removedProjectIds) {
     await expect(page.locator(`[data-project="${id}"]`)).toHaveCount(0);
@@ -1155,6 +1229,7 @@ for (const width of [320, 768, 1024]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/#project-archive");
     await page.evaluate(() => document.fonts.ready);
+    await expectHeroPreview(page);
     for (const card of await page.locator("#featured-projects .project-card, .archive-card").all()) {
       const id = await card.getAttribute("data-case-id") ||
         await card.getAttribute("data-supporting-id") || await card.getAttribute("data-showcase-id");

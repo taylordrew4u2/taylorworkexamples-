@@ -147,3 +147,10 @@ The asset record contains dimensions and original SHA-256 hashes. All nine sourc
 The user selected the supplied product banners as the main showcase images for The BitBinder and My Gig Calendar. Each banner is now the first gallery entry and the canonical cover, so it appears by default in selected work, the project collection, and project details. The banner dimensions, original colors, and original files are unchanged. All other gallery entries retain their relative order and remain available.
 
 Both covers are identified as supplied product artwork. Native frames retain their original capture labels and context so changing between artwork and app captures keeps the archive description accurate. Existing gallery counts remain twelve and nine respectively; total visual evidence stays at 57 views and 61 image references. The repository preference record preserves the user's choice for future edits. Twenty data checks, syntax checks, and the production build pass; focused browser assertions check first-load banner selection across all three surfaces, alongside the retained gallery regressions.
+
+
+## Cohesive opening product preview — v26, October 13, 2026
+
+The user found the Pins & Needles/My Gig Calendar opening collage unconvincing and its overlay treatment incoherent. The opening now gives the full preview area to one complete, upright Showrunner workspace. Its original screenshot has no crop, rotation, recoloring, or overlapping device. The authentic project icon, name, short workflow description, and “Web application · Sample workspace” label sit in a separate row below the image. The whole preview opens the matching project dialog using the existing accessible control behavior.
+
+The decorative orbit, asterisk, fake browser chrome, overlapping phone, and absolute caption have been removed. Mobile stacks the approved introduction, preview, and caption. The selected My Gig Calendar and BitBinder banner covers and their galleries remain unchanged. All page accents stay black, white, and gray; source colors remain intact. The preview depicts sample show data and does not claim a new runtime validation or client outcome.

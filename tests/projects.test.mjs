@@ -138,15 +138,22 @@ test("removed repositories cannot appear in the catalog or search results", () =
   }
 });
 
-test("the homepage hero uses the public Pins & Needles website and no removed projects", () => {
+test("the homepage hero uses the public Showrunner workspace with a separate verified product identity", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
-  const website = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
+  const project = projects.find((project) => project.id === "Showrunner-ICanRunAShow");
   const hero = html.match(/<div class="hero-stage"[\s\S]*?<\/section>/)?.[0];
-  assert.ok(hero, "Hero previews must be present");
-  assert.match(hero, /class="hero-web" data-project="PinsAndNeedlesComedyWebsite"/);
-  assert.ok(hero.includes(website.image), "Hero website image must match the public project");
-  assert.match(hero, /Pins &amp; Needles website|Pins & Needles website/);
-  assert.match(hero, /class="hero-phone" data-project="MyGigCalendar"[\s\S]*?src="\.\/assets\/gigcalendar-native-calendar\.webp"/);
+  assert.ok(hero, "Hero preview must be present");
+  assert.equal(project.sourceAvailable, true);
+  assert.match(hero, /class="hero-project" data-project="Showrunner-ICanRunAShow" aria-label="View the I Can Run A Show project"/);
+  assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 1);
+  assert.ok(hero.includes(`class="hero-project-screen" src="${project.image}" alt="${project.imageAlt}" width="2400" height="1688"`),
+    "The opening workspace uses the authentic cover and its actual dimensions");
+  assert.ok(hero.includes(`class="hero-project-icon" src="${project.icon}" alt="" width="100" height="100"`),
+    "The opening card includes the verified Showrunner icon");
+  assert.match(hero, /class="hero-project-info"[\s\S]*?class="hero-project-copy"[\s\S]*?<strong>I Can Run A Show<\/strong>/);
+  assert.match(hero, /Plan shows, book performers, and run live cues\./);
+  assert.match(hero, /Web application · Sample workspace/);
+  assert.doesNotMatch(hero, /hero-web|hero-phone|hero-orbit|hero-asterisk/);
   assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);
   for (const id of removedIds) {
     assert.ok(!hero.includes(`data-project="${id}"`), `${id}: removed from hero`);
