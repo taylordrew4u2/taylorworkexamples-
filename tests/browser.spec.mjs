@@ -874,14 +874,13 @@ test("removed repositories stay out of archive, search and hero while public sou
   await expect(liveSite).toHaveAttribute("rel", /noopener/);
 });
 
-test("every project dialog shows its images and keeps gallery, caption, full-size link, and focus in sync", async ({ page }) => {
-  // This serial catalog sweep loads every gallery, including full-resolution supplied artwork.
-  test.setTimeout(60_000);
-  const errors = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/#project-archive");
-  const dialog = page.getByRole("dialog");
-  for (const project of projects) {
+// Each complete gallery is a separate user flow, with its own normal timeout.
+for (const project of projects) {
+  test(`${project.title} dialog keeps images, caption, full-size link, and focus in sync`, async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await page.goto("/#project-archive");
+    const dialog = page.getByRole("dialog");
     const trigger = page.locator(`.archive-preview[data-project="${project.id}"]`);
     await trigger.click();
     await expect(dialog).toBeVisible();
@@ -928,9 +927,9 @@ test("every project dialog shows its images and keeps gallery, caption, full-siz
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
     await expect(trigger).toBeFocused();
-  }
-  expect(errors).toEqual([]);
-});
+    expect(errors).toEqual([]);
+  });
+}
 
 test("project dialog keeps background controls inactive, closes with Escape, and restores the trigger", async ({
   page,

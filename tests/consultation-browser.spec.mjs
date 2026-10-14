@@ -19,7 +19,7 @@ async function expectConsultationFit(page) {
   expect(controlsFit, "Visible consultation fields and actions fit the viewport").toBe(true);
 }
 
-test("the homepage prepares a chosen consultation and provides a usable copy fallback", async ({ page }) => {
+test("the homepage prepares a chosen consultation and provides a usable copy fallback", async ({ page }, testInfo) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "clipboard", {
       configurable: true,
@@ -29,9 +29,16 @@ test("the homepage prepares a chosen consultation and provides a usable copy fal
   await page.goto("/");
   const heroAction = page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false });
   await expect(heroAction).toHaveAttribute("href", "#consultation");
-  await expect(page.locator("#main-nav").getByRole("link", { name: "Book a consultation", exact: false }))
-    .toHaveAttribute("href", "#consultation");
-  await heroAction.click();
+  const menu = page.locator(".menu-toggle");
+  if (testInfo.project.name === "phone") await menu.click();
+  const navAction = page.locator("#main-nav").getByRole("link", { name: "Book a consultation", exact: false });
+  await expect(navAction).toHaveAttribute("href", "#consultation");
+  if (testInfo.project.name === "phone") {
+    await navAction.click();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+  } else {
+    await heroAction.click();
+  }
   await expect(page).toHaveURL(/#consultation$/);
 
   const form = page.locator("#consultation-form");
