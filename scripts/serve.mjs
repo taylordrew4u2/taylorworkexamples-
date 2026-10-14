@@ -17,6 +17,9 @@ const types = {
   ".webp": "image/webp",
   ".jpg": "image/jpeg",
   ".gif": "image/gif",
+  ".xml": "application/xml; charset=utf-8",
+  ".txt": "text/plain; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
 };
 http
   .createServer(async (request, response) => {

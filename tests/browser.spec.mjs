@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { projects, featuredProjects } from "../projects.js";
+import { projects, featuredProjects } from "../public-projects.js";
 
 const removedProjectIds = [
   "HealYourHeart",
@@ -10,6 +10,7 @@ const removedProjectIds = [
   "CONTROLLEREVENT",
   "comedysub",
   "staybusy",
+  "taylordrewwebsite",
 ];
 
 async function expectLoadedImageToFit(image, expected) {
@@ -216,7 +217,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await expect(page).toHaveTitle("Built4U — Custom tech. Built for you.");
+  await expect(page).toHaveTitle("Custom App, Website & Software Development | Built4U");
   await expect(page.getByRole("link", { name: "Built4U, home", exact: true })).toBeVisible();
   const headline = page.getByRole("heading", { level: 1 });
   await expect(headline).toHaveText("You know your business. I’ll build the technology.");
@@ -230,7 +231,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   );
   await expect(page.locator(".intro-description")).toBeVisible();
   await expect(page.locator(".footer-identity")).toContainText("Built4U");
-  await expect(page.locator(".owner-credit")).toHaveText("by taylordrew4u");
+  await expect(page.locator(".owner-credit")).toHaveCount(0);
   expect(await headline.evaluate((element) => {
     const headlineBox = element.getBoundingClientRect();
     const copy = element.closest(".intro-copy");
@@ -724,7 +725,7 @@ test("archive opens and filters, searches, empty state, and reset work together"
   await archive.locator("summary").click();
   await expect(archive).toHaveAttribute("open", "");
   const total = await page.locator(".archive-card").count();
-  expect(total).toBe(16);
+  expect(total).toBe(projects.length);
   await page.locator('[data-filter="ios"]').click();
   await expect(page.locator('[data-filter="ios"]')).toHaveAttribute(
     "aria-pressed",
@@ -749,7 +750,7 @@ test("archive opens and filters, searches, empty state, and reset work together"
   await expect(page.locator(".archive-card h3")).toHaveText("BillSpilt");
   await expect(page.locator('.archive-preview[data-project="Bill-Spilt"]')).toBeVisible();
   await expect(page.locator(".archive-card .project-workflows")).toContainText("Plan repayments");
-  await expect(page.locator("#result-count")).toHaveText("1 OF 16 PROJECTS");
+  await expect(page.locator("#result-count")).toHaveText(`1 OF ${projects.length} PROJECTS`);
   await search.fill("a-project-that-does-not-exist-9238");
   await expect(
     page.getByRole("heading", { name: "No projects found." }),
@@ -774,16 +775,16 @@ test("the archive deep link opens its images and filters on initial navigation",
   await page.goto("/#project-archive");
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
   await expect(page.getByRole("searchbox")).toBeVisible();
-  await expect(page.locator(".archive-card")).toHaveCount(16);
-  await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
+  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
+  await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
 });
 
-test("all 16 archive projects explain their purpose and workflows with genuine icons and accurately labeled covers", async ({ page }) => {
+test("all published archive projects explain their purpose and workflows with genuine icons and accurately labeled covers", async ({ page }) => {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/#project-archive");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".archive-placeholder")).toHaveCount(0);
   for (const project of projects) {
     const preview = page.locator(`.archive-preview[data-project="${project.id}"]`);
@@ -816,7 +817,9 @@ test("all 16 archive projects explain their purpose and workflows with genuine i
       await expect(liveLink).toHaveAttribute("target", "_blank");
       await expect(liveLink).toHaveAttribute("rel", /noopener/);
     }
-    await expect(card.locator(".project-links > a")).toHaveCount(project.demoUrl ? 2 : 1);
+    await expect(card.locator(".case-page-link")).toHaveAttribute("href", project.caseUrl);
+    await expect(card.locator(".case-page-link")).toBeVisible();
+    await expect(card.locator(".project-links > a")).toHaveCount(project.demoUrl ? 3 : 2);
   }
   expect(errors).toEqual([]);
 });
@@ -828,7 +831,7 @@ test("removed repositories stay out of archive, search and hero while public sou
   expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
-  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".source-note")).toHaveCount(0);
   await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
   for (const [id] of heroPreviews) {
@@ -847,10 +850,10 @@ test("removed repositories stay out of archive, search and hero while public sou
   for (const id of removedProjectIds) {
     await search.fill(id);
     await expect(page.locator(".archive-card")).toHaveCount(0);
-    await expect(page.locator("#result-count")).toHaveText("0 OF 16 PROJECTS");
+    await expect(page.locator("#result-count")).toHaveText(`0 OF ${projects.length} PROJECTS`);
   }
   await search.fill("");
-  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
 
   const publicPreview = page.locator(`.archive-preview[data-project="${publicProject.id}"]`);
   const publicCard = publicPreview.locator("..");
@@ -919,7 +922,7 @@ test("every project dialog shows its images and keeps gallery, caption, full-siz
       await expect(images.locator(".image-original")).toHaveAttribute("target", "_blank");
       await expect(images.locator(".image-original")).toHaveAttribute("rel", /noopener/);
       expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
-      await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
+      await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
       await expect(page.locator("#project-search")).toHaveValue("");
     }
     await page.keyboard.press("Escape");
@@ -1346,7 +1349,7 @@ for (const project of projects) {
       await expect(choice).toHaveAttribute("aria-pressed", "true");
       await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
       await expectInlineGalleryFrame(card, project, project.gallery[index], ".archive-preview");
-      await expect(page.locator("#result-count")).toHaveText("16 OF 16 PROJECTS");
+      await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
       await expect(page.getByRole("searchbox")).toHaveValue("");
     }
     const remaining = await page.locator(".archive-card").evaluateAll((cards, currentId) =>
@@ -1393,7 +1396,7 @@ test("archive re-rendering resets gallery state without changing selected-work g
   await page.getByRole("button", { name: "Clear filters", exact: true }).click();
   await expect(search).toHaveValue("");
   await expect(search).toBeFocused();
-  await expect(page.locator(".archive-card")).toHaveCount(16);
+  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(archiveChoices.first()).toHaveAttribute("aria-pressed", "true");
   await expect(archiveCard.locator(".archive-preview .primary-screen")).toHaveAttribute("src", project.image);
   await expect(archiveCard.locator(".screen-caption")).toHaveText(project.gallery[0].caption);
