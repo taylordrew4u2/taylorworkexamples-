@@ -1,4 +1,4 @@
-import { email } from "./public-projects.js?v=30";
+import { email } from "./public-projects.js?v=31";
 
 export const escape = (value) =>
   String(value).replace(
@@ -16,6 +16,7 @@ export function enquiryURL(topic = "general", reference = "") {
     "web-app": "web application",
     ios: "iOS app",
     software: "custom app or business software",
+    consultation: "consultation",
   };
   const selected = topics[topic] || topics.general;
   const subjects = {
@@ -24,14 +25,18 @@ export function enquiryURL(topic = "general", reference = "") {
     "web-app": "Web application project",
     ios: "iOS app project",
     software: "Custom app or software project",
+    consultation: "Built4U consultation",
   };
   const subject = reference
     ? `Project inspired by ${reference}`
     : subjects[topic] || subjects.general;
   const introduction = reference
     ? `I saw ${reference} in your portfolio and would like to discuss something similar.`
-    : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
-  const body = `Hi Built4U,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:\n\nThanks!`;
+    : topic === "consultation"
+      ? "I'd like to arrange a consultation about an app, website, or business software."
+      : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
+  const format = topic === "consultation" ? "\nConsultation format (Zoom or in-person in New York City):\nPreferred times:" : "";
+  const body = `Hi Built4U,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:${format}\n\nThanks!`;
   return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 export const labels = {

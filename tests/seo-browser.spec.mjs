@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { projects } from "../public-projects.js";
-import { services, guide, projectSlugs } from "../seo-content.js";
+import { services, guide, projectSlugs, site } from "../seo-content.js";
+import { articles } from "../seo-articles.js";
+import { localConsultation } from "../seo-local.js";
 
 test.use({ javaScriptEnabled: false });
 
@@ -132,5 +134,46 @@ test("the comparison guide, business information, and contact remain usable with
   for (const link of await page.locator("main a[href^='mailto:']").all()) {
     expect(new URL(await link.getAttribute("href")).pathname).toBe("admin@customtechbuilt4u.com");
   }
+  await expectPageFit(page);
+});
+
+test("a business guide connects the idea to a service and an arranged Zoom or NYC consultation without JavaScript", async ({ page }) => {
+  const article = articles.find((entry) => entry.slug === "salon-booking-website");
+  const service = services.find((entry) => entry.slug === article.serviceSlugs[0]);
+  await page.goto("/");
+  await expect(page.locator("#business-guides .insight-card")).toHaveCount(articles.length);
+  const guides = await linkTo(page, "/insights/");
+  await guides.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Useful reads for your next business build.");
+  await expect(page.locator(".insight-grid .insight-card")).toHaveCount(articles.length);
+  await expectPageFit(page);
+
+  const guide = await linkTo(page, `/insights/${article.slug}/`);
+  await guide.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+  await expect(page.locator(".article-byline")).toContainText("By Built4U");
+  await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", site.published);
+  await expect(page.locator("main")).toContainText(article.intro);
+  await expectPageFit(page);
+  const development = page.getByRole("navigation", { name: "Related development services" })
+    .getByRole("link", { name: service.title, exact: true });
+  await expect(development).toBeVisible();
+  await development.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+  await expectPageFit(page);
+
+  const local = await linkTo(page, "/new-york-city/");
+  await local.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(localConsultation.heading);
+  await expect(page.locator("main")).toContainText(localConsultation.intro);
+  await expect(page.locator("main")).toContainText(/Zoom consultations by arrangement/);
+  const arrange = page.locator(".page-actions").getByRole("link", { name: "Arrange a consultation", exact: false });
+  await expect(arrange).toBeVisible();
+  const draft = new URL(await arrange.getAttribute("href"));
+  expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
+  expect(draft.searchParams.get("subject")).toBe("Built4U consultation");
+  expect(draft.searchParams.get("body")).toContain("Consultation format (Zoom or in-person in New York City):");
+  expect(draft.searchParams.get("body")).toContain("Preferred times:");
+  expect(draft.searchParams.get("body")).toContain("The problem:");
   await expectPageFit(page);
 });

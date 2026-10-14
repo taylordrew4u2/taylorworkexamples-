@@ -1012,24 +1012,23 @@ test("navigation opens, closes on selection, and handles Escape on phones", asyn
 }, testInfo) => {
   await page.goto("/");
   const menu = page.locator(".menu-toggle");
+  const navigation = page.locator("#main-nav");
   if (testInfo.project.name === "desktop") {
     await expect(menu).toBeHidden();
-    await expect(
-      page.getByRole("navigation", { name: "Main navigation" }),
-    ).toBeVisible();
+    await expect(navigation).toBeVisible();
     return;
   }
   await menu.click();
   await expect(menu).toHaveAttribute("aria-expanded", "true");
-  await page
-    .getByRole("navigation")
-    .getByRole("link", { name: "Projects", exact: true })
-    .click();
+  await expect(navigation).toBeVisible();
+  await navigation.getByRole("link", { name: "Projects", exact: true }).click();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect(page.getByRole("navigation")).toBeHidden();
+  await expect(navigation).toBeHidden();
   await menu.click();
+  await expect(navigation).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expect(navigation).toBeHidden();
   await expect(menu).toBeFocused();
 });
 

@@ -1,13 +1,15 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { site, services, guide, projectSlugs } from "../seo-content.js";
+import { articles } from "../seo-articles.js";
+import { localConsultation } from "../seo-local.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { escape, enquiryURL, renderFeaturedProjects, renderArchiveProjects } from "../render-projects.js";
 
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "30";
+export const release = "31";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -48,6 +50,16 @@ function graph(page) {
     nodes.push({ "@type": "Service", "@id": `${url}#service`, url,
       name: page.service.title, serviceType: page.service.title,
       description: page.service.intro, provider: { "@id": organizationId },
+      ...(page.local ? { areaServed: { "@type": "City", name: "New York City" } } : {}),
+    });
+  }
+  if (page.article) {
+    webPage.mainEntity = { "@id": `${url}#article` };
+    nodes.push({ "@type": "Article", "@id": `${url}#article`, url,
+      headline: page.article.title, description: page.article.description,
+      author: { "@id": organizationId }, publisher: { "@id": organizationId },
+      datePublished: site.published, dateModified: site.published,
+      mainEntityOfPage: { "@id": webPage["@id"] }, inLanguage: "en",
     });
   }
   if (page.project) {
@@ -109,12 +121,12 @@ export function pageHead(page, homepage = false) {
 function header(route) {
   return `<a class="skip-link" href="#main">Skip to content</a><header class="site-header page-header wrap">
     <a class="wordmark" href="${local(route)}" aria-label="Built4U, home"><img class="brand-symbol" src="${local(route, "assets/4u-digital-logo-mono.png")}" alt="" width="256" height="256" /><span class="brand-name">Built4U</span></a>
-    <nav class="page-nav" aria-label="Main navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "about/")}">About Built4U</a><a class="nav-contact" href="${local(route, "contact/")}">Let’s talk <span aria-hidden="true">↗</span></a></nav>
+    <nav class="page-nav" aria-label="Main navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "about/")}">About Built4U</a><a class="nav-contact" href="${local(route, "contact/")}">Let’s talk <span aria-hidden="true">↗</span></a></nav>
   </header>`;
 }
 
 function footer(route) {
-  return `<footer class="page-footer wrap"><div><a class="brand-name" href="${local(route)}">Built4U</a><p>Custom tech. Built for you.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a><a href="${local(route, "about/")}">About Built4U</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav><p class="page-copyright">© 2026 Built4U</p></footer>`;
+  return `<footer class="page-footer wrap"><div><a class="brand-name" href="${local(route)}">Built4U</a><p>Custom tech. Built for you.</p><p>Zoom consultations and in-person consultations in the New York City area, by arrangement.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a><a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "about/")}">About Built4U</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav><p class="page-copyright">© 2026 Built4U</p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -151,6 +163,40 @@ function projectCard(project, route) {
 
 function serviceCards(route) {
   return `<div class="service-page-grid">${services.map((service) => `<article class="service-page-card"><p class="eyebrow">${escape(service.eyebrow)}</p><h2><a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a></h2><p>${escape(service.description)}</p><a class="text-link" href="${local(route, `services/${service.slug}/`)}">${escape(service.title)} <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
+}
+
+function articleCards(route, collection = articles) {
+  return `<div class="insight-grid">${collection.map((article) => `<article class="insight-card"><p class="eyebrow">BUSINESS TECHNOLOGY</p><h3><a href="${local(route, `insights/${article.slug}/`)}">${escape(article.title)}</a></h3><p>${escape(article.summary)}</p><a class="text-link" href="${local(route, `insights/${article.slug}/`)}">Read the guide <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
+}
+
+function consultationCallout(route) {
+  return `<aside class="page-callout"><h2>Let’s talk through your workflow.</h2><p>Arrange a Zoom consultation or an in-person consultation in the New York City area. We can discuss the people, tools, and tasks your website or app needs to support.</p><div class="page-actions">${inquiry("consultation", "Arrange a consultation")}<a class="text-link" href="${local(route, "new-york-city/")}">New York City consultations ↗</a></div></aside>`;
+}
+
+function articlePage(article) {
+  const route = `/insights/${article.slug}/`;
+  const page = { path: route, title: article.metaTitle, description: article.description, article, faq: article.faq,
+    breadcrumbs: [{ name: "Business guides", path: "/insights/" }, { name: article.title, path: route }],
+  };
+  const sections = article.sections.map(({ heading, text, paragraphs }) => `<section class="page-section"><h2>${escape(heading)}</h2>${(paragraphs || [text]).filter(Boolean).map((paragraph) => `<p>${escape(paragraph)}</p>`).join("")}</section>`).join("");
+  const examples = article.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
+  const content = `<article class="guide-article">${intro("A BUILT4U BUSINESS GUIDE", article.title, article.intro)}<p class="article-byline">By Built4U · <time datetime="${site.published}">October 14, 2026</time></p>${sections}${article.faq?.length ? faqBlock("A few useful answers", article.faq) : ""}<section class="page-section"><h2>Relevant work from the Built4U portfolio</h2><p>See the product screens and development details behind these related software projects. Each project page explains its purpose and the context of its images.</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section><section class="page-section"><h2>What would help your business?</h2><p>${escape(article.closing)}</p><nav class="related-links" aria-label="Related development services">${article.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav></section>${consultationCallout(route)}<nav class="related-links" aria-label="More business guides"><a href="${local(route, "insights/")}">All Built4U business guides</a><a href="${local(route, "guides/website-or-app/")}">Website, web app, or native app?</a></nav></article>`;
+  return { ...page, html: frame(page, content) };
+}
+
+function localPage() {
+  const route = "/new-york-city/";
+  const page = { path: route, title: localConsultation.metaTitle, description: localConsultation.description,
+    service: localConsultation, local: true, faq: localConsultation.faq,
+    breadcrumbs: [{ name: "New York City consultations", path: route }],
+  };
+  const content = intro("NEW YORK CITY · ZOOM CONSULTATIONS", localConsultation.heading, localConsultation.intro,
+    `<div class="page-actions">${inquiry("consultation", "Arrange a consultation")}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>`) +
+    localConsultation.sections.map(({ heading, text }) => `<section class="page-section"><h2>${escape(heading)}</h2><p>${escape(text)}</p></section>`).join("") +
+    `<section class="page-section"><h2>What could we build for your business?</h2><nav class="related-links" aria-label="Local development services">${localConsultation.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav><p>See how a booking or ordering workflow could be scoped before committing to a build.</p><nav class="related-links" aria-label="Business workflow guides"><a href="${local(route, "insights/salon-booking-website/")}">Planning a salon booking website</a><a href="${local(route, "insights/restaurant-ordering-app/")}">Planning restaurant online ordering</a><a href="${local(route, "work/")}">The Built4U project portfolio</a></nav></section>` +
+    faqBlock("Questions about consultations", localConsultation.faq) +
+    `<aside class="page-callout"><h2>Bring the problem, not a finished plan.</h2><p>${escape(localConsultation.meetingEmailIntro)}</p>${inquiry("consultation", "Email to arrange a consultation")}</aside>`;
+  return { ...page, html: frame(page, content) };
 }
 
 function servicePage(service) {
@@ -214,6 +260,7 @@ export async function generateSEO(output) {
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
   html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
   html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
+  html = html.replace('<div id="home-insights"></div>', articleCards("/"));
   html = html.replace('></p>\n            <div id="archive-projects"', `>${projects.length} OF ${projects.length} PROJECTS</p>\n            <div id="archive-projects"`);
   // Also give client-only controls a working route when JavaScript is unavailable.
   html = html.replace(/<noscript[\s\S]*?<\/noscript>/, '<noscript><p class="no-js-help">The projects below are available without JavaScript. Use each “Full project story” link to see every image and detail.</p></noscript>');
@@ -232,8 +279,12 @@ export async function generateSEO(output) {
     type: "AboutPage", breadcrumbs: [{ name: "About Built4U", path: "/about/" }],
   };
   const contact = { path: "/contact/", title: "Discuss Your App, Website or Software Project | Built4U",
-    description: "Contact Built4U at admin@customtechbuilt4u.com about an app, website, or software project. Start with the business problem, users, and features you need.",
+    description: "Contact Built4U about your website, app, or business software. Arrange a Zoom or New York City consultation at admin@customtechbuilt4u.com.",
     type: "ContactPage", breadcrumbs: [{ name: "Contact Built4U", path: "/contact/" }],
+  };
+  const insights = { path: "/insights/", title: "Business Website, App & Software Guides | Built4U",
+    description: "Practical Built4U guides to hiring a freelance developer, choosing a custom build, salon bookings, restaurant ordering, and scoping business software.",
+    type: "CollectionPage", breadcrumbs: [{ name: "Business guides", path: "/insights/" }],
   };
   const pages = [
     { ...home, html },
@@ -242,8 +293,11 @@ export async function generateSEO(output) {
     { ...work, html: frame(work, intro("THE BUILT4U PORTFOLIO", "See the work. Picture your own.", "15 websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.") + `<div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>`) },
     ...projects.map(projectPage),
     guidePage(),
-    { ...about, html: frame(about, intro("ABOUT BUILT4U", "You know your business. I’ll build the technology.", "Built4U is a custom technology business for companies that need an app, a website, or software shaped around how they work.") + `<section class="page-section"><h2>What does Built4U build?</h2><p>Built4U handles interface design and development, including the screens people use and the systems behind them. The portfolio includes public websites, web applications with accounts and shared workflows, native Apple apps, and desktop tools.</p><a class="text-link" href="${local(about.path, "work/")}">See Built4U’s software portfolio ↗</a></section><section class="page-section"><h2>How does full-stack development help your project?</h2><p>Built4U handles the interface people use and the backend code that stores records, checks access, and connects services. The portfolio includes authenticated web workspaces, shared records, and payment-provider integrations. The scope identifies what your project needs and which existing tools it can use.</p></section><section class="page-section"><h2>How does a project start?</h2><ol class="page-list"><li><strong>Describe the problem.</strong> Explain who will use the technology and what they need to do.</li><li><strong>Agree the scope and price.</strong> Define the features, project boundaries, costs, and responsibilities before building.</li><li><strong>Build, review, and prepare for launch.</strong> Review the work as it develops, then agree hosting, maintenance, and the launch requirements.</li></ol></section><section class="page-section"><h2>Where can you see the development work?</h2><p>Project pages include product screens, workflow descriptions, and links to public source code. Captions distinguish app captures from promotional artwork and identify sample content.</p><a class="text-link" href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">Browse the public GitHub projects ↗</a></section><aside class="page-callout"><h2>A rough idea is enough to start.</h2><p>Tell Built4U what your business needs. You don’t need a technical background or a finished specification.</p>${inquiry()}</aside>`) },
-    { ...contact, html: frame(contact, intro("LET’S TALK", "What would you like to build?", "Email Built4U about your website, app, or business software. Start with the problem you want to solve; a rough idea is enough.", `<div class="page-actions">${inquiry()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>`) + `<section class="page-section"><h2>What should you include in your first email?</h2><ul class="page-list"><li>What your business does and who will use the technology.</li><li>The task or problem you want to improve.</li><li>Features you have in mind and any existing website or software.</li><li>Your budget range and target date, if you know them.</li></ul><p>Built4U will discuss the scope and price before work starts. Hosting, outside services, and ongoing maintenance are agreed as part of that conversation.</p></section><section class="page-section"><h2>Choose a starting point.</h2><nav class="related-links" aria-label="Project inquiry types">${services.map((service) => `<a href="${escape(enquiryURL(service.topic))}">Discuss ${escape(service.title.toLowerCase())} ↗</a>`).join("")}</nav></section>`) },
+    { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Choose a development approach, think through your customer workflow, and decide what belongs in the first version. These short Built4U guides give you a practical starting point.") + articleCards(insights.path) + consultationCallout(insights.path)) },
+    ...articles.map(articlePage),
+    localPage(),
+    { ...about, html: frame(about, intro("ABOUT BUILT4U", "You know your business. I’ll build the technology.", "Built4U is a custom technology business for companies that need an app, a website, or software shaped around how they work.") + `<section class="page-section"><h2>What does Built4U build?</h2><p>Built4U handles interface design and development, including the screens people use and the systems behind them. The portfolio includes public websites, web applications with accounts and shared workflows, native Apple apps, and desktop tools.</p><a class="text-link" href="${local(about.path, "work/")}">See Built4U’s software portfolio ↗</a></section><section class="page-section"><h2>How does full-stack development help your project?</h2><p>Built4U handles the interface people use and the backend code that stores records, checks access, and connects services. The portfolio includes authenticated web workspaces, shared records, and payment-provider integrations. The scope identifies what your project needs and which existing tools it can use.</p></section><section class="page-section"><h2>How does a project start?</h2><ol class="page-list"><li><strong>Describe the problem.</strong> Explain who will use the technology and what they need to do.</li><li><strong>Agree the scope and price.</strong> Define the features, project boundaries, costs, and responsibilities before building.</li><li><strong>Build, review, and prepare for launch.</strong> Review the work as it develops, then agree hosting, maintenance, and the launch requirements.</li></ol></section><section class="page-section"><h2>Where can you see the development work?</h2><p>Project pages include product screens, workflow descriptions, and links to public source code. Captions distinguish app captures from promotional artwork and identify sample content.</p><a class="text-link" href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">Browse the public GitHub projects ↗</a></section>${consultationCallout(about.path)}<aside class="page-callout"><h2>A rough idea is enough to start.</h2><p>Tell Built4U what your business needs. You don’t need a technical background or a finished specification.</p>${inquiry()}</aside>`) },
+    { ...contact, html: frame(contact, intro("LET’S TALK", "What would you like to build?", "Email Built4U about your website, app, or business software. Start with the problem you want to solve; a rough idea is enough.", `<div class="page-actions">${inquiry()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>`) + `<section class="page-section"><h2>What should you include in your first email?</h2><ul class="page-list"><li>What your business does and who will use the technology.</li><li>The task or problem you want to improve.</li><li>Features you have in mind and any existing website or software.</li><li>Your budget range and target date, if you know them.</li></ul><p>Built4U will discuss the scope and price before work starts. Hosting, outside services, and ongoing maintenance are agreed as part of that conversation.</p></section>${consultationCallout(contact.path)}<section class="page-section"><h2>Choose a starting point.</h2><nav class="related-links" aria-label="Project inquiry types">${services.map((service) => `<a href="${escape(enquiryURL(service.topic))}">Discuss ${escape(service.title.toLowerCase())} ↗</a>`).join("")}</nav></section>`) },
   ];
   for (const page of pages.filter((page) => page.path !== "/")) {
     const directory = path.join(output, page.path);

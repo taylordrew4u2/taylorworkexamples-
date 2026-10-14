@@ -7,6 +7,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { projects, featuredProjects } from "../public-projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
+import { articles } from "../seo-articles.js";
+import { localConsultation } from "../seo-local.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -14,7 +16,8 @@ const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
 const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/"];
+  "/guides/website-or-app/", "/about/", "/contact/", "/insights/",
+  ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/"];
 const documents = new Map();
 
 const decode = (value = "") => value.replace(/&#(x[\da-f]+|\d+);/gi, (_, code) =>
@@ -64,9 +67,10 @@ before(async () => {
   }
 });
 
-test("the sitemap indexes exactly the public service, project, and business pages", async () => {
+test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
   assert.equal(projects.length, 15);
-  assert.equal(routes.length, 25);
+  assert.equal(articles.length, 6);
+  assert.equal(routes.length, 33);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -128,8 +132,8 @@ test("every indexable page has unique metadata, one semantic heading, and consis
   }
 });
 
-test("structured data points to the canonical business and matches visible service, project, and FAQ copy", () => {
-  const forbidden = new Set(["founder", "founders", "parentOrganization", "aggregateRating", "review", "ratingValue", "price", "priceCurrency", "address"]);
+test("structured data points to the canonical business and matches visible service, project, article, and FAQ copy", () => {
+  const forbidden = new Set(["founder", "founders", "parentOrganization", "aggregateRating", "review", "ratingValue", "price", "priceCurrency", "address", "openingHours", "openingHoursSpecification"]);
   const inspect = (value, route) => {
     if (!value || typeof value !== "object") return;
     assert.ok(!hasType(value, "Person"), `${route}: independent business identity`);
@@ -174,6 +178,25 @@ test("structured data points to the canonical business and matches visible servi
       assert.ok(visible.includes(normalize(schema.description)));
       assert.equal(page.mainEntity["@id"], schema["@id"]);
     }
+    const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
+    if (article) {
+      const schema = nodes.find((node) => hasType(node, "Article"));
+      assert.ok(schema, `${route}: article schema`);
+      assert.equal(schema.url, origin + route);
+      assert.equal(schema.headline, h1s(html)[0]);
+      assert.equal(schema.headline, article.title);
+      assert.equal(title(html), article.metaTitle);
+      assert.equal(schema.description, article.description);
+      assert.equal(schema.author["@id"], org["@id"]);
+      assert.equal(schema.publisher["@id"], org["@id"]);
+      assert.equal(schema.mainEntityOfPage["@id"], page["@id"]);
+      assert.equal(page.mainEntity["@id"], schema["@id"]);
+      assert.equal(schema.datePublished, "2026-10-14");
+      assert.equal(schema.dateModified, schema.datePublished);
+      assert.equal(schema.datePublished, site.published);
+      assert.deepEqual(tags(html, "time").map((tag) => tag.datetime), [schema.datePublished]);
+      assert.ok(visible.includes("by built4u"), `${route}: visible company author`);
+    }
     const project = projects.find((entry) => route === `/work/${projectSlugs[entry.id]}/`);
     if (project) {
       const schema = nodes.find((node) => hasType(node, "CreativeWork"));
@@ -190,6 +213,62 @@ test("structured data points to the canonical business and matches visible servi
       }
     }
     inspect(nodes, route);
+  }
+});
+
+test("business guides and consultation details are discoverable, truthful, and ready for email inquiries", () => {
+  const hubRoute = "/insights/";
+  const localRoute = "/new-york-city/";
+  const linksTo = (html, route, target) => tags(html, "a").some((tag) =>
+    tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === target);
+  for (const route of ["/", "/contact/", hubRoute]) {
+    const html = documents.get(route);
+    assert.ok(linksTo(html, route, localRoute), `${route}: reachable consultation page`);
+    assert.match(text(html), /Zoom/);
+    assert.match(text(html), /New York City/);
+    assert.match(text(html), /by arrangement/i);
+  }
+  assert.ok(linksTo(documents.get("/"), "/", hubRoute), "the homepage links to the guide hub");
+  const hub = documents.get(hubRoute);
+  assert.equal([...hub.matchAll(/class="[^"]*\binsight-card\b/g)].length, articles.length);
+  for (const article of articles) {
+    const route = `/insights/${article.slug}/`;
+    const html = documents.get(route);
+    assert.ok(linksTo(hub, hubRoute, route), `${article.title}: reachable from the hub`);
+    assert.ok(text(hub).includes(article.summary));
+    assert.ok(text(html).includes(article.intro), `${article.title}: crawlable explanatory content`);
+    assert.ok(linksTo(html, route, hubRoute));
+    assert.ok(linksTo(html, route, localRoute));
+    for (const slug of article.serviceSlugs) {
+      assert.ok(services.some((service) => service.slug === slug), `${article.title}: real development service`);
+      assert.ok(linksTo(html, route, `/services/${slug}/`));
+    }
+    for (const id of article.projectIds) {
+      assert.ok(projects.some((project) => project.id === id), `${article.title}: published project evidence`);
+      assert.ok(linksTo(html, route, `/work/${projectSlugs[id]}/`));
+    }
+  }
+  const local = documents.get(localRoute);
+  assert.equal(h1s(local)[0], localConsultation.heading);
+  assert.ok(text(local).includes(localConsultation.intro));
+  const service = schemaNodes(local).find((node) => hasType(node, "Service"));
+  assert.equal(service.name, localConsultation.title);
+  assert.equal(service.description, localConsultation.intro);
+  assert.deepEqual(service.areaServed, { "@type": "City", name: "New York City" });
+  for (const route of routes.filter((route) => route !== localRoute)) {
+    for (const schema of schemaNodes(documents.get(route)).filter((node) => hasType(node, "Service"))) {
+      assert.equal(schema.areaServed, undefined, `${route}: no invented local service claim`);
+    }
+  }
+  for (const slug of localConsultation.serviceSlugs) assert.ok(linksTo(local, localRoute, `/services/${slug}/`));
+  const consultations = tags(local, "a").filter((tag) => tag.href?.startsWith("mailto:"))
+    .map((tag) => new URL(tag.href)).filter((url) => url.searchParams.get("subject") === "Built4U consultation");
+  assert.ok(consultations.length > 0, "the local page provides an actual consultation inquiry");
+  for (const draft of consultations) {
+    assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
+    assert.ok(draft.searchParams.get("body").includes("Consultation format (Zoom or in-person in New York City):"));
+    assert.ok(draft.searchParams.get("body").includes("Preferred times:"));
+    assert.ok(draft.searchParams.get("body").includes("The problem:"));
   }
 });
 
