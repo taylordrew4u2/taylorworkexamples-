@@ -77,31 +77,31 @@ Prepared/build date: **October 14, 2026**. Register scope: 25 planned canonical 
 
 | Planned canonical URL | Prepared date | Public publication status |
 | --- | --- | --- |
-| https://customtechbuilt4u.com/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/services/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/services/website-development/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/services/web-app-development/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/services/app-development/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/services/custom-software-development/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/i-can-run-a-show/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/bitbinder/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/trip-handler/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/role-call/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/bill-spilt/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/my-gig-calendar/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/bleepkit/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/dictype/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/micro-short-film-website/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/nyc-open-mic-master-list/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/open-micer-timer/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/pins-and-needles-comedy/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/sobstage/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/tlc-massage-wellness/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/work/vlognudge/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/guides/website-or-app/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/about/ | 2026-10-14 | Pending verification |
-| https://customtechbuilt4u.com/contact/ | 2026-10-14 | Pending verification |
+| https://customtechbuilt4u.com/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/services/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/services/website-development/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/services/web-app-development/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/services/app-development/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/services/custom-software-development/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/i-can-run-a-show/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/bitbinder/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/trip-handler/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/role-call/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/bill-spilt/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/my-gig-calendar/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/bleepkit/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/dictype/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/micro-short-film-website/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/nyc-open-mic-master-list/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/open-micer-timer/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/pins-and-needles-comedy/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/sobstage/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/tlc-massage-wellness/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/work/vlognudge/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/guides/website-or-app/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/about/ | 2026-10-14 | Published October 14; HTTP200 verified |
+| https://customtechbuilt4u.com/contact/ | 2026-10-14 | Published October 14; HTTP200 verified |
 
 The404 fallback is an additional non-indexable document and is intentionally outside this 25-URL register. Robots and sitemap are supporting discovery files. Keep these URL entries stable when comparing later measurements.
 
@@ -150,3 +150,11 @@ Prepared October 14, 2026. The final dated publication artifact records actual H
 | https://customtechbuilt4u.com/new-york-city/ | 2026-10-14 |
 | https://customtechbuilt4u.com/about/ | 2026-10-14 |
 | https://customtechbuilt4u.com/contact/ | 2026-10-14 |
+
+## Verified publication — October 14, 2026
+
+The 33-page expansion was published at portfolio revision `e4d29f8c04f23248702759c0875751943d349d30`. Vercel production deployment `dpl_C3PYQ17izaFGvuCtXRu8oCwLTivK` reached READY with the custom domain alias. All 33 canonical URLs returned HTTP 200 directly and matched their primary-domain canonical tags. The homepage served `app.js?v=31`, six article cards, and the retained Google verification tag; the sitemap returned application/xml with 33 entries. The unknown nested URL returned the custom HTTP404 with noindex.
+
+GitHub Actions run `38601461467` passed the 31 Node tests and all 100 desktop/phone browser cases, then deployed the GitHub Pages build. Public browser checks also verified the service-to-guide navigation, six-guide index, phone-width article layout, original product images, and consultation email destination. The same layout remains in the small final editorial cleanup, which removes unnecessary negative example disclaimers while retaining all development-preview qualifications, scoped requirements, and genuine project references.
+
+Google confirmed HTML-tag ownership and processed the initial 25-entry sitemap successfully. The expanded sitemap at the same URL contains 33 entries; its submission/read results and any homepage indexing request are recorded in the dated final publication artifact after the console check. Sitemap discovery is not proof of indexing or ranking. Performance and indexing data are still processing, and independent AI-answer mention/citation metrics remain unmeasured.

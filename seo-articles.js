@@ -93,7 +93,7 @@ export const articles = [
     metaTitle: "Planning a Salon Booking Website | Built4U",
     description: "Plan salon services, staff, appointment durations, requests, confirmations, and optional reminders or deposits before choosing a booking website build.",
     summary: "A salon booking website needs rules for services, staff, and time. Decide how an appointment becomes confirmed before designing the booking screen.",
-    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. The scenario here is illustrative: Built4U can discuss a tailored booking workflow, while the portfolio's TLC Massage Wellness development preview provides a related example of service information and appointment requests.",
+    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. Built4U can help define a tailored booking workflow around your services and staff. The TLC Massage Wellness development preview provides a related example of service information and appointment requests.",
     sections: [
       {
         heading: "Define the service and staff rules first",
@@ -106,7 +106,7 @@ export const articles = [
         heading: "Distinguish a booking request from a confirmed appointment",
         paragraphs: [
           "A request workflow lets staff review the details before accepting the appointment. An automatic confirmation workflow needs availability and conflict rules that can make that decision. The customer should understand which step has happened and what they need to do next.",
-          "TLC Massage Wellness demonstrates treatment-aware requests, intake questions, staff information, and an accept-or-decline workflow in a development preview. That is useful product evidence for discussing a booking build. It does not establish that Built4U has delivered this illustrative salon scenario for a paying salon client.",
+          "TLC Massage Wellness demonstrates treatment-aware requests, intake questions, staff information, and an accept-or-decline workflow in a development preview. Use that example to discuss how requests, staff review, and appointment status should work in your own booking system.",
         ],
       },
       {
@@ -137,7 +137,7 @@ export const articles = [
     metaTitle: "Planning a Restaurant Ordering App | Built4U",
     description: "Define menu options, pickup or delivery, order acceptance, staff handling, payments, and POS access before building a restaurant ordering app.",
     summary: "An ordering app needs a complete path from menu choice to accepted order. Customer screens and restaurant operations should be planned together.",
-    intro: "A restaurant ordering app needs to match what happens after someone presses the order button. The menu, fulfillment process, payment status, and staff response all affect the build. This is an illustrative business scenario. Built4U's related portfolio evidence includes web-app coordination and payment integration, rather than a claim that this restaurant ordering system has already been delivered.",
+    intro: "A restaurant ordering app needs to match what happens after someone presses the order button. The menu, fulfillment process, payment status, and staff response all affect the build. Built4U can help plan those steps around your restaurant. Related portfolio work demonstrates web-app coordination and payment integration, giving you concrete examples to discuss when defining your ordering workflow.",
     sections: [
       {
         heading: "Make the menu and fulfillment choices explicit",
@@ -181,7 +181,7 @@ export const articles = [
     metaTitle: "From Spreadsheet to Business Software | Built4U",
     description: "Plan shared records, permissions, review steps, imports, and exports before replacing a spreadsheet with custom business software.",
     summary: "A spreadsheet can be useful until the work needs defined roles and handoffs. Start with one complete task before deciding what software to build.",
-    intro: "Moving a spreadsheet into software should begin with the work people perform around it. Who enters a record, who checks it, and what happens after a decision? Custom business software can give those steps a defined interface and access rules. The scenario here is illustrative; it does not claim measured time savings or a completed spreadsheet migration for a client.",
+    intro: "Moving a spreadsheet into software should begin with the work people perform around it. Who enters a record, who checks it, and what happens after a decision? Custom business software can give those steps a defined interface and access rules. Start by mapping your current spreadsheet process, then decide which steps need shared records, approvals, or a clearer interface.",
     sections: [
       {
         heading: "Describe a complete task using a real example",
@@ -194,7 +194,7 @@ export const articles = [
         heading: "Design shared records and permissions together",
         paragraphs: [
           "A business tool needs rules for who can see and change each record. Signing in identifies the user; permissions govern the work they may do. Decide which information is shared, which is private, and who can change a status or reverse a decision.",
-          "RoleCall shows screenplay and production-document workflows with team roles. The Trip Handler shows shared records and organizer approvals. These products demonstrate related application patterns; the spreadsheet process described here is illustrative and would need its own import and workflow scope.",
+          "RoleCall shows screenplay and production-document workflows with team roles. The Trip Handler shows shared records and organizer approvals. Use these application patterns as examples when defining the import rules, permissions, and review steps your spreadsheet process needs.",
         ],
       },
       {
