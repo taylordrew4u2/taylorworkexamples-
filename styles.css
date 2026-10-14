@@ -1845,6 +1845,11 @@ dialog::backdrop {
   .site-header nav a:hover, .text-link:hover, .project-title button:hover, .project-links a:hover, .project-links button:hover, .archive-card h3 button:hover {
     color: var(--accent);
   }
+  .site-header nav .nav-contact:hover {
+    color: white;
+    background: #000000;
+    border-color: #000000;
+  }
   .button-dark:hover {
     background: #000000;
   }
