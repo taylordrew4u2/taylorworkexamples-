@@ -333,6 +333,7 @@ test("every page offers the same consultation entry without relying on JavaScrip
     assert.equal(destination.pathname, "/");
     assert.equal(destination.hash, "#consultation");
     assert.ok(text(header).includes("Book a consultation"));
+    assert.ok(linksTo(html, route, "/contact/"), `${route}: the contact page remains reachable`);
   }
 });
 
