@@ -53,6 +53,37 @@ test("consultation details are trimmed and kept within the displayed field limit
   decodedDraft(capped);
 });
 
+test("emoji remain intact when consultation details reach or cross a field limit", () => {
+  for (const [field, limit] of [["preferredTimes", 300], ["project", 1000]]) {
+    const fits = "x".repeat(limit - 2) + "😀";
+    const complete = consultationDraft({ [field]: fits });
+    assert.ok(complete.body.includes(fits), `${field}: a complete emoji at the limit is preserved`);
+    assert.ok(complete.body.isWellFormed());
+    decodedDraft(complete);
+
+    const crosses = "x".repeat(limit - 1) + "😀";
+    const truncated = consultationDraft({ [field]: crosses });
+    assert.ok(truncated.body.includes("x".repeat(limit - 1)));
+    assert.ok(truncated.body.isWellFormed(), `${field}: truncation does not leave a broken surrogate`);
+    assert.ok(!truncated.body.includes("\uFFFD"), `${field}: truncating valid text does not introduce a replacement glyph`);
+    assert.ok(!truncated.body.includes("😀"), `${field}: the whole emoji is omitted when it cannot fit`);
+    decodedDraft(truncated);
+  }
+});
+
+test("Unicode consultation details encode safely even when pasted text has an unpaired surrogate", () => {
+  const valid = consultationDraft({ preferredTimes: "Vendredi à 14 h", project: "A café’s 客户 portal 🧑‍💻" });
+  assert.ok(valid.body.includes("Vendredi à 14 h"));
+  assert.ok(valid.body.includes("A café’s 客户 portal 🧑‍💻"));
+  decodedDraft(valid);
+
+  for (const malformed of ["A portal \uD83D", "A portal \uDC00", "A \uD83D portal \uDC00"]) {
+    const normalized = consultationDraft({ preferredTimes: malformed, project: malformed });
+    assert.ok(normalized.body.isWellFormed(), "Unpaired input is normalized before email encoding");
+    decodedDraft(normalized);
+  }
+});
+
 test("client text cannot change the recipient or add mail headers", () => {
   const project = "A customer portal?cc=someone@example.com&subject=other\nA quote with \"marks\" and café.";
   const draft = consultationDraft({ format: "in-person", preferredTimes: "Wed + Fri, 2–4 pm", project });
