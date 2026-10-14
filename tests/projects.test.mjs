@@ -357,16 +357,25 @@ test("all 16 public projects have traceable covers and galleries with accurate a
       ), `${project.id}: each development view discloses its capture or sample context`);
     }
     if (project.imageKind === "product-artwork") {
-      assert.ok(["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"].includes(project.id));
-      assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
       assert.equal(project.gallery[0].label, "Product overview");
-      assert.equal(project.imageLabel, "Supplied product artwork");
       assert.equal(project.imageCaption, project.gallery[0].caption);
-      assert.match(project.imageCaption, /^Supplied product artwork/);
-      assert.match(project.previewContext, /owner-supplied.*promotional artwork/i);
-      assert.equal(project.imageWidth, 1920);
-      assert.equal(project.imageHeight, 1080);
       assert.equal(project.portrait, false);
+      if (project.gallery[0].sourceKind === "owner-supplied-product-artwork") {
+        assert.ok(["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"].includes(project.id));
+        assert.equal(project.imageLabel, "Supplied product artwork");
+        assert.match(project.imageCaption, /^Supplied product artwork/);
+        assert.match(project.previewContext, /owner-supplied.*promotional artwork/i);
+        assert.equal(project.imageWidth, 1920);
+        assert.equal(project.imageHeight, 1080);
+      } else {
+        assert.equal(project.id, "Bill-Spilt");
+        assert.equal(project.gallery[0].sourceKind, "repository-product-artwork");
+        assert.equal(project.imageLabel, "Repository product artwork");
+        assert.match(project.imageCaption, /^Repository product artwork/);
+        assert.match(project.previewContext, /repository.*promotional artwork/i);
+        assert.match(project.gallery[0].sourceUrl,
+          /^https:\/\/(?:github\.com\/taylordrew4u2\/Bill-Spilt\/blob\/|raw\.githubusercontent\.com\/taylordrew4u2\/Bill-Spilt\/)[a-f0-9]{40}\/docs\/readme\/hero\.png$/);
+      }
     }
   }
 });
@@ -554,6 +563,60 @@ test("Open Micer Timer uses its supplied banner and keeps three native countdown
     const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
       `${name}: original supplied pixels must remain unchanged`);
+  }
+});
+
+test("BillSpilt uses eight original repository visuals with pinned sources and distinct artwork and app capture context", () => {
+  const bill = projects.find((project) => project.id === "Bill-Spilt");
+  const commit = "a45aad25f6274313a3c82329a87bba196f860aae";
+  const expected = [
+    ["hero.png", "Product overview", "docs/readme/hero.png", 2560, 1440, "66147df6cf2a40f8f8ffc12e7f9655f1b836787b3db3d9320a7834a90f7c4646"],
+    ["home-balances.png", "Balances", "docs/screenshots/home-balances.png", 780, 1688, "31499c6ccdcc5ffd8c538dc27bad05b619b01f669143fb7c89b660b2c177d221"],
+    ["settle-up.png", "Settlement", "docs/screenshots/settle-up.png", 780, 1688, "4a22108df51ae0bd05a6c44d3119c4c563bc4020c89f1914c78e0daaa1ab31f9"],
+    ["add-expense.png", "Expense split", "docs/screenshots/add-expense.png", 780, 1688, "7550455973e98aa30a6a63b8bea7d400cac56556f670214db8488baed16b2e64"],
+    ["expenses.png", "Expense history", "docs/screenshots/expenses.png", 780, 1688, "c5a6d24e56a759fce83ca198db3a61c0d420a3de588aed7b8bdd3bb819b7241c"],
+    ["stats.png", "Spending overview", "docs/screenshots/stats.png", 780, 1688, "a309383c9ceeafe92e2404576d36fde166cd1a033ce0e8dc3e6958e934cc7f3a"],
+    ["how-it-works.png", "How it works", "docs/readme/how-it-works.png", 2558, 1440, "b8ff4d37e616c4e2d62f33d3d875612f6b02e68b32ffc8affc4fb9dfb792176b"],
+    ["features.png", "Features", "docs/readme/features.png", 2560, 1280, "6495e02ae0db25d5a9d65259501328a419bc4c8759c2277d322bb3719814212f"],
+  ];
+  assert.equal(bill.repositoryHead, commit);
+  assert.equal(bill.repositoryVerifiedAt, "2026-10-13");
+  assert.equal(bill.image, "./assets/billspilt/hero.png");
+  assert.equal(bill.imageKind, "product-artwork");
+  assert.equal(bill.imageLabel, "Repository product artwork");
+  assert.equal(bill.imageWidth, 2560);
+  assert.equal(bill.imageHeight, 1440);
+  assert.equal(bill.portrait, false);
+  assert.deepEqual(bill.gallery.map((frame) => [frame.image, frame.label]),
+    expected.map(([file, label]) => [`./assets/billspilt/${file}`, label]));
+  for (const [index, frame] of bill.gallery.entries()) {
+    const [file, , sourcePath, width, height, sha256] = expected[index];
+    const artwork = sourcePath.startsWith("docs/readme/");
+    assert.equal(frame.width, width);
+    assert.equal(frame.height, height);
+    assert.equal(frame.portrait, !artwork);
+    assert.equal(frame.companion, undefined);
+    assert.ok([
+      `https://github.com/taylordrew4u2/Bill-Spilt/blob/${commit}/${sourcePath}`,
+      `https://raw.githubusercontent.com/taylordrew4u2/Bill-Spilt/${commit}/${sourcePath}`,
+    ].includes(frame.sourceUrl), `${file}: source points to the verified repository commit`);
+    assert.ok(bill.sources.includes(frame.sourceUrl));
+    if (artwork) {
+      assert.equal(frame.sourceKind, "repository-product-artwork");
+      assert.equal(frame.imageLabel, "Repository product artwork");
+      assert.equal(frame.previewContext, "Repository promotional artwork · Illustrative sample data");
+      assert.match(frame.caption, /^Repository product artwork/);
+    } else {
+      assert.equal(frame.sourceKind, "repository-app-capture");
+      assert.equal(frame.imageLabel, "App screenshot");
+      assert.equal(frame.previewContext, "Repository app capture · Sample household");
+      assert.match(frame.caption, /^Repository app capture/);
+      assert.match(frame.caption, /sample|fictional/i);
+    }
+    assert.notEqual(frame.sourceKind, "owner-supplied-product-artwork");
+    const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
+      `${file}: original repository pixels must remain unchanged`);
   }
 });
 

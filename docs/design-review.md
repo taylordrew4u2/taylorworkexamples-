@@ -164,3 +164,10 @@ The opening stacks the two previews with a neutral gap on all viewports. Native 
 
 
 The same release adds all seven Open Micer Timer images supplied on October 13. Its 1920 × 1080 Product overview banner becomes the archive and dialog cover, followed by the three original native captures and six supplied portrait feature images (ten views total). Every PNG is copied byte-for-byte, preserving original yellow/red source colors and 1320 × 2868 portrait dimensions. Captions and full-size links distinguish supplied promotional artwork from the native countdown captures, including when the inline archive switches between them. The opening remains the two apps explicitly selected by the user: BitBinder and My Gig Calendar.
+
+
+## BillSpilt repository visuals — v28, October 13, 2026
+
+The user asked to update BillSpilt from its public GitHub repository. Eight original PNGs are copied byte-for-byte from revision `a45aad25f6274313a3c82329a87bba196f860aae`: the 2560 × 1440 README hero, features and workflow graphics, and five 780 × 1688 interface captures. The hero is the new default cover across selected work, archive, and project details. The gallery retains balances, settlement, and expense entry as current full-resolution repository files, adds expense history and spending overview, and includes the two explanatory graphics (eight views total).
+
+The three README graphics are labeled repository product artwork, distinct from owner-supplied attachments and repository app captures. Archive labels and context follow each selected frame. Interface captures depict a sample household, with full balances/statistics identified as admin views. Their display does not establish that a payment occurred. Source links pin the exact commit, and the [asset record](billspilt-assets.md) records dimensions and original hashes. Original colors and proportions are preserved without recoloring, crop, or new image generation. The opening remains the approved BitBinder/My Gig Calendar banners, and the portfolio’s page accents remain monochrome.

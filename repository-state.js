@@ -1,4 +1,4 @@
-// Public GitHub inventory checked on 2026-10-12. This is a build-time snapshot.
+// Public GitHub inventory checked on 2026-10-12; BillSpilt refreshed on 2026-10-13.
 export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
   "Bill-Spilt": {
@@ -6,8 +6,9 @@ export const publicRepositories = {
     "description": "Roommate bill splitting made easy",
     "homepage": "https://billspilt.com",
     "defaultBranch": "main",
-    "headSha": "f04f24064d8e2a10575193e8a20027bb292c9791",
-    "pushedAt": "2026-10-06T05:53:07Z",
+    "headSha": "a45aad25f6274313a3c82329a87bba196f860aae",
+    "pushedAt": "2026-10-12T23:21:30Z",
+    "verifiedAt": "2026-10-13",
     "archived": false,
     "readmeAvailable": true
   },

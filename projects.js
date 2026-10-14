@@ -1,6 +1,6 @@
-import { projectVisuals } from "./visuals.js?v=25";
+import { projectVisuals } from "./visuals.js?v=28";
 import { projectIdentities } from "./identities.js?v=25";
-import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=25";
+import { publicRepositories, repositoryVerifiedAt } from "./repository-state.js?v=28";
 
 // The public GitHub snapshot determines which projects are listed.
 // Source links and screenshot provenance stay alongside each project.
@@ -801,7 +801,7 @@ for (const project of projects) {
 // Attach verified public repository status to the visible catalog.
 for (const project of projects) {
   const repository = publicRepositories[project.id];
-  project.repositoryVerifiedAt = repositoryVerifiedAt;
+  project.repositoryVerifiedAt = repository?.verifiedAt || repositoryVerifiedAt;
   project.sourceAvailable = Boolean(repository);
   project.repositoryArchived = repository?.archived || false;
   project.repositoryHead = repository?.headSha || null;

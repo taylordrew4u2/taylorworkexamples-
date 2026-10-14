@@ -3,7 +3,7 @@ import {
   projects,
   featuredProjects,
   filterProjects,
-} from "./projects.js?v=25";
+} from "./projects.js?v=28";
 
 const $ = (selector) => document.querySelector(selector);
 const escape = (value) =>
