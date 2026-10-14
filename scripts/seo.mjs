@@ -10,7 +10,7 @@ import { consultationDraft } from "../consultation.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "32";
+export const release = "33";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -122,7 +122,7 @@ export function pageHead(page, homepage = false) {
 function header(route) {
   return `<a class="skip-link" href="#main">Skip to content</a><header class="site-header page-header wrap">
     <a class="wordmark" href="${local(route)}" aria-label="Built4U, home"><img class="brand-symbol" src="${local(route, "assets/4u-digital-logo-mono.png")}" alt="" width="256" height="256" /><span class="brand-name">Built4U</span></a>
-    <nav class="page-nav" aria-label="Main navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "about/")}">About Built4U</a><a class="nav-contact" href="${local(route, "contact/")}">Let’s talk <span aria-hidden="true">↗</span></a></nav>
+    <nav class="page-nav" aria-label="Main navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "about/")}">About Built4U</a><a class="nav-contact" href="${local(route)}#consultation">Book a consultation <span aria-hidden="true">↘</span></a></nav>
   </header>`;
 }
 

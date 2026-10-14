@@ -1,4 +1,4 @@
-import { email } from "./public-projects.js?v=32";
+import { email } from "./public-projects.js?v=33";
 
 function boundedText(value, limit) {
   // Keep a whole Unicode character at the limit, and make pasted text safe to encode.

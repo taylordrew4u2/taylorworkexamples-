@@ -23,6 +23,11 @@ async function expectPageFit(page) {
       return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
     }));
   expect(controls, "Navigation and inquiry controls stay readable inside the viewport").toBe(true);
+  expect(await page.evaluate(() => {
+    const navigation = document.querySelector(".page-nav");
+    const main = document.querySelector(".page-main");
+    return !navigation || !main || navigation.getBoundingClientRect().bottom <= main.getBoundingClientRect().top + 1;
+  }), "The page navigation sits above the content rather than covering its title").toBe(true);
 }
 
 async function expectOriginalImage(image, frame) {

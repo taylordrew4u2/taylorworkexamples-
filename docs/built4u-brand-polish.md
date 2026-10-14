@@ -1,0 +1,13 @@
+# Built4U site polish — October 14, 2026
+
+BrandKit guides the existing identity: the approved Open Frame mark, Built4U wordmark, black primary actions, white cards, restrained gray section surfaces, Manrope headings, and DM Sans body copy. The approved tagline, headline, original product banners, and full-color project captures stay authoritative. New service icons are simple decorative outlines made in native SVG; they are not product logos or screenshots.
+
+Product & App Architect's existing-site audit identifies a client journey: understand the offer, compare services, inspect selected work, understand the project process, then request a consultation. The full consultation form follows the selected projects and process, while its homepage and header buttons still go directly to it. The form prepares an email; meeting details are confirmed by email. The user's separate booking app is not implemented or connected in this change.
+
+Service cards have a shared gray section surface, white interiors, larger headings, clear service symbols, concise descriptions, and an inquiry action before the secondary project example. The leading galleries place their choices beside the image instead of inside the introduction. Original captions, source links, real product icons, full-size files, all 78 gallery views, and searchable project data remain available. A stronger selected state makes gallery choices clear without recoloring any work.
+
+The homepage and every generated service, article, project, and business page use the same black consultation action and route to the homepage form. Relative links preserve the GitHub Pages repository prefix. The hero heading uses more of its available width on tablets, reducing unnecessary line breaks. The public brand stays independent of personal stand-up promotion.
+
+Static-page navigation also returns to normal document flow on phones. It previously inherited the homepage dropdown's absolute positioning, allowing the navigation to overlap the breadcrumb and title. The page-fit check now verifies this vertical boundary in addition to horizontal viewport fit.
+
+Validation uses the existing source/build checks, initial-HTML and canonical audits, original image byte comparisons, gallery interaction and focus tests, and desktop/phone viewport checks. A focused assertion covers the consultation's position after proof and process; another covers the shared consultation destination on all 33 pages. Public screenshots and final release results are recorded outside the repository after deployment. No conversion or ranking improvement is claimed by these changes.

@@ -27,6 +27,9 @@ test("the homepage prepares a chosen consultation and provides a usable copy fal
     });
   });
   await page.goto("/");
+  expect(await page.locator("#consultation").evaluate((section) => Boolean(
+    document.querySelector("#process").compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "Clients can see services and selected work before the full consultation form").toBe(true);
   const heroAction = page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false });
   await expect(heroAction).toHaveAttribute("href", "#consultation");
   const menu = page.locator(".menu-toggle");

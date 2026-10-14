@@ -12,7 +12,7 @@ html:not(.js-enabled) #main-nav { display: flex; position: static; flex-wrap: wr
 html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .content-page .page-header { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
 .content-page .page-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
-.content-page .page-nav .nav-contact { display: inline-flex; }
+.content-page .page-nav .nav-contact { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border: 1px solid var(--ink); border-radius: var(--control-corner); background: var(--ink); color: white; font-weight: 550; white-space: nowrap; }
 .content-page .page-main { padding-top: 2.5rem; padding-bottom: 4rem; }
 .breadcrumbs ol { display: flex; gap: 0.5rem; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; font-size: 0.875rem; color: var(--muted); }
 .breadcrumbs li + li::before { content: "/"; margin-right: 0.5rem; color: var(--muted); }
@@ -105,7 +105,7 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 }
 @media (max-width: 600px) {
   .content-page .page-header { gap: 1.25rem; padding-block: 1.25rem; }
-  .content-page .page-nav { width: 100%; font-size: 0.875rem; gap: 0.75rem 1.25rem; }
+  .content-page .page-nav { position: static; flex-direction: row; align-items: center; width: 100%; padding: 0; border: 0; box-shadow: none; background: none; font-size: 0.875rem; gap: 0.75rem 1.25rem; }
   .content-page .page-nav .nav-contact { padding: 0.5rem 0.875rem; }
   .content-page .page-main { padding-top: 1.25rem; }
   .page-intro { padding: 2.5rem 0; }

@@ -321,6 +321,21 @@ test("all local document references exist and remain inside the GitHub Pages sub
   }
 });
 
+test("every page offers the same consultation entry without relying on JavaScript", () => {
+  for (const route of routes) {
+    const html = documents.get(route);
+    const header = html.match(/<header\b[\s\S]*?<\/header>/i)?.[0];
+    assert.ok(header, `${route}: a site header is present`);
+    const action = tags(header, "a").find((tag) => tag.class?.split(/\s+/).includes("nav-contact"));
+    assert.ok(action, `${route}: the primary consultation link is present`);
+    const destination = new URL(action.href, `${origin}${route}`);
+    assert.equal(destination.origin, origin);
+    assert.equal(destination.pathname, "/");
+    assert.equal(destination.hash, "#consultation");
+    assert.ok(text(header).includes("Book a consultation"));
+  }
+});
+
 test("case pages preserve every original gallery image and caption in static HTML", async () => {
   for (const project of projects) {
     const route = `/work/${projectSlugs[project.id]}/`;
