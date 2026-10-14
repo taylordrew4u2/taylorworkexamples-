@@ -519,6 +519,7 @@ button, a, input, select, textarea, summary {
 .case-study {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-rows: max-content 1fr;
   column-gap: 3rem;
   row-gap: 1.5rem;
   align-items: start;
