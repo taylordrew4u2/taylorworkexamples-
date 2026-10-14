@@ -368,13 +368,15 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         assert.equal(project.imageWidth, 1920);
         assert.equal(project.imageHeight, 1080);
       } else {
-        assert.equal(project.id, "Bill-Spilt");
+        assert.ok(["Bill-Spilt", "Showrunner-ICanRunAShow"].includes(project.id));
         assert.equal(project.gallery[0].sourceKind, "repository-product-artwork");
         assert.equal(project.imageLabel, "Repository product artwork");
         assert.match(project.imageCaption, /^Repository product artwork/);
         assert.match(project.previewContext, /repository.*promotional artwork/i);
-        assert.match(project.gallery[0].sourceUrl,
-          /^https:\/\/(?:github\.com\/taylordrew4u2\/Bill-Spilt\/blob\/|raw\.githubusercontent\.com\/taylordrew4u2\/Bill-Spilt\/)[a-f0-9]{40}\/docs\/readme\/hero\.png$/);
+        const source = new URL(project.gallery[0].sourceUrl);
+        assert.ok(["github.com", "raw.githubusercontent.com"].includes(source.hostname));
+        assert.match(source.pathname,
+          new RegExp(`^/taylordrew4u2/${project.id}/${source.hostname === "github.com" ? "blob/" : ""}[a-f0-9]{40}/`));
       }
     }
   }
@@ -615,6 +617,82 @@ test("BillSpilt uses eight original repository visuals with pinned sources and d
     }
     assert.notEqual(frame.sourceKind, "owner-supplied-product-artwork");
     const bytes = readFileSync(new URL(`../${frame.image}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
+      `${file}: original repository pixels must remain unchanged`);
+  }
+});
+
+test("I Can Run A Show uses thirteen repository views with fifteen original image files and pinned provenance", () => {
+  const show = projects.find((project) => project.id === "Showrunner-ICanRunAShow");
+  const commit = "2989ec0dfb5439d888276bf1bceba7d53fc76995";
+  const expectedFiles = {
+    "banner-1920x1080.png": ["docs/promo/banner-1920x1080.png", 1920, 1080, "31e6ca8faf68ac6c8025f8cb8bc4e3888f5e98dc72b312c2dade6c1ad02cb960"],
+    "01-every-show.png": ["docs/promo/01-every-show.png", 1320, 2868, "1f9933a81fcd37f597b0a9795862e4545455c917e8a4430875e842d6d0ab748a"],
+    "02-run-show.png": ["docs/promo/02-run-show.png", 1320, 2868, "2881743c27230e9852779e51f9f5fd072c7be65acf0a314f82dab39833637d56"],
+    "03-run-of-show.png": ["docs/promo/03-run-of-show.png", 1320, 2868, "6f6371af9492b2e76fa13730cb22b3a40a32fcbb19f320f1cf67e3ebf652b262"],
+    "04-show-page.png": ["docs/promo/04-show-page.png", 1320, 2868, "9d52b5f3ffd8f489bfbccb60b674729505e5ce3472b3e77c08a9efe532498afa"],
+    "05-rolodex.png": ["docs/promo/05-rolodex.png", 1320, 2868, "34d75b23ee4612dcc773e00b21dcba68f0210923948a6fcb7c908cabebeaf1e5"],
+    "06-stage-remote.png": ["docs/promo/06-stage-remote.png", 1320, 2868, "7973ceee78d1fbde19c604c7be07dc3ae9aa04f5250bb3c36c2d2cd8067b49c6"],
+    "desktop-show.png": ["docs/screenshots/desktop-show.png", 2560, 1800, "ba875a9345a3a09d20d0b1e522dff2d0050779493c366a6421dd597fea2edeec"],
+    "run-show.png": ["docs/screenshots/run-show.png", 860, 2090, "94de4d94ddd204e83cd696ab1b2c4a7b1a8fc9c4a511ea48d9374bfc7fac1e3a"],
+    "desktop-light.png": ["docs/screenshots/desktop-light.png", 2560, 1800, "18d1fec28c2294a4535c5b9d17a1eb07e2d355b25040357a44e20bbba98cdf97"],
+    "contracts.png": ["docs/screenshots/contracts.png", 860, 1864, "25a39391868e8d5198f3ff7d4fb739d8306e64f7aed1d4381771941517433cfc"],
+    "schedule.png": ["docs/screenshots/schedule.png", 860, 1864, "bd38aef13848ea44771afb94ebfecca66f810226a21cb6678979196dd4fb54dc"],
+    "show-detail.png": ["docs/screenshots/show-detail.png", 860, 1864, "62c0bb7da9109c64546662b9be2bb069b9df4c537563aac579964abe0bdd4f05"],
+    "rolodex.png": ["docs/screenshots/rolodex.png", 860, 1864, "8381ffab8742e5e20f40fe668961497b53aeab952a63c5b2f43a0689393518fa"],
+    "stage-remote.png": ["docs/screenshots/stage-remote.png", 860, 1864, "2606c282a155bd938703f2b8ddb8195171ff1a9116bcba95cbe76be2946b686d"],
+  };
+  const expectedViews = [
+    ["Product overview", "banner-1920x1080.png", null],
+    ["Workspace & cues", "desktop-show.png", "run-show.png"],
+    ["Show planning", "desktop-light.png", null],
+    ["Contracts & cues", "contracts.png", "schedule.png"],
+    ["Mobile workspace", "show-detail.png", null],
+    ["Performer directory", "rolodex.png", null],
+    ["Stage remote", "stage-remote.png", null],
+    ["Every show", "01-every-show.png", null],
+    ["Run the show", "02-run-show.png", null],
+    ["Run of show", "03-run-of-show.png", null],
+    ["Show page", "04-show-page.png", null],
+    ["Rolodex overview", "05-rolodex.png", null],
+    ["Stage remote overview", "06-stage-remote.png", null],
+  ];
+  assert.equal(show.repositoryHead, commit);
+  assert.equal(show.image, "./assets/showrunner/banner-1920x1080.png");
+  assert.equal(show.imageKind, "product-artwork");
+  assert.equal(show.imageLabel, "Repository product artwork");
+  assert.equal(show.imageWidth, 1920);
+  assert.equal(show.imageHeight, 1080);
+  assert.equal(show.portrait, false);
+  assert.deepEqual(show.gallery.map((frame) => [frame.label, frame.image, frame.companion?.image || null]),
+    expectedViews.map(([label, file, companion]) => [label, `./assets/showrunner/${file}`,
+      companion ? `./assets/showrunner/${companion}` : null]));
+  const images = show.gallery.flatMap((frame) => [frame, frame.companion].filter(Boolean));
+  assert.equal(images.length, 15);
+  assert.deepEqual(images.map((image) => image.image.split("/").at(-1)).sort(), Object.keys(expectedFiles).sort());
+  for (const frame of show.gallery) {
+    const sourcePath = expectedFiles[frame.image.split("/").at(-1)][0];
+    const artwork = sourcePath.startsWith("docs/promo/");
+    assert.equal(frame.sourceKind, artwork ? "repository-product-artwork" : "repository-app-capture");
+    assert.equal(frame.imageLabel, artwork ? "Repository product artwork" : "App screenshot");
+    assert.equal(frame.previewContext, artwork
+      ? "Repository promotional artwork · Illustrative sample data"
+      : "Repository app capture · Sample show");
+    assert.match(frame.caption, artwork ? /^Repository product artwork/ : /^Repository app capture/);
+    assert.equal(frame.portrait, frame.width < frame.height);
+    assert.notEqual(frame.sourceKind, "owner-supplied-product-artwork");
+  }
+  for (const image of images) {
+    const file = image.image.split("/").at(-1);
+    const [sourcePath, width, height, sha256] = expectedFiles[file];
+    assert.equal(image.width, width);
+    assert.equal(image.height, height);
+    assert.ok([
+      `https://github.com/taylordrew4u2/Showrunner-ICanRunAShow/blob/${commit}/${sourcePath}`,
+      `https://raw.githubusercontent.com/taylordrew4u2/Showrunner-ICanRunAShow/${commit}/${sourcePath}`,
+    ].includes(image.sourceUrl), `${file}: source points to the verified repository commit`);
+    assert.ok(show.sources.includes(image.sourceUrl));
+    const bytes = readFileSync(new URL(`../${image.image}`, import.meta.url));
     assert.equal(createHash("sha256").update(bytes).digest("hex"), sha256,
       `${file}: original repository pixels must remain unchanged`);
   }

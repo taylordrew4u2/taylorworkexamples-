@@ -1,4 +1,4 @@
-// Public GitHub inventory checked on 2026-10-12; BillSpilt refreshed on 2026-10-13.
+// Public inventory checked on 2026-10-12; BillSpilt and Showrunner refreshed on 2026-10-13.
 export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
   "Bill-Spilt": {
@@ -97,8 +97,9 @@ export const publicRepositories = {
     "description": "The full live-show workflow in one app: plan the lineup, import the schedule from a photo, and run the show in a full-screen live mode with cue timers and walk-on music. React + TypeScript PWA with client-side encryption.",
     "homepage": "https://www.Icanrunashow.com",
     "defaultBranch": "main",
-    "headSha": "3b7fccd3b565f1e5d2cd37d69367eeaa5806c92b",
-    "pushedAt": "2026-10-07T19:59:59Z",
+    "headSha": "2989ec0dfb5439d888276bf1bceba7d53fc76995",
+    "pushedAt": "2026-10-14T00:54:51Z",
+    "verifiedAt": "2026-10-13",
     "archived": false,
     "readmeAvailable": true
   },

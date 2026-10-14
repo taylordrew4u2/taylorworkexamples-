@@ -8,12 +8,12 @@ export const projectIdentities = {
       "Run timers and cues"
     ],
     "previewContext": "Working app · Sample show",
-    "icon": "./assets/project-icons/showrunner-i-can-run-a-show.svg",
-    "iconWidth": 100,
-    "iconHeight": 100,
-    "iconSource": "https://raw.githubusercontent.com/taylordrew4u2/Showrunner-ICanRunAShow/3b7fccd3b565f1e5d2cd37d69367eeaa5806c92b/public/brand/mark.svg",
-    "iconKind": "brand-mark",
-    "iconNotes": "Original stage-and-cue mark; the BrandMark component uses this file. Original dark/navy and blue preserved."
+    "icon": "./assets/project-icons/showrunner-icon.png",
+    "iconWidth": 512,
+    "iconHeight": 512,
+    "iconSource": "https://raw.githubusercontent.com/taylordrew4u2/Showrunner-ICanRunAShow/2989ec0dfb5439d888276bf1bceba7d53fc76995/public/icons/icon-512x512.png",
+    "iconKind": "app-icon",
+    "iconNotes": "Original 512×512 app icon from the current public repository. Exact pixels, colors, and proportions preserved."
   },
   "The-Bit-Binder": {
     "purpose": "An iPhone writing notebook for comedians to capture jokes and build a set.",

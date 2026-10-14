@@ -538,6 +538,64 @@ test("BillSpilt uses its repository cover and switches artwork and app capture c
   await expect(trigger).toBeFocused();
 });
 
+test("I Can Run A Show opens with repository artwork and preserves paired native workspace context", async ({ page }) => {
+  const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
+  await page.goto("/#project-archive");
+  const selected = page.locator(`.case-study[data-case-id="${project.id}"]`);
+  const archive = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
+  const cover = project.gallery[0];
+  expect(cover.sourceKind).toBe("repository-product-artwork");
+  for (const [card, screen] of [[selected, ".case-screen"], [archive, ".archive-preview"]]) {
+    const choices = card.locator("button[data-gallery][data-screen]");
+    await expect(choices).toHaveCount(13);
+    await expect(choices).toHaveText([
+      "Product overview", "Workspace & cues", "Show planning", "Contracts & cues", "Mobile workspace",
+      "Performer directory", "Stage remote", "Every show", "Run the show", "Run of show",
+      "Show page", "Rolodex overview", "Stage remote overview",
+    ]);
+    await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
+    await expectInlineGalleryFrame(card, project, cover, screen);
+  }
+  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
+  await expect(archive.locator(".preview-context")).toHaveText("Repository promotional artwork · Illustrative sample data");
+  const native = project.gallery.find((frame) => frame.label === "Workspace & cues");
+  expect(native.sourceKind).toBe("repository-app-capture");
+  expect(native.companion).toBeDefined();
+  const nativeChoice = archive.locator(".archive-gallery").getByRole("button", { name: native.label, exact: true });
+  await nativeChoice.scrollIntoViewIfNeeded();
+  await nativeChoice.focus();
+  await page.keyboard.press("Enter");
+  await expect(nativeChoice).toBeFocused();
+  await expect(nativeChoice).toHaveAttribute("aria-pressed", "true");
+  await expectInlineGalleryFrame(archive, project, native, ".archive-preview");
+  await expect(archive.locator(".image-kind")).toHaveText("App screenshot");
+  await expect(archive.locator(".preview-context")).toHaveText("Repository app capture · Sample show");
+  const coverChoice = archive.locator(".archive-gallery").getByRole("button", { name: "Product overview", exact: true });
+  await coverChoice.focus();
+  await page.keyboard.press("Space");
+  await expect(coverChoice).toBeFocused();
+  await expect(coverChoice).toHaveAttribute("aria-pressed", "true");
+  await expect(archive.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
+  await expectInlineGalleryFrame(archive, project, cover, ".archive-preview");
+  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
+  await expect(selected.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
+  await expect(selected.locator(".primary-screen")).toHaveAttribute("src", cover.image);
+  const trigger = selected.locator(".case-screen");
+  await trigger.click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
+  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
+  await expectLoadedImageToFit(dialog.locator(".primary-screen"), cover);
+  await expect(dialog.locator(".companion-screen")).toHaveCount(0);
+  await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
+  await expect(dialog.locator(".dialog-image-caption")).toHaveText(cover.caption);
+  await expect(dialog.locator(".image-original")).toHaveAttribute("href", cover.image);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(trigger).toBeFocused();
+});
+
 test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
   await page.goto("/");
   const services = page.locator("#services");
