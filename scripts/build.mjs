@@ -13,6 +13,7 @@ for (const name of [
   "styles.css",
   "seo.css",
   "app.js",
+  "consultation.js",
   "render-projects.js",
   ".nojekyll",
 ]) {

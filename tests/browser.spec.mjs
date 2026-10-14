@@ -1046,7 +1046,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     "Target launch date:",
   ].join("\n");
   const generalLinks = page.locator('.enquiry-link[data-enquiry="general"]');
-  await expect(generalLinks).toHaveCount(3);
+  await expect(generalLinks).toHaveCount(1);
   for (const link of await generalLinks.all()) {
     const draft = new URL(await link.getAttribute("href"));
     expect(draft.protocol).toBe("mailto:");

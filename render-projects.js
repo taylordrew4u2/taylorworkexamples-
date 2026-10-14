@@ -1,4 +1,4 @@
-import { email } from "./public-projects.js?v=31";
+import { email } from "./public-projects.js?v=32";
 
 export const escape = (value) =>
   String(value).replace(

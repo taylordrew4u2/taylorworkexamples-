@@ -5,11 +5,12 @@ import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { escape, enquiryURL, renderFeaturedProjects, renderArchiveProjects } from "../render-projects.js";
+import { consultationDraft } from "../consultation.js";
 
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "31";
+export const release = "32";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -261,6 +262,8 @@ export async function generateSEO(output) {
   html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
   html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
   html = html.replace('<div id="home-insights"></div>', articleCards("/"));
+  html = html.replace(/(data-consultation-format="(zoom|in-person)" href=")[^"]*(")/g,
+    (_, before, format, after) => `${before}${escape(consultationDraft({ format }).href)}${after}`);
   html = html.replace('></p>\n            <div id="archive-projects"', `>${projects.length} OF ${projects.length} PROJECTS</p>\n            <div id="archive-projects"`);
   // Also give client-only controls a working route when JavaScript is unavailable.
   html = html.replace(/<noscript[\s\S]*?<\/noscript>/, '<noscript><p class="no-js-help">The projects below are available without JavaScript. Use each “Full project story” link to see every image and detail.</p></noscript>');
