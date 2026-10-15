@@ -1,6 +1,6 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=33";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=33";
-import { initConsultation } from "./consultation.js?v=33";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=35";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=35";
+import { initConsultation } from "./consultation.js?v=35";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");

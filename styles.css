@@ -1245,6 +1245,8 @@ button, a, input, select, textarea, summary {
   padding-bottom: 4rem;
 }
 
+.work-section > .archive { margin-top: 3rem; padding-bottom: 0; }
+
 .archive-heading {
   display: flex;
   align-items: center;
@@ -1531,6 +1533,12 @@ button, a, input, select, textarea, summary {
 .site-footer :focus-visible {
   outline-color: white;
 }
+
+.brand-signature { display: inline-flex; align-items: center; gap: 0.625rem; font-family: var(--display); font-weight: 750; font-size: 1.25rem; letter-spacing: -0.055em; line-height: 1.2; }
+.brand-signature-mark { width: 2rem; height: 2rem; object-fit: contain; flex-shrink: 0; }
+.consultation-copy > .brand-signature { margin-bottom: 1.75rem; }
+.site-footer > .footer-brand { margin-bottom: 2.5rem; font-size: 1.625rem; }
+.site-footer .brand-signature-mark { filter: invert(1); width: 2.5rem; height: 2.5rem; }
 
 .footer-contact {
   display: grid;

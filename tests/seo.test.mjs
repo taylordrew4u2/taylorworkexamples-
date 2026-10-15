@@ -298,6 +298,33 @@ test("project and service content is crawlable in production HTML before JavaScr
   }
 });
 
+test("the homepage keeps all project showcases together before process, consultation, and questions", () => {
+  const home = documents.get("/");
+  const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
+  const workStart = sectionTags.findIndex(([tag]) => attributes(tag).id === "work");
+  assert.ok(workStart >= 0, "the homepage has a work section");
+  let depth = 0;
+  let workEnd;
+  for (const [tag, position] of sectionTags.slice(workStart).map((match) => [match[0], match.index])) {
+    depth += /^<\/section/i.test(tag) ? -1 : 1;
+    if (depth === 0) { workEnd = position + tag.length; break; }
+  }
+  assert.ok(workEnd, "the work section is complete");
+  const work = home.slice(sectionTags[workStart].index, workEnd);
+  for (const id of ["featured-projects", "project-archive", "archive-projects"]) {
+    assert.ok([...work.matchAll(/<(?:section|div)\b[^>]*>/gi)].some(([tag]) => attributes(tag).id === id),
+      `${id} belongs to the same work section`);
+  }
+  const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
+  const destinations = ["work", "process", "consultation", "project-faq", "business-guides"].map(sectionPosition);
+  assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
+  assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
+    "work is followed by process, consultation, questions, and useful reads");
+  assert.ok(workEnd <= sectionPosition("process"), "the whole archive finishes before the process or consultation");
+  assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
+    "no app showcase returns after the consultation form or questions");
+});
+
 test("project stories explain the original workflows and preserve real development context and inquiry links", () => {
   for (const project of projects) {
     const route = `/work/${projectSlugs[project.id]}/`;

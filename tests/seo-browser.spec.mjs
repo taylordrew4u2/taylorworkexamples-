@@ -61,6 +61,17 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
   await expect(page.locator("#featured-projects .project-card")).toHaveCount(6);
   await expect(page.locator("#archive-projects .archive-card")).toHaveCount(projects.length);
+  expect(await page.evaluate(() => {
+    const work = document.querySelector("#work");
+    const archive = document.querySelector("#project-archive");
+    const groups = [...document.querySelectorAll("#featured-projects, #archive-projects, .project-card, .archive-card")];
+    const sections = ["work", "process", "consultation", "project-faq", "business-guides"]
+      .map((id) => document.getElementById(id));
+    return work.contains(archive) && groups.every((group) => work.contains(group)) &&
+      sections.every((section, index) => section && (index === 0 || Boolean(
+        sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
+  }), "All projects stay together before the process, consultation, questions, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.locator(".archive-disclosure summary").click();
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
@@ -143,7 +154,8 @@ for (const project of projects) {
   test(`${project.title} explains the app and exposes every original view without JavaScript`, async ({ page }) => {
     await page.goto(`/work/${projectSlugs[project.id]}/`);
     await expect(page.locator("body")).toHaveClass(/\bproject-detail-page\b/);
-    await expect(page.locator(".project-story-hero h1")).toHaveText(project.title);
+    await expect(page.getByRole("heading", { level: 1, name: project.title, exact: true })).toHaveCount(1);
+    await expect(page.locator(".project-story-hero h1 > span:last-child")).toHaveText(project.title);
     await expect(page.locator(".project-story-hero .page-lead")).toHaveText(project.purpose);
     await expectPageFit(page);
 
