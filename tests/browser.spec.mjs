@@ -218,7 +218,12 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await expect(page).toHaveTitle("Custom App, Website & Software Development | Built4U");
-  await expect(page.getByRole("link", { name: "Built4U, home", exact: true })).toBeVisible();
+  await expect(page.getByRole("banner").getByRole("link", { name: "Built4U, home", exact: true })).toBeVisible();
+  for (const area of ["#consultation", "#contact"]) {
+    const brand = page.locator(area).getByRole("link", { name: "Built4U, home", exact: true });
+    await expect(brand).toBeVisible();
+    await expect(brand.locator("img")).toHaveAttribute("src", "./assets/4u-digital-logo-mono.png");
+  }
   const headline = page.getByRole("heading", { level: 1 });
   await expect(headline).toHaveText("You know your business. I’ll build the technology.");
   await expect(headline).toBeVisible();
