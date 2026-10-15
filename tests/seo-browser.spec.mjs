@@ -98,7 +98,7 @@ test("a service page leads to relevant project proof and a complete business inq
   await expectPageFit(page);
 });
 
-test("a project case shows authentic paired captures and both original image links without JavaScript", async ({ page }) => {
+test("a project case shows authentic paired captures and both original image links without JavaScript", async ({ page }, testInfo) => {
   const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
   await page.goto(`/work/${projectSlugs[project.id]}/`);
   const cover = page.locator(".project-page-gallery > figure");
@@ -111,6 +111,20 @@ test("a project case shows authentic paired captures and both original image lin
   await expect(frame.locator("img")).toHaveCount(2);
   await expectOriginalImage(frame.locator("img").nth(0), native);
   await expectOriginalImage(frame.locator("img").nth(1), native.companion);
+  const pairLayout = await frame.evaluate((element) => {
+    const figure = element.getBoundingClientRect();
+    const grid = element.closest(".project-views-grid").getBoundingClientRect();
+    const [primary, companion] = [...element.querySelectorAll("img")].map((image) => image.getBoundingClientRect());
+    return {
+      spansGrid: figure.left >= grid.left - 1 && figure.right <= grid.right + 1 && figure.width >= grid.width - 2,
+      primaryIsWider: primary.width > companion.width,
+      stackedWithinViewport: companion.top >= primary.bottom - 1 && [primary, companion]
+        .every((image) => image.left >= -1 && image.right <= window.innerWidth + 1),
+    };
+  });
+  expect(pairLayout.spansGrid && (testInfo.project.name === "phone"
+    ? pairLayout.stackedWithinViewport : pairLayout.primaryIsWider),
+  "The wide workspace pair uses the full gallery width, with a larger desktop screen or stacked phone images").toBe(true);
   await expect(frame.locator("figcaption p")).toHaveText(native.caption);
   const original = frame.getByRole("link", { name: "Open full-size image", exact: false });
   expect(new URL(await original.getAttribute("href"), page.url()).pathname).toBe(`/${native.image.replace(/^\.\//, "")}`);
