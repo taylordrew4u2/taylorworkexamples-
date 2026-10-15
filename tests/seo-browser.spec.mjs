@@ -17,7 +17,7 @@ async function linkTo(page, pathname) {
 async function expectPageFit(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     "The complete page fits the viewport").toBe(true);
-  const controls = await page.locator(".page-nav a, .breadcrumbs, .page-actions a").evaluateAll((elements) =>
+  const controls = await page.locator(".page-nav a, .breadcrumbs, .page-actions a, .project-story-nav a, .project-build-cta a").evaluateAll((elements) =>
     elements.every((element) => {
       const box = element.getBoundingClientRect();
       return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
@@ -98,30 +98,110 @@ test("a service page leads to relevant project proof and a complete business inq
   await expectPageFit(page);
 });
 
-test("a project case preserves authentic cover and paired captures with native gallery controls", async ({ page }) => {
+test("a project case shows authentic paired captures and both original image links without JavaScript", async ({ page }) => {
   const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
   await page.goto(`/work/${projectSlugs[project.id]}/`);
   const cover = page.locator(".project-page-gallery > figure");
   await expectOriginalImage(cover.locator("img"), project.gallery[0]);
   await expect(cover.locator("figcaption p")).toHaveText(project.gallery[0].caption);
   const native = project.gallery.find((frame) => frame.label === "Workspace & cues");
-  const details = page.locator(".project-gallery-detail").filter({ has: page.locator("summary", { hasText: native.label }) });
-  const summary = details.locator("summary");
-  await summary.scrollIntoViewIfNeeded();
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  await expect(details).toHaveAttribute("open", "");
-  await expect(summary).toBeFocused();
-  await expect(details.locator("img")).toHaveCount(2);
-  await expectOriginalImage(details.locator("img").nth(0), native);
-  await expectOriginalImage(details.locator("img").nth(1), native.companion);
-  await expect(details.locator("figcaption p")).toHaveText(native.caption);
-  const original = details.getByRole("link", { name: "Open full-size image", exact: false });
+  const frame = page.locator(`#project-views .project-page-frame[data-view="${project.gallery.indexOf(native)}"]`);
+  await expect(frame).toBeVisible();
+  await expect(frame.locator("details")).toHaveCount(0);
+  await expect(frame.locator("img")).toHaveCount(2);
+  await expectOriginalImage(frame.locator("img").nth(0), native);
+  await expectOriginalImage(frame.locator("img").nth(1), native.companion);
+  await expect(frame.locator("figcaption p")).toHaveText(native.caption);
+  const original = frame.getByRole("link", { name: "Open full-size image", exact: false });
   expect(new URL(await original.getAttribute("href"), page.url()).pathname).toBe(`/${native.image.replace(/^\.\//, "")}`);
   await expect(original).toHaveAttribute("target", "_blank");
   await expect(original).toHaveAttribute("rel", /noopener/);
+  const companion = frame.getByRole("link", { name: "Open companion image", exact: false });
+  expect(new URL(await companion.getAttribute("href"), page.url()).pathname).toBe(`/${native.companion.image.replace(/^\.\//, "")}`);
+  await expect(companion).toHaveAttribute("target", "_blank");
+  await expect(companion).toHaveAttribute("rel", /noopener/);
+  await companion.focus();
+  await expect(companion).toBeFocused();
   await expectPageFit(page);
 });
+
+for (const project of projects) {
+  test(`${project.title} explains the app and exposes every original view without JavaScript`, async ({ page }) => {
+    await page.goto(`/work/${projectSlugs[project.id]}/`);
+    await expect(page.locator("body")).toHaveClass(/\bproject-detail-page\b/);
+    await expect(page.locator(".project-story-hero h1")).toHaveText(project.title);
+    await expect(page.locator(".project-story-hero .page-lead")).toHaveText(project.purpose);
+    await expectPageFit(page);
+
+    const navigation = page.getByRole("navigation", { name: "On this project page", exact: true });
+    await expect(navigation).toBeVisible();
+    await expect(navigation.locator("a")).toHaveCount(3);
+    for (const target of ["overview", "project-views", "development"]) {
+      const link = navigation.locator(`a[href="#${target}"]`);
+      await expect(link).toBeVisible();
+      await link.click();
+      await expect(page).toHaveURL(new RegExp(`#${target}$`));
+      await expect(page.locator(`#${target}`)).toBeVisible();
+    }
+
+    await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary || project.summary);
+    const workflows = page.locator("#overview .project-workflow-card");
+    await expect(workflows).toHaveCount(project.workflows.length);
+    for (const [index, workflow] of project.workflows.entries()) {
+      const card = workflows.nth(index);
+      await expect(card).toBeVisible();
+      await expect(card.locator("h3")).toHaveText(workflow);
+      const explanation = (await card.locator("p").innerText()).trim();
+      expect(explanation, `${workflow} explains the task beyond its label`).not.toBe("");
+      expect(explanation).not.toBe(workflow);
+    }
+
+    await expect(page.locator(".project-page-frame")).toHaveCount(project.gallery.length);
+    const cover = page.locator(".project-story-hero .project-page-gallery > figure");
+    await expect(cover).toHaveCount(1);
+    await expect(cover).toHaveAttribute("data-view", "0");
+    await expect(page.locator("#project-views .project-page-frame")).toHaveCount(project.gallery.length - 1);
+    await expect(page.locator(".project-gallery-detail")).toHaveCount(0);
+    for (const [index, original] of project.gallery.entries()) {
+      const frame = page.locator(`.project-page-frame[data-view="${index}"]`);
+      await expect(frame).toBeVisible();
+      expect(await frame.evaluate((element) => element.closest("details") === null),
+        `${original.label} is available without expanding a hidden image row`).toBe(true);
+      await expect(frame.locator("figcaption strong")).toHaveText(original.label);
+      await expect(frame.locator("figcaption p")).toHaveText(original.caption);
+      const originals = [original, original.companion].filter(Boolean);
+      await expect(frame.locator("img")).toHaveCount(originals.length);
+      for (const [imageIndex, source] of originals.entries()) {
+        await expectOriginalImage(frame.locator("img").nth(imageIndex), source);
+        const fullSize = frame.getByRole("link", {
+          name: imageIndex === 0 ? "Open full-size image" : "Open companion image", exact: false,
+        });
+        await expect(fullSize).toBeVisible();
+        expect(new URL(await fullSize.getAttribute("href"), page.url()).pathname)
+          .toBe(`/${source.image.replace(/^\.\//, "")}`);
+        await expect(fullSize).toHaveAttribute("target", "_blank");
+        await expect(fullSize).toHaveAttribute("rel", /noopener/);
+      }
+    }
+
+    const source = page.locator("#development").getByRole("link", {
+      name: `${project.title} source code on GitHub`, exact: false,
+    });
+    await expect(source).toHaveAttribute("href", project.repoUrl);
+    if (project.notes) await expect(page.locator("#development")).toContainText(project.notes);
+    const inquiry = page.locator(".project-build-cta a[href^='mailto:']");
+    await expect(inquiry).toBeVisible();
+    const draft = new URL(await inquiry.getAttribute("href"));
+    expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
+    expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
+    expect(draft.searchParams.get("body")).toContain("The problem:");
+    expect(draft.searchParams.get("body")).toContain("Who will use it:");
+    const consultation = new URL(await page.locator(".page-nav .nav-contact").getAttribute("href"), page.url());
+    expect(consultation.pathname).toBe("/");
+    expect(consultation.hash).toBe("#consultation");
+    await expectPageFit(page);
+  });
+}
 
 test("the comparison guide, business information, and contact remain usable without JavaScript", async ({ page }) => {
   await page.goto("/guides/website-or-app/");

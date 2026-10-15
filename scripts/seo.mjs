@@ -4,13 +4,14 @@ import { site, services, guide, projectSlugs } from "../seo-content.js";
 import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 import { projects, featuredProjects } from "../public-projects.js";
+import { projectStories } from "../project-stories.js";
 import { escape, enquiryURL, renderFeaturedProjects, renderArchiveProjects } from "../render-projects.js";
 import { consultationDraft } from "../consultation.js";
 
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "33";
+export const release = "34";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -135,7 +136,7 @@ function breadcrumbs(page) {
 }
 
 function frame(page, content) {
-  return `<!doctype html><html lang="en">${pageHead(page)}<body class="content-page">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`;
+  return `<!doctype html><html lang="en">${pageHead(page)}<body class="content-page${page.project ? " project-detail-page" : ""}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`;
 }
 
 function intro(eyebrow, heading, text, actions = "", icon = "") {
@@ -216,6 +217,20 @@ function servicePage(service) {
   return { ...page, html: frame(page, content) };
 }
 
+function projectFrame(view, index, route) {
+  const image = (capture, first = false) => `<img src="${local(route, capture.image.replace(/^\.\//, ""))}" alt="${escape(capture.imageAlt)}" width="${capture.width}" height="${capture.height}" ${first ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />`;
+  const fullSize = (capture, label) => `<a href="${local(route, capture.image.replace(/^\.\//, ""))}" target="_blank" rel="noopener noreferrer">${label} <span aria-hidden="true">↗</span></a>`;
+  return `<figure ${index === 0 ? 'id="project-cover"' : `id="project-view-${index}"`} data-view="${index}" class="project-page-frame ${view.portrait ? "portrait" : ""} ${view.companion ? "paired" : ""}"><div>${image(view, index === 0)}${view.companion ? image(view.companion) : ""}</div><figcaption><strong>${escape(view.label)}</strong><p>${escape(view.caption)}</p><div class="project-image-links">${fullSize(view, "Open full-size image")}${view.companion ? fullSize(view.companion, "Open companion image") : ""}</div></figcaption></figure>`;
+}
+
+function projectViews(project, route) {
+  const views = project.gallery.map((view, index) => ({ view, index })).slice(1);
+  const artwork = views.filter(({ view }) => /product artwork|promotional artwork/i.test(view.caption));
+  const captures = views.filter(({ view }) => !/product artwork|promotional artwork/i.test(view.caption));
+  const group = (items, heading = "") => items.length ? `<div class="project-visual-group">${heading ? `<h3>${heading}</h3>` : ""}<div class="project-views-grid ${items.every(({ view }) => view.portrait && !view.companion) ? "portrait-grid" : ""}">${items.map(({ view, index }) => projectFrame(view, index, route)).join("")}</div></div>` : "";
+  return `<section id="project-views" class="page-section project-views"><div class="project-section-heading"><div><p class="eyebrow">EXPLORE THE DETAILS</p><h2>See the project up close.</h2></div><p>${views.length ? "Images from the project, with context beside each view. Open an image at full size for a closer look." : "The available project image is shown above. Open it at full size to inspect the details."}</p></div>${views.length ? group(captures, artwork.length ? "App and website captures" : "") + group(artwork, "Product graphics") : '<a class="project-section-link" href="#project-cover">View the project image <span aria-hidden="true">↑</span></a>'}</section>`;
+}
+
 function projectPage(project) {
   const route = `/work/${projectSlugs[project.id]}/`;
   const page = { path: route, title: `${project.title} — ${projectType(project)} | Built4U`,
@@ -224,18 +239,14 @@ function projectPage(project) {
     imageWidth: project.imageWidth, imageHeight: project.imageHeight,
     breadcrumbs: [{ name: "Projects", path: "/work/" }, { name: project.title, path: route }],
   };
-  const gallery = project.gallery.map((view, index) => {
-    const screen = `<figure class="project-page-frame ${view.portrait ? "portrait" : ""} ${view.companion ? "paired" : ""}"><div><img src="${local(route, view.image.replace(/^\.\//, ""))}" alt="${escape(view.imageAlt)}" width="${view.width}" height="${view.height}" ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />${view.companion ? `<img src="${local(route, view.companion.image.replace(/^\.\//, ""))}" alt="${escape(view.companion.imageAlt)}" width="${view.companion.width}" height="${view.companion.height}" loading="lazy" decoding="async" />` : ""}</div><figcaption><strong>${escape(view.label)}</strong><p>${escape(view.caption)}</p><a href="${local(route, view.image.replace(/^\.\//, ""))}" target="_blank" rel="noopener noreferrer">Open full-size image ↗</a></figcaption></figure>`;
-    return index === 0 ? screen : `<details class="project-gallery-detail"><summary>${escape(view.label)}</summary>${screen}</details>`;
-  }).join("");
-  const content = intro(projectType(project), project.title, project.purpose,
-    `<div class="page-actions">${inquiry("general", "Discuss a similar project", project.title)}${project.demoUrl ? `<a class="text-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.demoLabel || "Visit the project")} ↗</a>` : ""}</div>`, iconFor(project, route)) +
-    `<section class="page-section project-page-gallery" aria-label="Screens from ${escape(project.title)}">${gallery}</section>` +
-    `<section class="page-section"><h2>What does ${escape(project.title)} do?</h2><p>${escape(project.clientSummary || project.summary)}</p><ul class="page-list">${project.workflows.map((workflow) => `<li>${escape(workflow)}</li>`).join("")}</ul></section>` +
-    `${project.challenge ? `<section class="page-section"><h2>The problem behind ${escape(project.title)}</h2><p>${escape(project.challenge)}</p><h3>What was built</h3><p>${escape(project.build)}</p></section>` : ""}` +
-    `${project.highlights?.length ? `<section class="page-section"><h2>How the product works.</h2><div class="page-columns">${project.highlights.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` : ""}` +
-    `<section class="page-section"><h2>Development details</h2><div class="project-tags">${project.stack.map((technology) => `<span class="tag">${escape(technology)}</span>`).join("")}</div><ul class="page-list">${project.features.map((feature) => `<li>${escape(feature)}</li>`).join("")}</ul>${project.notes ? `<p class="evidence-note">${escape(project.notes)}</p>` : ""}<a class="text-link" href="${escape(project.repoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.title)} source code on GitHub ↗</a></section>` +
-    `<section class="page-section"><h2>Could your business use something similar?</h2><p>Bring the workflow you need to improve. Built4U can help define the screens, data, and features for your own project.</p>${inquiry("general", "Talk about your build", project.title)}<nav class="related-links" aria-label="Related services">${services.filter((service) => service.projectIds.includes(project.id)).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}<a href="${local(route, "work/")}">All Built4U projects</a></nav></section>`;
+  const story = projectStories[project.id];
+  const content = `<section class="project-story-hero">${intro(projectType(project), project.title, project.purpose,
+    `<p class="project-audience"><span>Made for</span> ${escape(story.audience)}</p><div class="page-actions">${inquiry("general", "Discuss a similar project", project.title)}${project.demoUrl ? `<a class="text-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.demoLabel || "Visit the project")} ↗</a>` : ""}</div>`, iconFor(project, route))}<div class="project-page-gallery" aria-label="Main image from ${escape(project.title)}">${projectFrame(project.gallery[0], 0, route)}</div></section>` +
+    `<nav class="project-story-nav" aria-label="On this project page"><span class="mono">TAKE A CLOSER LOOK</span><a href="#overview">What it does <span aria-hidden="true">↓</span></a><a href="#project-views">Project images <span aria-hidden="true">↓</span></a><a href="#development">Behind the build <span aria-hidden="true">↓</span></a></nav>` +
+    `<section id="overview" class="page-section project-overview"><div class="project-section-heading"><div><p class="eyebrow">THE WORKFLOW</p><h2>What does ${escape(project.title)} do?</h2></div><p class="project-summary">${escape(project.clientSummary || project.summary)}</p></div><div class="project-workflow-grid">${project.workflows.map((workflow, index) => `<article class="project-workflow-card"><span class="mono project-step" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span><h3>${escape(workflow)}</h3><p>${escape(story.workflowDescriptions[index])}</p></article>`).join("")}</div>${project.highlights?.length ? `<div class="project-capabilities"><h3>More of what’s inside</h3><div class="page-columns">${project.highlights.map(({ title, text }) => `<article><h4>${escape(title)}</h4><p>${escape(text)}</p></article>`).join("")}</div></div>` : ""}</section>` +
+    projectViews(project, route) +
+    `<section id="development" class="page-section project-development"><div class="project-section-heading"><div><p class="eyebrow">BEHIND THE BUILD</p><h2>From the task to the technology.</h2></div><p>The development work behind ${escape(project.title)}, with source code and image context available to explore.</p></div>${project.challenge ? `<div class="project-context"><article><h3>The problem</h3><p>${escape(project.challenge)}</p></article><article><h3>What was built</h3><p>${escape(project.build)}</p></article></div>` : ""}<div class="project-development-grid"><div><h3>Development details</h3><ul class="page-list">${project.features.map((feature) => `<li>${escape(feature)}</li>`).join("")}</ul></div><aside class="project-stack"><h3>Built with</h3><div class="project-tags">${project.stack.map((technology) => `<span class="tag">${escape(technology)}</span>`).join("")}</div><a class="text-link" href="${escape(project.repoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.title)} source code on GitHub ↗</a></aside></div>${project.notes ? `<details class="project-evidence"><summary>About these images and previews</summary><p>${escape(project.notes)}</p></details>` : ""}</section>` +
+    `<section class="page-section project-build-cta"><div><p class="eyebrow">YOUR BUSINESS, YOUR BUILD</p><h2>Could your business use something similar?</h2><p>Bring the workflow you need to improve. Built4U can help define the screens, data, and features for your own project.</p><p class="project-consultation-note">Zoom or in person in the New York City area, by arrangement.</p></div><div class="project-build-actions">${inquiry("general", "Talk about your build", project.title)}<a class="project-section-link" href="${local(route)}#consultation">Book a consultation <span aria-hidden="true">↗</span></a></div></section><nav class="related-links project-related" aria-label="Related services">${services.filter((service) => service.projectIds.includes(project.id)).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}<a href="${local(route, "work/")}">All Built4U projects</a></nav>`;
   return { ...page, html: frame(page, content) };
 }
 
@@ -312,7 +323,7 @@ export async function generateSEO(output) {
   // A 404 can be served at any nesting depth, so its assets and recovery links use the primary domain.
   await writeFile(path.join(output, "404.html"), notFoundHTML.replace(/(href|src)="\.\/([^\"]*)"/g, (_, attribute, target) => `${attribute}="${origin}/${target}"`));
   await writeFile(path.join(output, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`);
-  await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${escape(origin + page.path)}</loc><lastmod>${site.published}</lastmod></url>`).join("\n")}\n</urlset>\n`);
+  await writeFile(path.join(output, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((page) => `  <url><loc>${escape(origin + page.path)}</loc><lastmod>${page.project ? "2026-10-15" : site.published}</lastmod></url>`).join("\n")}\n</urlset>\n`);
   await writeFile(path.join(output, "search-manifest.json"), JSON.stringify({ brand: "Built4U", published: site.published, pages: pages.map(({ path: route, title, description }) => ({ path: route, title, description })) }, null, 2));
   return pages;
 }

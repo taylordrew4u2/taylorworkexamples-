@@ -298,6 +298,57 @@ test("project and service content is crawlable in production HTML before JavaScr
   }
 });
 
+test("project stories explain the original workflows and preserve real development context and inquiry links", () => {
+  for (const project of projects) {
+    const route = `/work/${projectSlugs[project.id]}/`;
+    const html = documents.get(route);
+    assert.ok(tags(html, "body")[0]?.class?.split(/\s+/).includes("project-detail-page"),
+      `${project.title}: the dedicated project layout is present`);
+    assert.equal(tags(html, "script").filter((tag) => tag.src).length, 0,
+      `${project.title}: the project story does not require client-side JavaScript`);
+    const visible = text(html);
+    assert.ok(visible.includes(project.clientSummary || project.summary), `${project.title}: plain-language summary`);
+    for (const original of [project.purpose, project.challenge, project.build, project.notes,
+      ...project.features, ...project.stack, ...(project.highlights || []).flatMap(({ title, text }) => [title, text])].filter(Boolean)) {
+      assert.ok(visible.includes(original), `${project.title}: existing product and evidence context is preserved`);
+    }
+    const workflowCards = [...html.matchAll(/<article\b([^>]*)>([\s\S]*?)<\/article>/gi)]
+      .filter(([, attrs]) => attributes(attrs).class?.split(/\s+/).includes("project-workflow-card"));
+    assert.equal(workflowCards.length, project.workflows.length, `${project.title}: one explanatory card for each workflow`);
+    for (const [index, workflow] of project.workflows.entries()) {
+      const [, , contents] = workflowCards[index];
+      assert.equal(text(contents.match(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i)?.[1] || ""), workflow,
+        `${project.title}: the workflow remains accurate`);
+      const explanation = text(contents.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] || "");
+      assert.ok(explanation.length > 0 && explanation !== workflow,
+        `${project.title}: ${workflow} has client-facing explanation beyond the label`);
+    }
+    const storyNavigation = html.match(/<nav\b[^>]*aria-label="On this project page"[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
+    assert.ok(storyNavigation, `${project.title}: the project has its own page navigation`);
+    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#project-views", "#development"]);
+    for (const target of ["overview", "project-views", "development", "project-cover"]) {
+      assert.ok(tags(html, target === "project-cover" ? "figure" : "section").some((tag) => tag.id === target),
+        `${project.title}: ${target} is a real static destination`);
+    }
+    assert.ok(html.indexOf('id="project-cover"') < html.indexOf('id="overview"'),
+      `${project.title}: original cover introduces the project before the workflow`);
+    const buildCallout = html.match(/<section\b[^>]*class="[^"]*\bproject-build-cta\b[^"]*"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
+    assert.ok(buildCallout, `${project.title}: business inquiry follows the project evidence`);
+    assert.match(text(buildCallout), /Zoom or in person in the New York City area, by arrangement\./);
+    const inquiryLinks = tags(buildCallout, "a");
+    const draft = new URL(inquiryLinks.find((tag) => tag.href?.startsWith("mailto:"))?.href || "https://invalid.example");
+    assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
+    assert.equal(draft.searchParams.get("subject"), `Project inspired by ${project.title}`);
+    assert.ok(draft.searchParams.get("body").includes("The problem:"));
+    assert.ok(draft.searchParams.get("body").includes("Who will use it:"));
+    const consultation = inquiryLinks.map((tag) => new URL(tag.href, `${origin}${route}`))
+      .find((url) => url.origin === origin && url.pathname === "/" && url.hash === "#consultation");
+    assert.ok(consultation, `${project.title}: the existing homepage consultation request remains reachable`);
+    if (project.demoUrl) assert.ok(tags(html, "a").some((tag) => tag.href === project.demoUrl),
+      `${project.title}: its real live or app destination is retained`);
+  }
+});
+
 test("all local document references exist and remain inside the GitHub Pages subfolder", async () => {
   for (const [route, html] of documents) {
     const references = [...tags(html, "a"), ...tags(html, "img"), ...tags(html, "script"), ...tags(html, "link")];
@@ -338,20 +389,40 @@ test("every page offers the same consultation entry without relying on JavaScrip
   }
 });
 
-test("case pages preserve every original gallery image and caption in static HTML", async () => {
+test("case pages expose every original gallery image, caption, and full-size link in static HTML", async () => {
   for (const project of projects) {
     const route = `/work/${projectSlugs[project.id]}/`;
     const html = documents.get(route);
-    const images = tags(html, "img");
-    for (const frame of project.gallery) {
-      assert.ok(text(html).includes(frame.caption), `${project.title}: visible capture disclosure`);
-      for (const image of [frame, frame.companion].filter(Boolean)) {
+    const figures = [...html.matchAll(/<figure\b([^>]*)>([\s\S]*?)<\/figure>/gi)]
+      .filter(([, attrs]) => attributes(attrs).class?.split(/\s+/).includes("project-page-frame"));
+    assert.equal(figures.length, project.gallery.length, `${project.title}: each original view appears once`);
+    assert.deepEqual(figures.map(([, attrs]) => Number(attributes(attrs)["data-view"])).sort((a, b) => a - b),
+      project.gallery.map((_, index) => index), `${project.title}: all original view indices are retained`);
+    assert.doesNotMatch(html, /\bproject-gallery-detail\b/, `${project.title}: product views are not hidden in collapsed gallery rows`);
+    for (const [index, frame] of project.gallery.entries()) {
+      const [, attrs, contents] = figures.find(([, attrs]) => attributes(attrs)["data-view"] === String(index));
+      assert.equal(attributes(attrs).id, index === 0 ? "project-cover" : `project-view-${index}`);
+      const caption = contents.match(/<figcaption\b[^>]*>([\s\S]*?)<\/figcaption>/i)?.[1];
+      assert.equal(text(caption.match(/<strong\b[^>]*>([\s\S]*?)<\/strong>/i)?.[1] || ""), frame.label);
+      assert.equal(text(caption.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)?.[1] || ""), frame.caption,
+        `${project.title}: the original capture disclosure remains beside its image`);
+      const originals = [frame, frame.companion].filter(Boolean);
+      const images = tags(contents, "img");
+      const fullSize = tags(caption, "a");
+      assert.equal(images.length, originals.length, `${project.title}: all paired captures remain visible`);
+      assert.equal(fullSize.length, originals.length, `${project.title}: every image has its own original-size link`);
+      for (const image of originals) {
         const absolutePath = `/${image.image.replace(/^\.\//, "")}`;
-        const tag = images.find((entry) => entry.src && pathname(entry.src, route) === absolutePath);
-        assert.ok(tag, `${project.title}: ${image.image} is in initial HTML`);
+        const matches = images.filter((entry) => entry.src && pathname(entry.src, route) === absolutePath);
+        assert.equal(matches.length, 1, `${project.title}: ${image.image} appears once inside the original view`);
+        const tag = matches[0];
         assert.equal(tag.alt, image.imageAlt);
         assert.equal(Number(tag.width), image.width);
         assert.equal(Number(tag.height), image.height);
+        const link = fullSize.find((entry) => entry.href && sameSite(entry.href, route) && pathname(entry.href, route) === absolutePath);
+        assert.ok(link, `${project.title}: ${image.image} can be inspected at its original size`);
+        assert.equal(link.target, "_blank");
+        assert.ok(link.rel.split(/\s+/).includes("noopener"));
         assert.deepEqual(await readFile(await localFile(tag.src, route)), await readFile(path.join(root, image.image)),
           `${image.image}: the deployed original is unchanged`);
       }
