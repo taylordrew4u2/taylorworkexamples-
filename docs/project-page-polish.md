@@ -8,6 +8,8 @@ Native page anchors lead to the overview, project images, and development detail
 
 Technical details, challenge/build text where available, and original source links follow the visual story. Full provenance notes remain in an accessible native disclosure. The business inquiry keeps its project-specific email draft to admin@customtechbuilt4u.com. The consultation link reaches the existing homepage request for Zoom or NYC in-person meetings; no booking application or instant scheduling is introduced.
 
-The sitemap marks only the fifteen changed project pages as modified on October 15, 2026. Article publication dates and the other canonical pages keep their existing dates. All thirty-three indexable routes and the Search Console verification remain intact.
+The homepage keeps selected work and the full project archive in one continuous work section, before process, consultation, FAQ, and business guides. The approved Built4U logo is repeated at consultation/contact points and generated-page footers. Original product images remain untouched. Project-page section links jump immediately, avoiding smooth-scroll conflicts when moving between sections without JavaScript.
+
+The sitemap marks the changed homepage and fifteen project pages as modified on October 15, 2026. Article publication dates and the other canonical pages keep their existing dates. All thirty-three indexable routes and the Search Console verification remain intact.
 
 Source/build audits verify the rendered stories, local routes, original asset bytes, image links and captions, inquiry routing, and business identity. The browser suite covers every project at desktop and phone sizes without JavaScript, including original image dimensions/colors, gallery visibility, page anchors, and viewport fit. Final publication results and screenshots are recorded outside the repository.

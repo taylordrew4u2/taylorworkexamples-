@@ -100,6 +100,7 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .guide-article > .page-section > p + p { margin-top: 1rem; }
 
 /* Project stories use the same quiet surfaces and clear actions as the homepage. */
+html:has(body.project-detail-page) { scroll-behavior: auto; }
 .project-detail-page .project-story-hero { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.35fr); gap: clamp(2rem, 4vw, 4rem); align-items: center; padding: 3rem 0; }
 .project-story-hero .page-intro { padding: 0; min-width: 0; }
 .project-story-hero .page-intro h1 { font-size: clamp(2.5rem, 4.2vw, 4rem); letter-spacing: -0.06em; }
