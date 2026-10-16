@@ -1,8 +1,8 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=37";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=37";
-import { initConsultation } from "./consultation.js?v=37";
-import { trackContact } from "./analytics.js?v=37";
-import { renderRangeProof } from "./range-proof.js?v=37";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=38";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=38";
+import { initConsultation } from "./consultation.js?v=38";
+import { trackContact } from "./analytics.js?v=38";
+import { renderRangeProof } from "./range-proof.js?v=38";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");

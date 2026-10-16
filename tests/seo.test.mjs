@@ -16,7 +16,7 @@ const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
 const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/privacy/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/privacy/", "/insights/",
   ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/"];
 const documents = new Map();
 
@@ -71,7 +71,7 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   assert.equal(projects.length, 15);
   assert.equal(articles.length, 6);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 36);
+  assert.equal(routes.length, 37);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -94,6 +94,31 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   const missing = documents.get("/404.html");
   assert.match(metadata(missing, "robots")[0]?.content || "", /\bnoindex\b/);
   assert.equal(canonical(missing)[0]?.href, `${origin}/404.html`);
+});
+
+test("the kickoff checklist is a later project step with a complete, attributed business email draft", () => {
+  const route = "/project-kickoff/";
+  const html = documents.get(route);
+  const linksTo = (html, base, target) => tags(html, "a").some(tag =>
+    tag.href && sameSite(tag.href, base) && pathname(tag.href, base) === target);
+  assert.ok(linksTo(documents.get("/"), "/", route));
+  assert.ok(linksTo(documents.get("/contact/"), "/contact/", route));
+  assert.match(text(html), /AFTER THE CONSULTATION/);
+  assert.match(text(html), /You don’t need this worked out before getting in touch/);
+  assert.match(text(html), /This is an illustration/);
+  const drafts = tags(html, "a").filter(tag => tag.href?.startsWith("mailto:"))
+    .map(tag => new URL(tag.href)).filter(url => url.searchParams.get("subject") === "4u Digital project kickoff details");
+  assert.ok(drafts.length > 0);
+  for (const draft of drafts) {
+    assert.equal(draft.pathname, site.email);
+    const body = draft.searchParams.get("body");
+    for (const field of ["Main contact and business email:", "Who approves scope", "Who gathers feedback",
+      "What is included:", "What is outside this version:", "Examples of a successful result",
+      "Who supplies and approves each item, and its permitted use:", "accounts involved and their owners:",
+      "Account invitations and access to arrange separately:", "handover to agree:"]) assert.ok(body.includes(field), field);
+    assert.match(body, /without sending passwords, payment details, or customer records/);
+    assert.ok(body.endsWith(`Source page: ${origin}${route}`));
+  }
 });
 
 test("every indexable page has unique metadata, one semantic heading, and consistent social metadata", async () => {

@@ -309,6 +309,28 @@ test("the comparison guide, business information, and contact remain usable with
   await expectPageFit(page);
 });
 
+test("the later kickoff checklist is reachable from the process and prepares an attributed email without JavaScript", async ({ page }) => {
+  await page.goto("/");
+  const kickoff = page.locator("#process").getByRole("link", { name: "See the project kickoff checklist", exact: false });
+  await kickoff.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
+  await expect(page.locator("main")).toContainText("You don’t need this worked out before getting in touch.");
+  for (const heading of ["1. Agree the first useful version.", "2. Know who makes the decisions.", "3. Plan the assets, access, and handover."])
+    await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();
+  const email = page.locator(".page-intro").getByRole("link", { name: "Prepare a kickoff email", exact: false });
+  const draft = new URL(await email.getAttribute("href"));
+  expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
+  expect(draft.searchParams.get("subject")).toBe("4u Digital project kickoff details");
+  expect(draft.searchParams.get("body")).toContain("What is outside this version:");
+  expect(draft.searchParams.get("body")).toContain("Who supplies and approves each item, and its permitted use:");
+  expect(draft.searchParams.get("body")).toContain("without sending passwords");
+  expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/project-kickoff/`);
+  await expectPageFit(page);
+  const consultation = new URL(await page.locator(".page-nav .nav-contact").getAttribute("href"), page.url());
+  expect(consultation.searchParams.get("from")).toBe("/project-kickoff/");
+  expect(consultation.hash).toBe("#consultation");
+});
+
 test("a business guide connects the idea to a service and an arranged Zoom or NYC consultation without JavaScript", async ({ page }) => {
   const article = articles.find((entry) => entry.slug === "salon-booking-website");
   const service = services.find((entry) => entry.slug === article.serviceSlugs[0]);

@@ -5,6 +5,6 @@ import { articles } from "./seo-articles.js";
 export const contactPages = [
   "/", "/services/", ...services.map(({ slug }) => `/services/${slug}/`),
   "/work/", ...Object.values(projectSlugs).map((slug) => `/work/${slug}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/privacy/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/privacy/", "/insights/",
   ...articles.map(({ slug }) => `/insights/${slug}/`), "/new-york-city/",
 ];
