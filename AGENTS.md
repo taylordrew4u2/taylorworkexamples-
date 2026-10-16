@@ -2,6 +2,7 @@
 
 - Use **4u Digital** as the independent public business brand, with exact casing. Do not add personal owner credits, a Taylor Drew biography, or stand-up promotion. GitHub profile and project source links are permitted. Exclude the personal stand-up website (`taylordrewwebsite`) from published portfolio pages and data. The primary public address is **https://customtechbuilt4u.com/**.
 - Use **admin@customtechbuilt4u.com** for all 4u Digital business email communication, portfolio contact links, inquiry drafts, clipboard content, and structured metadata.
+- Use only free methods for contact attribution. Keep paid analytics disabled; the owner declined paid services. Inquiry drafts can identify their originating public page without a paid reporting service.
 - Offer Zoom consultations and in-person consultations in the New York City area, arranged through the business email. Do not invent free fees, durations, office addresses, or instant availability.
 - Preserve the Google Search Console homepage verification tag in `seo-content.js` and generated HTML. Update sitemap modification dates only when the corresponding content actually changes. Keep primary-domain canonical URLs aligned with the real published routes.
 - Use the approved tagline **Custom tech build for you.** and descriptor **Apps, websites, and software for your business.** Keep the service offer clear in the opening screen.

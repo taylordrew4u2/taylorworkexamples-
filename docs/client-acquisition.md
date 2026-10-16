@@ -18,7 +18,7 @@ No project description, preferred time, search input, email body, arbitrary URL 
 
 Reporting location: Vercel → **4u-digital** project → **Analytics** → **Events** → **Contact intent**. Select a page/action breakdown to compare interest from the homepage, services, guides, and project pages. These are intent counts, not email delivery or booking confirmations.
 
-Activation requires both `site.analyticsEnabled` and the project's Web Analytics setting. The existing Vercel team is Pro; custom events are supported. Vercel's published price is $0.03 per 1,000 collected page-view and custom events, subject to existing monthly usage credit. No Analytics Plus subscription is needed. Paid activation is pending user approval.
+The owner explicitly declined paid services. `site.analyticsEnabled` remains false, and Vercel Web Analytics remains disabled. The production site uses the free source references in inquiry emails described above; it does not collect aggregate visitor or contact-click analytics. The inactive module and mocked tests document the implementation, but no reporting service is activated and no new analytics charges are introduced.
 
 ## Verification
 
