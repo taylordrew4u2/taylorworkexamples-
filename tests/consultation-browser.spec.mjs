@@ -30,11 +30,11 @@ test("the homepage prepares a chosen consultation and provides a usable copy fal
   expect(await page.locator("#consultation").evaluate((section) => Boolean(
     document.querySelector("#process").compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
   )), "Clients can see services and selected work before the full consultation form").toBe(true);
-  const heroAction = page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false });
+  const heroAction = page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false });
   await expect(heroAction).toHaveAttribute("href", "#consultation");
   const menu = page.locator(".menu-toggle");
   if (testInfo.project.name === "phone") await menu.click();
-  const navAction = page.locator("#main-nav").getByRole("link", { name: "Book a consultation", exact: false });
+  const navAction = page.locator("#main-nav").getByRole("link", { name: "Request a consultation", exact: false });
   await expect(navAction).toHaveAttribute("href", "#consultation");
   if (testInfo.project.name === "phone") {
     await navAction.click();
@@ -67,7 +67,7 @@ test("the homepage prepares a chosen consultation and provides a usable copy fal
   await times.fill(preferredTimes);
   await project.fill(brief);
   const draft = readDraft(await email.getAttribute("href"));
-  expect(draft.subject).toBe("Built4U in-person consultation");
+  expect(draft.subject).toBe("4u Digital in-person consultation");
   expect(draft.body).toContain("In person in the New York City area");
   expect(draft.body).toContain(preferredTimes);
   expect(draft.body).toContain(brief);
@@ -79,7 +79,7 @@ test("the homepage prepares a chosen consultation and provides a usable copy fal
   const manualDraft = page.locator("#consultation-draft");
   await expect(manualDraft).toBeVisible();
   await expect(manualDraft).toHaveAttribute("readonly", "");
-  await expect(manualDraft).toHaveValue(new RegExp("Built4U in-person consultation"));
+  await expect(manualDraft).toHaveValue(new RegExp("4u Digital in-person consultation"));
   await expect(manualDraft).toHaveValue(new RegExp(preferredTimes));
   expect(await manualDraft.inputValue()).toContain(brief);
   await expect(page.locator("#consultation-status")).toContainText(/clipboard|copy|select/i);
@@ -94,14 +94,14 @@ test("clients can request either consultation directly from the homepage without
   try {
     const page = await context.newPage();
     await page.goto(new URL("/", testInfo.project.use.baseURL || "http://127.0.0.1:4173").href);
-    await expect(page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false }))
+    await expect(page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false }))
       .toHaveAttribute("href", "#consultation");
     const fallback = page.locator("#consultation .consultation-fallback");
     await expect(fallback).toBeVisible();
     await expect(page.locator("#consultation-form")).toBeHidden();
     for (const [label, subject, format] of [
-      ["Zoom", "Built4U Zoom consultation", "Zoom"],
-      ["In person · NYC", "Built4U in-person consultation", "In person in the New York City area"],
+      ["Zoom", "4u Digital Zoom consultation", "Zoom"],
+      ["In person · NYC", "4u Digital in-person consultation", "In person in the New York City area"],
     ]) {
       const link = fallback.getByRole("link", { name: label, exact: false });
       await expect(link).toBeVisible();

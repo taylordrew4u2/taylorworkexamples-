@@ -106,8 +106,66 @@ test("a service page leads to relevant project proof and a complete business inq
   expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
   expect(draft.searchParams.get("body")).toContain("The problem:");
   expect(draft.searchParams.get("body")).toContain("Who will use it:");
+  expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
   await expectPageFit(page);
 });
+
+for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-development"]) {
+  test(`${slug} connects homepage visitors to a clear service, authentic evidence, and attributed contact without JavaScript`, async ({ page }) => {
+    const service = services.find((entry) => entry.slug === slug);
+    const route = `/services/${slug}/`;
+    await page.goto("/");
+    const industryLinks = page.locator("#services .industry-services");
+    await expect(industryLinks.locator("a")).toHaveCount(2);
+    const entryIndex = await industryLinks.locator("a").evaluateAll((elements, target) => elements.findIndex((element) =>
+      new URL(element.getAttribute("href"), location.href).pathname === target), route);
+    expect(entryIndex, "The homepage industry navigation reaches this service").toBeGreaterThanOrEqual(0);
+    const start = industryLinks.locator("a").nth(entryIndex);
+    await expect(start).toContainText(slug.startsWith("salon") ? /salon/i : /restaurant/i);
+    await expect(start).toBeVisible();
+    await start.click();
+    await expect(page).toHaveURL(new RegExp(`${route}$`));
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+    await expect(page.locator("main")).toContainText(service.intro);
+    await expect(page.locator("main")).toContainText(service.proofIntro);
+    await expect(page.locator("link[rel='canonical']")).toHaveAttribute("href", site.origin + route);
+    await expect(page.locator(".faq-list .faq-item")).toHaveCount(service.faq.length);
+    const question = page.locator(".faq-list .faq-item").first();
+    await question.locator("summary").click();
+    await expect(question).toHaveAttribute("open", "");
+    await expect(question.locator("p")).toHaveText(service.faq[0].answer);
+
+    for (const id of service.projectIds) {
+      const proof = await linkTo(page, `/work/${projectSlugs[id]}/`);
+      await expect(proof).toBeVisible();
+    }
+    const inquiry = page.locator(".page-intro .page-actions a[href^='mailto:']");
+    await expect(inquiry).toBeVisible();
+    const draft = new URL(await inquiry.getAttribute("href"));
+    expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
+    expect(draft.searchParams.get("body")).toContain("The problem:");
+    expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}${route}`);
+
+    const consultationLink = page.locator(".page-nav .nav-contact");
+    await expect(consultationLink).toContainText("Request a consultation");
+    const consultation = new URL(await consultationLink.getAttribute("href"), page.url());
+    expect(consultation.pathname).toBe("/");
+    expect(consultation.searchParams.get("from")).toBe(route);
+    expect(consultation.hash).toBe("#consultation");
+    await expectPageFit(page);
+
+    const planning = await linkTo(page, `/insights/${service.guideSlug}/`);
+    await planning.click();
+    const article = articles.find((entry) => entry.slug === service.guideSlug);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+    const returnToService = page.getByRole("navigation", { name: "Related development services" })
+      .getByRole("link", { name: service.title, exact: true });
+    await expect(returnToService).toBeVisible();
+    await returnToService.click();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+    await expectPageFit(page);
+  });
+}
 
 test("a project case shows authentic paired captures and both original image links without JavaScript", async ({ page }, testInfo) => {
   const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
@@ -222,8 +280,11 @@ for (const project of projects) {
     expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
     expect(draft.searchParams.get("body")).toContain("The problem:");
     expect(draft.searchParams.get("body")).toContain("Who will use it:");
+    expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
+    await expect(page.locator(".page-nav .nav-contact")).toContainText("Request a consultation");
     const consultation = new URL(await page.locator(".page-nav .nav-contact").getAttribute("href"), page.url());
     expect(consultation.pathname).toBe("/");
+    expect(consultation.searchParams.get("from")).toBe(`/work/${projectSlugs[project.id]}/`);
     expect(consultation.hash).toBe("#consultation");
     await expectPageFit(page);
   });
@@ -262,7 +323,7 @@ test("a business guide connects the idea to a service and an arranged Zoom or NY
   const guide = await linkTo(page, `/insights/${article.slug}/`);
   await guide.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
-  await expect(page.locator(".article-byline")).toContainText("By Built4U");
+  await expect(page.locator(".article-byline")).toContainText("By 4u Digital");
   await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", site.published);
   await expect(page.locator("main")).toContainText(article.intro);
   await expectPageFit(page);
@@ -278,13 +339,14 @@ test("a business guide connects the idea to a service and an arranged Zoom or NY
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(localConsultation.heading);
   await expect(page.locator("main")).toContainText(localConsultation.intro);
   await expect(page.locator("main")).toContainText(/Zoom consultations by arrangement/);
-  const arrange = page.locator(".page-actions").getByRole("link", { name: "Arrange a consultation", exact: false });
+  const arrange = page.locator(".page-actions").getByRole("link", { name: "Request a consultation", exact: false });
   await expect(arrange).toBeVisible();
   const draft = new URL(await arrange.getAttribute("href"));
   expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(draft.searchParams.get("subject")).toBe("Built4U consultation");
+  expect(draft.searchParams.get("subject")).toBe("4u Digital consultation");
   expect(draft.searchParams.get("body")).toContain("Consultation format (Zoom or in-person in New York City):");
   expect(draft.searchParams.get("body")).toContain("Preferred times:");
   expect(draft.searchParams.get("body")).toContain("The problem:");
+  expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/new-york-city/`);
   await expectPageFit(page);
 });

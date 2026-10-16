@@ -1,6 +1,7 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=35";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=35";
-import { initConsultation } from "./consultation.js?v=35";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=36";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=36";
+import { initConsultation } from "./consultation.js?v=36";
+import { trackContact } from "./analytics.js?v=36";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -169,6 +170,7 @@ $("#copy-email").addEventListener("click", async () => {
   clearTimeout(copyReset);
   try {
     await navigator.clipboard.writeText(email);
+    trackContact("email-copy");
     $("#copy-email").textContent = "COPIED ✓";
     $("#copy-status").textContent = "Email address copied to clipboard.";
   } catch {

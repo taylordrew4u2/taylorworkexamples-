@@ -13,10 +13,10 @@ function decodedDraft(draft) {
   return url;
 }
 
-test("each consultation format produces a complete request addressed to Built4U", () => {
+test("each consultation format produces a complete request addressed to 4u Digital", () => {
   for (const [format, subject, description] of [
-    ["zoom", "Built4U Zoom consultation", "Zoom"],
-    ["in-person", "Built4U in-person consultation", "In person in the New York City area"],
+    ["zoom", "4u Digital Zoom consultation", "Zoom"],
+    ["in-person", "4u Digital in-person consultation", "In person in the New York City area"],
   ]) {
     const preferredTimes = "Tuesday after 2 pm or Thursday morning (Eastern time)";
     const project = "A salon website with appointment requests & staff calendars.";
@@ -31,7 +31,7 @@ test("each consultation format produces a complete request addressed to Built4U"
 
 test("a fallback request works before clients have supplied project details", () => {
   const draft = consultationDraft();
-  assert.equal(draft.subject, "Built4U Zoom consultation");
+  assert.equal(draft.subject, "4u Digital Zoom consultation");
   assert.ok(draft.body.includes("Zoom"));
   assert.match(draft.body, /preferred.*(?:days|times)|(?:days|times).*preferred/i);
   assert.doesNotMatch(draft.body, /undefined|null/);
@@ -102,5 +102,16 @@ test("unsupported formats and non-text details are rejected", () => {
     for (const value of [null, 5, true, [], {}]) {
       assert.throws(() => consultationDraft({ [field]: value }), TypeError);
     }
+  }
+});
+
+test("consultation drafts attribute only approved public source pages", () => {
+  const source = "/services/salon-booking-app-development/";
+  const draft = consultationDraft({ source, project: "A booking website" });
+  assert.ok(draft.body.endsWith(`Source page: https://customtechbuilt4u.com${source}`));
+  for (const value of ["https://unrelated.example/", source + "?email=private@example.test", "/private/", "\nInjected", null]) {
+    const fallback = consultationDraft({ source: value });
+    assert.ok(fallback.body.endsWith("Source page: https://customtechbuilt4u.com/"));
+    assert.ok(!fallback.body.includes("private@example.test"));
   }
 });

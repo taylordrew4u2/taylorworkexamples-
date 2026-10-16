@@ -1,4 +1,5 @@
-import { email } from "./public-projects.js?v=33";
+import { email } from "./public-projects.js?v=36";
+import { addInquirySource } from "./contact-context.js?v=36";
 
 export const escape = (value) =>
   String(value).replace(
@@ -9,7 +10,7 @@ export const escape = (value) =>
       ],
   );
 export const external = 'target="_blank" rel="noopener noreferrer"';
-export function enquiryURL(topic = "general", reference = "") {
+export function enquiryURL(topic = "general", reference = "", source = "/") {
   const topics = {
     general: "website, app, or business software",
     website: "website",
@@ -17,6 +18,8 @@ export function enquiryURL(topic = "general", reference = "") {
     ios: "iOS app",
     software: "custom app or business software",
     consultation: "consultation",
+    salon: "salon booking website or app",
+    restaurant: "restaurant ordering website or app",
   };
   const selected = topics[topic] || topics.general;
   const subjects = {
@@ -25,7 +28,9 @@ export function enquiryURL(topic = "general", reference = "") {
     "web-app": "Web application project",
     ios: "iOS app project",
     software: "Custom app or software project",
-    consultation: "Built4U consultation",
+    consultation: "4u Digital consultation",
+    salon: "Salon booking project",
+    restaurant: "Restaurant ordering project",
   };
   const subject = reference
     ? `Project inspired by ${reference}`
@@ -36,8 +41,8 @@ export function enquiryURL(topic = "general", reference = "") {
       ? "I'd like to arrange a consultation about an app, website, or business software."
       : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
   const format = topic === "consultation" ? "\nConsultation format (Zoom or in-person in New York City):\nPreferred times:" : "";
-  const body = `Hi Built4U,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:${format}\n\nThanks!`;
-  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const body = `Hi 4u Digital,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:${format}\n\nThanks!`;
+  return addInquirySource(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, source);
 }
 export const labels = {
   web: "WEB DEVELOPMENT",

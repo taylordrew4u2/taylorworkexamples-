@@ -1,7 +1,7 @@
 import { email, projects as auditedProjects, featuredProjects as selected, filterProjects } from "./projects.js";
 import { projectSlugs } from "./seo-content.js";
 
-// Built4U presents software work independently of the owner's personal stand-up site.
+// 4u Digital presents software work independently of the owner's personal stand-up site.
 export { email, filterProjects };
 export const projects = auditedProjects
   .filter((project) => project.id !== "taylordrewwebsite")

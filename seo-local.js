@@ -1,9 +1,9 @@
 export const localConsultation = {
   title: "Consultations for New York City businesses",
-  metaTitle: "NYC Website, App & Software Consultations | Built4U",
-  description: "Discuss your custom website, app, or business software with Built4U. Arrange an in-person NYC-area consultation or a Zoom conversation by email.",
+  metaTitle: "NYC Website, App & Software Consultations | 4u Digital",
+  description: "Discuss your custom website, app, or business software with 4u Digital. Arrange an in-person NYC-area consultation or a Zoom conversation by email.",
   heading: "Let’s talk through your business, in person or on Zoom.",
-  intro: "Built4U offers in-person consultations in the New York City area and Zoom consultations by arrangement for businesses considering a custom website, app, or software project. A conversation can help explain what customers need, how staff work, and where the current process gets awkward. Bring an existing tool or a rough idea. Email admin@customtechbuilt4u.com with your preferred format so we can discuss the meeting details and a suitable time.",
+  intro: "4u Digital offers in-person consultations in the New York City area and Zoom consultations by arrangement for businesses considering a custom website, app, or software project. A conversation can help explain what customers need, how staff work, and where the current process gets awkward. Bring an existing tool or a rough idea. Email admin@customtechbuilt4u.com with your preferred format so we can discuss the meeting details and a suitable time.",
   sections: [
     {
       heading: "Show how your business works.",
@@ -21,7 +21,7 @@ export const localConsultation = {
   faq: [
     {
       question: "Can we meet on Zoom or in person?",
-      answer: "Yes. Email Built4U with what you want to discuss and whether you prefer Zoom or an in-person meeting in the NYC area. We arrange the format and time together. For an in-person consultation, the location is agreed by email based on your business and the discussion.",
+      answer: "Yes. Email 4u Digital with what you want to discuss and whether you prefer Zoom or an in-person meeting in the NYC area. We arrange the format and time together. For an in-person consultation, the location is agreed by email based on your business and the discussion.",
     },
     {
       question: "Do I need a finished plan before we meet?",
@@ -32,7 +32,7 @@ export const localConsultation = {
       answer: "Yes. We can compare the task, users, devices, and existing tools before choosing a platform. Public information, shared browser workflows, and native device features create different requirements. The meeting can help identify a practical starting point for the project.",
     },
   ],
-  meetingEmailIntro: "Email Built4U with the task you want to discuss, your preferred consultation format, and suitable times. We’ll arrange the meeting details together.",
+  meetingEmailIntro: "Email 4u Digital with the task you want to discuss, your preferred consultation format, and suitable times. We’ll arrange the meeting details together.",
   serviceSlugs: [
     "website-development",
     "web-app-development",

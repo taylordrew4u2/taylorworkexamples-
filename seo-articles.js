@@ -2,7 +2,7 @@ export const articles = [
   {
     slug: "freelance-developer-vs-agency",
     title: "Freelance developer or agency: which fits your build?",
-    metaTitle: "Freelance Developer vs Agency: Choosing a Fit | Built4U",
+    metaTitle: "Freelance Developer vs Agency: Choosing a Fit | 4u Digital",
     description: "Compare a direct developer relationship with an agency team by communication, scope, specialist needs, and ongoing responsibilities.",
     summary: "A direct developer relationship can fit a focused website or app project. An agency team may suit work that needs several specialists at once.",
     intro: "Hiring a freelance developer can give you direct contact with the person designing and writing the software. That is useful when your business needs a focused build and clear decisions. Choosing between a freelancer and an agency should still depend on the project, the people required, and the responsibilities after launch.",
@@ -10,7 +10,7 @@ export const articles = [
       {
         heading: "Direct communication connects the question to the build",
         paragraphs: [
-          "At Built4U, the discussion about what your business needs connects directly to the design and code. You can explain a difficult task, review a screen, or ask how a change affects the scope with the developer doing the work.",
+          "At 4u Digital, the discussion about what your business needs connects directly to the design and code. You can explain a difficult task, review a screen, or ask how a change affects the scope with the developer doing the work.",
           "That relationship is most useful when decisions are clear. Identify who approves the work, how feedback is collected, and what must be agreed before changes are built. Direct contact still needs a practical review process and realistic availability.",
         ],
       },
@@ -18,7 +18,7 @@ export const articles = [
         heading: "Compare the scope and responsibilities behind the price",
         paragraphs: [
           "A useful quote describes what is included: pages, workflows, integrations, testing, and launch work. It should also explain what is outside the initial build. Comparing that detail helps you understand the value of a proposal without relying on the size of the business providing it.",
-          "My portfolio includes native apps such as The BitBinder and full-stack work such as The Trip Handler. Those examples let you inspect actual product workflows and source evidence. They show the kind of implementation you can discuss with Built4U, without promising an identical price or outcome.",
+          "My portfolio includes native apps such as The BitBinder and full-stack work such as The Trip Handler. Those examples let you inspect actual product workflows and source evidence. They show the kind of implementation you can discuss with 4u Digital, without promising an identical price or outcome.",
         ],
       },
       {
@@ -41,12 +41,12 @@ export const articles = [
     ],
     serviceSlugs: ["website-development", "custom-software-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task you want to solve and any existing website or app. A finished technical plan is not required.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task you want to solve and any existing website or app. A finished technical plan is not required.",
   },
   {
     slug: "diy-vs-custom-website",
     title: "When does a DIY website need custom development?",
-    metaTitle: "DIY Website vs Custom Development: When to Build | Built4U",
+    metaTitle: "DIY Website vs Custom Development: When to Build | 4u Digital",
     description: "A website builder can suit basic business information. Learn when editing needs, bookings, permissions, or connected workflows justify custom development.",
     summary: "A website builder can handle a straightforward information site. Custom development becomes useful when the business needs particular actions, rules, or connections.",
     intro: "A DIY website can be a sensible starting point for a business that needs a few public pages and a contact route. Custom development is worth considering when visitors or staff need to complete tasks that the existing setup handles awkwardly. Start by identifying the missing function rather than assuming every website needs rebuilding.",
@@ -85,15 +85,16 @@ export const articles = [
     ],
     serviceSlugs: ["website-development", "web-app-development"],
     projectIds: ["tlcmassagewellness", "PinsAndNeedlesComedyWebsite"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
   },
   {
     slug: "salon-booking-website",
+    modified: "2026-10-16",
     title: "What should a salon booking website actually do?",
-    metaTitle: "Planning a Salon Booking Website | Built4U",
+    metaTitle: "Planning a Salon Booking Website | 4u Digital",
     description: "Plan salon services, staff, appointment durations, requests, confirmations, and optional reminders or deposits before choosing a booking website build.",
     summary: "A salon booking website needs rules for services, staff, and time. Decide how an appointment becomes confirmed before designing the booking screen.",
-    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. Built4U can help define a tailored booking workflow around your services and staff. The TLC Massage Wellness development preview provides a related example of service information and appointment requests.",
+    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. 4u Digital can help define a tailored booking workflow around your services and staff. The TLC Massage Wellness development preview provides a related example of service information and appointment requests.",
     sections: [
       {
         heading: "Define the service and staff rules first",
@@ -127,17 +128,18 @@ export const articles = [
         answer: "No. Include them when they serve the business process, and define their behavior and service costs. They should not be assumed from the phrase booking website or promised before the requirements are understood.",
       },
     ],
-    serviceSlugs: ["website-development", "web-app-development"],
+    serviceSlugs: ["salon-booking-app-development", "website-development", "web-app-development"],
     projectIds: ["tlcmassagewellness"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
   },
   {
     slug: "restaurant-ordering-app",
+    modified: "2026-10-16",
     title: "Plan the restaurant order before building the app",
-    metaTitle: "Planning a Restaurant Ordering App | Built4U",
+    metaTitle: "Planning a Restaurant Ordering App | 4u Digital",
     description: "Define menu options, pickup or delivery, order acceptance, staff handling, payments, and POS access before building a restaurant ordering app.",
     summary: "An ordering app needs a complete path from menu choice to accepted order. Customer screens and restaurant operations should be planned together.",
-    intro: "A restaurant ordering app needs to match what happens after someone presses the order button. The menu, fulfillment process, payment status, and staff response all affect the build. Built4U can help plan those steps around your restaurant. Related portfolio work demonstrates web-app coordination and payment integration, giving you concrete examples to discuss when defining your ordering workflow.",
+    intro: "A restaurant ordering app needs to match what happens after someone presses the order button. The menu, fulfillment process, payment status, and staff response all affect the build. 4u Digital can help plan those steps around your restaurant. Related portfolio work demonstrates web-app coordination and payment integration, giving you concrete examples to discuss when defining your ordering workflow.",
     sections: [
       {
         heading: "Make the menu and fulfillment choices explicit",
@@ -171,14 +173,14 @@ export const articles = [
         answer: "Only if both workflows are defined and belong in the first scope. A pickup-only version may provide a clearer starting boundary. Delivery should have explicit destination, timing, and fulfillment rules when included.",
       },
     ],
-    serviceSlugs: ["web-app-development", "app-development"],
+    serviceSlugs: ["restaurant-ordering-app-development", "web-app-development", "app-development"],
     projectIds: ["the-trip-handler"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
   },
   {
     slug: "spreadsheet-to-business-software",
     title: "When a spreadsheet needs a business workflow",
-    metaTitle: "From Spreadsheet to Business Software | Built4U",
+    metaTitle: "From Spreadsheet to Business Software | 4u Digital",
     description: "Plan shared records, permissions, review steps, imports, and exports before replacing a spreadsheet with custom business software.",
     summary: "A spreadsheet can be useful until the work needs defined roles and handoffs. Start with one complete task before deciding what software to build.",
     intro: "Moving a spreadsheet into software should begin with the work people perform around it. Who enters a record, who checks it, and what happens after a decision? Custom business software can give those steps a defined interface and access rules. Start by mapping your current spreadsheet process, then decide which steps need shared records, approvals, or a clearer interface.",
@@ -217,15 +219,15 @@ export const articles = [
     ],
     serviceSlugs: ["custom-software-development", "web-app-development"],
     projectIds: ["Role-Call", "the-trip-handler"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
   },
   {
     slug: "first-version-app-features",
     title: "Choose app features around one useful first version",
-    metaTitle: "Planning First-Version App Features and MVP Scope | Built4U",
+    metaTitle: "Planning First-Version App Features and MVP Scope | 4u Digital",
     description: "Define an app's first useful task, users, accounts, payments, review criteria, and maintenance responsibilities before adding more features.",
     summary: "A first version should let someone complete a useful task. Feature choices follow from that task, its users, and what a successful result looks like.",
-    intro: "A minimum viable product, or MVP, needs a clear purpose and a complete user workflow. A long feature list does not provide that boundary. Built4U can help turn an app idea into a scoped first version by defining the task, the decisions it requires, and what belongs in the initial build. A finished technical specification is not required.",
+    intro: "A minimum viable product, or MVP, needs a clear purpose and a complete user workflow. A long feature list does not provide that boundary. 4u Digital can help turn an app idea into a scoped first version by defining the task, the decisions it requires, and what belongs in the initial build. A finished technical specification is not required.",
     sections: [
       {
         heading: "Follow one user through one complete task",
@@ -261,6 +263,6 @@ export const articles = [
     ],
     serviceSlugs: ["app-development", "web-app-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    closing: "Built4U offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your app idea, intended users, and the first task it should handle. We can work through the scope together.",
+    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your app idea, intended users, and the first task it should handle. We can work through the scope together.",
   },
 ];

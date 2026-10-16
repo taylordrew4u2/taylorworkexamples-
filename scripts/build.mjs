@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { email, projects, featuredProjects, filterProjects } from "../public-projects.js";
 import { generateSEO } from "./seo.mjs";
+import { contactPages } from "../contact-pages.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -14,17 +15,20 @@ for (const name of [
   "seo.css",
   "app.js",
   "consultation.js",
+  "analytics.js",
+  "contact-context.js",
   "render-projects.js",
   ".nojekyll",
 ]) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
 }
 
-// Publish only the Built4U catalog. The audited source inventory stays in the repo.
+// Publish only the 4u Digital catalog. The audited source inventory stays in the repo.
 await writeFile(path.join(output, "public-projects.js"),
   `export const email = ${JSON.stringify(email)};\nexport const projects = ${JSON.stringify(projects)};\nexport const featuredProjects = ${JSON.stringify(featuredProjects.map((project) => project.id))}.map((id) => projects.find((project) => project.id === id));\nexport ${filterProjects.toString()}\n`,
 );
 const pages = await generateSEO(output);
+await writeFile(path.join(output, "contact-pages.js"), `export const contactPages = ${JSON.stringify(contactPages)};\n`);
 
 // Package only the current portfolio's images and branding assets.
 const assets = new Set(projects.flatMap((project) => [
@@ -42,4 +46,4 @@ for (const asset of assets) {
   await mkdir(path.dirname(destination), { recursive: true });
   await cp(path.join(root, asset), destination);
 }
-console.log(`Built4U built in dist/: ${pages.length} indexable pages, ${projects.length} public projects.`);
+console.log(`4u Digital built in dist/: ${pages.length} indexable pages, ${projects.length} public projects.`);

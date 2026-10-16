@@ -217,17 +217,17 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
-  await expect(page).toHaveTitle("Custom App, Website & Software Development | Built4U");
-  await expect(page.getByRole("banner").getByRole("link", { name: "Built4U, home", exact: true })).toBeVisible();
+  await expect(page).toHaveTitle("Custom App, Website & Software Development | 4u Digital");
+  await expect(page.getByRole("banner").getByRole("link", { name: "4u Digital, home", exact: true })).toBeVisible();
   for (const area of ["#consultation", "#contact"]) {
-    const brand = page.locator(area).getByRole("link", { name: "Built4U, home", exact: true });
+    const brand = page.locator(area).getByRole("link", { name: "4u Digital, home", exact: true });
     await expect(brand).toBeVisible();
     await expect(brand.locator("img")).toHaveAttribute("src", "./assets/4u-digital-logo-mono.png");
   }
   const headline = page.getByRole("heading", { level: 1 });
   await expect(headline).toHaveText("You know your business. I’ll build the technology.");
   await expect(headline).toBeVisible();
-  await expect(page.locator(".hero-tagline")).toHaveText("Custom tech. Built for you.");
+  await expect(page.locator(".hero-tagline")).toHaveText("Custom tech build for you.");
   await expect(page.locator(".hero-tagline")).toBeVisible();
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
@@ -235,7 +235,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     "Need an app, a complete website, or software that makes running your business easier? I design, code, and build it from start to finish. You don’t need a technical background—or a finished plan—to get started.",
   );
   await expect(page.locator(".intro-description")).toBeVisible();
-  await expect(page.locator(".footer-identity")).toContainText("Built4U");
+  await expect(page.locator(".footer-identity")).toContainText("4u Digital");
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   expect(await headline.evaluate((element) => {
     const headlineBox = element.getBoundingClientRect();
@@ -1056,7 +1056,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     expect(draft.protocol).toBe("mailto:");
     expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
     expect(draft.searchParams.get("subject")).toBe("Website, app, or software project");
-    expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
+    expect(draft.searchParams.get("body")).toMatch(/^Hi 4u Digital,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
       "I'm looking for help with a website, app, or business software.",
     );
@@ -1077,7 +1077,7 @@ test("project and service inquiry links prepare the correct email drafts", async
     expect(draft.protocol).toBe("mailto:");
     expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
     expect(draft.searchParams.get("subject")).toBe(subject);
-    expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
+    expect(draft.searchParams.get("body")).toMatch(/^Hi 4u Digital,\n\n/);
     expect(draft.searchParams.get("body")).toContain(
       `I'm looking for help with ${description}.`,
     );
@@ -1132,7 +1132,7 @@ test("case studies show the need, build evidence, and a project-specific inquiry
   expect(draft.searchParams.get("subject")).toBe(
     "Project inspired by Pins & Needles Comedy",
   );
-  expect(draft.searchParams.get("body")).toMatch(/^Hi Built4U,\n\n/);
+  expect(draft.searchParams.get("body")).toMatch(/^Hi 4u Digital,\n\n/);
   expect(draft.searchParams.get("body")).toContain(
     "I saw Pins & Needles Comedy in your portfolio and would like to discuss something similar.",
   );

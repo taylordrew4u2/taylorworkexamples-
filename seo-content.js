@@ -1,8 +1,10 @@
 export const site = {
   origin: "https://customtechbuilt4u.com",
-  brand: "Built4U",
+  brand: "4u Digital",
   email: "admin@customtechbuilt4u.com",
   published: "2026-10-14",
+  modified: "2026-10-16",
+  analyticsEnabled: false,
   googleSiteVerification: "ToeKeLBKtkzU6usikyPh_H5UyaYv8bVZJp1JjyhzzVM",
 };
 
@@ -11,10 +13,10 @@ export const services = [
     slug: "website-development",
     title: "Custom website development",
     serviceLabel: "Websites",
-    metaTitle: "Custom Website Development for Your Business | Built4U",
-    description: "Custom business websites with clear content, mobile layouts, and useful inquiry or booking flows. See Built4U projects and discuss your website.",
+    metaTitle: "Custom Website Development for Your Business | 4u Digital",
+    description: "Custom business websites with clear content, mobile layouts, and useful inquiry or booking flows. See 4u Digital projects and discuss your website.",
     heading: "Give your business a website people can use.",
-    intro: "I design and build custom websites that explain your business and give visitors a clear next step. That might be viewing your work, sending an inquiry, or requesting an appointment. At Built4U, I handle the design and code together. You can start with a rough idea or an existing website that needs work.",
+    intro: "I design and build custom websites that explain your business and give visitors a clear next step. That might be viewing your work, sending an inquiry, or requesting an appointment. At 4u Digital, I handle the design and code together. You can start with a rough idea or an existing website that needs work.",
     eyebrow: "CUSTOM WEBSITES",
     topic: "website",
     when: [
@@ -70,10 +72,10 @@ export const services = [
     slug: "web-app-development",
     title: "Web app development",
     serviceLabel: "Web apps",
-    metaTitle: "Web App Development for Business Workflows | Built4U",
-    description: "Custom web applications for accounts, approvals, shared records, and payments. See Built4U workflow projects and discuss the app your business needs.",
+    metaTitle: "Web App Development for Business Workflows | 4u Digital",
+    description: "Custom web applications for accounts, approvals, shared records, and payments. See 4u Digital workflow projects and discuss the app your business needs.",
     heading: "Bring the work into one place.",
-    intro: "I build web applications that let people sign in, work with shared records, complete approvals, and see what needs attention. Built4U connects the interface to the rules and data behind it. We start with a real business task, identify the people involved, and plan the steps the application needs to support.",
+    intro: "I build web applications that let people sign in, work with shared records, complete approvals, and see what needs attention. 4u Digital connects the interface to the rules and data behind it. We start with a real business task, identify the people involved, and plan the steps the application needs to support.",
     eyebrow: "WEB APPLICATIONS",
     topic: "web-app",
     when: [
@@ -129,10 +131,10 @@ export const services = [
     slug: "app-development",
     title: "iPhone, iPad, and Mac app development",
     serviceLabel: "Apple apps",
-    metaTitle: "iPhone, iPad & Mac App Development | Built4U",
-    description: "Native iPhone, iPad, and Mac apps built around useful workflows. See Built4U notebooks, calendars, and desktop tools, then discuss your app idea.",
+    metaTitle: "iPhone, iPad & Mac App Development | 4u Digital",
+    description: "Native iPhone, iPad, and Mac apps built around useful workflows. See 4u Digital notebooks, calendars, and desktop tools, then discuss your app idea.",
     heading: "Put your workflow on the devices people use.",
-    intro: "I design and build native apps for iPhone, iPad, and Mac. An app can fit a recurring task that needs device features, local storage, or an interface shaped for that device. At Built4U, we choose the intended Apple devices and define the main workflow before deciding what belongs in the first release.",
+    intro: "I design and build native apps for iPhone, iPad, and Mac. An app can fit a recurring task that needs device features, local storage, or an interface shaped for that device. At 4u Digital, we choose the intended Apple devices and define the main workflow before deciding what belongs in the first release.",
     eyebrow: "APPLE APP DEVELOPMENT",
     topic: "software",
     when: [
@@ -188,10 +190,10 @@ export const services = [
     slug: "custom-software-development",
     title: "Custom software development",
     serviceLabel: "Custom software",
-    metaTitle: "Custom Software Development for Your Business | Built4U",
-    description: "Custom software for document workflows, internal tools, data services, and desktop utilities. See Built4U examples and discuss the task you need to solve.",
+    metaTitle: "Custom Software Development for Your Business | 4u Digital",
+    description: "Custom software for document workflows, internal tools, data services, and desktop utilities. See 4u Digital examples and discuss the task you need to solve.",
     heading: "Build software around the way you work.",
-    intro: "I build custom software for work that needs its own rules, data, or specialist tools. The result might be an internal browser workspace, desktop utility, or service connecting an existing process. Built4U starts with the task your team needs to complete, then identifies what needs custom code and agrees a practical scope.",
+    intro: "I build custom software for work that needs its own rules, data, or specialist tools. The result might be an internal browser workspace, desktop utility, or service connecting an existing process. 4u Digital starts with the task your team needs to complete, then identifies what needs custom code and agrees a practical scope.",
     eyebrow: "CUSTOM BUSINESS SOFTWARE",
     topic: "software",
     when: [
@@ -243,14 +245,136 @@ export const services = [
       },
     ],
   },
+  {
+    slug: "salon-booking-app-development",
+    title: "Salon booking app development",
+    serviceLabel: "Salon bookings",
+    modified: "2026-10-16",
+    guideSlug: "salon-booking-website",
+    metaTitle: "Custom Salon Booking Apps & Websites | 4u Digital",
+    description: "Custom salon booking websites and apps for services, staff, appointment requests, and schedule management. Discuss your booking workflow with 4u Digital.",
+    heading: "Make booking fit the way your salon works.",
+    intro: "Customers need to choose a service and understand what happens next. Your team needs appointments that fit the staff, time, and space available. I design and build salon booking websites and apps around those two sides of the same appointment. Bring your current booking process to 4u Digital, whether it runs through messages, a calendar, or an existing service. We can decide which steps need a custom build.",
+    eyebrow: "SALON BOOKING WEBSITES & APPS",
+    topic: "salon",
+    when: [
+      {
+        title: "Let customers choose the right service",
+        text: "A booking flow can explain each service, collect the details your team needs, and offer eligible staff. We define durations, preparation time, and any choices that change the appointment before designing the calendar. Customers should know whether they are sending a request or securing a confirmed time.",
+      },
+      {
+        title: "Give your team a useful schedule",
+        text: "A staff view can bring appointment requests, confirmed bookings, unavailable time, and service details together. We decide who can accept a request, change a schedule, or update the treatment list. If rooms or equipment affect availability, those constraints belong alongside staff hours.",
+      },
+      {
+        title: "Handle changes without losing the details",
+        text: "Rescheduling and cancellation need clear rules for customers and staff. We can scope customer change requests, staff review, and notifications that match the appointment's status. The workflow should show what changed and which action is still needed, rather than leaving your team to reconstruct it from messages.",
+      },
+    ],
+    scope: [
+      {
+        title: "Requests or automatic confirmation?",
+        text: "A request-and-review flow lets your team check an appointment before accepting it. Automatic confirmation needs reliable availability, conflict checks, and rules for the service, staff, and resources involved. We choose the approach around how your salon works, then define the behavior customers and staff will review.",
+      },
+      {
+        title: "What should connect to your existing tools?",
+        text: "Bring the calendar or booking service you already use. We check its supported access before promising a connection or replacing it. Reminders, deposits, and payments can be scoped when useful, with clear confirmation rules and provider costs. Customer information and staff access also need a defined handling plan.",
+      },
+      {
+        title: "What makes a useful first version?",
+        text: "A first version could cover choosing a service, requesting a time, and reviewing the request in a staff workspace. We agree the necessary screens, who maintains the service list, and how exceptions are handled. The scope and price are settled before building; hosting and maintenance need an arrangement too.",
+      },
+    ],
+    projectIds: ["tlcmassagewellness", "MyGigCalendar"],
+    proofIntro: "TLC Massage Wellness is a development preview with treatment-aware requests, intake questions, editable content, and an accept-or-decline workflow. My Gig Calendar shows native scheduling connected to a public calendar. These related portfolio projects let you examine booking and scheduling capabilities; they are not salon client projects or evidence of automatic appointment confirmation.",
+    faq: [
+      {
+        question: "Do salon customers need to download an app?",
+        answer: "No. A booking website or web app can work in a phone browser. A native Apple app can be considered if customers or staff need a recurring device workflow. We choose the platform around how people will use the booking system.",
+      },
+      {
+        question: "Can different services have different staff and durations?",
+        answer: "Yes, those rules can be part of the build. We need your service list, which staff can provide each service, appointment lengths, and any preparation or cleanup time. Shared rooms or equipment can affect availability as well.",
+      },
+      {
+        question: "Can I keep my current booking system?",
+        answer: "Possibly. Your website could direct customers to it, or a custom workflow might connect to supported features. Share the system you use so its access and limits can be assessed before we agree an integration.",
+      },
+      {
+        question: "How do I discuss a salon booking project?",
+        answer: "Request a Zoom consultation or an in-person consultation in the New York City area by arrangement. Email admin@customtechbuilt4u.com with your current booking process and what you want to improve. A rough outline is enough to start.",
+      },
+    ],
+  },
+  {
+    slug: "restaurant-ordering-app-development",
+    title: "Restaurant ordering app development",
+    serviceLabel: "Restaurant ordering",
+    modified: "2026-10-16",
+    guideSlug: "restaurant-ordering-app",
+    metaTitle: "Custom Restaurant Ordering Apps & Websites | 4u Digital",
+    description: "Custom restaurant ordering websites and apps for menus, pickup, staff order queues, and payment workflows. Plan your ordering system with 4u Digital.",
+    heading: "Build an ordering flow your restaurant can run.",
+    intro: "An online order needs to reach the people preparing it, with the right choices and a clear status. I design and build restaurant ordering websites and apps around that complete path: menu, order details, staff acceptance, and fulfillment. Bring 4u Digital your current menu and ordering process. We can plan a custom customer experience and the staff tools that make it workable.",
+    eyebrow: "RESTAURANT ORDERING WEBSITES & APPS",
+    topic: "restaurant",
+    when: [
+      {
+        title: "Make the menu clear and manageable",
+        text: "An ordering menu can support item options, sizes, extras, and availability rules. We define which choices change the price and what happens when an item sells out. A staff editing view can let authorized people update menu information, with the customer order preserving the choices made at checkout.",
+      },
+      {
+        title: "Give each order a place in the queue",
+        text: "A counter or kitchen workspace can show submitted orders and the next action for each one. We map who accepts an order, who prepares it, and how it becomes ready for pickup. Customer updates should reflect those real steps, including when the restaurant cannot accept an order.",
+      },
+      {
+        title: "Match ordering to your fulfillment process",
+        text: "Pickup ordering needs hours, timing choices, customer details, and a clear collection step. Delivery adds destination and fulfillment rules. We can scope either workflow around how your restaurant operates, including what staff do when capacity changes or an order needs correction.",
+      },
+    ],
+    scope: [
+      {
+        title: "When is an order accepted and paid?",
+        text: "A submitted order, an accepted order, and a confirmed payment are different events. We define their sequence, the amount calculation, and what happens when payment fails or an order is cancelled. Payment-provider access and charges need to be understood before checkout becomes part of the agreed build.",
+      },
+      {
+        title: "Can your POS and menu data connect?",
+        text: "Share the point-of-sale system and other tools your restaurant uses. We check available documentation and account access before scoping a connection. Menu imports, price updates, and order handoffs need a clear source of truth and a plan for failed updates. The connection should serve the staff process.",
+      },
+      {
+        title: "Which ordering workflow should come first?",
+        text: "A useful first version could focus on browser-based pickup orders and a staff acceptance queue. We agree menu rules, operating hours, roles, and the review examples before building. Delivery, loyalty features, or a native Apple app can be considered separately. Hosting, service costs, and maintenance belong in the project plan.",
+      },
+    ],
+    projectIds: ["the-trip-handler", "Role-Call"],
+    proofIntro: "The Trip Handler demonstrates approval workflows, shared records, Stripe Checkout, and verified payment events. RoleCall demonstrates team roles and shared working documents. These are related software capabilities from the portfolio, not restaurant client projects. Your menu, ordering queue, and fulfillment rules would be designed and reviewed for your own business.",
+    faq: [
+      {
+        question: "Does restaurant ordering require a downloadable app?",
+        answer: "No. A website or web app can let customers order from a phone browser. A native Apple app may suit a repeat-use requirement, but it needs its own scope. We can compare the options before choosing a platform.",
+      },
+      {
+        question: "Can the ordering app connect to my current POS?",
+        answer: "That depends on the POS system's supported connection methods and your account access. Tell 4u Digital which system you use. The integration can then be assessed before it is promised or included in the project price.",
+      },
+      {
+        question: "Can we start with pickup orders only?",
+        answer: "Yes. A first version can focus on pickup if that covers a complete useful task. We still need the menu choices, ordering hours, acceptance rules, payment approach, and what customers see when an order is ready or cannot be accepted.",
+      },
+      {
+        question: "How do I discuss a restaurant ordering project?",
+        answer: "Request a Zoom consultation or an in-person consultation in the New York City area by arrangement. Email admin@customtechbuilt4u.com with your menu, current ordering process, and POS system if you use one. A finished specification is not required.",
+      },
+    ],
+  },
 ];
 
 export const guide = {
   slug: "website-or-app",
   title: "Do you need a website, a web app, or custom software?",
-  metaTitle: "Website, Web App, or Software? A Practical Guide | Built4U",
-  description: "Compare websites, web apps, native Apple apps, and custom software by the task, users, and device requirements. Find a practical starting point with Built4U.",
-  intro: "Choose the build by the task people need to complete. A website explains a business; a web app manages ongoing work; a native app serves a device workflow. Custom software can use any of those forms. Bring Built4U the problem and an example before choosing the technology.",
+  metaTitle: "Website, Web App, or Software? A Practical Guide | 4u Digital",
+  description: "Compare websites, web apps, native Apple apps, and custom software by the task, users, and device requirements. Find a practical starting point with 4u Digital.",
+  intro: "Choose the build by the task people need to complete. A website explains a business; a web app manages ongoing work; a native app serves a device workflow. Custom software can use any of those forms. Bring 4u Digital the problem and an example before choosing the technology.",
   rows: [
     {
       type: "Website",
@@ -301,7 +425,7 @@ export const guide = {
       answer: "No. Bring the problem, intended users, and an example of the current task. I can work through the technical choices once the requirements are understood. A rough idea is enough for an initial discussion.",
     },
     {
-      question: "How do I start a conversation with Built4U?",
+      question: "How do I start a conversation with 4u Digital?",
       answer: "Email admin@customtechbuilt4u.com with what your business does and what you want to build or improve. Include an existing website or example if available. Budget and timing information can help, but a finished plan is not required.",
     },
   ],

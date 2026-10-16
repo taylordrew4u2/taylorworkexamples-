@@ -16,7 +16,7 @@ const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
 const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/privacy/", "/insights/",
   ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/"];
 const documents = new Map();
 
@@ -70,7 +70,8 @@ before(async () => {
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
   assert.equal(projects.length, 15);
   assert.equal(articles.length, 6);
-  assert.equal(routes.length, 33);
+  assert.equal(services.length, 6);
+  assert.equal(routes.length, 36);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -103,7 +104,7 @@ test("every indexable page has unique metadata, one semantic heading, and consis
     const pageTitle = title(html);
     const description = metadata(html, "description");
     const headings = h1s(html);
-    assert.ok(pageTitle.includes("Built4U"), `${route}: page title identifies the business`);
+    assert.ok(pageTitle.includes("4u Digital"), `${route}: page title identifies the business`);
     assert.ok(!titles.has(pageTitle), `${route}: unique title`);
     titles.add(pageTitle);
     assert.equal(description.length, 1);
@@ -148,7 +149,7 @@ test("structured data points to the canonical business and matches visible servi
     const nodes = schemaNodes(html);
     assert.ok(nodes.length >= 3);
     const org = nodes.find((node) => hasType(node, "Organization"));
-    assert.equal(org.name, "Built4U");
+    assert.equal(org.name, "4u Digital");
     assert.equal(org.email, "admin@customtechbuilt4u.com");
     assert.equal(org.url, `${origin}/`);
     assert.ok(org.sameAs.includes("https://github.com/taylordrew4u2"));
@@ -192,10 +193,10 @@ test("structured data points to the canonical business and matches visible servi
       assert.equal(schema.mainEntityOfPage["@id"], page["@id"]);
       assert.equal(page.mainEntity["@id"], schema["@id"]);
       assert.equal(schema.datePublished, "2026-10-14");
-      assert.equal(schema.dateModified, schema.datePublished);
+      assert.equal(schema.dateModified, article.modified || site.modified || schema.datePublished);
       assert.equal(schema.datePublished, site.published);
       assert.deepEqual(tags(html, "time").map((tag) => tag.datetime), [schema.datePublished]);
-      assert.ok(visible.includes("by built4u"), `${route}: visible company author`);
+      assert.ok(visible.includes("by 4u digital"), `${route}: visible company author`);
     }
     const project = projects.find((entry) => route === `/work/${projectSlugs[entry.id]}/`);
     if (project) {
@@ -262,7 +263,7 @@ test("business guides and consultation details are discoverable, truthful, and r
   }
   for (const slug of localConsultation.serviceSlugs) assert.ok(linksTo(local, localRoute, `/services/${slug}/`));
   const consultations = tags(local, "a").filter((tag) => tag.href?.startsWith("mailto:"))
-    .map((tag) => new URL(tag.href)).filter((url) => url.searchParams.get("subject") === "Built4U consultation");
+    .map((tag) => new URL(tag.href)).filter((url) => url.searchParams.get("subject") === "4u Digital consultation");
   assert.ok(consultations.length > 0, "the local page provides an actual consultation inquiry");
   for (const draft of consultations) {
     assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
@@ -298,6 +299,57 @@ test("project and service content is crawlable in production HTML before JavaScr
   }
 });
 
+test("salon and restaurant services explain the business workflow and connect to their guides and genuine project evidence", async () => {
+  const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
+  const sitemapDates = new Map([...xml.matchAll(/<url>\s*<loc>([^<]+)<\/loc>\s*<lastmod>([^<]+)<\/lastmod>\s*<\/url>/g)]
+    .map(([, location, date]) => [new URL(decode(location)).pathname, date]));
+  const home = documents.get("/");
+  const homeServices = home.match(/<section\b[^>]*id="services"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
+  assert.ok(homeServices, "industry-specific starting points are part of the homepage services");
+  const linksTo = (html, route, target) => tags(html, "a").some((tag) =>
+    tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === target);
+  for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-development"]) {
+    const service = services.find((entry) => entry.slug === slug);
+    const route = `/services/${slug}/`;
+    const html = documents.get(route);
+    const visible = text(html);
+    assert.deepEqual(canonical(html).map((tag) => tag.href), [origin + route]);
+    assert.equal(title(html), service.metaTitle);
+    assert.equal(h1s(html)[0], service.heading);
+    assert.equal(metadata(html, "description")[0]?.content, service.description);
+    assert.equal(sitemapDates.get(route), "2026-10-16");
+    assert.ok(linksTo(homeServices, "/", route), `${service.title}: homepage services entry`);
+    assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
+    for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
+      ...service.scope.flatMap(({ title, text }) => [title, text]), ...service.faq.flatMap(({ question, answer }) => [question, answer])]) {
+      assert.ok(visible.includes(content), `${service.title}: complete explanatory copy is in the production HTML`);
+    }
+    const serviceSchema = schemaNodes(html).find((node) => hasType(node, "Service"));
+    assert.equal(serviceSchema.url, origin + route);
+    assert.equal(serviceSchema.name, service.title);
+    const faqSchema = schemaNodes(html).find((node) => hasType(node, "FAQPage"));
+    assert.deepEqual(faqSchema.mainEntity.map((entry) => entry.name), service.faq.map((entry) => entry.question));
+    for (const id of service.projectIds) {
+      assert.ok(projects.some((project) => project.id === id));
+      assert.ok(linksTo(html, route, `/work/${projectSlugs[id]}/`), `${service.title}: published portfolio evidence`);
+    }
+    const guideRoute = `/insights/${service.guideSlug}/`;
+    assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
+    assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
+    assert.equal(sitemapDates.get(guideRoute), "2026-10-16");
+    const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
+      .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
+    assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
+    assert.ok(inquiry.searchParams.get("body").includes(`Source page: ${origin}${route}`),
+      `${service.title}: a real inquiry retains its source without JavaScript`);
+  }
+  for (const article of articles.filter((entry) => !entry.modified)) {
+    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), site.modified,
+      `${article.title}: the business rename updates the guide while its publication date remains unchanged`);
+  }
+  for (const route of ["/", "/services/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-16");
+});
+
 test("the homepage keeps all project showcases together before process, consultation, and questions", () => {
   const home = documents.get("/");
   const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
@@ -331,8 +383,10 @@ test("project stories explain the original workflows and preserve real developme
     const html = documents.get(route);
     assert.ok(tags(html, "body")[0]?.class?.split(/\s+/).includes("project-detail-page"),
       `${project.title}: the dedicated project layout is present`);
-    assert.equal(tags(html, "script").filter((tag) => tag.src).length, 0,
-      `${project.title}: the project story does not require client-side JavaScript`);
+    const clientScripts = tags(html, "script").filter((tag) => tag.src);
+    assert.equal(clientScripts.length, 1, `${project.title}: only the contact-tracking module is loaded`);
+    assert.equal(pathname(clientScripts[0].src, route), "/analytics.js");
+    assert.equal(clientScripts[0].type, "module");
     const visible = text(html);
     assert.ok(visible.includes(project.clientSummary || project.summary), `${project.title}: plain-language summary`);
     for (const original of [project.purpose, project.challenge, project.build, project.notes,
@@ -368,6 +422,8 @@ test("project stories explain the original workflows and preserve real developme
     assert.equal(draft.searchParams.get("subject"), `Project inspired by ${project.title}`);
     assert.ok(draft.searchParams.get("body").includes("The problem:"));
     assert.ok(draft.searchParams.get("body").includes("Who will use it:"));
+    assert.ok(draft.searchParams.get("body").includes(`Source page: ${origin}${route}`),
+      `${project.title}: source attribution remains available without JavaScript`);
     const consultation = inquiryLinks.map((tag) => new URL(tag.href, `${origin}${route}`))
       .find((url) => url.origin === origin && url.pathname === "/" && url.hash === "#consultation");
     assert.ok(consultation, `${project.title}: the existing homepage consultation request remains reachable`);
@@ -410,7 +466,10 @@ test("every page offers the same consultation entry without relying on JavaScrip
     assert.equal(destination.origin, origin);
     assert.equal(destination.pathname, "/");
     assert.equal(destination.hash, "#consultation");
-    assert.ok(text(header).includes("Book a consultation"));
+    if (route !== "/") assert.equal(destination.searchParams.get("from"), route,
+      `${route}: the homepage request remembers the public source page`);
+    assert.ok(text(header).includes("Request a consultation"));
+    assert.doesNotMatch(text(html), /\bBook a consultation\b/);
     assert.ok(tags(html, "a").some((tag) => tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === "/contact/"),
       `${route}: the contact page remains reachable`);
   }
@@ -471,7 +530,11 @@ test("the published business excludes personal identity while preserving allowed
   }
   for (const [route, html] of documents) {
     for (const link of tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))) {
-      assert.equal(new URL(link.href).pathname, "admin@customtechbuilt4u.com", `${route}: business inquiries use the requested address`);
+      const draft = new URL(link.href);
+      assert.equal(draft.pathname, "admin@customtechbuilt4u.com", `${route}: business inquiries use the requested address`);
+      const source = route === "/404.html" ? "/" : route;
+      assert.ok(draft.searchParams.get("body")?.includes(`Source page: ${origin}${source}`),
+        `${route}: an email inquiry retains its canonical source without JavaScript`);
     }
   }
   assert.ok(!documents.has("/work/retro-desktop-website/"));
