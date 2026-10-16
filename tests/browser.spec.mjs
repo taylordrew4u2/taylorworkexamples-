@@ -984,10 +984,9 @@ test("email copy succeeds and explains the fallback when clipboard is unavailabl
 }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/");
-  await expect(page.locator(".email-link")).toHaveAttribute(
-    "href",
-    "mailto:admin@customtechbuilt4u.com",
-  );
+  const emailDraft = new URL(await page.locator(".email-link").getAttribute("href"));
+  expect(emailDraft.pathname).toBe("admin@customtechbuilt4u.com");
+  expect(emailDraft.searchParams.get("body")).toBe("Source page: https://customtechbuilt4u.com/");
   await page.getByRole("button", { name: "Copy email address" }).click();
   await expect(page.locator("#copy-status")).toHaveText(
     "Email address copied to clipboard.",
