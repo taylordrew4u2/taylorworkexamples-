@@ -291,11 +291,18 @@ test("the film website uses neutral initials rather than an invented project log
 
 test("App Store listings, RoleCall development captures, and known unavailable demos are represented accurately", () => {
   const find = (id) => projects.find((project) => project.id === id);
-  for (const id of ["The-Bit-Binder", "MyGigCalendar"]) {
-    assert.equal(new URL(find(id).demoUrl).hostname, "apps.apple.com");
-    assert.equal(find(id).demoLabel, "App Store");
-    assert.equal(find(id).badge, "APP STORE");
+  for (const [id, listing] of [
+    ["The-Bit-Binder", "https://apps.apple.com/us/app/the-bitbinder/id6756085897"],
+    ["MyGigCalendar", "https://apps.apple.com/us/app/my-gig-calendar/id6760590068"],
+    ["Open-Micer-Timer", "https://apps.apple.com/us/app/open-micer-timer/id6756205253"],
+  ]) {
+    const project = find(id);
+    assert.equal(project.demoUrl, listing);
+    assert.equal(project.demoLabel, "App Store");
+    assert.equal(project.badge, "APP STORE");
+    assert.equal(project.experiment, false);
   }
+  assert.ok(find("Open-Micer-Timer").sources.includes(find("Open-Micer-Timer").demoUrl));
   assert.equal(find("Role-Call").demoUrl, "https://rolecall.space");
   const role = find("Role-Call");
   assert.equal(role.badge, "DEV PREVIEW");
@@ -738,7 +745,8 @@ test("tools includes focused utilities and development projects independently of
   assert.ok(results.length > 0 && results.length < projects.length);
   assert.ok(results.every((project) => project.experiment));
   assert.ok(results.some((project) => project.id === "dictype"));
-  assert.ok(results.some((project) => project.id === "Open-Micer-Timer"));
+  assert.ok(results.some((project) => project.id === "bleepkit"));
+  assert.ok(!results.some((project) => project.id === "Open-Micer-Timer"));
   assert.ok(!results.some((project) => project.id === "The-Bit-Binder"));
 });
 

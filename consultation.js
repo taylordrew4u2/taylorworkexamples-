@@ -1,6 +1,6 @@
-import { email } from "./public-projects.js?v=36";
-import { addInquirySource, getConsultationSource } from "./contact-context.js?v=36";
-import { trackContact } from "./analytics.js?v=36";
+import { email } from "./public-projects.js?v=37";
+import { addInquirySource, getConsultationSource } from "./contact-context.js?v=37";
+import { trackContact } from "./analytics.js?v=37";
 
 function boundedText(value, limit) {
   // Keep a whole Unicode character at the limit, and make pasted text safe to encode.

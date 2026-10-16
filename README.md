@@ -78,3 +78,5 @@ The visual layout uses white backgrounds, black surfaces, gray accents, Manrope 
 ## Client acquisition and free source attribution
 
 The current public brand is **4u Digital**, with **Custom tech build for you.** as the tagline. Homepage links lead to dedicated salon booking and restaurant ordering services. Consultation buttons say **Request a consultation**, and inquiry drafts include their originating public page. Paid visitor analytics remains disabled at the owner’s request. See [the implementation record](docs/client-acquisition.md).
+
+The opening also points to published iPhone/iPad apps. Inside the grouped work section, `range-proof.js` renders three verified App Store products with authentic icons and direct listings, alongside full-stack, business website, and desktop examples. Open Micer Timer now has its verified public App Store link. See [the listing evidence](docs/app-store-evidence.md). This proof demonstrates delivery and engineering range without inventing a senior title, years of experience, or client results. The original product banners and captures retain their colors and disclosure captions.

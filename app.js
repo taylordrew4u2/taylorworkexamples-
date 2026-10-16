@@ -1,7 +1,8 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=36";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=36";
-import { initConsultation } from "./consultation.js?v=36";
-import { trackContact } from "./analytics.js?v=36";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=37";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=37";
+import { initConsultation } from "./consultation.js?v=37";
+import { trackContact } from "./analytics.js?v=37";
+import { renderRangeProof } from "./range-proof.js?v=37";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -9,6 +10,7 @@ document.querySelectorAll(".enquiry-link").forEach((link) => {
   link.href = enquiryURL(link.dataset.enquiry);
 });
 initConsultation();
+if (!$("#range-proof").children.length) $("#range-proof").innerHTML = renderRangeProof();
 
 // The build supplies this markup before JavaScript. Only source previews need a fallback render.
 if (!$("#featured-projects").children.length) {

@@ -1,4 +1,4 @@
-import { contactPages } from "./contact-pages.js?v=36";
+import { contactPages } from "./contact-pages.js?v=37";
 
 export const contactOrigin = "https://customtechbuilt4u.com";
 const publicPaths = new Set(contactPages);

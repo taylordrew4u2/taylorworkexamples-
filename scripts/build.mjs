@@ -18,6 +18,7 @@ for (const name of [
   "analytics.js",
   "contact-context.js",
   "render-projects.js",
+  "range-proof.js",
   ".nojekyll",
 ]) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
