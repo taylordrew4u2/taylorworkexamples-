@@ -10,7 +10,7 @@ export function publishedApps() {
 
 const capabilityCards = [
   { label: "FULL-STACK WEB PLATFORMS", title: "The interface and the systems behind it.",
-    description: "Accounts, permissions, shared data, approval flows, and payment integrations. Explore how complete applications fit those parts together.",
+    description: "Customer and team accounts, access rules, shared records, approvals, and payment integrations. Explore how complete applications fit those parts together.",
     projects: ["the-trip-handler", "Bill-Spilt", "Showrunner-ICanRunAShow"] },
   { label: "BUSINESS WEBSITES", title: "Public websites with useful working tools.",
     description: "Clear customer-facing pages, editable content, inquiry flows, and controls for the people running the business.",
