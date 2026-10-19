@@ -256,7 +256,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
   await expect(page.locator(".intro-description")).toHaveText(
-    "Need an app, a complete website, or software that makes running your business easier? I design, code, and build it from start to finish. You don’t need a technical background—or a finished plan—to get started.",
+    "Work directly with the developer who designs, codes, and launches your project—from customer-facing websites to connected business tools and published iPhone apps.",
   );
   await expect(page.locator(".intro-description")).toBeVisible();
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");

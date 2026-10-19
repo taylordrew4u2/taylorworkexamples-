@@ -1,5 +1,5 @@
-import { email } from "./public-projects.js?v=40";
-import { addInquirySource } from "./contact-context.js?v=40";
+import { email } from "./public-projects.js?v=41";
+import { addInquirySource } from "./contact-context.js?v=41";
 
 export const escape = (value) =>
   String(value).replace(

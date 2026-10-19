@@ -14,7 +14,7 @@ import { renderKickoffForm } from "../kickoff-view.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "40";
+export const release = "41";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -301,7 +301,7 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-18",
+    modified: "2026-10-19",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));

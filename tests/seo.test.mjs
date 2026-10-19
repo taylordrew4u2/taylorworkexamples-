@@ -373,7 +373,7 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the business rename updates the guide while its publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-16");
-  assert.equal(sitemapDates.get("/"), "2026-10-18");
+  assert.equal(sitemapDates.get("/"), "2026-10-19");
   for (const route of ["/project-kickoff/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-18");
 });
 

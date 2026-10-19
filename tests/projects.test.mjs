@@ -140,6 +140,13 @@ test("removed repositories cannot appear in the catalog or search results", () =
 
 test("the homepage hero uses the BitBinder and My Gig Calendar supplied banners without extra visible copy", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const capabilities = html.match(/<nav\b[^>]*class="hero-capabilities"[^>]*>[\s\S]*?<\/nav>/)?.[0];
+  assert.ok(capabilities, "The opening includes native navigation for the development range");
+  assert.ok(html.indexOf(capabilities) < html.indexOf('<div class="hero-stage"'), "Clients see the range before the app banners");
+  assert.equal([...capabilities.matchAll(/<a\b[^>]*class="hero-capability"/g)].length, 4);
+  for (const label of ["iPhone & iPad apps", "Business websites", "Web apps & platforms", "Desktop software"]) {
+    assert.ok(capabilities.replaceAll("&amp;", "&").includes(label), `${label}: visible in the opening`);
+  }
   const hero = html.match(/<div class="hero-stage"[\s\S]*?<\/section>/)?.[0];
   assert.ok(hero, "Hero banners must be present");
   assert.match(hero, /aria-label="Featured app previews"/);
