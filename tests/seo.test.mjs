@@ -372,7 +372,8 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(sitemapDates.get(`/insights/${article.slug}/`), site.modified,
       `${article.title}: the business rename updates the guide while its publication date remains unchanged`);
   }
-  for (const route of ["/", "/services/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-16");
+  for (const route of ["/", "/services/"]) assert.equal(sitemapDates.get(route), "2026-10-16");
+  for (const route of ["/project-kickoff/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-18");
 });
 
 test("the homepage keeps all project showcases together before process, consultation, and questions", () => {

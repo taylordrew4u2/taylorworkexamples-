@@ -56,6 +56,31 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .page-callout { background: #f3f3f3; padding: 2.5rem; border-radius: 1rem; margin: 1rem 0 2.5rem; }
 .page-callout p { margin: 1.25rem 0 1.5rem; }
 .page-callout .text-link { display: block; margin-bottom: 1.5rem; }
+.kickoff-form, .kickoff-review { scroll-margin-top: 2rem; max-width: 62rem; }
+.kickoff-form-intro { border-top: 1px solid var(--line); padding-top: 2rem; margin-bottom: 2rem; }
+.kickoff-form h2, .kickoff-review h2 { font-family: var(--display); font-size: clamp(1.7rem, 3vw, 2.5rem); letter-spacing: -.05em; line-height: 1.2; margin: .8rem 0 1rem; }
+.kickoff-form-intro > p:last-child, .kickoff-review > p { color: var(--muted); line-height: 1.7; max-width: 50rem; }
+.kickoff-group { min-width: 0; margin: 0 0 1.5rem; padding: 1.8rem; background: #f7f7f7; border: 1px solid var(--line); border-radius: 1rem; }
+.kickoff-group legend { max-width: 100%; display: flex; align-items: center; gap: .75rem; font-family: var(--display); font-size: 1.3rem; font-weight: 600; line-height: 1.4; padding: 0 .5rem; }
+.kickoff-step { color: var(--muted); font-family: var(--mono); font-size: .75rem; font-weight: 400; }
+.kickoff-group-help { color: var(--muted); line-height: 1.65; margin: 0 0 1.5rem; }
+.kickoff-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.kickoff-field { min-width: 0; }
+.kickoff-field-wide { grid-column: 1 / -1; }
+.kickoff-field label, .kickoff-review > label { display: block; color: var(--ink); font-size: .9375rem; font-weight: 600; line-height: 1.5; margin-bottom: .6rem; }
+.kickoff-field input, .kickoff-field textarea, #kickoff-summary { width: 100%; min-width: 0; border: 1px solid #bdbdbd; border-radius: .6rem; background: #fff; color: #111; padding: .85rem 1rem; font: inherit; font-size: 1rem; line-height: 1.6; }
+.kickoff-field textarea, #kickoff-summary { resize: vertical; }
+.kickoff-hint { font-size: .8125rem; color: var(--muted); line-height: 1.6; margin-top: .5rem; }
+.kickoff-form-actions, .kickoff-review-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.5rem; }
+.kickoff-form-actions > p { color: var(--muted); font-size: .8125rem; line-height: 1.6; max-width: 32rem; }
+.kickoff-status { color: var(--ink); font-size: .9375rem; line-height: 1.7; max-width: 55rem; }
+.kickoff-status:not(:empty) { margin: 1.5rem 0; }
+.kickoff-review { margin-top: 2rem; border-top: 1px solid var(--line); padding-top: 2rem; }
+.kickoff-review > label { margin-top: 1.5rem; }
+#kickoff-summary { display: block; margin-bottom: 1.5rem; background: #f7f7f7; }
+.kickoff-review-note { margin-top: 1.25rem; font-size: .8125rem; }
+.kickoff-form input:focus-visible, .kickoff-form textarea:focus-visible, .kickoff-review textarea:focus-visible { outline: 2px solid #111; outline-offset: 3px; }
+@media (max-width: 600px) { .kickoff-fields { grid-template-columns: minmax(0, 1fr); } .kickoff-group { padding: 1.2rem; } .kickoff-group legend { font-size: 1.15rem; } .kickoff-form-actions .button, .kickoff-review-actions .button { justify-content: center; width: 100%; } }
 .content-page .faq-list { margin-top: 1.5rem; }
 .table-scroll { overflow-x: auto; margin-top: 1.75rem; }
 .table-scroll table { border-collapse: collapse; width: 100%; line-height: 1.6; min-width: 40rem; text-align: left; }

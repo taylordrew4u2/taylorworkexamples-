@@ -15,6 +15,7 @@ for (const name of [
   "seo.css",
   "app.js",
   "consultation.js",
+  "kickoff-form.js",
   "analytics.js",
   "contact-context.js",
   "render-projects.js",
