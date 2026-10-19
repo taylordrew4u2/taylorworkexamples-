@@ -1,7 +1,7 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=45";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=45";
-import { trackContact } from "./analytics.js?v=45";
-import { renderRangeProof } from "./range-proof.js?v=45";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=46";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=46";
+import { trackContact } from "./analytics.js?v=46";
+import { renderRangeProof } from "./range-proof.js?v=46";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");

@@ -885,7 +885,8 @@ export const projectVisuals = {
     "portrait": false,
     "imageKind": "product-artwork",
     "imageLabel": "Repository product artwork",
-    "imageCaption": "Repository product artwork · Multiple microphone channels, recording controls, and saved tracks.",
+    "badge": "DESKTOP ENGINEERING",
+    "imageCaption": "Repository product artwork · Desktop engineering / release candidate · Multitrack recording overview.",
     "gallery": [
       {
         "label": "Product overview",
@@ -894,12 +895,12 @@ export const projectVisuals = {
         "width": 2400,
         "height": 1500,
         "portrait": false,
-        "caption": "Repository product artwork · Multiple microphone channels, recording controls, and saved tracks.",
+        "caption": "Repository product artwork · Desktop engineering / release candidate · Multitrack recording overview.",
         "sourceUrl": "https://github.com/taylordrew4u2/SobStage/blob/8843186a58f62c91911ad6df99f879391144938e/docs/images/overview.png",
         "sourceKind": "repository-product-artwork",
         "imageKind": "product-artwork",
         "imageLabel": "Repository product artwork",
-        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+        "previewContext": "Repository product artwork · Desktop engineering / release candidate"
       },
       {
         "label": "Recording",
@@ -954,8 +955,8 @@ export const projectVisuals = {
         "previewContext": "Repository app capture · Virtual microphones; earlier interface"
       }
     ],
-    "notes": "The product overview is repository promotional artwork illustrating microphone channels and saved tracks. Its depicted recording durations, device names, file sizes, and alignment figures are not measurements taken for this portfolio. The separate repository app captures use virtual microphones and display an earlier UI version. The v1.13.25 source includes headphone output routing and recording-stem alignment. Physical microphone validation remains in progress.",
-    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+    "notes": "The product overview is repository promotional artwork illustrating microphone channels and saved tracks. Its depicted recording durations, device names, file sizes, and alignment figures are not measurements taken for this portfolio. The separate repository app captures use virtual microphones and display an earlier UI version. The current repository status is v1.13.29 release candidate, with physical microphone validation still in progress. The earlier v1.13.25 source used for the app captures includes headphone output routing and recording-stem alignment.",
+    "previewContext": "Repository product artwork · Desktop engineering / release candidate"
   },
   "bleepkit": {
     "image": "./assets/readme-overviews/bleepkit.png",

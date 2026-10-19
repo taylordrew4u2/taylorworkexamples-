@@ -63,7 +63,7 @@ export const articles = [
         heading: "Custom development can connect the public site to daily work",
         paragraphs: [
           "A custom website can connect visitor actions to a defined business workflow. An appointment request might need treatment details, a staff review, and an accepted or declined status. Editable service information and staff controls may also need rules that match how the business operates.",
-          "TLC Massage Wellness provides a development-preview example of treatment-aware booking requests and owner editing. Pins & Needles Comedy connects public pages with producer controls. These portfolio examples show different ways a website can include operational functions; they are not claims about a salon client or measured sales results.",
+          "Pins & Needles Comedy connects public pages with audience submissions and producer controls. That portfolio example shows how a website can include operational functions alongside its public information. It is not a salon client project or a claim about measured sales results.",
         ],
       },
       {
@@ -85,7 +85,7 @@ export const articles = [
       },
     ],
     serviceSlugs: ["website-development", "web-app-development"],
-    projectIds: ["tlcmassagewellness", "PinsAndNeedlesComedyWebsite"],
+    projectIds: ["PinsAndNeedlesComedyWebsite"],
     modified: "2026-10-19",
     closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
   },
@@ -96,7 +96,7 @@ export const articles = [
     metaTitle: "Planning a Salon Booking Website | 4u Digital",
     description: "Plan salon services, staff, appointment durations, requests, confirmations, and optional reminders or deposits before choosing a booking website build.",
     summary: "A salon booking website needs rules for services, staff, and time. Decide how an appointment becomes confirmed before designing the booking screen.",
-    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. 4u Digital can help define a tailored booking workflow around your services and staff. The TLC Massage Wellness development preview provides a related example of service information and appointment requests.",
+    intro: "A salon booking website should reflect how the business actually schedules appointments. A treatment list and a calendar are only parts of that process. 4u Digital can help define a tailored booking workflow around your services and staff. Related portfolio work shows public-facing information, scheduling, and operator controls that can help explain the parts of a booking system.",
     sections: [
       {
         heading: "Define the service and staff rules first",
@@ -109,7 +109,7 @@ export const articles = [
         heading: "Distinguish a booking request from a confirmed appointment",
         paragraphs: [
           "A request workflow lets staff review the details before accepting the appointment. An automatic confirmation workflow needs availability and conflict rules that can make that decision. The customer should understand which step has happened and what they need to do next.",
-          "TLC Massage Wellness demonstrates treatment-aware requests, intake questions, staff information, and an accept-or-decline workflow in a development preview. Use that example to discuss how requests, staff review, and appointment status should work in your own booking system.",
+          "Pins & Needles Comedy connects a public website to audience submissions and producer controls. My Gig Calendar publishes saved dates to a public calendar. These related examples can help explain customer-facing information, scheduling, and operator workflows. They are not salon client projects or proof of appointment availability checks; your booking rules would be designed for your business.",
         ],
       },
       {
@@ -131,7 +131,7 @@ export const articles = [
       },
     ],
     serviceSlugs: ["salon-booking-app-development", "website-development", "web-app-development"],
-    projectIds: ["tlcmassagewellness"],
+    projectIds: ["PinsAndNeedlesComedyWebsite", "MyGigCalendar"],
     modified: "2026-10-19",
     closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
   },
@@ -200,7 +200,7 @@ export const articles = [
         heading: "Design shared records and permissions together",
         paragraphs: [
           "A business tool needs rules for who can see and change each record. Signing in identifies the user; permissions govern the work they may do. Decide which information is shared, which is private, and who can change a status or reverse a decision.",
-          "RoleCall shows screenplay and production-document workflows with team roles. The Trip Handler shows shared records and organizer approvals. Use these application patterns as examples when defining the import rules, permissions, and review steps your spreadsheet process needs.",
+          "I Can Run A Show brings performer bookings, agreements, and production controls into a shared workflow. The Trip Handler shows shared records and organizer approvals. Use these application patterns as examples when defining the import rules, permissions, and review steps your spreadsheet process needs.",
         ],
       },
       {
@@ -222,7 +222,7 @@ export const articles = [
       },
     ],
     serviceSlugs: ["custom-software-development", "web-app-development"],
-    projectIds: ["Role-Call", "the-trip-handler"],
+    projectIds: ["Showrunner-ICanRunAShow", "the-trip-handler"],
     modified: "2026-10-19",
     closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
   },

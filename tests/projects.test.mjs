@@ -10,7 +10,8 @@ import {
 } from "../projects.js";
 import { publicRepositories, repositoryVerifiedAt } from "../repository-state.js";
 import { projectIdentities } from "../identities.js";
-import { projects as publicProjects } from "../public-projects.js";
+import { projects as publicProjects, featuredProjects as publicFeaturedProjects } from "../public-projects.js";
+import { portfolioProjectIds, featuredProjectIds } from "../portfolio-selection.js";
 
 // Check the actual asset headers so stale dimensions cannot stretch a preview.
 function assetDimensions(image) {
@@ -112,6 +113,31 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
+test("the public portfolio selects eight complete projects while the audited inventory stays internal", () => {
+  const expectedPublic = [
+    "Showrunner-ICanRunAShow", "The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "Bill-Spilt",
+    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic",
+  ];
+  const expectedFeatured = [
+    "Showrunner-ICanRunAShow", "The-Bit-Binder", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
+  ];
+  assert.deepEqual(portfolioProjectIds, expectedPublic);
+  assert.deepEqual(featuredProjectIds, expectedFeatured);
+  assert.equal(publicProjects.length, 8);
+  assert.deepEqual(publicProjects.map((project) => project.id).sort(), [...expectedPublic].sort());
+  assert.deepEqual(publicFeaturedProjects.map((project) => project.id), expectedFeatured);
+  assert.equal(projects.length, 16, "Unselected evidence remains in the internal audited inventory");
+  for (const project of publicProjects) {
+    assert.ok(project.sourceAvailable);
+    assert.match(project.caseUrl, /^\.\/work\/[a-z0-9-]+\/$/);
+  }
+  for (const project of publicFeaturedProjects) assert.equal(project, publicProjects.find((entry) => entry.id === project.id));
+  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness", "taylordrewwebsite"]) {
+    assert.ok(projects.some((project) => project.id === id), `${id}: internal evidence is retained`);
+    assert.equal(publicProjects.some((project) => project.id === id), false, `${id}: excluded from public pages and search data`);
+  }
+});
+
 test("the public-only catalog matches the October 12 GitHub inventory and canonical source links", () => {
   assert.equal(repositoryVerifiedAt, "2026-10-12");
   assert.equal(Object.keys(publicRepositories).length, 16);
@@ -171,8 +197,8 @@ test("the homepage opening shows real website and desktop work while preserving 
   const platformCards = [...hero.matchAll(/<a class="hero-platform-project"([^>]*)>([\s\S]*?)<\/a>/g)];
   assert.equal(platformCards.length, 2, "Real website and desktop projects appear beside the app banners");
   for (const [index, [id, status]] of [
-    ["tlcmassagewellness", "Website · Development preview"],
-    ["usbmic", "Desktop software · Product overview"],
+    ["PinsAndNeedlesComedyWebsite", "Website · Product overview"],
+    ["usbmic", "Desktop software · Release candidate"],
   ].entries()) {
     const project = publicProjects.find((entry) => entry.id === id);
     const frame = project.gallery[0];
@@ -182,11 +208,12 @@ test("the homepage opening shows real website and desktop work while preserving 
     assert.ok(screen, `${id}: the real application screen is present`);
     assert.ok(screen.includes(`src="${frame.image}"`), `${id}: the real screenshot matches the catalog`);
     assert.ok(screen.includes(`width="${frame.width}" height="${frame.height}"`), `${id}: screenshot dimensions match the original`);
-    assert.match(screen, new RegExp(`alt="${project.title}[^\"]+"`), `${id}: the screenshot has a project-specific description`);
+    assert.match(screen, id === "PinsAndNeedlesComedyWebsite" ? /alt="Pins[^"]*Needles[^"]*product artwork/i : /alt="SobStage[^"]*product artwork/i,
+      `${id}: the artwork has a project-specific description`);
     assert.ok(contents.includes(`src="${project.icon}" alt="" width="${project.iconWidth}" height="${project.iconHeight}"`),
       `${id}: the project uses its authentic icon`);
     assert.match(contents, /class="hero-platform-caption"/);
-    assert.ok(contents.includes(project.title));
+    assert.ok(contents.replaceAll("&amp;", "&").includes(project.title));
     assert.ok(contents.includes(status), `${id}: the preview identifies its development or demo status`);
     assert.deepEqual(assetDimensions(frame.image), { width: frame.width, height: frame.height });
   }
@@ -413,7 +440,8 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         assert.equal(project.gallery[0].sourceKind, "repository-product-artwork");
         assert.equal(project.imageLabel, "Repository product artwork");
         assert.match(project.imageCaption, /^Repository product artwork/);
-        assert.match(project.previewContext, /repository.*promotional artwork/i);
+        assert.match(project.previewContext, /repository.*(?:promotional|product) artwork/i);
+        if (project.id === "usbmic") assert.match(project.previewContext, /release candidate/i);
         const source = new URL(project.gallery[0].sourceUrl);
         assert.ok(["github.com", "raw.githubusercontent.com"].includes(source.hostname));
         assert.match(source.pathname,

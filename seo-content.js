@@ -3,7 +3,7 @@ export const site = {
   brand: "4u Digital",
   email: "admin@customtechbuilt4u.com",
   published: "2026-10-14",
-  modified: "2026-10-16",
+  modified: "2026-10-19",
   analyticsEnabled: false,
   googleSiteVerification: "ToeKeLBKtkzU6usikyPh_H5UyaYv8bVZJp1JjyhzzVM",
 };
@@ -47,8 +47,8 @@ export const services = [
         text: "A website may need a domain, hosting, business email, or an existing booking service. We identify those connections, service costs, launch checks, and maintenance responsibilities. Page titles and descriptions can be included in the build; search placement is not guaranteed.",
       },
     ],
-    projectIds: ["PinsAndNeedlesComedyWebsite", "tlcmassagewellness", "micro-short-website"],
-    proofIntro: "Pins & Needles Comedy connects public pages with producer controls. TLC Massage Wellness demonstrates editable treatment information and booking requests in a development preview. The Micro-short Film Website shows a focused public presentation, with its source and capture context available.",
+    projectIds: ["PinsAndNeedlesComedyWebsite"],
+    proofIntro: "Pins & Needles Comedy connects a public website with producer controls, audience submissions, and a live display. Its project page shows how public information and operator workflows can work together, with original product artwork and separate website captures.",
     faq: [
       {
         question: "Do I need finished website copy before contacting you?",
@@ -165,8 +165,8 @@ export const services = [
         text: "A working app and a public release need separate planning. We discuss testing, distribution, product information, and submission work in the scope. Permissions and external services may affect features or costs. Maintenance, compatibility work, and later features need an agreed arrangement.",
       },
     ],
-    projectIds: ["The-Bit-Binder", "MyGigCalendar", "dictype"],
-    proofIntro: "The BitBinder demonstrates native notebook, import, and set-list workflows. My Gig Calendar connects a native calendar to public dates and promotional material. DicType is a macOS dictation utility. Project pages identify the available app captures, development previews, and source evidence for each example.",
+    projectIds: ["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"],
+    proofIntro: "The BitBinder demonstrates native notebook, import, and set-list workflows. My Gig Calendar connects a native calendar to public dates and promotional material. Open Micer Timer provides a native stage countdown with clear visual cues. Project pages identify the available app captures, product artwork, and source evidence for each example.",
     faq: [
       {
         question: "Should my idea be an app or a web app?",
@@ -199,7 +199,7 @@ export const services = [
     when: [
       {
         title: "Do documents need to become usable records?",
-        text: "Custom software can turn a document into structured information that people can review and use. A screenplay can become a working cast or shot list. We define the input format, what needs extracting, how a person checks the result, and how errors are handled.",
+        text: "Custom software can turn submitted information into structured records that people can review and use. An intake form can become an approval queue with a clear status for each request. We define the input format, how a person checks the result, and how missing details or errors are handled.",
       },
       {
         title: "Does an internal task need a specialist tool?",
@@ -224,8 +224,8 @@ export const services = [
         text: "We agree review criteria tied to the task, suitable sample records, and how issues are reported. Existing data needs a migration or import plan when relevant. Maintenance, access to external services, and later changes also belong in the discussion about scope and price.",
       },
     ],
-    projectIds: ["Role-Call", "nycstandupopenmicmaster", "usbmic"],
-    proofIntro: "RoleCall demonstrates screenplay processing and team production documents. NYC Open Mic Master List shows a searchable directory backed by a data service. SobStage demonstrates desktop audio tools and saved-report interfaces. Their evidence notes describe development or repository captures and the limits of the available examples.",
+    projectIds: ["usbmic", "the-trip-handler", "Showrunner-ICanRunAShow"],
+    proofIntro: "SobStage demonstrates desktop recording tools and saved-take interfaces; its gallery identifies virtual-microphone captures and pending physical microphone validation. The Trip Handler shows shared records and organizer approvals. I Can Run A Show connects agreements, scheduling, and live controls in a working production workflow.",
     faq: [
       {
         question: "How is custom software different from a web app?",
@@ -285,8 +285,8 @@ export const services = [
         text: "A first version could cover choosing a service, requesting a time, and reviewing the request in a staff workspace. We agree the necessary screens, who maintains the service list, and how exceptions are handled. The scope and price are settled before building; hosting and maintenance need an arrangement too.",
       },
     ],
-    projectIds: ["tlcmassagewellness", "MyGigCalendar"],
-    proofIntro: "TLC Massage Wellness is a development preview with treatment-aware requests, intake questions, editable content, and an accept-or-decline workflow. My Gig Calendar shows native scheduling connected to a public calendar. These related portfolio projects let you examine booking and scheduling capabilities; they are not salon client projects or evidence of automatic appointment confirmation.",
+    projectIds: ["MyGigCalendar", "PinsAndNeedlesComedyWebsite"],
+    proofIntro: "My Gig Calendar shows native scheduling connected to a public calendar. Pins & Needles Comedy connects a public website to audience submissions and producer controls. These are related examples of scheduling, customer-facing information, and operator workflows; they are not salon client projects or evidence of automatic appointment confirmation.",
     faq: [
       {
         question: "Do salon customers need to download an app?",
@@ -346,8 +346,8 @@ export const services = [
         text: "A useful first version could focus on browser-based pickup orders and a staff acceptance queue. We agree menu rules, operating hours, roles, and the review examples before building. Delivery, loyalty features, or a native Apple app can be considered separately. Hosting, service costs, and maintenance belong in the project plan.",
       },
     ],
-    projectIds: ["the-trip-handler", "Role-Call"],
-    proofIntro: "The Trip Handler demonstrates approval workflows, shared records, Stripe Checkout, and verified payment events. RoleCall demonstrates team roles and shared working documents. These are related software capabilities from the portfolio, not restaurant client projects. Your menu, ordering queue, and fulfillment rules would be designed and reviewed for your own business.",
+    projectIds: ["the-trip-handler", "Showrunner-ICanRunAShow"],
+    proofIntro: "The Trip Handler demonstrates approval workflows, shared records, Stripe Checkout, and verified payment events. I Can Run A Show demonstrates organizer controls, agreements, and a coordinated schedule. These are related software capabilities from the portfolio, not restaurant client projects. Your menu, ordering queue, and fulfillment rules would be designed and reviewed for your own business.",
     faq: [
       {
         question: "Does restaurant ordering require a downloadable app?",
@@ -379,7 +379,7 @@ export const guide = {
     {
       type: "Website",
       when: "Choose a website when visitors need to understand your services, view your work, or contact you. Public information and a clear next step are the priority. A request form can be included.",
-      example: "A service website with treatment information and appointment requests, as shown in the TLC Massage Wellness development preview.",
+      example: "Pins & Needles Comedy combines a public show website with producer controls and audience submissions.",
       serviceSlug: "website-development",
     },
     {
@@ -397,7 +397,7 @@ export const guide = {
     {
       type: "Custom software",
       when: "Choose custom software for particular processing rules, integrations, or specialist controls. The result could be a browser tool, desktop utility, or data service. Define the input, actions, and result someone needs to check.",
-      example: "RoleCall turns screenplay text into cast and shot-list workflows with team roles.",
+      example: "SobStage brings multiple microphone inputs, recording controls, and saved-take tools into a desktop application; its project notes explain the available demo evidence.",
       serviceSlug: "custom-software-development",
     },
   ],

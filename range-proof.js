@@ -1,5 +1,5 @@
-import { projects } from "./public-projects.js?v=45";
-import { escape, external, projectIcon } from "./render-projects.js?v=45";
+import { projects } from "./public-projects.js?v=46";
+import { escape, external, projectIcon } from "./render-projects.js?v=46";
 
 export const appStoreIds = ["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"];
 export function publishedApps() {
@@ -14,10 +14,10 @@ const capabilityCards = [
     projects: ["the-trip-handler", "Bill-Spilt", "Showrunner-ICanRunAShow"] },
   { label: "BUSINESS WEBSITES", title: "A clear home for your business.",
     description: "Show what you offer, update your content, and give customers a way to get in touch. Explore websites with tools for the people running them.",
-    projects: ["PinsAndNeedlesComedyWebsite", "tlcmassagewellness"] },
+    projects: ["PinsAndNeedlesComedyWebsite"] },
   { label: "DESKTOP SOFTWARE", title: "Software for the way you work.",
-    description: "Explore Mac dictation and desktop audio tools, with real interface images and an explanation of what each project does.",
-    projects: ["dictype", "usbmic"] },
+    description: "Explore desktop audio software with multitrack recording, input routing, and recovery workflows. See its current development status and engineering details.",
+    projects: ["usbmic"] },
 ];
 
 export function renderRangeProof() {

@@ -14,7 +14,7 @@ import { renderKickoffForm } from "../kickoff-view.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "45";
+export const release = "46";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -325,7 +325,7 @@ export async function generateSEO(output) {
     breadcrumbs: [{ name: "Services", path: "/services/" }],
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
-    description: "See 15 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.",
+    description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
     type: "CollectionPage", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
@@ -348,7 +348,7 @@ export async function generateSEO(output) {
     { ...home, html },
     { ...servicesPage, html: frame(servicesPage, intro("CUSTOM TECH BUILD FOR YOU.", "Apps, websites, and software for your business.", "Choose the technology around the task. 4u Digital designs and develops public websites, browser-based applications, native apps, and custom business tools.") + serviceCards(servicesPage.path) + `<aside class="page-callout"><h2>Unsure what your business needs?</h2><p>Start with what needs to work better. We can decide the scope and platform together.</p><a class="text-link" href="${local(servicesPage.path, "guides/website-or-app/")}">Compare a website, web app, and native app ↗</a>${inquiry()}</aside>`) },
     ...services.map(servicePage),
-    { ...work, html: frame(work, intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", "15 websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.") + `<div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>`) },
+    { ...work, html: frame(work, intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `${projects.length} selected websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.`) + `<div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>`) },
     ...projects.map(projectPage),
     guidePage(),
     { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Choose a development approach, think through your customer workflow, and decide what belongs in the first version. These short 4u Digital guides give you a practical starting point.") + articleCards(insights.path) + consultationCallout(insights.path)) },
@@ -360,7 +360,7 @@ export async function generateSEO(output) {
     { ...contact, html: frame(contact, intro("LET’S TALK", "What would you like to build?", "Email 4u Digital about your website, app, or business software. Start with the problem you want to solve; a rough idea is enough.", `<div class="page-actions">${inquiry()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>`) + `<section class="page-section"><h2>What should you include in your first email?</h2><ul class="page-list"><li>What your business does and who will use the technology.</li><li>The task or problem you want to improve.</li><li>Features you have in mind and any existing website or software.</li><li>Your budget range and target date, if you know them.</li></ul><p>4u Digital will discuss the scope and price before work starts. Hosting, outside services, and ongoing maintenance are agreed as part of that conversation.</p><p>After the consultation, use the <a class="text-link" href="${local(contact.path, "project-kickoff/")}">project kickoff checklist</a> to record the first version, approvals, and responsibilities together.</p></section>${consultationCallout(contact.path)}<section class="page-section"><h2>Choose a starting point.</h2><nav class="related-links" aria-label="Project inquiry types">${services.map((service) => `<a href="${escape(enquiryURL(service.topic))}">Discuss ${escape(service.title.toLowerCase())} ↗</a>`).join("")}</nav></section>`) },
   ].map((page) => ({
     ...page,
-    // Every published page changed with the shared BriefBooth header and footer.
+    // Every published page uses the selected public portfolio and shared navigation.
     modified: [page.modified || page.article?.modified || site.modified || site.published, "2026-10-19"].sort().at(-1),
   }));
   for (const page of pages.filter((page) => page.path !== "/")) {

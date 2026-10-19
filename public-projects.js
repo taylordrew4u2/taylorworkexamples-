@@ -1,10 +1,11 @@
-import { email, projects as auditedProjects, featuredProjects as selected, filterProjects } from "./projects.js";
+import { email, projects as auditedProjects, filterProjects } from "./projects.js";
 import { projectSlugs } from "./seo-content.js";
+import { portfolioProjectIds, featuredProjectIds } from "./portfolio-selection.js";
 
 // 4u Digital presents software work independently of the owner's personal stand-up site.
 export { email, filterProjects };
 export const projects = auditedProjects
-  .filter((project) => project.id !== "taylordrewwebsite")
+  .filter((project) => portfolioProjectIds.includes(project.id))
   .map((project) => ({
     ...project,
     caseUrl: `./work/${projectSlugs[project.id]}/`,
@@ -14,4 +15,4 @@ export const projects = auditedProjects
       documentationUrl: "https://github.com/taylordrew4u2/SobStage#readme",
     } : {}),
   }));
-export const featuredProjects = selected.map((project) => projects.find((entry) => entry.id === project.id)).filter(Boolean);
+export const featuredProjects = featuredProjectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);

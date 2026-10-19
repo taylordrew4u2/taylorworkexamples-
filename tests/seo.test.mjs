@@ -6,6 +6,7 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { projects, featuredProjects } from "../public-projects.js";
+import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
 import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
@@ -73,10 +74,10 @@ before(async () => {
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 15);
+  assert.equal(projects.length, 8);
   assert.equal(articles.length, 6);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 37);
+  assert.equal(routes.length, 30);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -576,13 +577,32 @@ test("case pages expose every original gallery image, caption, and full-size lin
   }
 });
 
-test("the published business excludes personal identity while preserving allowed GitHub sources", async () => {
-  const excluded = ["taylordrewwebsite", "https://www.taylordrew4u.com"];
-  const published = (await filesUnder(output)).filter((file) => /\.(?:html|js|json|xml|txt)$/.test(file));
+test("published pages, data, routes, and assets contain only the eight selected projects", async () => {
+  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness", "taylordrewwebsite"];
+  const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
+  assert.equal(excludedProjects.length, 8, "Unselected projects still exist in the internal audited inventory");
+  const excluded = ["https://www.taylordrew4u.com", ...excludedIds,
+    ...excludedProjects.map((project) => project.title), ...excludedProjects.map((project) => `/work/${projectSlugs[project.id]}/`)];
+  const outputFiles = await filesUnder(output);
+  const published = outputFiles.filter((file) => /\.(?:html|js|json|xml|txt)$/.test(file));
   for (const file of published) {
     const contents = await readFile(file, "utf8");
-    for (const value of excluded) assert.ok(!contents.includes(value), `${path.relative(output, file)} excludes ${value}`);
+    for (const value of excluded) assert.ok(!contents.toLowerCase().includes(value.toLowerCase()),
+      `${path.relative(output, file)} excludes ${value}`);
     assert.doesNotMatch(contents, /\bTaylor\s+Drew\b|\bTaylorDrew\b|by taylordrew4u|class=["'][^"']*owner-credit/i);
+  }
+  const assetsFor = (project) => [project.image, project.icon,
+    ...(project.gallery || []).flatMap((frame) => [frame.image, frame.companion?.image])].filter(Boolean);
+  const selectedAssets = new Set(projects.flatMap(assetsFor));
+  for (const project of excludedProjects) {
+    const route = `/work/${projectSlugs[project.id]}/`;
+    assert.ok(!documents.has(route), `${project.title}: no public case page is generated`);
+    await assert.rejects(stat(pageFile(route)), { code: "ENOENT" }, `${project.title}: no stale case route remains in the build`);
+    for (const asset of new Set(assetsFor(project))) {
+      if (selectedAssets.has(asset)) continue;
+      await assert.rejects(stat(path.join(output, asset)), { code: "ENOENT" },
+        `${project.title}: unselected project media is not deployed`);
+    }
   }
   const publicModule = await readFile(path.join(output, "public-projects.js"), "utf8");
   for (const project of projects) {

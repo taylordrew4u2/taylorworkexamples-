@@ -11,6 +11,7 @@ const removedProjectIds = [
   "comedysub",
   "staybusy",
   "taylordrewwebsite",
+  "Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness",
 ];
 
 async function expectLoadedImageToFit(image, expected) {
@@ -181,8 +182,8 @@ const heroPreviews = [
 ];
 
 const heroPlatformPreviews = [
-  ["tlcmassagewellness", "Website · Development preview", /TLC Massage Wellness.*homepage.*Development preview/i],
-  ["usbmic", "Desktop software · Product overview", /SobStage.*repository product artwork.*microphone.*recording/i],
+  ["PinsAndNeedlesComedyWebsite", "Website · Product overview", /Pins.*Needles.*product artwork/i],
+  ["usbmic", "Desktop software · Release candidate", /SobStage.*repository product artwork.*microphone.*recording/i],
 ];
 
 async function expectHeroPreview(page) {
@@ -355,7 +356,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   ]);
   await expect(page.locator(".supporting-grid .project-title")).toHaveText([
     "BillSpilt",
-    "RoleCall",
+    "Pins & Needles Comedy",
     "My Gig Calendar",
   ]);
   for (const story of await page.locator(".case-study").all()) {
@@ -399,13 +400,12 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       "src", projects.find((entry) => entry.id === id).image,
     );
   }
-  const roleCard = page.locator(".supporting-card").filter({
-    has: page.getByRole("button", { name: "RoleCall", exact: true }),
-  });
-  await expect(roleCard.locator(".visual-badge")).toHaveText("DEV PREVIEW");
-  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("src", "./assets/readme-overviews/rolecall.png");
-  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("alt", /RoleCall repository product artwork.*fictional.*shot list/i);
-  await expect(roleCard.locator(".project-visual")).toHaveClass(/product-cover/);
+  const website = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
+  const websiteCard = page.locator(`.supporting-card[data-supporting-id="${website.id}"]`);
+  await expect(websiteCard.locator(".visual-badge")).toHaveText(website.badge);
+  await expect(websiteCard.locator(".project-visual img")).toHaveAttribute("src", "./assets/readme-overviews/pins-and-needles.png");
+  await expect(websiteCard.locator(".project-visual img")).toHaveAttribute("alt", /Pins.*Needles.*repository product artwork/i);
+  await expect(websiteCard.locator(".project-visual")).toHaveClass(/product-cover/);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -928,6 +928,13 @@ test("archive opens and filters, searches, empty state, and reset work together"
       await page.locator(".archive-card .project-category").allTextContents()
     ).every((value) => value === "NATIVE iOS"),
   ).toBe(true);
+  const engineering = page.locator('[data-filter="tools"]');
+  await expect(engineering).toHaveText("Engineering");
+  await engineering.click();
+  await expect(engineering).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator(".archive-card")).toHaveCount(1);
+  await expect(page.locator(".archive-card h3")).toHaveText("SobStage");
+  await expect(page.locator(".archive-card .preview-context")).toContainText(/release candidate/i);
   await page.locator('[data-filter="all"]').click();
   const search = page.getByRole("searchbox");
   await search.fill("showrunner");
@@ -1019,6 +1026,8 @@ test("removed repositories stay out of archive, search and hero while public sou
   expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
+  expect(projects.length).toBe(8);
+  await expect(page.locator("#archive-title")).toHaveText("Explore 8 selected projects");
   await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".source-note")).toHaveCount(0);
   await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
@@ -1030,7 +1039,8 @@ test("removed repositories stay out of archive, search and hero while public sou
   for (const id of removedProjectIds) {
     await expect(page.locator(`[data-project="${id}"]`)).toHaveCount(0);
   }
-  for (const asset of ["markvegas.webp", "controller-live-loaded.webp", "staybusy-overview-mono.svg"]) {
+  for (const asset of ["markvegas.webp", "controller-live-loaded.webp", "staybusy-overview-mono.svg", "readme-overviews/rolecall.png",
+    "readme-overviews/bleepkit.png", "readme-overviews/dictype.png", "tlc-homepage.webp"]) {
     const response = await page.request.get(`/assets/${asset}`);
     expect(response.status(), `${asset}: removed project media is not deployed`).toBe(404);
   }
@@ -1273,9 +1283,8 @@ test("case studies show the need, build evidence, and a project-specific inquiry
 }, testInfo) => {
   await page.goto("/");
   await page.locator(".archive-disclosure summary").click();
-  await page
-    .getByRole("button", { name: "Pins & Needles Comedy", exact: true })
-    .click();
+  await page.locator('.archive-card[data-showcase-id="PinsAndNeedlesComedyWebsite"]')
+    .getByRole("button", { name: "Pins & Needles Comedy", exact: true }).click();
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(
     "Pins & Needles Comedy",
@@ -1442,7 +1451,7 @@ test("My Gig Calendar changes its on-page images, captions, and selection withou
   expect(errors).toEqual([]);
 });
 
-for (const id of ["Bill-Spilt", "Role-Call"]) {
+for (const id of ["Bill-Spilt", "PinsAndNeedlesComedyWebsite"]) {
   const project = projects.find((entry) => entry.id === id);
   test(`${project.title} has a complete on-page showcase with keyboard gallery controls`, async ({ page }) => {
     const errors = [];

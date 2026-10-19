@@ -1,6 +1,6 @@
-import { bookingURL } from "./booking.js?v=45";
-import { email } from "./public-projects.js?v=45";
-import { addInquirySource } from "./contact-context.js?v=45";
+import { bookingURL } from "./booking.js?v=46";
+import { email } from "./public-projects.js?v=46";
+import { addInquirySource } from "./contact-context.js?v=46";
 
 export const escape = (value) =>
   String(value).replace(

@@ -13,10 +13,11 @@ test("the range proof identifies three real App Store products and distinct engi
     assert.ok(html.includes(app.icon));
     assert.ok(html.includes(app.caseUrl));
   }
-  for (const route of ["trip-handler", "bill-spilt", "pins-and-needles-comedy", "dictype", "sobstage"]) {
+  for (const route of ["trip-handler", "bill-spilt", "pins-and-needles-comedy", "sobstage"]) {
     assert.ok(html.includes(`./work/${route}/`));
   }
   assert.ok(html.includes("3 PUBLISHED iOS APPS"));
+  assert.doesNotMatch(html, /DicType|TLC Massage Wellness|RoleCall|BleepKit|VlogNudge|dictype|tlc-massage-wellness/i);
   assert.doesNotMatch(html, /\bsenior\b|years of experience|client results|\bdownloads\b/i);
 });
 
