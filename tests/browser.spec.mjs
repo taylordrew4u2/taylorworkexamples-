@@ -1039,8 +1039,8 @@ test("all published archive projects explain their purpose and workflows with ge
     await expect(card.locator(".archive-purpose")).toHaveText(project.purpose);
     await expectProjectWorkflows(card, project);
     await expect(card.locator(".preview-context")).toBeVisible();
-    await expect(card.locator(".preview-context")).toHaveText(project.previewContext);
-    await expect(card.locator(".image-kind")).toHaveText(project.imageLabel);
+    await expect(card.locator(".preview-context")).toHaveText(project.gallery[0].previewContext || project.previewContext);
+    await expect(card.locator(".image-kind")).toHaveText(project.gallery[0].imageLabel || project.imageLabel);
     await expect(preview.locator(".primary-screen")).toHaveCount(1);
     await expect(preview.locator("img")).toHaveCount(project.gallery[0].companion ? 2 : 1);
     await expectLoadedImageToFit(preview.locator(".primary-screen"), {
