@@ -65,13 +65,13 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
     const work = document.querySelector("#work");
     const archive = document.querySelector("#project-archive");
     const groups = [...document.querySelectorAll("#featured-projects, #archive-projects, .project-card, .archive-card")];
-    const sections = ["work", "process", "consultation", "project-faq", "business-guides"]
+    const sections = ["work", "process", "project-faq", "consultation", "business-guides"]
       .map((id) => document.getElementById(id));
     return work.contains(archive) && groups.every((group) => work.contains(group)) &&
       sections.every((section, index) => section && (index === 0 || Boolean(
         sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
-  }), "All projects stay together before the process, consultation, questions, and guides").toBe(true);
+  }), "All projects stay together before the process, questions, consultation, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.locator(".archive-disclosure summary").click();
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
@@ -91,6 +91,11 @@ test("a service page leads to relevant project proof and a complete business inq
   const service = services.find((entry) => entry.slug === "website-development");
   const project = projects.find((entry) => entry.id === service.projectIds[0]);
   await page.goto("/");
+  const comparison = page.locator("details.service-comparison");
+  await expect(comparison).not.toHaveAttribute("open", "");
+  await comparison.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(comparison).toHaveAttribute("open", "");
   const serviceLink = await linkTo(page, `/services/${service.slug}/`);
   await serviceLink.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);

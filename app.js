@@ -1,8 +1,8 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=39";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=39";
-import { initConsultation } from "./consultation.js?v=39";
-import { trackContact } from "./analytics.js?v=39";
-import { renderRangeProof } from "./range-proof.js?v=39";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=40";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=40";
+import { initConsultation } from "./consultation.js?v=40";
+import { trackContact } from "./analytics.js?v=40";
+import { renderRangeProof } from "./range-proof.js?v=40";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -29,6 +29,7 @@ function changeShowcaseImage(event) {
   });
   const screen = story.querySelector(".case-screen, .supporting-screen, .archive-preview");
   screen.classList.toggle("portrait", frame.portrait === true);
+  screen.classList.toggle("product-cover", !story.classList.contains("archive-card") && isProductCover(frame));
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
   screen.innerHTML = `<span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;

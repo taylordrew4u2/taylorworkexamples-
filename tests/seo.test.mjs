@@ -372,11 +372,12 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(sitemapDates.get(`/insights/${article.slug}/`), site.modified,
       `${article.title}: the business rename updates the guide while its publication date remains unchanged`);
   }
-  for (const route of ["/", "/services/"]) assert.equal(sitemapDates.get(route), "2026-10-16");
+  assert.equal(sitemapDates.get("/services/"), "2026-10-16");
+  assert.equal(sitemapDates.get("/"), "2026-10-18");
   for (const route of ["/project-kickoff/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-18");
 });
 
-test("the homepage keeps all project showcases together before process, consultation, and questions", () => {
+test("the homepage keeps all project showcases together before process, questions, and consultation", () => {
   const home = documents.get("/");
   const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
   const workStart = sectionTags.findIndex(([tag]) => attributes(tag).id === "work");
@@ -394,10 +395,10 @@ test("the homepage keeps all project showcases together before process, consulta
       `${id} belongs to the same work section`);
   }
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["work", "process", "consultation", "project-faq", "business-guides"].map(sectionPosition);
+  const destinations = ["work", "process", "project-faq", "consultation", "business-guides"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
-    "work is followed by process, consultation, questions, and useful reads");
+    "work is followed by process, questions, consultation, and useful reads");
   assert.ok(workEnd <= sectionPosition("process"), "the whole archive finishes before the process or consultation");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation form or questions");

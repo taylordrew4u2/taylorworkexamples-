@@ -1,5 +1,5 @@
-import { email } from "./public-projects.js?v=39";
-import { addInquirySource } from "./contact-context.js?v=39";
+import { email } from "./public-projects.js?v=40";
+import { addInquirySource } from "./contact-context.js?v=40";
 
 export const escape = (value) =>
   String(value).replace(
@@ -87,11 +87,21 @@ export function previewImages(frame) {
   return `<img class="primary-screen" src="${escape(frame.image)}" alt="${escape(frame.imageAlt)}" width="${frame.width || (frame.portrait ? 600 : 1280)}" height="${frame.height || (frame.portrait ? 1299 : 800)}" loading="lazy" decoding="async">${frame.companion ? `<img class="companion-screen" src="${escape(frame.companion.image)}" alt="${escape(frame.companion.imageAlt)}" width="${frame.companion.width || 600}" height="${frame.companion.height || 1299}" loading="lazy" decoding="async">` : ""}${workflow}`;
 }
 
-function showcaseGallery(project, frame, className) {
+export const isProductCover = (frame) => frame.portrait !== true && !frame.companion && !frame.workflow &&
+  frame.width * 9 === frame.height * 16 && /product-artwork$/.test(frame.sourceKind || "");
+
+function showcaseGallery(project, frame, className, collapsed = false) {
   const choices = project.gallery.length > 1
     ? `<div class="screen-choices" role="group" aria-label="Screens from ${escape(project.title)}">${project.gallery.map((view, viewIndex) => `<button type="button" data-gallery="${escape(project.id)}" data-screen="${viewIndex}" aria-pressed="${viewIndex === 0}">${escape(view.label)}</button>`).join("")}</div>`
     : "";
-  return `<div class="${className}">${choices}<p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p><a class="showcase-original" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a></div>`;
+  const content = `${choices}<p class="screen-caption" aria-live="polite">${escape(frame.caption)}</p><a class="showcase-original" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a>`;
+  return collapsed
+    ? `<details class="${className} gallery-disclosure"><summary>Browse ${project.gallery.length} screens <span aria-hidden="true">+</span></summary><div class="gallery-disclosure-body">${content}</div></details>`
+    : `<div class="${className}">${content}</div>`;
+}
+
+function featuredLinks(project) {
+  return `<div class="project-links">${caseLink(project)}${liveLink(project)}<details class="project-more"><summary>More project details <span aria-hidden="true">+</span></summary><div class="project-more-links">${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></details></div>`;
 }
 
 function productStory(project, index) {
@@ -112,13 +122,13 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div><div class="project-links">${liveLink(project)}${caseLink(project)}${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar")}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${featuredLinks(project)}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar", true)}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
   const frame = project.gallery[0];
   const anchor = project.id === "MyGigCalendar" ? 'id="my-gig-calendar-showcase"' : `id="${escape(project.id.toLowerCase())}-showcase"`;
-  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${projectWorkflows(project)}<div class="project-links">${liveLink(project)}${detailsButton(project, "About this project", "case-link")}${sourceLink(project, "Source code", "source-link")}${caseLink(project)}</div>${showcaseGallery(project, frame, "supporting-gallery")}</article>`;
+  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}" data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${projectWorkflows(project)}${featuredLinks(project)}${showcaseGallery(project, frame, "supporting-gallery", true)}</article>`;
 }
 
 function archiveCard(project) {

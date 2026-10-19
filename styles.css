@@ -820,6 +820,54 @@ button, a, input, select, textarea, summary {
 .case-media .screen-toolbar { margin-top: 1rem; }
 .case-media .screen-caption { max-width: none; }
 
+/* Keep the first view focused on the product; reveal supporting detail on request. */
+.gallery-disclosure, .service-comparison {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.gallery-disclosure > summary, .service-comparison > summary, .project-more > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+  list-style: none;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.gallery-disclosure > summary::-webkit-details-marker,
+.service-comparison > summary::-webkit-details-marker,
+.project-more > summary::-webkit-details-marker { display: none; }
+.gallery-disclosure > summary > span, .service-comparison > summary > span, .project-more > summary > span {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  font-weight: 450;
+}
+.gallery-disclosure[open] > summary > span,
+.service-comparison[open] > summary > span,
+.project-more[open] > summary > span { transform: rotate(45deg); }
+.gallery-disclosure-body { padding: .75rem 0 1rem; }
+.gallery-disclosure > summary:focus-visible,
+.service-comparison > summary:focus-visible,
+.project-more > summary:focus-visible { outline: 2px solid #111; outline-offset: 4px; border-radius: .25rem; }
+.service-comparison { margin-top: 1.5rem; padding-inline: .25rem; }
+.service-comparison > summary { padding-block: .5rem; }
+.service-comparison .service-discovery { margin-top: 0; padding-top: .5rem; padding-bottom: 1rem; border-top: 0; }
+#featured-projects .project-links > .case-page-link {
+  color: #fff;
+  background: #111;
+  border-color: #111;
+  padding: .75rem 1rem;
+}
+#featured-projects .project-links > .case-page-link:hover { background: #333; }
+.project-more { flex-basis: 100%; color: var(--muted); max-width: 25rem; }
+.project-more > summary { justify-content: flex-start; font-size: .75rem; font-weight: 450; }
+.project-more-links { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; padding-bottom: .5rem; }
+.project-more-links .source-link { flex-basis: auto; }
+.process-intro { max-width: 42rem; margin-top: 1rem; color: var(--muted); font-size: .9375rem; line-height: 1.75; }
+
 .case-highlights {
   display: grid;
   grid-template-columns: 1fr;
@@ -2515,3 +2563,22 @@ dialog::backdrop {
   .case-header .project-icon-frame { flex-basis: 3.5rem; width: 3.5rem; height: 3.5rem; }
   .dialog-identity .project-icon-frame { flex-basis: 3rem; width: 3rem; height: 3rem; }
 }
+
+/* Product artwork is already a complete composition. Let it fill its own frame. */
+#featured-projects .project-visual.product-cover {
+  height: auto;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  gap: 0;
+}
+#featured-projects .project-visual.product-cover .primary-screen {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+#featured-projects .product-cover .visual-badge,
+#featured-projects .product-cover .preview-arrow { display: none; }

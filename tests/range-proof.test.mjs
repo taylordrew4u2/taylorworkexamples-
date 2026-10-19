@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { publishedApps, renderRangeProof } from "../range-proof.js";
+import { isProductCover } from "../render-projects.js";
 
 test("the range proof identifies three real App Store products and distinct engineering examples", () => {
   const apps = publishedApps();
@@ -17,4 +18,23 @@ test("the range proof identifies three real App Store products and distinct engi
   }
   assert.ok(html.includes("3 PUBLISHED iOS APPS"));
   assert.doesNotMatch(html, /\bsenior\b|years of experience|client results|\bdownloads\b/i);
+});
+
+
+test("full composition cover mode excludes portrait artwork, native captures, and paired workflows", () => {
+  const banner = { width: 1920, height: 1080, sourceKind: "owner-supplied-product-artwork" };
+  assert.equal(isProductCover(banner), true);
+  assert.equal(isProductCover({ ...banner, width: 2560, height: 1440, sourceKind: "repository-product-artwork" }), true);
+  for (const [reason, overrides] of [
+    ["explicit portrait mode", { portrait: true }],
+    ["portrait promotional dimensions", { width: 1320, height: 2868 }],
+    ["a non-16:9 composition", { width: 1600, height: 1000 }],
+    ["a companion image", { companion: { image: "./native-screen.png" } }],
+    ["a workflow illustration", { workflow: ["Import", "Review"] }],
+    ["a native capture at the same aspect ratio", { sourceKind: "repository-app-capture" }],
+    ["unverified artwork", { sourceKind: undefined }],
+  ]) {
+    assert.equal(isProductCover({ ...banner, ...overrides }), false, reason);
+  }
+  assert.equal(isProductCover(banner), true, "classifying other views leaves the original cover unchanged");
 });

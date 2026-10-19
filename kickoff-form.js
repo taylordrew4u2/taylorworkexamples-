@@ -1,5 +1,5 @@
-import { email } from "./public-projects.js?v=39";
-import { addInquirySource } from "./contact-context.js?v=39";
+import { email } from "./public-projects.js?v=40";
+import { addInquirySource } from "./contact-context.js?v=40";
 
 const fields = [
   { name: "company", label: "Business or organization", required: true, limit: 160 },

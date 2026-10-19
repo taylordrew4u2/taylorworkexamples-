@@ -1,4 +1,4 @@
-import { getContactPage, getConsultationSource, normalizeSource, sourceURL } from "./contact-context.js?v=39";
+import { getContactPage, getConsultationSource, normalizeSource, sourceURL } from "./contact-context.js?v=40";
 
 const controllers = new WeakMap();
 const eventName = "Contact intent";

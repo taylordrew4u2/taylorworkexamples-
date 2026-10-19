@@ -54,8 +54,32 @@ async function expectLoadedImageToFit(image, expected) {
   )).toBe(true);
 }
 
+async function openSelectedGallery(card) {
+  const disclosure = card.locator("details.gallery-disclosure");
+  if (await disclosure.count() === 0) return; // Archive controls remain directly visible.
+  if (await disclosure.getAttribute("open") === null) {
+    await disclosure.locator("summary").click();
+  }
+  await expect(disclosure).toHaveAttribute("open", "");
+}
+
 async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
+  await openSelectedGallery(card);
   const screen = card.locator(screenSelector);
+  const productCover = screenSelector !== ".archive-preview" && frame.portrait !== true &&
+    !frame.companion && !frame.workflow && frame.width * 9 === frame.height * 16 &&
+    /product-artwork$/.test(frame.sourceKind || "");
+  expect(await screen.evaluate((element) => element.classList.contains("product-cover")),
+    `${project.title}: only unpaired landscape product banners use the full composition frame`).toBe(productCover);
+  if (productCover) {
+    await expect(screen.locator(".visual-badge")).toBeHidden();
+    await expect(screen.locator(".preview-arrow")).toBeHidden();
+    const aspectError = await screen.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      return Math.abs(box.height - box.width * 9 / 16);
+    });
+    expect(aspectError, `${frame.label}: the cover frame retains its full 16:9 composition`).toBeLessThanOrEqual(1);
+  }
   await expectLoadedImageToFit(screen.locator(".primary-screen"), frame);
   await expect(screen.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
   if (frame.companion) {
@@ -602,6 +626,86 @@ test("I Can Run A Show opens with repository artwork and preserves paired native
   await expect(trigger).toBeFocused();
 });
 
+test("the homepage gives clients clear next steps while keeping optional project screens compact", async ({ page }, testInfo) => {
+  await page.goto("/");
+  const menu = page.locator(".menu-toggle");
+  if (testInfo.project.name === "phone") await menu.click();
+  const processLink = page.locator("#main-nav").getByRole("link", { name: "How it works", exact: true });
+  await expect(processLink).toBeVisible();
+  await expect(processLink).toHaveAttribute("href", "#process");
+  await expect(page.locator("#main-nav a[href*='github.com']")).toHaveCount(0);
+  await expect(page.locator("footer a[href='https://github.com/taylordrew4u2']")).toBeVisible();
+  await expect(page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false }))
+    .toHaveAttribute("href", "#consultation");
+  await expect(page.locator("#main-nav .nav-contact")).toHaveAttribute("href", "#consultation");
+  await processLink.click();
+  await expect(page).toHaveURL(/#process$/);
+  if (testInfo.project.name === "phone") await expect(menu).toHaveAttribute("aria-expanded", "false");
+  expect(await page.locator("#project-faq").evaluate((faq) => Boolean(
+    document.querySelector("#process").compareDocumentPosition(faq) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ) && Boolean(faq.compareDocumentPosition(document.querySelector("#consultation")) & Node.DOCUMENT_POSITION_FOLLOWING)),
+  "Clients see the process and answers before the unchanged consultation section").toBe(true);
+
+  const comparison = page.locator("details.service-comparison");
+  await expect(comparison).not.toHaveAttribute("open", "");
+  await expect(comparison.locator(".service-discovery")).toBeHidden();
+  await expect(page.locator("#services .industry-services")).toBeVisible();
+  await comparison.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(comparison.locator(".service-discovery")).toBeVisible();
+  await expect(comparison.getByRole("navigation", { name: "Development services", exact: true }).locator("a")).toHaveCount(4);
+  await comparison.locator("summary").focus();
+  await page.keyboard.press("Space");
+  await expect(comparison).not.toHaveAttribute("open", "");
+
+  const cards = page.locator("#featured-projects .project-card");
+  await expect(cards).toHaveCount(6);
+  await expect(page.locator("#featured-projects details.gallery-disclosure:not([open])")).toHaveCount(6);
+  for (const project of featuredProjects) {
+    const card = cards.filter({ has: page.locator(`.project-visual[data-project="${project.id}"]`) });
+    const disclosure = card.locator("details.gallery-disclosure");
+    const summary = disclosure.locator("summary");
+    const choices = disclosure.locator("button[data-gallery][data-screen]");
+    await expect(summary).toHaveText(`Browse ${project.gallery.length} screens +`);
+    await expect(choices.first()).toBeHidden();
+    const story = card.getByRole("link", { name: "Full project story", exact: true });
+    await expect(story).toBeVisible();
+    await expect(story).toHaveAttribute("href", project.caseUrl);
+    await expect(card.locator(".project-links > :first-child")).toHaveClass(/case-page-link/);
+    const more = card.locator("details.project-more");
+    await expect(more).not.toHaveAttribute("open", "");
+    await expect(more.locator(".project-more-links")).toBeHidden();
+    await summary.focus();
+    await page.keyboard.press("Enter");
+    await expect(disclosure).toHaveAttribute("open", "");
+    await expect(summary).toBeFocused();
+    await expect(choices).toHaveCount(project.gallery.length);
+    await choices.last().focus();
+    await page.keyboard.press("Space");
+    await expect(choices.last()).toBeFocused();
+    await expect(choices.last()).toHaveAttribute("aria-pressed", "true");
+    const screen = project === featuredProjects[0] || project === featuredProjects[1] || project === featuredProjects[2]
+      ? ".case-screen" : ".supporting-screen";
+    await expectInlineGalleryFrame(card, project, project.gallery.at(-1), screen);
+    await summary.focus();
+    await page.keyboard.press("Space");
+    await expect(disclosure).not.toHaveAttribute("open", "");
+    await expect(choices.last()).toBeHidden();
+    await expect(card.locator(".project-visual .primary-screen")).toHaveAttribute("src", project.gallery.at(-1).image);
+    await more.locator("summary").focus();
+    await page.keyboard.press("Enter");
+    const source = more.getByRole("link", { name: "Source code", exact: true });
+    await expect(source).toBeVisible();
+    await expect(source).toHaveAttribute("href", project.repoUrl);
+    await more.locator("summary").focus();
+    await page.keyboard.press("Space");
+    await expect(more.locator(".project-more-links")).toBeHidden();
+  }
+  await expect(page.locator("#featured-projects details.gallery-disclosure[open]")).toHaveCount(0);
+  await cards.first().getByRole("link", { name: "Full project story", exact: true }).click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(featuredProjects[0].title);
+});
+
 test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
   await page.goto("/");
   const services = page.locator("#services");
@@ -697,6 +801,9 @@ test("service choices, open FAQs, and the supporting gallery fit narrow and tabl
       await summary.click();
     }
     await expect(page.locator("#project-faq details[open]")).toHaveCount(3);
+    for (const selected of await page.locator("#featured-projects .project-card").all()) {
+      await openSelectedGallery(selected);
+    }
     const card = page.locator(`.supporting-card[data-supporting-id="${calendar.id}"]`);
     const choices = card.locator(".supporting-gallery button[data-screen]");
     await choices.last().click();
@@ -1150,6 +1257,7 @@ for (const project of featuredProjects.slice(0, 3)) {
     const isBitBinder = project.id === "The-Bit-Binder";
     await page.goto(isBitBinder ? "/#the-bit-binder-showcase" : "/");
     const story = page.locator(`.case-study[data-case-id="${project.id}"]`);
+    await openSelectedGallery(story);
     if (isBitBinder) {
       await expect(story).toHaveAttribute("id", "the-bit-binder-showcase");
       expect(new URL(page.url()).hash).toBe("#the-bit-binder-showcase");
@@ -1215,6 +1323,7 @@ test("My Gig Calendar changes its on-page images, captions, and selection withou
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   const card = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
+  await openSelectedGallery(card);
   const screen = card.locator(".supporting-screen");
   const gallery = card.locator(".supporting-gallery");
   const group = gallery.getByRole("group", { name: `Screens from ${project.title}`, exact: true });
@@ -1264,6 +1373,7 @@ for (const id of ["Bill-Spilt", "Role-Call"]) {
     page.on("pageerror", (error) => errors.push(error.message));
     await page.goto("/");
     const card = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
+    await openSelectedGallery(card);
     const group = card.getByRole("group", { name: `Screens from ${project.title}`, exact: true });
     const choices = group.locator("button[data-gallery][data-screen]");
     await expect(card).toHaveClass(/has-gallery/);
@@ -1372,6 +1482,7 @@ test("archive re-rendering resets gallery state without changing selected-work g
   const project = projects.find((entry) => entry.id === "Bill-Spilt");
   await page.goto("/#project-archive");
   const selectedCard = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
+  await openSelectedGallery(selectedCard);
   const archiveCard = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
   const selectedChoices = selectedCard.locator("button[data-gallery][data-screen]");
   const archiveChoices = archiveCard.locator("button[data-gallery][data-screen]");
@@ -1418,6 +1529,7 @@ for (const width of [320, 768, 1024]) {
       const id = await card.getAttribute("data-case-id") ||
         await card.getAttribute("data-supporting-id") || await card.getAttribute("data-showcase-id");
       const project = projects.find((entry) => entry.id === id);
+      await openSelectedGallery(card);
       const choices = card.locator("button[data-gallery][data-screen]");
       const screenSelector = await card.getAttribute("data-case-id") ? ".case-screen" :
         await card.getAttribute("data-supporting-id") ? ".supporting-screen" : ".archive-preview";
