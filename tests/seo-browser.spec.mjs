@@ -152,7 +152,9 @@ test("a service page leads to relevant project proof and a complete business inq
   await expectPageFit(page);
   await page.setViewportSize(testInfo.project.use.viewport);
   const proof = await linkTo(page, `/work/${projectSlugs[project.id]}/`);
-  await proof.click();
+  // Native activation remains usable while the section-link scroll is finishing.
+  await proof.focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
   await expectHeaderSection(page, "/work/");
   await expect(page.getByRole("link", { name: `${project.title} source code on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
@@ -190,7 +192,8 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await expect(page.locator("link[rel='canonical']")).toHaveAttribute("href", site.origin + route);
     await expect(page.locator(".faq-list .faq-item")).toHaveCount(service.faq.length);
     const question = page.locator(".faq-list .faq-item").first();
-    await question.locator("summary").click();
+    await question.locator("summary").focus();
+    await page.keyboard.press("Enter");
     await expect(question).toHaveAttribute("open", "");
     await expect(question.locator("p")).toHaveText(service.faq[0].answer);
 
@@ -210,14 +213,16 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await expectPageFit(page);
 
     const planning = await linkTo(page, `/insights/${service.guideSlug}/`);
-    await planning.click();
+    await planning.focus();
+    await page.keyboard.press("Enter");
     const article = articles.find((entry) => entry.slug === service.guideSlug);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
     await expectHeaderSection(page, "/insights/");
     const returnToService = page.getByRole("navigation", { name: "Related development services" })
       .getByRole("link", { name: service.title, exact: true });
     await expect(returnToService).toBeVisible();
-    await returnToService.click();
+    await returnToService.focus();
+    await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
     await expectPageFit(page);
   });
@@ -437,12 +442,16 @@ test("a business guide connects the idea to a service and the supplied consultat
   const development = page.getByRole("navigation", { name: "Related development services" })
     .getByRole("link", { name: service.title, exact: true });
   await expect(development).toBeVisible();
-  await development.click();
+  // Keep this a native navigation test without waiting for pointer-position stability
+  // after the preceding in-page links have started smooth scrolling.
+  await development.focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
   await expectPageFit(page);
 
   const local = await linkTo(page, "/new-york-city/");
-  await local.click();
+  await local.focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(localConsultation.heading);
   await expect(page.locator("main")).toContainText(localConsultation.intro);
   await expect(page.locator("main")).toContainText(/Start with a Zoom consultation/i);
