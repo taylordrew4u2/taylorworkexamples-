@@ -14,7 +14,7 @@ import { renderKickoffForm } from "../kickoff-view.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "46";
+export const release = "47";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -127,9 +127,14 @@ export function pageHead(page, homepage = false) {
 }
 
 function header(route) {
+  const navigation = [["services/", "Services"], ["work/", "Projects"], ["insights/", "Guides"], ["about/", "About 4u Digital"]];
+  const navLink = ([target, label]) => {
+    const current = route === `/${target}` ? "page" : route.startsWith(`/${target}`) || (target === "insights/" && route.startsWith("/guides/")) ? "location" : "";
+    return `<a href="${local(route, target)}"${current ? ` aria-current="${current}"` : ""}>${label}</a>`;
+  };
   return `<a class="skip-link" href="#main">Skip to content</a><header class="site-header page-header wrap">
     <a class="wordmark" href="${local(route)}" aria-label="4u Digital, home"><img class="brand-symbol" src="${local(route, "assets/4u-digital-logo-mono.png")}" alt="" width="256" height="256" /><span class="brand-name">4u Digital</span></a>
-    <nav class="page-nav" aria-label="Main navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "about/")}">About 4u Digital</a>${bookingLink("nav-contact")}</nav>
+    <nav class="page-nav" aria-label="Main navigation">${navigation.map(navLink).join("")}${bookingLink("nav-contact")}</nav>
   </header>`;
 }
 
@@ -138,7 +143,7 @@ function brandSignature(route) {
 }
 
 function footer(route) {
-  return `<footer class="page-footer wrap"><div>${brandSignature(route)}<p>Custom tech build for you.</p><p>Start on Zoom. NYC in-person consultations can help clarify your needs or plan technology around your space and workflow.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation">${bookingLink("text-link")}<a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a><a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "about/")}">About 4u Digital</a><a href="${local(route, "contact/")}">Contact 4u Digital</a><a href="${local(route, "project-kickoff/")}">Project kickoff checklist</a><a href="${local(route, "privacy/")}">Privacy &amp; site analytics</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav><p class="page-copyright">© 2026 4u Digital</p></footer>`;
+  return `<footer class="page-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p><p>Start on Zoom. NYC in-person consultations can help clarify your needs or plan technology around your space and workflow.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><div class="footer-link-group"><p class="eyebrow">EXPLORE</p><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a></div><div class="footer-link-group"><p class="eyebrow">START A PROJECT</p>${bookingLink("text-link")}<a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "contact/")}">Contact 4u Digital</a><a href="${local(route, "project-kickoff/")}">Project kickoff form</a></div><div class="footer-link-group"><p class="eyebrow">4u Digital</p><a href="${local(route, "about/")}">About 4u Digital</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="${local(route, "privacy/")}">Privacy &amp; site analytics</a></div></nav><p class="page-copyright">© 2026 4u Digital<span>Apps, websites, and software for your business.</span></p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -146,7 +151,12 @@ function breadcrumbs(page) {
 }
 
 function frame(page, content) {
-  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page${page.project ? " project-detail-page" : ""}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`, page.path);
+  const pageClass = page.project ? "project-detail-page" : page.article ? "article-detail-page" : page.local ? "local-consultation-page" : page.service ? "service-detail-page" : ({
+    "/services/": "service-index-page", "/work/": "work-index-page", "/insights/": "insights-index-page",
+    "/project-kickoff/": "kickoff-page", "/contact/": "contact-page", "/about/": "about-page",
+    "/privacy/": "privacy-page", "/guides/website-or-app/": "comparison-page",
+  }[page.path] || "");
+  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`, page.path);
 }
 
 function sourceEmailLinks(html, route) {
@@ -167,8 +177,8 @@ function bookingLink(className = "button button-dark") {
   return `<a class="${className}" data-booking-link href="${bookingURL}" target="_blank" rel="noopener noreferrer">Book a consultation <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`;
 }
 
-function faqBlock(title, faqs) {
-  return `<section class="page-section"><h2>${escape(title)}</h2><div class="faq-list">${faqs.map(({ question, answer }) => `<details class="faq-item"><summary>${escape(question)}</summary><p>${escape(answer)}</p></details>`).join("")}</div></section>`;
+function faqBlock(title, faqs, id = "") {
+  return `<section${id ? ` id="${escape(id)}"` : ""} class="page-section"><h2>${escape(title)}</h2><div class="faq-list">${faqs.map(({ question, answer }) => `<details class="faq-item"><summary>${escape(question)}</summary><p>${escape(answer)}</p></details>`).join("")}</div></section>`;
 }
 
 function projectType(project) {
@@ -184,7 +194,7 @@ function projectCard(project, route) {
 }
 
 function serviceCards(route) {
-  return `<div class="service-page-grid">${services.map((service) => `<article class="service-page-card"><p class="eyebrow">${escape(service.eyebrow)}</p><h2><a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a></h2><p>${escape(service.description)}</p><a class="text-link" href="${local(route, `services/${service.slug}/`)}">${escape(service.title)} <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
+  return `<div class="service-page-grid">${services.map((service, index) => `<article class="service-page-card"><div class="service-card-topline"><p class="eyebrow">${escape(service.eyebrow)}</p><span class="service-card-index mono" aria-hidden="true">${String(index + 1).padStart(2, "0")}</span></div><h2><a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a></h2><p>${escape(service.description)}</p><a class="text-link" href="${local(route, `services/${service.slug}/`)}">${escape(service.title)} <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
 }
 
 function articleCards(route, collection = articles) {
@@ -192,7 +202,7 @@ function articleCards(route, collection = articles) {
 }
 
 function consultationCallout(route) {
-  return `<aside class="page-callout"><h2>Let’s talk through your workflow.</h2><p>A website, a mobile app, a web platform, desktop software, or a custom business workflow: we can work out what fits your business. Start with a Zoom consultation through BriefBooth. If you are unsure what you need, or the technology depends on a particular space, we can arrange an in-person consultation in the NYC area.</p><div class="page-actions">${bookingLink()}<a class="text-link" href="${local(route, "new-york-city/")}">New York City consultations ↗</a></div></aside>`;
+  return `<aside class="page-callout consultation-callout"><div><p class="eyebrow">FROM IDEA TO A CLEAR NEXT STEP</p><h2>Let’s talk through your workflow.</h2><p>A website, a mobile app, a web platform, desktop software, or a custom business workflow: we can work out what fits your business. Start with a Zoom consultation through BriefBooth. If you are unsure what you need, or the technology depends on a particular space, we can arrange an in-person consultation in the NYC area.</p></div><div class="page-actions">${bookingLink()}<a class="text-link" href="${local(route, "new-york-city/")}">New York City consultations ↗</a></div></aside>`;
 }
 
 function kickoffPage() {
@@ -218,9 +228,10 @@ function articlePage(article) {
   const page = { path: route, title: article.metaTitle, description: article.description, article, faq: article.faq,
     breadcrumbs: [{ name: "Business guides", path: "/insights/" }, { name: article.title, path: route }],
   };
-  const sections = article.sections.map(({ heading, text, paragraphs }) => `<section class="page-section"><h2>${escape(heading)}</h2>${(paragraphs || [text]).filter(Boolean).map((paragraph) => `<p>${escape(paragraph)}</p>`).join("")}</section>`).join("");
+  const sections = article.sections.map(({ heading, text, paragraphs }, index) => `<section id="guide-section-${index + 1}" class="page-section"><h2>${escape(heading)}</h2>${(paragraphs || [text]).filter(Boolean).map((paragraph) => `<p>${escape(paragraph)}</p>`).join("")}</section>`).join("");
+  const contents = `<nav class="article-contents" aria-label="Guide sections"><p class="eyebrow">IN THIS GUIDE</p><ol>${article.sections.map(({ heading }, index) => `<li><a href="#guide-section-${index + 1}">${escape(heading)}</a></li>`).join("")}</ol></nav>`;
   const examples = article.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
-  const content = `<article class="guide-article">${intro("A 4u Digital BUSINESS GUIDE", article.title, article.intro)}<p class="article-byline">By 4u Digital · <time datetime="${site.published}">October 14, 2026</time></p>${sections}${article.faq?.length ? faqBlock("A few useful answers", article.faq) : ""}<section class="page-section"><h2>Relevant work from the 4u Digital portfolio</h2><p>See the product screens and development details behind these related software projects. Each project page explains its purpose and the context of its images.</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section><section class="page-section"><h2>What would help your business?</h2><p>${escape(article.closing)}</p><nav class="related-links" aria-label="Related development services">${article.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav></section>${consultationCallout(route)}<nav class="related-links" aria-label="More business guides"><a href="${local(route, "insights/")}">All 4u Digital business guides</a><a href="${local(route, "guides/website-or-app/")}">Website, web app, or native app?</a></nav></article>`;
+  const content = `<article class="guide-article">${intro("A 4u Digital BUSINESS GUIDE", article.title, article.intro)}<p class="article-byline">By 4u Digital · <time datetime="${site.published}">October 14, 2026</time></p><div class="article-layout">${contents}<div class="article-body">${sections}${article.faq?.length ? faqBlock("A few useful answers", article.faq) : ""}</div></div><section class="page-section"><h2>Relevant work from the 4u Digital portfolio</h2><p>See the product screens and development details behind these related software projects. Each project page explains its purpose and the context of its images.</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section><section class="page-section"><h2>What would help your business?</h2><p>${escape(article.closing)}</p><nav class="related-links" aria-label="Related development services">${article.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav></section>${consultationCallout(route)}<nav class="related-links" aria-label="More business guides"><a href="${local(route, "insights/")}">All 4u Digital business guides</a><a href="${local(route, "guides/website-or-app/")}">Website, web app, or native app?</a></nav></article>`;
   return { ...page, html: frame(page, content) };
 }
 
@@ -247,10 +258,11 @@ function servicePage(service) {
   };
   const examples = service.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
   const content = intro(service.eyebrow, service.heading, service.intro, `<div class="page-actions">${inquiry(service.topic, "Discuss your project")}<a class="text-link" href="#examples">See examples ↓</a></div>`) +
-    `<section class="page-section"><h2>What could ${escape(service.title.toLowerCase())} help you do?</h2><div class="page-columns">${service.when.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
+    `<nav class="page-section-nav" aria-label="On this service page"><span class="mono">EXPLORE THE SERVICE</span><a href="#service-fit">What it can do <span aria-hidden="true">↓</span></a><a href="#examples">Project examples <span aria-hidden="true">↓</span></a><a href="#service-scope">Planning your build <span aria-hidden="true">↓</span></a><a href="#service-questions">Questions <span aria-hidden="true">↓</span></a></nav>` +
+    `<section id="service-fit" class="page-section"><h2>What could ${escape(service.title.toLowerCase())} help you do?</h2><div class="page-columns">${service.when.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
     `<section id="examples" class="page-section"><h2>See the work behind the offer.</h2><p class="section-lead">${escape(service.proofIntro)}</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section>` +
-    `<section class="page-section"><h2>What do we decide before building?</h2><div class="page-columns">${service.scope.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
-    faqBlock(`Questions about ${service.title.toLowerCase()}`, service.faq) +
+    `<section id="service-scope" class="page-section"><h2>What do we decide before building?</h2><div class="page-columns">${service.scope.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
+    faqBlock(`Questions about ${service.title.toLowerCase()}`, service.faq, "service-questions") +
     `<aside class="page-callout"><h2>Start with the problem.</h2><p>Describe your business, who will use the technology, and what needs to work better. A finished plan isn’t required.</p>${inquiry(service.topic, "Email about your project")}</aside>` +
     `<section class="page-section"><h2>Still choosing what to build?</h2><p>A website, browser app, and native app solve different problems. Compare the options before choosing a platform.</p>${service.guideSlug ? `<p><a class="text-link" href="${local(route, `insights/${service.guideSlug}/`)}">Read the ${service.topic === "salon" ? "salon booking" : "restaurant ordering"} planning guide ↗</a></p>` : ""}<a class="text-link" href="${local(route, "guides/website-or-app/")}">Should you build a website or an app? ↗</a><nav class="related-links" aria-label="Other development services">${services.filter((other) => other.slug !== service.slug).map((other) => `<a href="${local(route, `services/${other.slug}/`)}">${escape(other.title)}</a>`).join("")}</nav></section>`;
   return { ...page, html: frame(page, content) };
@@ -259,7 +271,8 @@ function servicePage(service) {
 function projectFrame(view, index, route) {
   const image = (capture, first = false) => `<img src="${local(route, capture.image.replace(/^\.\//, ""))}" alt="${escape(capture.imageAlt)}" width="${capture.width}" height="${capture.height}" ${first ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />`;
   const fullSize = (capture, label) => `<a href="${local(route, capture.image.replace(/^\.\//, ""))}" target="_blank" rel="noopener noreferrer">${label} <span aria-hidden="true">↗</span></a>`;
-  return `<figure ${index === 0 ? 'id="project-cover"' : `id="project-view-${index}"`} data-view="${index}" class="project-page-frame ${view.portrait ? "portrait" : ""} ${view.companion ? "paired" : ""}"><div>${image(view, index === 0)}${view.companion ? image(view.companion) : ""}</div><figcaption><strong>${escape(view.label)}</strong><p>${escape(view.caption)}</p><div class="project-image-links">${fullSize(view, "Open full-size image")}${view.companion ? fullSize(view.companion, "Open companion image") : ""}</div></figcaption></figure>`;
+  const artwork = !view.portrait && !view.companion && /product-artwork$/.test(view.sourceKind || "");
+  return `<figure ${index === 0 ? 'id="project-cover"' : `id="project-view-${index}"`} data-view="${index}" class="project-page-frame ${view.portrait ? "portrait" : ""} ${view.companion ? "paired" : ""}${artwork ? " product-artwork" : ""}"><div>${image(view, index === 0)}${view.companion ? image(view.companion) : ""}</div><figcaption><strong>${escape(view.label)}</strong><p>${escape(view.caption)}</p><div class="project-image-links">${fullSize(view, "Open full-size image")}${view.companion ? fullSize(view.companion, "Open companion image") : ""}</div></figcaption></figure>`;
 }
 
 function projectViews(project, route) {

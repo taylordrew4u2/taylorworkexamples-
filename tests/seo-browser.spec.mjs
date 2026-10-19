@@ -28,8 +28,8 @@ async function linkTo(page, pathname) {
 async function expectPageFit(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
     "The complete page fits the viewport").toBe(true);
-  const controls = await page.locator(".page-nav a, .breadcrumbs, .page-actions a, .project-story-nav a, .project-build-cta a").evaluateAll((elements) =>
-    elements.every((element) => {
+  const controls = await page.locator(".page-nav a, .breadcrumbs, .page-actions a, .project-story-nav a, .page-section-nav a, .article-contents a, .project-build-cta a, .footer-link-group a").evaluateAll((elements) =>
+    elements.filter((element) => element.getClientRects().length > 0).every((element) => {
       const box = element.getBoundingClientRect();
       return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
     }));
@@ -39,6 +39,34 @@ async function expectPageFit(page) {
     const main = document.querySelector(".page-main");
     return !navigation || !main || navigation.getBoundingClientRect().bottom <= main.getBoundingClientRect().top + 1;
   }), "The page navigation sits above the content rather than covering its title").toBe(true);
+}
+
+async function expectHeaderSection(page, path, current = "location") {
+  const selected = page.locator(".page-nav a[aria-current]");
+  await expect(selected).toHaveCount(1);
+  await expect(selected).toHaveAttribute("aria-current", current);
+  expect(new URL(await selected.getAttribute("href"), page.url()).pathname).toBe(path);
+}
+
+async function expectServiceSections(page, service) {
+  const navigation = page.getByRole("navigation", { name: "On this service page", exact: true });
+  await expect(navigation).toBeVisible();
+  const destinations = [
+    ["service-fit", `What could ${service.title.toLowerCase()} help you do?`],
+    ["examples", "See the work behind the offer."],
+    ["service-scope", "What do we decide before building?"],
+    ["service-questions", `Questions about ${service.title.toLowerCase()}`],
+  ];
+  await expect(navigation.locator("a")).toHaveCount(destinations.length);
+  for (const [id, heading] of destinations) {
+    const link = navigation.locator(`a[href="#${id}"]`);
+    await expect(link).toBeVisible();
+    await expect(page.locator(`#${id}`)).toHaveCount(1);
+    await expect(page.locator(`#${id}`).getByRole("heading", { level: 2 })).toHaveText(heading);
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+  }
 }
 
 async function expectOriginalImage(image, frame) {
@@ -75,10 +103,14 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
   expect(await page.evaluate(() => {
     const work = document.querySelector("#work");
     const archive = document.querySelector("#project-archive");
+    const featured = document.querySelector("#featured-projects");
+    const rangeProof = document.querySelector("#range-proof");
     const groups = [...document.querySelectorAll("#featured-projects, #archive-projects, .project-card, .archive-card")];
     const sections = ["work", "process", "project-faq", "consultation", "business-guides"]
       .map((id) => document.getElementById(id));
-    return work.contains(archive) && groups.every((group) => work.contains(group)) &&
+    return work.contains(archive) && work.contains(rangeProof) && groups.every((group) => work.contains(group)) &&
+      Boolean(featured.compareDocumentPosition(rangeProof) & Node.DOCUMENT_POSITION_FOLLOWING) &&
+      Boolean(rangeProof.compareDocumentPosition(archive) & Node.DOCUMENT_POSITION_FOLLOWING) &&
       sections.every((section, index) => section && (index === 0 || Boolean(
         sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
@@ -95,10 +127,11 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
   const portfolio = await linkTo(page, "/work/");
   await portfolio.click();
   await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
+  await expectHeaderSection(page, "/work/", "page");
   await expectPageFit(page);
 });
 
-test("a service page leads to relevant project proof and a complete business inquiry without JavaScript", async ({ page }) => {
+test("a service page leads to relevant project proof and a complete business inquiry without JavaScript", async ({ page }, testInfo) => {
   const service = services.find((entry) => entry.slug === "website-development");
   const project = projects.find((entry) => entry.id === service.projectIds[0]);
   await page.goto("/");
@@ -112,10 +145,16 @@ test("a service page leads to relevant project proof and a complete business inq
   const serviceLink = await linkTo(page, `/services/${service.slug}/`);
   await serviceLink.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+  await expectHeaderSection(page, "/services/");
+  await expectServiceSections(page, service);
   await expectPageFit(page);
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expectPageFit(page);
+  await page.setViewportSize(testInfo.project.use.viewport);
   const proof = await linkTo(page, `/work/${projectSlugs[project.id]}/`);
   await proof.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+  await expectHeaderSection(page, "/work/");
   await expect(page.getByRole("link", { name: `${project.title} source code on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
   const inquiry = page.locator(".page-actions a[href^='mailto:']");
   await expect(inquiry).toBeVisible();
@@ -144,6 +183,8 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await start.click();
     await expect(page).toHaveURL(new RegExp(`${route}$`));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+    await expectHeaderSection(page, "/services/");
+    await expectServiceSections(page, service);
     await expect(page.locator("main")).toContainText(service.intro);
     await expect(page.locator("main")).toContainText(service.proofIntro);
     await expect(page.locator("link[rel='canonical']")).toHaveAttribute("href", site.origin + route);
@@ -172,6 +213,7 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await planning.click();
     const article = articles.find((entry) => entry.slug === service.guideSlug);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+    await expectHeaderSection(page, "/insights/");
     const returnToService = page.getByRole("navigation", { name: "Related development services" })
       .getByRole("link", { name: service.title, exact: true });
     await expect(returnToService).toBeVisible();
@@ -219,6 +261,8 @@ test("a project case shows authentic paired captures and both original image lin
   await expect(companion).toHaveAttribute("rel", /noopener/);
   await companion.focus();
   await expect(companion).toBeFocused();
+  await expectPageFit(page);
+  await page.setViewportSize({ width: 768, height: 1024 });
   await expectPageFit(page);
 });
 
@@ -331,6 +375,8 @@ test("the comparison guide, business information, and contact remain usable with
     expect(new URL(await link.getAttribute("href")).pathname).toBe("admin@customtechbuilt4u.com");
   }
   await expectPageFit(page);
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expectPageFit(page);
 });
 
 test("the later kickoff checklist is reachable from the process and prepares an attributed email without JavaScript", async ({ page }) => {
@@ -351,6 +397,8 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/project-kickoff/`);
   await expectPageFit(page);
   await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expectPageFit(page);
 });
 
 test("a business guide connects the idea to a service and the supplied consultation booking page without JavaScript", async ({ page }) => {
@@ -361,15 +409,30 @@ test("a business guide connects the idea to a service and the supplied consultat
   const guides = await linkTo(page, "/insights/");
   await guides.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Useful reads for your next business build.");
+  await expectHeaderSection(page, "/insights/", "page");
   await expect(page.locator(".insight-grid .insight-card")).toHaveCount(articles.length);
   await expectPageFit(page);
 
   const guide = await linkTo(page, `/insights/${article.slug}/`);
   await guide.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+  await expectHeaderSection(page, "/insights/");
   await expect(page.locator(".article-byline")).toContainText("By 4u Digital");
   await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", site.published);
   await expect(page.locator("main")).toContainText(article.intro);
+  const contents = page.getByRole("navigation", { name: "Guide sections", exact: true });
+  await expect(contents).toBeVisible();
+  await expect(contents.locator("a")).toHaveCount(article.sections.length);
+  for (const [index, section] of article.sections.entries()) {
+    const id = `guide-section-${index + 1}`;
+    const link = contents.getByRole("link", { name: section.heading, exact: true });
+    await expect(link).toHaveAttribute("href", `#${id}`);
+    await expect(page.locator(`#${id}`)).toHaveCount(1);
+    await expect(page.locator(`#${id}`).getByRole("heading", { level: 2 })).toHaveText(section.heading);
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+  }
   await expectPageFit(page);
   const development = page.getByRole("navigation", { name: "Related development services" })
     .getByRole("link", { name: service.title, exact: true });

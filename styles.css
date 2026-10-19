@@ -2851,3 +2851,142 @@ dialog::backdrop {
 @media (max-width: 380px) {
   .hero-platform-previews { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Shared finish: readable type, deliberate rhythm, and consistent interaction states. */
+body { line-height: 1.5; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+a, button, summary { touch-action: manipulation; }
+.button { font-size: .875rem; font-weight: 550; border-radius: var(--control-corner); }
+.button-outline:hover { border-color: #888; }
+.text-link { text-underline-offset: .3em; }
+.text-link:hover { text-decoration: underline; }
+.site-header nav > a:not(.nav-contact):hover { text-decoration: underline; text-underline-offset: .4em; }
+.site-header { background: #fff; }
+.hero-platform-project, .hero-project { transition: border-color .2s, box-shadow .2s; }
+.hero-platform-project:hover, .hero-project:hover { border-color: #aaa; box-shadow: 0 0 0 1px #777; }
+.hero-platform-project:focus-visible, .hero-project:focus-visible { outline-color: #fff; }
+.hero-platform-caption > span > span { line-height: 1.55; }
+.hero-capabilities { gap: 1rem; }
+.hero-capability { padding: 1rem .875rem; }
+.capability-strip { border-top: 0; }
+.services-section { padding: clamp(1.5rem, 3.5vw, 3.25rem); margin-top: clamp(2.5rem, 5vw, 4.5rem); }
+.services-heading h2 { font-size: clamp(2rem, 3.5vw, 3rem); font-weight: 650; }
+.service-item { padding: clamp(1.5rem, 2.25vw, 2rem); }
+.service-item p { font-size: .9375rem; line-height: 1.75; }
+.service-item h3 { font-weight: 650; }
+.service-icon { width: 2.5rem; height: 2.5rem; }
+.industry-services > a { background: #fff; padding: clamp(1.5rem, 2.5vw, 2.25rem); transition: background .2s, border-color .2s; }
+.industry-services > a > span:not(.eyebrow):not(.text-link) { color: var(--muted); line-height: 1.65; font-size: .9375rem; }
+.industry-services > a:hover { background: #fafafa; border-color: #999; }
+.work-section { padding-block: clamp(3.5rem, 6vw, 6rem); }
+.section-heading h2 { font-weight: 700; }
+.work-intro, .process-intro { font-size: 1rem; line-height: 1.75; }
+.section-count { white-space: nowrap; font-size: .6875rem; }
+.case-study, .supporting-card.has-gallery { padding-top: 2.5rem; }
+.case-header .project-title, .supporting-card .project-title { font-weight: 650; letter-spacing: -.045em; }
+.case-header .project-description { font-size: 1.0625rem; line-height: 1.7; margin-top: 1.125rem; }
+.case-highlights strong { font-size: .9375rem; }
+.case-highlights p { font-size: .875rem; line-height: 1.7; }
+.capability-tags .tag { font-size: .6875rem; }
+.gallery-disclosure > summary, .service-comparison > summary { min-height: 3.25rem; }
+.screen-caption, .archive-gallery .screen-caption, .supporting-gallery .screen-caption { font-size: .8125rem; line-height: 1.7; }
+.screen-choices button, .archive-gallery .screen-choices button, .supporting-gallery .screen-choices button { font-size: .75rem; }
+.screen-choices button:hover:not([aria-pressed="true"]) { background: #f4f4f4; border-color: #999; }
+.range-proof { padding-block: 2.5rem; margin-block: 4rem 1rem; border-top: 1px solid var(--line); }
+.range-proof-heading { max-width: 44rem; margin-bottom: 2rem; }
+.range-card { background: #fafafa; padding: clamp(1.5rem, 2.5vw, 2.25rem); }
+.range-project-links a, .range-store-link { min-height: 2.75rem; display: inline-flex; align-items: center; }
+.range-project-links a:hover, .range-store-link:hover { text-decoration: underline; }
+.range-apps { gap: .75rem; }
+.archive-heading { padding-block: 1.75rem; }
+.archive-heading:hover .archive-symbol { color: #fff; background: #111; border-color: #111; }
+.archive-update, .source-note { font-size: .8125rem; }
+.filter { min-height: 2.75rem; font-size: .8125rem; }
+.archive-controls { padding: .75rem; border: 1px solid var(--line); border-radius: .875rem; background: #fafafa; }
+.search-field { background: #fff; }
+.result-count { font-size: .6875rem; margin-block: 1.25rem; }
+.archive-card .archive-purpose { font-size: .9375rem; line-height: 1.7; }
+.archive-card .preview-context { font-size: .75rem; }
+.archive-card .project-links { gap: .75rem 1.25rem; }
+.process-section { padding-block: clamp(3rem, 5vw, 5rem); }
+.process-steps { gap: 1.25rem; }
+.process-steps li { background: #fafafa; border: 1px solid var(--line); border-radius: var(--corner); padding: 1.75rem; }
+.process-number { display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border: 1px solid var(--line); border-radius: .5rem; font-size: .75rem; }
+.process-steps h3 { font-size: 1.375rem; font-weight: 650; }
+.process-steps p { font-size: .9375rem; }
+.faq-section { padding-block: 1rem 4rem; }
+.faq-heading h2 { font-size: clamp(2rem, 3vw, 2.75rem); font-weight: 650; }
+.faq-item summary { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; list-style: none; padding-block: 1.5rem; font-size: 1rem; font-weight: 600; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: "+"; flex: none; font-size: 1.25rem; font-weight: 400; }
+.faq-item[open] summary::after { content: "−"; }
+.faq-item summary:hover { color: #555; }
+.faq-item p { max-width: 46rem; padding-right: 2rem; font-size: .9375rem; }
+.consultation-section { border-top: 1px solid var(--line); padding-block: clamp(3rem, 5vw, 5rem); }
+.consultation-panel { background: #111; border-color: #111; color: #fff; padding: clamp(1.5rem, 3vw, 2.5rem); }
+.consultation-panel .eyebrow, .consultation-panel .booking-steps .mono { color: #ccc; }
+.consultation-panel .booking-intro, .consultation-panel .booking-destination { color: #ccc; }
+.consultation-panel .booking-steps { border-color: #444; }
+.consultation-panel .button-dark { background: #fff; color: #111; border-color: #fff; }
+.consultation-panel .button-dark:hover { background: #e5e5e5; border-color: #e5e5e5; }
+.consultation-panel :focus-visible { outline-color: #fff; }
+.consultation-panel .booking-destination { font-size: .8125rem; }
+.site-footer { margin-top: 2rem; padding: clamp(2rem, 5vw, 4.5rem); }
+.footer-contact .contact-description { font-size: 1rem; }
+.footer-pages a, .copy-email { min-height: 2.75rem; }
+.footer-pages a:hover { text-decoration: underline; text-underline-offset: .3em; }
+.dialog-top { position: sticky; top: 0; background: #fff; z-index: 2; border-bottom: 1px solid var(--line); }
+.dialog-close { min-width: 2.75rem; min-height: 2.75rem; }
+.dialog-actions .dialog-story-link { flex-shrink: 0; }
+
+@media (min-width: 901px) {
+  html { scroll-padding-top: 8rem; }
+  .site-header:not(.page-header) { position: sticky; top: 0; z-index: 15; isolation: isolate; }
+  .site-header:not(.page-header)::before { content: ""; position: absolute; inset: 0; z-index: -1; background: #fff; box-shadow: 0 0 0 100vmax #fff; clip-path: inset(0 -100vmax); border-bottom: 1px solid var(--line); }
+}
+
+/* Collapse before the wordmark and navigation compete for space on tablets. */
+@media (max-width: 900px) {
+  .site-header:not(.page-header) { min-height: 5rem; }
+  .menu-toggle { display: flex; flex-direction: column; justify-content: center; gap: .5rem; width: 2.75rem; height: 2.75rem; padding: .75rem; border: 1px solid var(--line); border-radius: 50%; background: #fff; }
+  .menu-toggle span { width: 100%; height: 1px; background: var(--ink); transition: transform .2s; }
+  .menu-toggle[aria-expanded="true"] span:first-child { transform: translateY(.25rem) rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] span:last-child { transform: translateY(-.25rem) rotate(-45deg); }
+  .site-header:not(.page-header) nav { display: none; position: absolute; top: calc(100% - .25rem); left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; padding: .5rem; background: #fff; border: 1px solid var(--line); border-radius: .75rem; box-shadow: 0 1rem 2rem #0000001a; }
+  .site-header:not(.page-header) nav.is-open { display: flex; }
+  .site-header:not(.page-header) nav a { padding: .875rem; }
+  .site-header:not(.page-header) nav .nav-contact { justify-content: space-between; margin-top: .25rem; }
+  .section-heading { align-items: flex-start; }
+  .section-count { padding-top: .25rem; }
+}
+@media (max-width: 600px) {
+  .hero-capabilities { gap: .75rem; }
+  .hero-capability { padding: .875rem .625rem; }
+  .hero-capability > span > span { font-size: .6875rem; }
+  .intro-actions .button, .intro-actions .text-link { font-size: .875rem; }
+  .intro-actions { gap: .75rem 1.25rem; }
+  .intro h1 { font-size: clamp(2.125rem, 9.2vw, 3rem); }
+  .section-heading { flex-wrap: wrap; }
+  .section-count { font-size: .625rem; }
+  .case-study, .supporting-card.has-gallery { padding-top: 1.5rem; }
+  .case-header .project-description, .project-description { font-size: .9375rem; }
+  .case-highlights strong { font-size: .875rem; }
+  .case-highlights p { font-size: .8125rem; }
+  .services-section { padding: 1.25rem; }
+  .service-item { padding: 1.5rem; }
+  .archive-controls { padding: .5rem; align-items: stretch; }
+  .filter-group { gap: .125rem; }
+  .filter { padding-inline: .75rem; font-size: .75rem; }
+  .search-field { width: 100%; }
+  .range-proof { padding-top: 2rem; margin-top: 3rem; }
+  .process-steps li { padding: 1.5rem; }
+  .faq-item summary { font-size: .9375rem; padding-block: 1.25rem; }
+  .site-footer { padding-inline: 1.5rem; }
+  .contact-heading { font-size: clamp(2.5rem, 10vw, 3.5rem); }
+  .dialog-actions { align-items: stretch; }
+  .dialog-actions > .button { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-platform-project, .hero-project, .industry-services > a, .menu-toggle span { transition: none; }
+}

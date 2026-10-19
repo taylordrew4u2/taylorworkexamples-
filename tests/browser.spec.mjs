@@ -331,7 +331,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
   await expect(page.locator(".intro-description")).toHaveText(
-    "Work directly with the developer who designs, codes, and launches your project—from business websites and iPhone apps to web platforms, desktop software, and connected business workflows.",
+    "From your first idea to launch, work directly with the developer building your website, app, or software. One point of contact for the design, code, and systems behind it.",
   );
   await expect(page.locator(".intro-description")).toBeVisible();
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");
@@ -1088,6 +1088,10 @@ for (const project of projects) {
     await expect(dialog.locator(".dialog-summary")).toBeVisible();
     await expect(dialog.locator(".dialog-summary")).toHaveText(project.purpose);
     await expectProjectWorkflows(dialog, project);
+    const fullStory = dialog.getByRole("link", { name: "Full project story", exact: true });
+    await expect(fullStory).toHaveCount(1);
+    await expect(fullStory).toHaveAttribute("href", project.caseUrl);
+    expect(await fullStory.getAttribute("target"), "The full story continues in the same tab").toBeNull();
     const images = dialog.getByRole("region", { name: `Images from ${project.title}`, exact: true });
     await expect(images).toBeVisible();
     const group = images.getByRole("group", { name: `Project images from ${project.title}`, exact: true });
@@ -1126,6 +1130,12 @@ for (const project of projects) {
     await expect(dialog).toBeHidden();
     await expect(trigger).toBeFocused();
     expect(errors).toEqual([]);
+    // A client can move directly from the quick preview into the complete project page.
+    await trigger.click();
+    await fullStory.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new URL(project.caseUrl, test.info().project.use.baseURL || "http://127.0.0.1:4173").href);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
   });
 }
 
@@ -1226,6 +1236,60 @@ test("navigation opens, closes on selection, and handles Escape on phones", asyn
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   await expect(navigation).toBeHidden();
   await expect(menu).toBeFocused();
+});
+
+test("tablet navigation fits at 768px and closes on Escape, outside clicks, selection, and resizing", async ({ page }) => {
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto("/");
+  const menu = page.locator(".menu-toggle");
+  const navigation = page.locator("#main-nav");
+  const expectFits = async () => {
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      "The tablet page has no horizontal overflow").toBe(true);
+    expect(await page.locator(".site-header .wordmark, .menu-toggle, #main-nav a").evaluateAll((elements) =>
+      elements.filter((element) => element.getClientRects().length > 0).every((element) => {
+        const box = element.getBoundingClientRect();
+        return box.width > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
+      })), "Every visible tablet navigation control fits inside the screen").toBe(true);
+  };
+  await expect(menu).toBeVisible();
+  await expect(menu).toHaveAccessibleName("Open navigation");
+  await expect(navigation).toBeHidden();
+  await expectFits();
+  await menu.click();
+  await expect(menu).toHaveAttribute("aria-expanded", "true");
+  await expect(navigation).toBeVisible();
+  await expectFits();
+  await page.keyboard.press("Escape");
+  await expect(navigation).toBeHidden();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expect(menu).toBeFocused();
+
+  await menu.click();
+  await expect(navigation).toBeVisible();
+  // The main content's outer edge is outside the header and its expanded menu.
+  await page.locator("main").click({ position: { x: 4, y: 4 } });
+  await expect(navigation).toBeHidden();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+
+  await menu.click();
+  await navigation.getByRole("link", { name: "Projects", exact: true }).click();
+  await expect(page).toHaveURL(/#work$/);
+  await expect(navigation).toBeHidden();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expectFits();
+
+  await menu.click();
+  await expect(menu).toHaveAttribute("aria-expanded", "true");
+  await page.setViewportSize({ width: 1100, height: 900 });
+  await expect(menu).toBeHidden();
+  await expect(navigation).toBeVisible();
+  await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expectFits();
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await expect(menu).toBeVisible();
+  await expect(navigation).toBeHidden();
+  await expectFits();
 });
 
 test("project and service inquiry links prepare the correct email drafts", async ({

@@ -1,7 +1,7 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=46";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=46";
-import { trackContact } from "./analytics.js?v=46";
-import { renderRangeProof } from "./range-proof.js?v=46";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=47";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=47";
+import { trackContact } from "./analytics.js?v=47";
+import { renderRangeProof } from "./range-proof.js?v=47";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -110,6 +110,16 @@ document.addEventListener("click", (event) => {
   const technical = `<div class="technical-content"><div class="project-tags">${tags(project.stack)}</div><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>${sourceLink(project, "View source code", "text-link")}</div>`;
   $("#dialog-content").innerHTML =
     `<div class="project-identity dialog-identity">${projectIcon(project)}<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2></div><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
+  const storyLink = document.createElement("a");
+  storyLink.className = "button button-dark dialog-story-link";
+  storyLink.href = project.caseUrl;
+  storyLink.textContent = "Full project story";
+  const storyArrow = document.createElement("span");
+  storyArrow.setAttribute("aria-hidden", "true");
+  storyArrow.textContent = "↗";
+  storyLink.append(storyArrow);
+  $(".dialog-actions").prepend(storyLink);
+  $(".project-enquiry").classList.replace("button-dark", "button-outline");
   dialog.showModal();
   dialog.scrollTop = 0;
 });
@@ -173,7 +183,7 @@ document.addEventListener("keydown", (event) => {
     menuButton.focus();
   }
 });
-window.matchMedia("(min-width: 601px)").addEventListener("change", closeMenu);
+window.matchMedia("(min-width: 901px)").addEventListener("change", closeMenu);
 
 let copyReset;
 $("#copy-email").addEventListener("click", async () => {
