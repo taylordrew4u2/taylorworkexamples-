@@ -378,6 +378,18 @@ test("a business guide connects the idea to a service and the supplied consultat
   const arrange = page.locator(".page-intro .page-actions [data-booking-link]");
   await expect(arrange).toBeVisible();
   await expectBookingLink(arrange);
-  await expect(page.locator(".page-actions a[href^='mailto:']")).toHaveCount(0);
+  const generalEmail = page.locator(".page-actions a[href^='mailto:']");
+  await expect(generalEmail).toHaveCount(1);
+  await expect(generalEmail).toContainText("admin@customtechbuilt4u.com");
+  const emailDestination = new URL(await generalEmail.getAttribute("href"));
+  expect(emailDestination.protocol).toBe("mailto:");
+  expect(emailDestination.pathname).toBe("admin@customtechbuilt4u.com");
+  expect(emailDestination.searchParams.get("subject") || "").not.toMatch(/consultation|Zoom|in.person/i);
+  expect(emailDestination.searchParams.get("body") || "").not.toMatch(/Consultation format|Preferred (?:times|days)/i);
+  await expect(generalEmail).not.toHaveAttribute("data-booking-link", "");
+  for (const booking of await page.locator("[data-booking-link]").all()) {
+    await expectBookingLink(booking);
+  }
+  await expect(page.locator("#consultation-form, [data-consultation-format]")).toHaveCount(0);
   await expectPageFit(page);
 });
