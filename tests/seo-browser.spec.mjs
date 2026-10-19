@@ -304,7 +304,8 @@ for (const project of projects) {
     for (const target of ["overview", "project-views", "development"]) {
       const link = navigation.locator(`a[href="#${target}"]`);
       await expect(link).toBeVisible();
-      await link.click();
+      await link.focus();
+      await page.keyboard.press("Enter");
       await expect(page).toHaveURL(new RegExp(`#${target}$`));
       await expect(page.locator(`#${target}`)).toBeVisible();
     }
@@ -405,7 +406,9 @@ test("the comparison guide, business information, and contact remain usable with
 test("the later kickoff checklist is reachable from the process and prepares an attributed email without JavaScript", async ({ page }) => {
   await page.goto("/");
   const kickoff = page.locator("#process").getByRole("link", { name: "Fill out the project kickoff form", exact: false });
-  await kickoff.click();
+  // Native keyboard activation does not wait on pointer stability during smooth scrolling.
+  await kickoff.focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
   await expect(page.locator("main")).toContainText("You don’t need this worked out before getting in touch.");
   for (const heading of ["1. Agree the first useful version.", "2. Know who makes the decisions.", "3. Plan the assets, access, and handover."])
