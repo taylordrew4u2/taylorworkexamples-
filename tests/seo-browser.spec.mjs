@@ -97,8 +97,11 @@ async function expectOriginalImage(image, frame) {
   expect(geometry.width).toBeGreaterThan(0);
   expect(geometry.height).toBeGreaterThan(0);
   const originalRatio = frame.width / frame.height;
-  expect(Math.abs(geometry.width / geometry.height - originalRatio) / originalRatio,
-    "Responsive delivery preserves the original proportions").toBeLessThanOrEqual(0.01);
+  // Responsive natural dimensions are density-corrected integer CSS pixels.
+  // Allow one pixel of rounding per axis; encoded proportions are checked in Node.
+  expect(Math.abs(geometry.width - geometry.height * originalRatio),
+    "Responsive intrinsic dimensions preserve proportions within per-axis pixel rounding")
+    .toBeLessThanOrEqual(1 + originalRatio);
   if (geometry.candidates.length) {
     expect(geometry.sizes.trim()).not.toBe("");
     expect(geometry.candidates).toContain(geometry.current);

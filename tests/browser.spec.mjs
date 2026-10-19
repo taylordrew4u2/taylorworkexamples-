@@ -26,8 +26,12 @@ async function expectResponsiveImageSource(image, expected) {
   expect(source.width).toBeGreaterThan(0);
   expect(source.height).toBeGreaterThan(0);
   const originalRatio = expected.width / expected.height;
-  expect(Math.abs(source.width / source.height - originalRatio) / originalRatio,
-    "Responsive delivery preserves the original image proportions").toBeLessThanOrEqual(0.01);
+  // Width-descriptor candidates expose density-corrected integer CSS dimensions.
+  // One pixel of rounding per axis can exceed 1% on a narrow companion image.
+  // Encoded candidate dimensions and proportions are checked separately in Node.
+  expect(Math.abs(source.width - source.height * originalRatio),
+    "Responsive intrinsic dimensions preserve proportions within per-axis pixel rounding")
+    .toBeLessThanOrEqual(1 + originalRatio);
   if (source.candidates.length) {
     expect(source.sizes.trim(), "Responsive images declare their displayed size").not.toBe("");
     expect(source.candidates, "The browser loads an advertised image candidate").toContain(source.current);
