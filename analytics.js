@@ -1,5 +1,5 @@
-import { bookingURL } from "./booking.js?v=44";
-import { getContactPage, normalizeSource, sourceURL } from "./contact-context.js?v=44";
+import { bookingURL } from "./booking.js?v=45";
+import { getContactPage, normalizeSource, sourceURL } from "./contact-context.js?v=45";
 
 const controllers = new WeakMap();
 const eventName = "Contact intent";

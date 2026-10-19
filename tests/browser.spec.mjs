@@ -66,7 +66,7 @@ async function openSelectedGallery(card) {
 async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
   await openSelectedGallery(card);
   const screen = card.locator(screenSelector);
-  const productCover = screenSelector !== ".archive-preview" && frame.portrait !== true &&
+  const productCover = frame.portrait !== true &&
     !frame.companion && !frame.workflow && frame.width > frame.height &&
     /product-artwork$/.test(frame.sourceKind || "");
   expect(await screen.evaluate((element) => element.classList.contains("product-cover")),
@@ -92,6 +92,10 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
   }
   await expect(card.locator(".screen-caption")).toHaveText(frame.caption);
   if (screenSelector === ".archive-preview") {
+    expect(await screen.evaluate((element) => element.classList.contains("source-overview")),
+      `${project.title}: source diagrams keep their own layout when selected`).toBe(
+      (frame.imageKind || project.imageKind) === "project-overview",
+    );
     const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
     await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel);
     await expect(card.locator(".preview-context")).toHaveText(suppliedArtwork

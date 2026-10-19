@@ -2824,14 +2824,16 @@ dialog::backdrop {
 }
 
 /* Product artwork is already a complete composition. Let it fill its own frame. */
-#featured-projects .project-visual.product-cover {
+#featured-projects .project-visual.product-cover,
+.archive-card .archive-preview.product-cover {
   height: auto;
   aspect-ratio: var(--product-cover-ratio, 16 / 9);
   padding: 0;
   gap: 0;
   border-radius: 0;
 }
-#featured-projects .project-visual.product-cover .primary-screen {
+#featured-projects .project-visual.product-cover .primary-screen,
+.archive-card .archive-preview.product-cover .primary-screen {
   display: block;
   width: 100%;
   height: auto;
@@ -2842,7 +2844,9 @@ dialog::backdrop {
   box-shadow: none;
 }
 #featured-projects .product-cover .visual-badge,
-#featured-projects .product-cover .preview-arrow { display: none; }
+#featured-projects .product-cover .preview-arrow,
+.archive-card .product-cover .visual-badge,
+.archive-card .product-cover .preview-arrow { display: none; }
 
 @media (max-width: 380px) {
   .hero-platform-previews { grid-template-columns: minmax(0, 1fr); }

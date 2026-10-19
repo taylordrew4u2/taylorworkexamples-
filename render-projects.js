@@ -1,6 +1,6 @@
-import { bookingURL } from "./booking.js?v=44";
-import { email } from "./public-projects.js?v=44";
-import { addInquirySource } from "./contact-context.js?v=44";
+import { bookingURL } from "./booking.js?v=45";
+import { email } from "./public-projects.js?v=45";
+import { addInquirySource } from "./contact-context.js?v=45";
 
 export const escape = (value) =>
   String(value).replace(
@@ -135,7 +135,7 @@ function supportingCard(project, index) {
 
 function archiveCard(project) {
   const frame = project.gallery[0];
-  return `<article class="archive-card" data-showcase-id="${escape(project.id)}"><div class="archive-intro">${projectHeading(project)}<p class="archive-purpose">${escape(project.purpose)}</p></div><button class="archive-preview project-visual ${escape(project.tone)} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${project.imageKind === "project-overview" ? "source-overview" : ""}" data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "archive-gallery")}<div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel)}</span></div><p class="preview-context">${escape(project.previewContext)}</p>${projectWorkflows(project)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Details", "case-link")}${sourceLink(project)}${caseLink(project)}</div></article>`;
+  return `<article class="archive-card" data-showcase-id="${escape(project.id)}"><div class="archive-intro">${projectHeading(project)}<p class="archive-purpose">${escape(project.purpose)}</p></div><button class="archive-preview project-visual ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${(frame.imageKind || project.imageKind) === "project-overview" ? "source-overview" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="View images and details for ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "archive-gallery")}<div class="archive-description"><div class="project-meta"><span class="mono project-category">${labels[project.category]}</span><span class="image-kind">${escape(project.imageLabel)}</span></div><p class="preview-context">${escape(project.previewContext)}</p>${projectWorkflows(project)}</div><div class="project-links">${liveLink(project)}${detailsButton(project, "Details", "case-link")}${sourceLink(project)}${caseLink(project)}</div></article>`;
 }
 
 export function dialogVisual(project, index = 0) {

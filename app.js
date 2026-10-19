@@ -1,7 +1,7 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=44";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=44";
-import { trackContact } from "./analytics.js?v=44";
-import { renderRangeProof } from "./range-proof.js?v=44";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=45";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=45";
+import { trackContact } from "./analytics.js?v=45";
+import { renderRangeProof } from "./range-proof.js?v=45";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -26,7 +26,7 @@ function changeShowcaseImage(event) {
     button.setAttribute("aria-pressed", String(button === choice));
   });
   const screen = story.querySelector(".case-screen, .supporting-screen, .archive-preview");
-  const productCover = !story.classList.contains("archive-card") && isProductCover(frame);
+  const productCover = isProductCover(frame);
   screen.classList.toggle("portrait", frame.portrait === true);
   screen.classList.toggle("product-cover", productCover);
   if (productCover) {
@@ -35,6 +35,9 @@ function changeShowcaseImage(event) {
     screen.style.removeProperty("--product-cover-ratio");
   }
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
+  if (story.classList.contains("archive-card")) {
+    screen.classList.toggle("source-overview", (frame.imageKind || project.imageKind) === "project-overview");
+  }
   screen.innerHTML = `<span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;
   story.querySelector(".showcase-original").href = frame.image;
