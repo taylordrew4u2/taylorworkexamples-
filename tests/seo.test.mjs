@@ -1,10 +1,12 @@
 import test, { before } from "node:test";
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { promisify } from "node:util";
 import { readFile, readdir, stat } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
+import sharp from "sharp";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
@@ -430,7 +432,7 @@ test("project stories explain the original workflows and preserve real developme
       `${project.title}: the dedicated project layout is present`);
     const clientScripts = tags(html, "script").filter((tag) => tag.src);
     assert.equal(clientScripts.length, 1, `${project.title}: only the contact-tracking module is loaded`);
-    assert.equal(pathname(clientScripts[0].src, route), "/analytics.js");
+    assert.match(pathname(clientScripts[0].src, route), /^\/static\/[a-f0-9]{16}\/analytics\.js$/);
     assert.equal(clientScripts[0].type, "module");
     const visible = text(html);
     assert.ok(visible.includes(project.clientSummary || project.summary), `${project.title}: plain-language summary`);
@@ -573,6 +575,136 @@ test("case pages expose every original gallery image, caption, and full-size lin
         assert.deepEqual(await readFile(await localFile(tag.src, route)), await readFile(path.join(root, image.image)),
           `${image.image}: the deployed original is unchanged`);
       }
+    }
+  }
+});
+
+test("responsive project images are real, proportionate WebP files with intact full-size originals", async () => {
+  const { imageVariants } = await import(pathToFileURL(path.join(output, "image-variants.js")).href);
+  assert.ok(Object.keys(imageVariants).length > 0, "the production build produces responsive images");
+  for (const project of projects) {
+    assert.ok(imageVariants[project.image]?.length, `${project.title}: its main image has optimized display sizes`);
+  }
+  const encodedFiles = new Set();
+  for (const [source, variants] of Object.entries(imageVariants)) {
+    assert.match(source, /^\.\/assets\//);
+    assert.ok(Array.isArray(variants) && variants.length > 0, `${source}: candidates are available`);
+    const original = await readFile(path.join(root, source));
+    assert.deepEqual(await readFile(path.join(output, source)), original, `${source}: the full-size master stays unchanged`);
+    assert.ok(variants.some((variant) => variant.bytes < original.length),
+      `${source}: responsive delivery offers a genuinely smaller display file`);
+    const metadata = await sharp(original).metadata();
+    let previousWidth = 0;
+    for (const variant of variants) {
+      assert.match(variant.src, /^\.\/assets\/optimized\/.+\.webp$/);
+      assert.match(path.basename(variant.src), /[a-f0-9]{16}/, `${source}: optimized URLs contain a content fingerprint`);
+      assert.ok(Number.isInteger(variant.width) && variant.width > previousWidth,
+        `${source}: candidates have unique increasing pixel widths`);
+      assert.ok(variant.width <= metadata.width, `${source}: display variants never upscale the original`);
+      assert.ok(Number.isInteger(variant.height) && variant.height > 0);
+      const originalRatio = metadata.width / metadata.height;
+      assert.ok(Math.abs(variant.width / variant.height - originalRatio) / originalRatio <= 0.01,
+        `${source}: resizing preserves the original proportions`);
+      const bytes = await readFile(path.join(output, variant.src));
+      assert.equal(bytes.length, variant.bytes, `${variant.src}: advertised byte count matches the encoded file`);
+      const fingerprint = createHash("sha256").update(bytes).digest("hex").slice(0, 16);
+      assert.ok(path.basename(variant.src).endsWith(`-${fingerprint}-${variant.width}.webp`),
+        `${variant.src}: changing encoded image bytes changes the cache URL`);
+      const encoded = await sharp(bytes).metadata();
+      assert.equal(encoded.format, "webp");
+      assert.equal(encoded.width, variant.width);
+      assert.equal(encoded.height, variant.height);
+      encodedFiles.add(path.resolve(output, variant.src));
+      previousWidth = variant.width;
+    }
+  }
+  const deployedVariants = await filesUnder(path.join(output, "assets/optimized"));
+  assert.deepEqual(new Set(deployedVariants.map((file) => path.resolve(file))), encodedFiles,
+    "every packaged responsive file belongs to the current public image manifest");
+
+  for (const [route, html] of documents) {
+    for (const image of tags(html, "img")) {
+      if (!image.src || !sameSite(image.src, route)) continue;
+      const key = `.${pathname(image.src, route)}`;
+      const variants = imageVariants[key];
+      if (!variants) continue;
+      assert.ok(image.sizes?.trim(), `${route}: ${key} declares its displayed size without JavaScript`);
+      const candidates = (image.srcset || "").split(",").map((candidate) => {
+        const match = candidate.trim().match(/^(\S+)\s+(\d+)w$/);
+        assert.ok(match, `${route}: ${key} has valid width-based responsive candidates`);
+        const [, url, width] = match;
+        const github = new URL(url, `https://example.invalid${githubPrefix}${route}`);
+        assert.ok(github.pathname.startsWith(`${githubPrefix}/assets/optimized/`),
+          `${route}: responsive URLs retain the GitHub Pages subfolder`);
+        return { src: `.${pathname(url, route)}`, width: Number(width) };
+      });
+      assert.deepEqual(candidates, variants.map(({ src, width }) => ({ src, width })),
+        `${route}: ${key} offers the actual generated image candidates`);
+    }
+  }
+});
+
+test("immutable caching applies only to content-versioned assets and keeps one complete module graph", async () => {
+  const configuration = JSON.parse(await readFile(path.join(root, "vercel.json"), "utf8"));
+  const cacheRules = (configuration.headers || []).flatMap((rule) => rule.headers
+    .filter((header) => header.key.toLowerCase() === "cache-control")
+    .map((header) => ({ source: rule.source, value: header.value })));
+  assert.deepEqual(new Set(cacheRules.map(({ source }) => source)),
+    new Set(["/static/(.*)", "/assets/optimized/(.*)"]),
+    "only versioned modules, styles, and optimized image URLs receive a long browser cache");
+  for (const rule of cacheRules) {
+    assert.match(rule.value, /(?:^|,)\s*public\s*(?:,|$)/);
+    assert.match(rule.value, /(?:^|,)\s*max-age=31536000\s*(?:,|$)/);
+    assert.match(rule.value, /(?:^|,)\s*immutable\s*(?:,|$)/);
+  }
+  for (const route of [...routes, "/404.html"]) {
+    assert.ok(!route.startsWith("/static/") && !route.startsWith("/assets/optimized/"),
+      `${route}: HTML remains outside the immutable cache rules`);
+  }
+
+  const versions = await readdir(path.join(output, "static"));
+  assert.equal(versions.length, 1, "the build emits one current asset graph");
+  const [version] = versions;
+  assert.match(version, /^[a-f0-9]{16}$/);
+  const directory = path.join(output, "static", version);
+  const names = (await readdir(directory)).sort();
+  assert.ok(names.includes("app.js") && names.includes("analytics.js") && names.includes("styles.css") &&
+    names.includes("image-variants.js"), "the graph includes entries, styles, and the generated image map");
+  const digest = createHash("sha256");
+  const moduleURLs = new Map();
+  const rememberModule = (url) => {
+    const name = path.posix.basename(url.pathname);
+    if (moduleURLs.has(name)) assert.equal(url.href, moduleURLs.get(name),
+      `${name}: page scripts and imports resolve to the same module instance`);
+    moduleURLs.set(name, url.href);
+  };
+  for (const name of names) {
+    const content = await readFile(path.join(directory, name));
+    assert.deepEqual(content, await readFile(path.join(output, name)),
+      `${name}: the versioned file matches the freshly generated compatibility copy`);
+    digest.update(name).update("\0").update(content).update("\0");
+    if (!name.endsWith(".js")) continue;
+    const importer = `${origin}/static/${version}/${name}`;
+    for (const [, reference] of content.toString("utf8").matchAll(/^\s*import\s+[^;\n]*?\bfrom\s+["']([^"']+)["']/gm)) {
+      assert.ok(reference.startsWith("./"), `${name}: module imports stay relative to their versioned graph`);
+      const target = new URL(reference, importer);
+      assert.equal(path.posix.dirname(target.pathname), `/static/${version}`,
+        `${name}: imported modules cannot fall back to stale unversioned URLs`);
+      assert.ok(names.includes(path.posix.basename(target.pathname)), `${name}: ${reference} is packaged`);
+      rememberModule(target);
+    }
+  }
+  assert.equal(digest.digest("hex").slice(0, 16), version,
+    "every changed module or stylesheet changes the shared immutable asset URL");
+  for (const [route, html] of documents) {
+    for (const tag of [...tags(html, "script"), ...tags(html, "link")]) {
+      const reference = tag.src || tag.href;
+      if (!reference || !sameSite(reference, route)) continue;
+      const url = new URL(reference, `${origin}${route}`);
+      if (!/\.(?:js|css)$/.test(url.pathname)) continue;
+      assert.equal(path.posix.dirname(url.pathname), `/static/${version}`,
+        `${route}: browser entry points use the current content version`);
+      if (url.pathname.endsWith(".js")) rememberModule(url);
     }
   }
 });

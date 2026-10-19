@@ -20,6 +20,7 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run build && npm run preview",
+    timeout: 180_000, // A clean build also encodes the lossless responsive artwork.
     url: "http://127.0.0.1:4173",
     env: { PORT: "4173" },
     reuseExistingServer: false,

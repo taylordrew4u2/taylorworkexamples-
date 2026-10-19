@@ -14,6 +14,30 @@ const removedProjectIds = [
   "Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness",
 ];
 
+async function expectResponsiveImageSource(image, expected) {
+  const source = await image.evaluate((element) => ({
+    width: element.naturalWidth,
+    height: element.naturalHeight,
+    current: element.currentSrc,
+    candidates: element.srcset.split(",").filter(Boolean).map((candidate) =>
+      new URL(candidate.trim().split(/\s+/)[0], document.baseURI).href),
+    sizes: element.sizes,
+  }));
+  expect(source.width).toBeGreaterThan(0);
+  expect(source.height).toBeGreaterThan(0);
+  const originalRatio = expected.width / expected.height;
+  expect(Math.abs(source.width / source.height - originalRatio) / originalRatio,
+    "Responsive delivery preserves the original image proportions").toBeLessThanOrEqual(0.01);
+  if (source.candidates.length) {
+    expect(source.sizes.trim(), "Responsive images declare their displayed size").not.toBe("");
+    expect(source.candidates, "The browser loads an advertised image candidate").toContain(source.current);
+    expect(new URL(source.current).pathname).toMatch(/\/assets\/optimized\//);
+  } else {
+    expect(source.width).toBe(expected.width);
+    expect(source.height).toBe(expected.height);
+  }
+}
+
 async function expectLoadedImageToFit(image, expected) {
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((element) =>
@@ -43,8 +67,7 @@ async function expectLoadedImageToFit(image, expected) {
         imageBox.bottom <= frameBox.bottom + 1,
     };
   });
-  expect(geometry.naturalWidth).toBe(expected.width);
-  expect(geometry.naturalHeight).toBe(expected.height);
+  await expectResponsiveImageSource(image, expected);
   expect(geometry.fit).toBe("contain");
   expect(geometry.frameFilter, "The preview preserves the source image colors").toBe("none");
   expect(geometry.width).toBeGreaterThan(0);
@@ -218,6 +241,8 @@ async function expectHeroPreview(page) {
     await expect(image).toHaveAttribute("alt", project.imageAlt);
     await expect(image).toHaveAttribute("width", "1920");
     await expect(image).toHaveAttribute("height", "1080");
+    await expect(image).toHaveAttribute("srcset", /\S/);
+    await expect(image).toHaveAttribute("sizes", /\S/);
     await expect(image).toHaveCSS("object-fit", "contain");
     await expect(image).toHaveCSS("filter", "none");
     await expect(image).toHaveCSS("mix-blend-mode", "normal");
@@ -240,8 +265,7 @@ async function expectHeroPreview(page) {
           document.documentElement.scrollWidth <= window.innerWidth,
       };
     });
-    expect(geometry.naturalWidth).toBe(1920);
-    expect(geometry.naturalHeight).toBe(1080);
+    await expectResponsiveImageSource(image, { width: 1920, height: 1080 });
     expect(geometry.aspectError, `${project.title}: the banner keeps its original upright proportions`).toBeLessThanOrEqual(1);
     expect(geometry.wholeScreenInside, `${project.title}: the complete banner fits its control`).toBe(true);
     expect(geometry.fitsViewport, `${project.title}: the banner fits the viewport`).toBe(true);
@@ -265,6 +289,8 @@ async function expectHeroPreview(page) {
     await expect(image).toHaveAttribute("alt", imageDescription);
     await expect(image).toHaveAttribute("width", String(frame.width));
     await expect(image).toHaveAttribute("height", String(frame.height));
+    await expect(image).toHaveAttribute("srcset", /\S/);
+    await expect(image).toHaveAttribute("sizes", /\S/);
     await expect(image).toHaveCSS("object-fit", "contain");
     await expect(image).toHaveCSS("filter", "none");
     await expect(image).toHaveCSS("mix-blend-mode", "normal");
@@ -294,8 +320,7 @@ async function expectHeroPreview(page) {
         fitsViewport: box.left >= -1 && box.right <= window.innerWidth + 1,
       };
     });
-    expect(geometry.naturalWidth).toBe(frame.width);
-    expect(geometry.naturalHeight).toBe(frame.height);
+    await expectResponsiveImageSource(image, frame);
     expect(geometry.completeInside, `${project.title}: the complete original fits its card`).toBe(true);
     expect(geometry.captionBelow, `${project.title}: its caption sits below the image without an overlay`).toBe(true);
     expect(geometry.fitsViewport, `${project.title}: its preview fits the viewport`).toBe(true);

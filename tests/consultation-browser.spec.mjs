@@ -52,14 +52,16 @@ test("homepage consultation actions open the supplied booking page and explain t
   const panel = page.locator("#consultation .consultation-panel");
   await expect(panel).toBeVisible();
   await expect(panel).toContainText(/Zoom/);
+  await expect(panel).toContainText(/No account needed/);
+  await expect(page.locator(".hero-consultation-note")).toContainText(/six steps, then choose a time/);
   await expect(page.locator("#consultation")).toContainText(/in-person/i);
   await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
   await expect(page.locator(".consultation-how")).toContainText(/unsure what you need/i);
   await expect(page.locator("#consultation")).toContainText(/Manhattan, Brooklyn, and parts of Queens/);
   await expect(panel.locator(".booking-steps li > span:last-child")).toHaveText([
-    "Share a little about your business and project.",
-    "Choose an available time on BriefBooth.",
-    "Meet on Zoom to discuss the next step.",
+    "Complete the six-step intake about your business and project.",
+    "Then choose an available time for your first Zoom consultation.",
+    "Meet to work out what to build and where to start.",
   ]);
   await expect(panel.locator(".booking-destination")).toContainText(/BriefBooth.*new tab/i);
   const booking = panel.locator(".booking-primary");
@@ -78,6 +80,8 @@ test("consultation booking works directly from the homepage without JavaScript",
     await expectBookingLink(hero);
     await expectBookingLink(page.locator("#consultation .booking-primary"));
     await expect(page.locator("#consultation")).toContainText(/Zoom/);
+    await expect(page.locator("#consultation")).toContainText(/six-step intake/);
+    await expect(page.locator("#consultation")).toContainText(/No account needed/);
     await expect(page.locator("#consultation")).toContainText(/in-person/i);
     await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
     await expect(page.locator("#consultation form, #consultation-email, [data-consultation-format]")).toHaveCount(0);

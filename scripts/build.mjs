@@ -4,6 +4,8 @@ import path from "node:path";
 import { email, projects, featuredProjects, filterProjects } from "../public-projects.js";
 import { generateSEO } from "./seo.mjs";
 import { contactPages } from "../contact-pages.js";
+import { optimizeImages } from "./optimize-images.mjs";
+import { responsiveHTML, fingerprintAssets } from "./cache-assets.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -20,6 +22,8 @@ for (const name of [
   "contact-context.js",
   "render-projects.js",
   "range-proof.js",
+  "responsive-images.js",
+  "image-variants.js",
   ".nojekyll",
 ]) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
@@ -48,4 +52,16 @@ for (const asset of assets) {
   await mkdir(path.dirname(destination), { recursive: true });
   await cp(path.join(root, asset), destination);
 }
-console.log(`4u Digital built in dist/: ${pages.length} indexable pages, ${projects.length} public projects.`);
+const imageVariants = await optimizeImages({ root, output, assets });
+await writeFile(path.join(output, "image-variants.js"), `export const imageVariants = ${JSON.stringify(imageVariants)};\n`);
+const routes = [...pages.map((page) => page.path), "/404.html"];
+for (const route of routes) {
+  const file = path.join(output, route.replace(/^\//, ""), route.endsWith("/") ? "index.html" : "");
+  await writeFile(file, responsiveHTML(await readFile(file, "utf8"), route, imageVariants));
+}
+const version = await fingerprintAssets({ output, routes, names: [
+  "styles.css", "seo.css", "app.js", "booking.js", "kickoff-form.js", "analytics.js",
+  "contact-context.js", "contact-pages.js", "render-projects.js", "range-proof.js",
+  "public-projects.js", "responsive-images.js", "image-variants.js",
+] });
+console.log(`4u Digital built in dist/: ${pages.length} indexable pages, ${projects.length} public projects, ${Object.keys(imageVariants).length} responsive images. Static version: ${version}.`);

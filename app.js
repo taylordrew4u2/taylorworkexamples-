@@ -1,7 +1,8 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=47";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=47";
-import { trackContact } from "./analytics.js?v=47";
-import { renderRangeProof } from "./range-proof.js?v=47";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=48";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=48";
+import { dialogSizes } from "./responsive-images.js?v=48";
+import { trackContact } from "./analytics.js?v=48";
+import { renderRangeProof } from "./range-proof.js?v=48";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -135,7 +136,7 @@ $("#dialog-content").addEventListener("click", (event) => {
   const preview = area.querySelector(".dialog-preview");
   preview.classList.toggle("portrait", frame.portrait === true);
   preview.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
-  preview.innerHTML = previewImages(frame);
+  preview.innerHTML = previewImages(frame, dialogSizes);
   area.querySelector(".dialog-image-caption").textContent = frame.caption;
   area.querySelector(".image-original").href = frame.image;
 });

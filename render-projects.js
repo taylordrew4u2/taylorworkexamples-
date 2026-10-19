@@ -1,6 +1,7 @@
-import { bookingURL } from "./booking.js?v=47";
-import { email } from "./public-projects.js?v=47";
-import { addInquirySource } from "./contact-context.js?v=47";
+import { bookingURL } from "./booking.js?v=48";
+import { email } from "./public-projects.js?v=48";
+import { addInquirySource } from "./contact-context.js?v=48";
+import { responsiveAttributes, gallerySizes, dialogSizes } from "./responsive-images.js?v=48";
 
 export const escape = (value) =>
   String(value).replace(
@@ -77,11 +78,11 @@ export function projectWorkflows(project) {
   return `<ul class="project-workflows" aria-label="What ${escape(project.title)} does">${project.workflows.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>`;
 }
 
-export function previewImages(frame) {
+export function previewImages(frame, sizes = gallerySizes) {
   const workflow = frame.workflow
     ? `<span class="screen-workflow"><span class="workflow-label">Import workflow</span><span class="workflow-steps" role="list">${frame.workflow.map((step) => `<span class="workflow-step" role="listitem">${escape(step)}</span>`).join("")}</span><span class="workflow-source">From the current source</span></span>`
     : "";
-  return `<img class="primary-screen" src="${escape(frame.image)}" alt="${escape(frame.imageAlt)}" width="${frame.width || (frame.portrait ? 600 : 1280)}" height="${frame.height || (frame.portrait ? 1299 : 800)}" loading="lazy" decoding="async">${frame.companion ? `<img class="companion-screen" src="${escape(frame.companion.image)}" alt="${escape(frame.companion.imageAlt)}" width="${frame.companion.width || 600}" height="${frame.companion.height || 1299}" loading="lazy" decoding="async">` : ""}${workflow}`;
+  return `<img class="primary-screen" src="${escape(frame.image)}" alt="${escape(frame.imageAlt)}" width="${frame.width || (frame.portrait ? 600 : 1280)}" height="${frame.height || (frame.portrait ? 1299 : 800)}" loading="lazy" decoding="async"${responsiveAttributes(frame.image, sizes)}>${frame.companion ? `<img class="companion-screen" src="${escape(frame.companion.image)}" alt="${escape(frame.companion.imageAlt)}" width="${frame.companion.width || 600}" height="${frame.companion.height || 1299}" loading="lazy" decoding="async"${responsiveAttributes(frame.companion.image, sizes)}>` : ""}${workflow}`;
 }
 
 export const isProductCover = (frame) => frame.portrait !== true && !frame.companion && !frame.workflow &&
@@ -142,7 +143,7 @@ export function dialogVisual(project, index = 0) {
   const views = project.gallery || [{ image: project.image, imageAlt: project.imageAlt, width: project.imageWidth, height: project.imageHeight, portrait: project.portrait, caption: project.imageCaption || project.imageAlt, label: "Overview" }];
   const frame = views[index];
   if (!frame?.image) return "";
-  return `<section class="dialog-images" data-visual-project="${escape(project.id)}" aria-label="Images from ${escape(project.title)}"><div class="dialog-preview ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${escape(project.tone)}">${previewImages(frame)}</div>${views.length > 1 ? `<div class="screen-choices dialog-screen-choices" role="group" aria-label="Project images from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-dialog-screen="${viewIndex}" aria-pressed="${index === viewIndex}">${escape(view.label)}</button>`).join("")}</div>` : ""}<p class="dialog-image-caption" aria-live="polite">${escape(frame.caption || project.imageCaption || "")}</p><a class="image-original text-link" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a></section>`;
+  return `<section class="dialog-images" data-visual-project="${escape(project.id)}" aria-label="Images from ${escape(project.title)}"><div class="dialog-preview ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""} ${escape(project.tone)}">${previewImages(frame, dialogSizes)}</div>${views.length > 1 ? `<div class="screen-choices dialog-screen-choices" role="group" aria-label="Project images from ${escape(project.title)}">${views.map((view, viewIndex) => `<button type="button" data-dialog-screen="${viewIndex}" aria-pressed="${index === viewIndex}">${escape(view.label)}</button>`).join("")}</div>` : ""}<p class="dialog-image-caption" aria-live="polite">${escape(frame.caption || project.imageCaption || "")}</p><a class="image-original text-link" href="${escape(frame.image)}" ${external}>Open full-size image <span aria-hidden="true">↗</span></a></section>`;
 }
 
 

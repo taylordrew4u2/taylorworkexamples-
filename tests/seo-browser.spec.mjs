@@ -85,13 +85,28 @@ async function expectOriginalImage(image, frame) {
     return {
       source: new URL(element.getAttribute("src"), location.href).pathname,
       width: element.naturalWidth, height: element.naturalHeight,
+      current: element.currentSrc,
+      candidates: element.srcset.split(",").filter(Boolean).map((candidate) =>
+        new URL(candidate.trim().split(/\s+/)[0], document.baseURI).href),
+      sizes: element.sizes,
       fits: box.width > 0 && box.height > 0 && box.left >= figure.left - 1 && box.right <= figure.right + 1 &&
         box.top >= figure.top - 1 && box.bottom <= figure.bottom + 1,
     };
   });
   expect(geometry.source).toBe(`/${frame.image.replace(/^\.\//, "")}`);
-  expect(geometry.width).toBe(frame.width);
-  expect(geometry.height).toBe(frame.height);
+  expect(geometry.width).toBeGreaterThan(0);
+  expect(geometry.height).toBeGreaterThan(0);
+  const originalRatio = frame.width / frame.height;
+  expect(Math.abs(geometry.width / geometry.height - originalRatio) / originalRatio,
+    "Responsive delivery preserves the original proportions").toBeLessThanOrEqual(0.01);
+  if (geometry.candidates.length) {
+    expect(geometry.sizes.trim()).not.toBe("");
+    expect(geometry.candidates).toContain(geometry.current);
+    expect(new URL(geometry.current).pathname).toMatch(/\/assets\/optimized\//);
+  } else {
+    expect(geometry.width).toBe(frame.width);
+    expect(geometry.height).toBe(frame.height);
+  }
   expect(geometry.fits, "The full original remains inside its figure").toBe(true);
 }
 
