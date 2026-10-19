@@ -8,4 +8,4 @@ Encoded image bytes determine their filenames. The complete browser module graph
 
 The ignored `.image-cache/` folder reuses local encodes. Its key includes the original image bytes, encoder versions, and encoding settings. Removing it only makes the next build regenerate the display copies.
 
-Consultation links still open exactly `https://briefbooth.com/book/4u-digital`. The homepage and consultation callouts now explain that the six-step project intake comes before choosing an available time, no account is needed, and the first consultation is on Zoom. NYC visits can be arranged to understand an uncertain brief, physical space, or workflow. This change does not submit a booking or alter the BriefBooth application.
+Consultation links open exactly `https://briefbooth.com/book/4u-digital`. All booking, intake, scheduling, and confirmation stay on BriefBooth. The portfolio provides direct outbound links and basic Zoom/NYC service information, with no booking form or booking-steps walkthrough. General project email remains available. This does not submit a booking or alter the BriefBooth application.

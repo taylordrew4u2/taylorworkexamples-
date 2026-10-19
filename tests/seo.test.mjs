@@ -76,10 +76,10 @@ before(async () => {
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 8);
+  assert.equal(projects.length, 9);
   assert.equal(articles.length, 6);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 30);
+  assert.equal(routes.length, 31);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -709,7 +709,7 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the eight selected projects", async () => {
+test("published pages, data, routes, and assets contain only the nine selected projects", async () => {
   const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
   assert.equal(excludedProjects.length, 8, "Unselected projects still exist in the internal audited inventory");

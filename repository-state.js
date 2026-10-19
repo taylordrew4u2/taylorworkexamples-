@@ -1,6 +1,18 @@
-// Public inventory checked on 2026-10-12; BillSpilt and Showrunner refreshed on 2026-10-13.
+// Public inventory checked on 2026-10-12; individual records retain their later verification dates.
 export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
+  "BriefBooth.com": {
+    "repoUrl": "https://github.com/taylordrew4u2/BriefBooth.com",
+    "description": null,
+    "homepage": "https://briefbooth.vercel.app",
+    "defaultBranch": "main",
+    "headSha": "a00d51669d0b65977c800477bc11baede060b7ab",
+    "pushedAt": "2026-10-19T18:35:05Z",
+    "verifiedAt": "2026-10-19",
+    "archived": false,
+    "readmeAvailable": true,
+    "codeAvailable": false
+  },
   "Bill-Spilt": {
     "repoUrl": "https://github.com/taylordrew4u2/Bill-Spilt",
     "description": "Roommate bill splitting made easy",

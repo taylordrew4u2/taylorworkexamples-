@@ -106,8 +106,8 @@ export const services = [
         text: "A web app may connect to sign-in services, email notifications, payment providers, or an existing database. We check available access before scoping a connection. Hosting, service costs, and failure handling need a plan too, so each integration serves a defined task.",
       },
     ],
-    projectIds: ["the-trip-handler", "Showrunner-ICanRunAShow", "Bill-Spilt"],
-    proofIntro: "The Trip Handler demonstrates invitations, approvals, shared planning, and Stripe payment integration. I Can Run A Show combines booking, contract signing, and live-show controls. BillSpilt demonstrates shared expenses and settlement planning. Their galleries distinguish sample app captures from product artwork.",
+    projectIds: ["BriefBooth.com", "the-trip-handler", "Showrunner-ICanRunAShow", "Bill-Spilt"],
+    proofIntro: "BriefBooth brings client intake, availability, and consultation requests into a booking platform used by 4u Digital. The Trip Handler demonstrates invitations, approvals, shared planning, and Stripe payment integration. I Can Run A Show combines booking, contract signing, and live-show controls. BillSpilt demonstrates shared expenses and settlement planning. Their galleries distinguish sample app captures from product artwork.",
     faq: [
       {
         question: "How is a web app different from a website?",
@@ -432,6 +432,7 @@ export const guide = {
 };
 
 export const projectSlugs = {
+  "BriefBooth.com": "briefbooth",
   "Showrunner-ICanRunAShow": "i-can-run-a-show",
   "The-Bit-Binder": "bitbinder",
   "the-trip-handler": "trip-handler",

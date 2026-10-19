@@ -53,6 +53,18 @@ a {
   text-decoration: none;
 }
 
+[data-booking-link] {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 2.75rem;
+  min-width: 0;
+  max-width: 100%;
+  padding-inline: .375rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 img {
   display: block;
   max-width: 100%;
@@ -2854,6 +2866,9 @@ dialog::backdrop {
 
 /* Shared finish: readable type, deliberate rhythm, and consistent interaction states. */
 body { line-height: 1.5; }
+.portfolio-disclosure { margin-bottom: 2rem; padding: 1.25rem 1.5rem; border: 1px solid var(--line); border-radius: var(--corner); background: var(--surface-soft); }
+.portfolio-disclosure p, .client-ownership-note { font-size: .9375rem; line-height: 1.75; }
+.client-ownership-note { margin-top: 1.25rem; }
 h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }
 a, button, summary { touch-action: manipulation; }
@@ -2939,6 +2954,7 @@ a, button, summary { touch-action: manipulation; }
 .dialog-top { position: sticky; top: 0; background: #fff; z-index: 2; border-bottom: 1px solid var(--line); }
 .dialog-close { min-width: 2.75rem; min-height: 2.75rem; }
 .dialog-actions .dialog-story-link { flex-shrink: 0; }
+.dialog-booking-intro { display: grid; justify-items: start; gap: .75rem; margin-top: 1.5rem; }
 
 @media (min-width: 901px) {
   html { scroll-padding-top: 8rem; }
@@ -2979,6 +2995,7 @@ a, button, summary { touch-action: manipulation; }
   .filter-group { gap: .125rem; }
   .filter { padding-inline: .75rem; font-size: .75rem; }
   .search-field { width: 100%; }
+  .search-field input { font-size: 1rem; }
   .range-proof { padding-top: 2rem; margin-top: 3rem; }
   .process-steps li { padding: 1.5rem; }
   .faq-item summary { font-size: .9375rem; padding-block: 1.25rem; }
@@ -2986,6 +3003,7 @@ a, button, summary { touch-action: manipulation; }
   .contact-heading { font-size: clamp(2.5rem, 10vw, 3.5rem); }
   .dialog-actions { align-items: stretch; }
   .dialog-actions > .button { width: 100%; }
+  .dialog-booking-intro > .button { width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hero-platform-project, .hero-project, .industry-services > a, .menu-toggle span { transition: none; }

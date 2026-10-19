@@ -1,5 +1,57 @@
 // Image evidence, source links, and accurate capture labels. README artwork refreshed 2026-10-19.
 export const projectVisuals = {
+  "BriefBooth.com": {
+    "image": "./assets/briefbooth/home-desktop.png",
+    "imageAlt": "BriefBooth live website introducing its consultation booking platform alongside an illustrative consultant booking page.",
+    "imageWidth": 1440,
+    "imageHeight": 900,
+    "portrait": false,
+    "imageKind": "app-screenshot",
+    "imageLabel": "Live website capture",
+    "imageCaption": "Live website capture · Public product homepage with an illustrative booking-page preview.",
+    "previewContext": "Live website capture · Built-in booking demo",
+    "gallery": [
+      {
+        "label": "Website overview",
+        "image": "./assets/briefbooth/home-desktop.png",
+        "imageAlt": "BriefBooth live website introducing its consultation booking platform alongside an illustrative consultant booking page.",
+        "width": 1440,
+        "height": 900,
+        "portrait": false,
+        "caption": "Live website capture · Public product homepage with an illustrative booking-page preview.",
+        "sourceUrl": "https://briefbooth.com/",
+        "sourceKind": "live-site-capture",
+        "imageLabel": "Live website capture",
+        "previewContext": "Public website captured October 19, 2026"
+      },
+      {
+        "label": "Booking demo",
+        "image": "./assets/briefbooth/booking-desktop.png",
+        "imageAlt": "BriefBooth desktop demo showing the example consultant Alex Morgan beside a client introduction form, consultation progress, and an interactive-demo notice.",
+        "width": 1440,
+        "height": 900,
+        "portrait": false,
+        "caption": "Live website capture · Built-in demo with an example consultant; no real appointment is created.",
+        "sourceUrl": "https://briefbooth.com/book/demo/",
+        "sourceKind": "live-site-capture",
+        "imageLabel": "Demo booking capture",
+        "previewContext": "Public demo captured October 19, 2026 · Example consultant"
+      },
+      {
+        "label": "Mobile booking",
+        "image": "./assets/briefbooth/booking-mobile.png",
+        "imageAlt": "BriefBooth mobile demo displaying the example consultant, a three-stage booking progress indicator, and the client introduction form in a single-column layout.",
+        "width": 390,
+        "height": 1195,
+        "portrait": true,
+        "caption": "Live website capture · Responsive built-in demo using an example consultant and empty client fields.",
+        "sourceUrl": "https://briefbooth.com/book/demo/",
+        "sourceKind": "live-site-capture",
+        "imageLabel": "Demo booking capture",
+        "previewContext": "Public mobile demo captured October 19, 2026 · Example consultant"
+      }
+    ]
+  },
   "Showrunner-ICanRunAShow": {
     "image": "./assets/showrunner/banner-1920x1080.png",
     "imageAlt": "I Can Run A Show repository product artwork showing the app mark, sample show dashboard, and performer soundboard in two phone frames.",

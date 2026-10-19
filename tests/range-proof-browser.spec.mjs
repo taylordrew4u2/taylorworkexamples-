@@ -11,7 +11,7 @@ test("published apps and the development range are visible and usable without Ja
     const openingProjects = [
       ["iPhone & iPad apps", "The-Bit-Binder"],
       ["Business websites", "PinsAndNeedlesComedyWebsite"],
-      ["Web apps & platforms", "Showrunner-ICanRunAShow"],
+      ["Web apps & platforms", "BriefBooth.com"],
       ["Desktop software", "usbmic"],
     ];
     for (const [label, id] of openingProjects) {
@@ -39,7 +39,7 @@ test("published apps and the development range are visible and usable without Ja
       return !element.closest(".hero-stage") && (links.top >= previews.bottom - 1 ||
         links.bottom <= previews.top + 1 || links.right <= previews.left + 1 || links.left >= previews.right - 1);
     }), "The range navigation stays separate from the real project images").toBe(true);
-    const platformProjects = ["PinsAndNeedlesComedyWebsite", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
+    const platformProjects = ["BriefBooth.com", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
     const platformPreviews = page.locator(".hero-platform-previews a.hero-platform-project");
     await expect(platformPreviews).toHaveCount(2);
     for (const project of platformProjects) {

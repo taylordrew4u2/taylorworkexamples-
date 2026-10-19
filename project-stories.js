@@ -1,6 +1,14 @@
 // Client-facing explanations of the existing catalog workflows.
 // Each description matches the workflow heading at the same index in projects.js.
 export const projectStories = {
+  "BriefBooth.com": {
+    audience: "Independent consultants and service businesses",
+    workflowDescriptions: [
+      "Give clients a public page that brings consultation options and availability together.",
+      "Ask the questions that help the consultant understand the client’s needs before meeting.",
+      "Review consultation requests and keep appointment details in the consultant’s workspace.",
+    ],
+  },
   "Showrunner-ICanRunAShow": {
     audience: "Live-show organizers and producers",
     workflowDescriptions: [

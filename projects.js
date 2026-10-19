@@ -9,6 +9,72 @@ export const email = "admin@customtechbuilt4u.com";
 // experiment marks focused utilities and development projects for the tools filter.
 export const projects = [
   {
+    id: "BriefBooth.com",
+    title: "BriefBooth",
+    category: "web",
+    summary:
+      "A consultation booking platform that brings service options, client questions, and availability together in one shareable link.",
+    stack: ["Next.js", "React", "TypeScript", "Supabase", "PostgreSQL"],
+    features: [
+      "Shareable booking pages for independent consultants",
+      "Custom client questionnaires and consultation types",
+      "Weekly availability with client timezone display",
+      "Consultant approval for booking requests",
+      "Private appointment management and calendar downloads",
+    ],
+    repoUrl: "https://github.com/taylordrew4u2/BriefBooth.com",
+    repoLabel: "Project repository",
+    codeAvailable: false,
+    demoUrl: "https://briefbooth.com/",
+    demoLabel: "Live site",
+    image: "./assets/briefbooth/home-desktop.png",
+    imageAlt:
+      "BriefBooth live website introducing its consultation booking platform and an illustrative consultant booking page.",
+    portrait: false,
+    tone: "dark",
+    badge: "LIVE WEB APP",
+    experiment: false,
+    sources: [
+      "https://briefbooth.com/",
+      "https://briefbooth.com/book/demo/",
+      "https://briefbooth.com/book/4u-digital",
+      "https://github.com/taylordrew4u2/BriefBooth.com",
+      "https://github.com/taylordrew4u2/BriefBooth.com/blob/a00d51669d0b65977c800477bc11baede060b7ab/README.md",
+    ],
+    clientSummary:
+      "Let clients explain what they need and request a consultation from one link.",
+    demonstrates: [
+      "Full-stack business application development",
+      "Client intake and booking workflows",
+      "Availability and timezone handling",
+      "Public and private account experiences",
+    ],
+    projectType: "Booking web application",
+    challenge:
+      "Give independent consultants a clear way to learn what a client needs and manage consultation requests without scattered messages.",
+    build:
+      "A responsive web platform with consultant profiles, custom intake questions, consultation options, availability, and approval-based booking requests. It also powers 4u Digital’s own consultation link.",
+    highlights: [
+      {
+        title: "One client-facing link",
+        text: "Bring the consultant’s services, client questions, and available times into one place.",
+        source: "https://briefbooth.com/",
+      },
+      {
+        title: "Context before the meeting",
+        text: "Collect answers to the consultant’s questions before a consultation is requested.",
+        source: "https://briefbooth.com/book/demo/",
+      },
+      {
+        title: "A product used here",
+        text: "4u Digital’s consultation button leads to its own published BriefBooth booking page.",
+        source: "https://briefbooth.com/book/4u-digital",
+      },
+    ],
+    notes:
+      "Live website captures show the public product and built-in demo; no private client or consultant records are shown. The public GitHub repository currently contains a short README rather than the application source. Open the live site to explore the working product.",
+  },
+  {
     id: "Showrunner-ICanRunAShow",
     title: "I Can Run A Show",
     category: "web",

@@ -1,8 +1,9 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=48";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=48";
-import { dialogSizes } from "./responsive-images.js?v=48";
-import { trackContact } from "./analytics.js?v=48";
-import { renderRangeProof } from "./range-proof.js?v=48";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=49";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=49";
+import { dialogSizes } from "./responsive-images.js?v=49";
+import { trackContact } from "./analytics.js?v=49";
+import { renderRangeProof } from "./range-proof.js?v=49";
+import { bookingURL } from "./booking.js?v=49";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -109,18 +110,19 @@ document.addEventListener("click", (event) => {
     ? `<div class="dialog-case"><section><h3>The need</h3><p>${escape(project.challenge)}</p></section><section><h3>What I built</h3><p>${escape(project.build)}</p></section></div>`
     : "";
   const technical = `<div class="technical-content"><div class="project-tags">${tags(project.stack)}</div><ul>${project.features.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>${sourceLink(project, "View source code", "text-link")}</div>`;
+  const bookingAction = `<a class="button button-dark" data-booking-link href="${escape(bookingURL)}" ${external}>Book a consultation <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`;
+  const bookingIntro = `<div class="dialog-booking-intro">${bookingAction}</div>`;
   $("#dialog-content").innerHTML =
-    `<div class="project-identity dialog-identity">${projectIcon(project)}<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2></div><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<div class="dialog-actions"><a class="button button-dark project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
+    `<div class="project-identity dialog-identity">${projectIcon(project)}<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2></div><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.purpose || project.clientSummary || project.summary)}</p>${bookingIntro}${projectWorkflows(project)}${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<p class="client-ownership-note">Your custom code is 100% yours. Client work and code stay out of this public portfolio unless you give permission.</p><div class="dialog-actions">${bookingAction}<a class="button button-outline project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
   const storyLink = document.createElement("a");
-  storyLink.className = "button button-dark dialog-story-link";
+  storyLink.className = "button button-outline dialog-story-link";
   storyLink.href = project.caseUrl;
   storyLink.textContent = "Full project story";
   const storyArrow = document.createElement("span");
   storyArrow.setAttribute("aria-hidden", "true");
   storyArrow.textContent = "↗";
   storyLink.append(storyArrow);
-  $(".dialog-actions").prepend(storyLink);
-  $(".project-enquiry").classList.replace("button-dark", "button-outline");
+  $(".dialog-actions").insertBefore(storyLink, $(".project-enquiry"));
   dialog.showModal();
   dialog.scrollTop = 0;
 });

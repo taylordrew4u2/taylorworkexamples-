@@ -209,7 +209,7 @@ const heroPreviews = [
 ];
 
 const heroPlatformPreviews = [
-  ["PinsAndNeedlesComedyWebsite", "Website · Product overview", /Pins.*Needles.*product artwork/i],
+  ["BriefBooth.com", "Web app · Live website capture", /BriefBooth.*(?:booking|consultation|homepage)/i],
   ["usbmic", "Desktop software · Release candidate", /SobStage.*repository product artwork.*microphone.*recording/i],
 ];
 
@@ -376,18 +376,10 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       box.left >= copyBox.left - 1 && box.right <= copyBox.right + 1,
     );
   }), "Long headline stays within its copy column").toBe(true);
-  await expect(page.locator(".project-card")).toHaveCount(6);
+  await expect(page.locator(".project-card")).toHaveCount(featuredProjects.length);
   await expect(page.locator(".case-study")).toHaveCount(3);
-  await expect(page.locator(".case-study .project-title")).toHaveText([
-    "I Can Run A Show",
-    "The BitBinder",
-    "The Trip Handler",
-  ]);
-  await expect(page.locator(".supporting-grid .project-title")).toHaveText([
-    "BillSpilt",
-    "Pins & Needles Comedy",
-    "My Gig Calendar",
-  ]);
+  await expect(page.locator(".case-study .project-title")).toHaveText(featuredProjects.slice(0, 3).map((project) => project.title));
+  await expect(page.locator(".supporting-grid .project-title")).toHaveText(featuredProjects.slice(3).map((project) => project.title));
   for (const story of await page.locator(".case-study").all()) {
     await expect(story.locator(".case-highlights li")).toHaveCount(3);
     for (const highlight of await story.locator(".case-highlights li").all()) {
@@ -764,8 +756,8 @@ test("the homepage gives clients clear next steps while keeping optional project
   await expect(comparison).not.toHaveAttribute("open", "");
 
   const cards = page.locator("#featured-projects .project-card");
-  await expect(cards).toHaveCount(6);
-  await expect(page.locator("#featured-projects details.gallery-disclosure:not([open])")).toHaveCount(6);
+  await expect(cards).toHaveCount(featuredProjects.length);
+  await expect(page.locator("#featured-projects details.gallery-disclosure:not([open])")).toHaveCount(featuredProjects.length);
   for (const project of featuredProjects) {
     const card = cards.filter({ has: page.locator(`.project-visual[data-project="${project.id}"]`) });
     const disclosure = card.locator("details.gallery-disclosure");
@@ -799,7 +791,7 @@ test("the homepage gives clients clear next steps while keeping optional project
     await expect(card.locator(".project-visual .primary-screen")).toHaveAttribute("src", project.gallery.at(-1).image);
     await more.locator("summary").focus();
     await page.keyboard.press("Enter");
-    const source = more.getByRole("link", { name: "Source code", exact: true });
+    const source = more.getByRole("link", { name: project.codeAvailable === false ? "Project repository" : "Source code", exact: true });
     await expect(source).toBeVisible();
     await expect(source).toHaveAttribute("href", project.repoUrl);
     await more.locator("summary").focus();
@@ -809,6 +801,33 @@ test("the homepage gives clients clear next steps while keeping optional project
   await expect(page.locator("#featured-projects details.gallery-disclosure[open]")).toHaveCount(0);
   await cards.first().getByRole("link", { name: "Full project story", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(featuredProjects[0].title);
+});
+
+test("BriefBooth is featured as a real product and opens its own story without starting a booking", async ({ page }) => {
+  const project = projects.find((entry) => entry.id === "BriefBooth.com");
+  expect(featuredProjects[0]).toBe(project);
+  await page.goto("/");
+  const firstStory = page.locator("#featured-projects .case-study").first();
+  await expect(firstStory).toHaveAttribute("data-case-id", project.id);
+  await expect(firstStory.locator(".project-title")).toHaveText("BriefBooth");
+  await expect(firstStory.locator(".case-highlights li strong")).toHaveText(project.highlights.map((item) => item.title));
+  const opening = page.locator(`.hero-platform-project[href="${project.caseUrl}"]`);
+  await expect(opening).toHaveCount(1);
+  await expect(opening.locator(".hero-platform-caption")).toContainText("BriefBooth");
+  await expect(opening.locator(".hero-platform-screen")).toHaveAttribute("src", project.image);
+  await opening.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/work\/briefbooth\/$/);
+  await expect(page.getByRole("heading", { level: 1, name: "BriefBooth", exact: true })).toBeVisible();
+  await expect(page.locator(".project-page-frame")).toHaveCount(3);
+  await expect(page.locator(".project-workflow-card h3")).toHaveText(project.workflows);
+  await expect(page.locator("main").getByRole("link", { name: "Project repository", exact: false }).first())
+    .toHaveAttribute("href", project.repoUrl);
+  await expect(page.locator("main").getByRole("link", { name: /source code/i })).toHaveCount(0);
+  await expect(page.locator("main input[type='date'], main input[type='time'], main iframe")).toHaveCount(0);
+  const booking = page.locator(".project-story-hero [data-booking-link]");
+  await expect(booking).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
+  await expect(booking).toHaveAttribute("target", "_blank");
 });
 
 test("services lead to relevant project proof and restore keyboard focus", async ({ page }) => {
@@ -822,7 +841,7 @@ test("services lead to relevant project proof and restore keyboard focus", async
 
   const examples = [
     ["website", "PinsAndNeedlesComedyWebsite", "See Pins & Needles website project"],
-    ["web-app", "the-trip-handler", "See The Trip Handler project"],
+    ["web-app", "BriefBooth.com", "See BriefBooth booking platform project"],
     ["software", "MyGigCalendar", "See My Gig Calendar app project"],
   ];
   const dialog = page.getByRole("dialog");
@@ -1033,7 +1052,7 @@ test("all published archive projects explain their purpose and workflows with ge
     await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
     expect(project.sourceAvailable).toBe(true);
     await expect(card.locator(".source-note")).toHaveCount(0);
-    await expect(card.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
+    await expect(card.getByRole("link", { name: project.codeAvailable === false ? "Project repository" : "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
     if (project.demoUrl) {
       const liveLink = card.getByRole("link", { name: project.demoLabel, exact: true });
       await expect(liveLink).toBeVisible();
@@ -1055,8 +1074,8 @@ test("removed repositories stay out of archive, search and hero while public sou
   expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
-  expect(projects.length).toBe(8);
-  await expect(page.locator("#archive-title")).toHaveText("Explore 8 selected projects");
+  expect(projects.length).toBe(9);
+  await expect(page.locator("#archive-title")).toHaveText("Explore 9 selected projects");
   await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".source-note")).toHaveCount(0);
   await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
@@ -1727,7 +1746,7 @@ for (const width of [320, 768, 1024]) {
         await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
       }
     }
-    const fit = await page.evaluate(() => {
+    const fit = await page.evaluate((supportingCount) => {
       const bounds = (element) => {
         const box = element.getBoundingClientRect();
         return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
@@ -1741,7 +1760,7 @@ for (const width of [320, 768, 1024]) {
         page: document.documentElement.scrollWidth <= window.innerWidth,
         controls: [...controls].every(bounds),
         media: [...media].every(bounds),
-        completeSupportingShowcases: [...document.querySelectorAll(".supporting-card.has-gallery")].length === 3 &&
+        completeSupportingShowcases: [...document.querySelectorAll(".supporting-card.has-gallery")].length === supportingCount &&
           [...document.querySelectorAll(".supporting-card.has-gallery")].every((card) =>
             Math.abs(card.getBoundingClientRect().width - gridWidth) <= 1),
         orderedNarrowCaseSections: window.innerWidth > 800 || [...document.querySelectorAll(".case-study")].every((card) => {
@@ -1751,7 +1770,7 @@ for (const width of [320, 768, 1024]) {
           return header.top >= media.bottom - 1 && proof.top >= header.bottom - 1;
         }),
       };
-    });
+    }, featuredProjects.length - 3);
     expect(fit).toEqual({
       page: true, controls: true, media: true,
       completeSupportingShowcases: true, orderedNarrowCaseSections: true,

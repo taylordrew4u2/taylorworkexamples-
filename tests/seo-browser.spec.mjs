@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { projects } from "../public-projects.js";
+import { projects, featuredProjects } from "../public-projects.js";
 import { services, guide, projectSlugs, site } from "../seo-content.js";
 import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
@@ -116,7 +116,7 @@ async function expectOriginalImage(image, frame) {
 test("the homepage exposes the portfolio and project navigation without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
-  await expect(page.locator("#featured-projects .project-card")).toHaveCount(6);
+  await expect(page.locator("#featured-projects .project-card")).toHaveCount(featuredProjects.length);
   await expect(page.locator("#archive-projects .archive-card")).toHaveCount(projects.length);
   expect(await page.evaluate(() => {
     const work = document.querySelector("#work");
@@ -175,7 +175,7 @@ test("a service page leads to relevant project proof and a complete business inq
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
   await expectHeaderSection(page, "/work/");
-  await expect(page.getByRole("link", { name: `${project.title} source code on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
+    await expect(page.getByRole("link", { name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
   const inquiry = page.locator(".page-actions a[href^='mailto:']");
   await expect(inquiry).toBeVisible();
   const draft = new URL(await inquiry.getAttribute("href"));
@@ -364,7 +364,7 @@ for (const project of projects) {
     }
 
     const source = page.locator("#development").getByRole("link", {
-      name: `${project.title} source code on GitHub`, exact: false,
+      name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false,
     });
     await expect(source).toHaveAttribute("href", project.repoUrl);
     if (project.notes) await expect(page.locator("#development")).toContainText(project.notes);

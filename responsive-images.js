@@ -1,4 +1,4 @@
-import { imageVariants } from "./image-variants.js?v=48";
+import { imageVariants } from "./image-variants.js?v=49";
 
 export const gallerySizes = "auto, (max-width: 600px) calc(100vw - 40px), (max-width: 980px) calc(100vw - 64px), 640px";
 export const dialogSizes = "auto, (max-width: 600px) calc(100vw - 56px), 960px";

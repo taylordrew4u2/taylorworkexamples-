@@ -1,5 +1,20 @@
-// Genuine product icons and client-facing explanations. Sources verified October 12, 2026.
+// Genuine product icons and client-facing explanations. BriefBooth verified October 19, 2026.
 export const projectIdentities = {
+  "BriefBooth.com": {
+    "purpose": "Give clients one link to explain their needs and request a consultation.",
+    "workflows": [
+      "Share a booking page",
+      "Collect client context",
+      "Manage consultation requests"
+    ],
+    "previewContext": "Live website capture · Built-in booking demo",
+    "icon": "./assets/project-icons/briefbooth.svg",
+    "iconWidth": 64,
+    "iconHeight": 64,
+    "iconSource": "https://briefbooth.com/icon.svg",
+    "iconKind": "favicon",
+    "iconNotes": "Original public website SVG favicon downloaded byte-for-byte on October 19, 2026. The full 64×64 canvas, paths, and original blue fill are preserved. The public repository currently has no icon asset."
+  },
   "Showrunner-ICanRunAShow": {
     "purpose": "Plan a live show, collect performer contracts, and run cues from your phone.",
     "workflows": [

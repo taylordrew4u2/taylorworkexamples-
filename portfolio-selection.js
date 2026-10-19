@@ -8,9 +8,11 @@ export const portfolioProjectIds = [
   "the-trip-handler",
   "PinsAndNeedlesComedyWebsite",
   "usbmic",
+  "BriefBooth.com",
 ];
 
 export const featuredProjectIds = [
+  "BriefBooth.com",
   "Showrunner-ICanRunAShow",
   "The-Bit-Binder",
   "the-trip-handler",

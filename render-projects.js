@@ -1,7 +1,7 @@
-import { bookingURL } from "./booking.js?v=48";
-import { email } from "./public-projects.js?v=48";
-import { addInquirySource } from "./contact-context.js?v=48";
-import { responsiveAttributes, gallerySizes, dialogSizes } from "./responsive-images.js?v=48";
+import { bookingURL } from "./booking.js?v=49";
+import { email } from "./public-projects.js?v=49";
+import { addInquirySource } from "./contact-context.js?v=49";
+import { responsiveAttributes, gallerySizes, dialogSizes } from "./responsive-images.js?v=49";
 
 export const escape = (value) =>
   String(value).replace(
@@ -58,7 +58,7 @@ const detailsButton = (project, text = "Project details", className = "") =>
 export const sourceLink = (project, label = "Source", className = "", url = project.repoUrl) =>
   project.sourceAvailable === false
     ? `<span class="${escape(className)} source-note">Source not public</span>`
-    : `<a class="${escape(className)}" href="${escape(url)}" ${external}>${escape(label)} <span aria-hidden="true">↗</span></a>`;
+    : `<a class="${escape(className)}" href="${escape(url)}" ${external}>${escape(project.codeAvailable === false ? project.repoLabel || "Project repository" : label)} <span aria-hidden="true">↗</span></a>`;
 const liveLink = (project) =>
   project.demoUrl
     ? `<a href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "Live site")} <span aria-hidden="true">↗</span></a>`
