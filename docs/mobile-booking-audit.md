@@ -10,8 +10,9 @@ Scope: the live 4u Digital portfolio and its handoff to BriefBooth. All checks u
 - Project section navigation and evidence disclosures had smaller touch areas. They now have 44px minimum heights. Mobile project search text is 16px rather than 13px.
 - Per the owner's latest instruction, removed the on-site booking walkthrough. All intake, time selection, and confirmation happen after the external BriefBooth link. The portfolio retains basic Zoom/NYC service information and general project email links.
 - Added a visible personal-project disclaimer on the homepage and work index: this is a selection of personal projects, not every app built. Clients own 100% of the custom code built for their project. Client work and code will never be included in the public portfolio without permission. Short ownership reminders appear on service/project pages and in previews.
-
 - Added BriefBooth as the first featured project, an opening preview, and a dedicated project story. Captures show the genuine public site and built-in demo in full color. The source link is labeled Project repository because the public repository currently contains only a README. No private records are included.
+
+- Browser regression checks caught two gallery issues after the featured order changed. Supporting cards now size paired phone screens to their available width without clipping or large empty frames. The archive uses the first capture’s own label and context on initial load, matching subsequent gallery selections. Manual checks confirmed both phone images stay inside their frame at 320px and 1024px.
 
 ## Delivery and external handoff
 

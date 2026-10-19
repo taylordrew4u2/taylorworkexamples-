@@ -1242,6 +1242,34 @@ button, a, input, select, textarea, summary {
   height: 40rem;
 }
 
+.supporting-screen.project-visual.paired {
+  gap: 4%;
+  padding: 1rem;
+}
+
+.supporting-screen.project-visual.paired img {
+  width: 44%;
+  max-width: 44%;
+  min-width: 0;
+  height: auto;
+  max-height: 100%;
+}
+
+.supporting-screen.project-visual.paired.portrait {
+  height: auto;
+  padding: 3rem 1rem;
+}
+
+.supporting-screen.project-visual.paired:not(.portrait) .primary-screen {
+  width: 74%;
+  max-width: 74%;
+}
+
+.supporting-screen.project-visual.paired:not(.portrait) .companion-screen {
+  width: 22%;
+  max-width: 22%;
+}
+
 .supporting-card.has-gallery > :not(.project-visual) {
   grid-column: 2;
 }
