@@ -386,7 +386,7 @@ test("the comparison guide, business information, and contact remain usable with
 
 test("the later kickoff checklist is reachable from the process and prepares an attributed email without JavaScript", async ({ page }) => {
   await page.goto("/");
-  const kickoff = page.locator("#process").getByRole("link", { name: "See the project kickoff checklist", exact: false });
+  const kickoff = page.locator("#process").getByRole("link", { name: "Fill out the project kickoff form", exact: false });
   await kickoff.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
   await expect(page.locator("main")).toContainText("You don’t need this worked out before getting in touch.");
