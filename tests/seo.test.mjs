@@ -9,6 +9,7 @@ import { projects, featuredProjects } from "../public-projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
 import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
+import { bookingURL } from "../booking.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -24,8 +25,12 @@ const decode = (value = "") => value.replace(/&#(x[\da-f]+|\d+);/gi, (_, code) =
   String.fromCodePoint(code[0].toLowerCase() === "x" ? parseInt(code.slice(1), 16) : Number(code)),
 ).replace(/&(amp|lt|gt|quot|apos|nbsp);/g, (_, name) =>
   ({ amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " })[name]);
-const attributes = (tag) => Object.fromEntries([...tag.matchAll(/([\w:-]+)\s*=\s*(["'])([\s\S]*?)\2/g)]
-  .map(([, name, , value]) => [name.toLowerCase(), decode(value)]));
+const attributes = (tag) => {
+  const result = Object.fromEntries([...tag.matchAll(/([\w:-]+)\s*=\s*(["'])([\s\S]*?)\2/g)]
+    .map(([, name, , value]) => [name.toLowerCase(), decode(value)]));
+  if (/\sdata-booking-link(?=\s|=|>)/i.test(tag)) result["data-booking-link"] ??= "";
+  return result;
+};
 const tags = (html, name) => [...html.matchAll(new RegExp(`<${name}\\b[^>]*>`, "gi"))].map(([tag]) => attributes(tag));
 const text = (html) => decode(html.replace(/<script\b[\s\S]*?<\/script>/gi, " ")
   .replace(/<style\b[\s\S]*?<\/style>/gi, " ").replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
@@ -242,7 +247,7 @@ test("structured data points to the canonical business and matches visible servi
   }
 });
 
-test("business guides and consultation details are discoverable, truthful, and ready for email inquiries", () => {
+test("business guides and consultation details are discoverable, truthful, and ready for booking", () => {
   const hubRoute = "/insights/";
   const localRoute = "/new-york-city/";
   const linksTo = (html, route, target) => tags(html, "a").some((tag) =>
@@ -251,8 +256,9 @@ test("business guides and consultation details are discoverable, truthful, and r
     const html = documents.get(route);
     assert.ok(linksTo(html, route, localRoute), `${route}: reachable consultation page`);
     assert.match(text(html), /Zoom/);
-    assert.match(text(html), /New York City/);
-    assert.match(text(html), /by arrangement/i);
+    assert.match(text(html), /New York City|Manhattan/);
+    assert.match(text(html), /in-person/i);
+    assert.match(text(html), /space|workflow/i);
   }
   assert.ok(linksTo(documents.get("/"), "/", hubRoute), "the homepage links to the guide hub");
   const hub = documents.get(hubRoute);
@@ -287,15 +293,25 @@ test("business guides and consultation details are discoverable, truthful, and r
     }
   }
   for (const slug of localConsultation.serviceSlugs) assert.ok(linksTo(local, localRoute, `/services/${slug}/`));
-  const consultations = tags(local, "a").filter((tag) => tag.href?.startsWith("mailto:"))
-    .map((tag) => new URL(tag.href)).filter((url) => url.searchParams.get("subject") === "4u Digital consultation");
-  assert.ok(consultations.length > 0, "the local page provides an actual consultation inquiry");
-  for (const draft of consultations) {
-    assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
-    assert.ok(draft.searchParams.get("body").includes("Consultation format (Zoom or in-person in New York City):"));
-    assert.ok(draft.searchParams.get("body").includes("Preferred times:"));
-    assert.ok(draft.searchParams.get("body").includes("The problem:"));
+  const consultations = tags(local, "a").filter((tag) => Object.hasOwn(tag, "data-booking-link"));
+  assert.ok(consultations.length > 0, "the local page provides the actual booking destination");
+  for (const action of consultations) {
+    assert.equal(action.href, bookingURL);
+    assert.equal(action.target, "_blank");
+    assert.match(action.rel, /\bnoopener\b/);
+    assert.match(action.rel, /\bnoreferrer\b/);
   }
+  assert.match(text(local), /Start with a Zoom consultation/);
+  assert.match(text(local), /See the space before deciding on the software\./);
+  assert.match(text(local), /reception desk, booking handoff, order station/);
+  assert.match(text(local), /in-person consultation can help us understand the work before choosing what to build/);
+  for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
+    assert.ok(text(local).includes(option), `${option}: the consultation explains the available build range`);
+  }
+  assert.match(text(local), /Manhattan, Brooklyn, and parts of Queens/);
+  const consultationMail = tags(local, "a").filter((tag) => tag.href?.startsWith("mailto:"))
+    .map((tag) => new URL(tag.href)).filter((url) => /consultation/i.test(url.searchParams.get("subject") || ""));
+  assert.equal(consultationMail.length, 0, "Booking is no longer routed into a consultation email draft");
 });
 
 test("project and service content is crawlable in production HTML before JavaScript runs", () => {
@@ -342,7 +358,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], service.heading);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), "2026-10-16");
+    assert.equal(sitemapDates.get(route), "2026-10-19");
     assert.ok(linksTo(homeServices, "/", route), `${service.title}: homepage services entry`);
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
@@ -361,7 +377,7 @@ test("salon and restaurant services explain the business workflow and connect to
     const guideRoute = `/insights/${service.guideSlug}/`;
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
-    assert.equal(sitemapDates.get(guideRoute), "2026-10-16");
+    assert.equal(sitemapDates.get(guideRoute), "2026-10-19");
     const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
       .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
     assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
@@ -369,12 +385,13 @@ test("salon and restaurant services explain the business workflow and connect to
       `${service.title}: a real inquiry retains its source without JavaScript`);
   }
   for (const article of articles.filter((entry) => !entry.modified)) {
-    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), site.modified,
-      `${article.title}: the business rename updates the guide while its publication date remains unchanged`);
+    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-19",
+      `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
   }
-  assert.equal(sitemapDates.get("/services/"), "2026-10-16");
+  assert.equal(sitemapDates.get("/services/"), "2026-10-19");
   assert.equal(sitemapDates.get("/"), "2026-10-19");
-  for (const route of ["/project-kickoff/", "/privacy/"]) assert.equal(sitemapDates.get(route), "2026-10-18");
+  for (const route of routes) assert.equal(sitemapDates.get(route), "2026-10-19",
+    `${route}: its changed booking navigation has the actual modification date`);
 });
 
 test("the homepage keeps all project showcases together before process, questions, and consultation", () => {
@@ -401,7 +418,7 @@ test("the homepage keeps all project showcases together before process, question
     "work is followed by process, questions, consultation, and useful reads");
   assert.ok(workEnd <= sectionPosition("process"), "the whole archive finishes before the process or consultation");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
-    "no app showcase returns after the consultation form or questions");
+    "no app showcase returns after the consultation panel or questions");
 });
 
 test("project stories explain the original workflows and preserve real development context and inquiry links", () => {
@@ -442,7 +459,9 @@ test("project stories explain the original workflows and preserve real developme
       `${project.title}: original cover introduces the project before the workflow`);
     const buildCallout = html.match(/<section\b[^>]*class="[^"]*\bproject-build-cta\b[^"]*"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
     assert.ok(buildCallout, `${project.title}: business inquiry follows the project evidence`);
-    assert.match(text(buildCallout), /Zoom or in person in the New York City area, by arrangement\./);
+    assert.match(text(buildCallout), /Zoom/);
+    assert.match(text(buildCallout), /space or workflow would help define the build/);
+    assert.match(text(buildCallout), /in-person consultation/i);
     const inquiryLinks = tags(buildCallout, "a");
     const draft = new URL(inquiryLinks.find((tag) => tag.href?.startsWith("mailto:"))?.href || "https://invalid.example");
     assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
@@ -451,9 +470,11 @@ test("project stories explain the original workflows and preserve real developme
     assert.ok(draft.searchParams.get("body").includes("Who will use it:"));
     assert.ok(draft.searchParams.get("body").includes(`Source page: ${origin}${route}`),
       `${project.title}: source attribution remains available without JavaScript`);
-    const consultation = inquiryLinks.map((tag) => new URL(tag.href, `${origin}${route}`))
-      .find((url) => url.origin === origin && url.pathname === "/" && url.hash === "#consultation");
-    assert.ok(consultation, `${project.title}: the existing homepage consultation request remains reachable`);
+    const consultation = inquiryLinks.find((tag) => Object.hasOwn(tag, "data-booking-link"));
+    assert.equal(consultation?.href, bookingURL, `${project.title}: clients can book directly from the project evidence`);
+    assert.equal(consultation.target, "_blank");
+    assert.match(consultation.rel, /\bnoopener\b/);
+    assert.match(consultation.rel, /\bnoreferrer\b/);
     if (project.demoUrl) assert.ok(tags(html, "a").some((tag) => tag.href === project.demoUrl),
       `${project.title}: its real live or app destination is retained`);
   }
@@ -482,21 +503,33 @@ test("all local document references exist and remain inside the GitHub Pages sub
   }
 });
 
-test("every page offers the same consultation entry without relying on JavaScript", () => {
+test("every public page offers the exact supplied booking destination without JavaScript", () => {
+  assert.equal(bookingURL, "https://briefbooth.com/book/4u-digital");
   for (const route of routes) {
     const html = documents.get(route);
     const header = html.match(/<header\b[\s\S]*?<\/header>/i)?.[0];
     assert.ok(header, `${route}: a site header is present`);
     const action = tags(header, "a").find((tag) => tag.class?.split(/\s+/).includes("nav-contact"));
-    assert.ok(action, `${route}: the primary consultation link is present`);
-    const destination = new URL(action.href, `${origin}${route}`);
-    assert.equal(destination.origin, origin);
-    assert.equal(destination.pathname, "/");
-    assert.equal(destination.hash, "#consultation");
-    if (route !== "/") assert.equal(destination.searchParams.get("from"), route,
-      `${route}: the homepage request remembers the public source page`);
-    assert.ok(text(header).includes("Request a consultation"));
-    assert.doesNotMatch(text(html), /\bBook a consultation\b/);
+    assert.ok(action, `${route}: the primary booking link is present`);
+    assert.ok(Object.hasOwn(action, "data-booking-link"));
+    assert.equal(action.href, bookingURL);
+    assert.ok(text(header).includes("Book a consultation"));
+    const bookingLinks = tags(html, "a").filter((tag) => Object.hasOwn(tag, "data-booking-link"));
+    assert.ok(bookingLinks.length >= 2, `${route}: booking is available in the header and the page`);
+    for (const link of bookingLinks) {
+      assert.equal(link.href, bookingURL, `${route}: no queries, fragments, or private data are added to booking links`);
+      assert.equal(link.target, "_blank");
+      assert.match(link.rel, /\bnoopener\b/);
+      assert.match(link.rel, /\bnoreferrer\b/);
+    }
+    assert.doesNotMatch(html, /id="consultation-(?:form|email|times|project|copy|draft)"/);
+    assert.doesNotMatch(text(html), /\bRequest a consultation\b/);
+    for (const mail of tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))) {
+      const draft = new URL(mail.href);
+      assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
+      assert.doesNotMatch(draft.searchParams.get("subject") || "", /consultation/i,
+        `${route}: consultation booking does not open an old email request`);
+    }
     assert.ok(tags(html, "a").some((tag) => tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === "/contact/"),
       `${route}: the contact page remains reachable`);
   }

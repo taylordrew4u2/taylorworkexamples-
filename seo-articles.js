@@ -41,7 +41,8 @@ export const articles = [
     ],
     serviceSlugs: ["website-development", "custom-software-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task you want to solve and any existing website or app. A finished technical plan is not required.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task you want to solve and any existing website or app. A finished technical plan is not required.",
   },
   {
     slug: "diy-vs-custom-website",
@@ -85,7 +86,8 @@ export const articles = [
     ],
     serviceSlugs: ["website-development", "web-app-development"],
     projectIds: ["tlcmassagewellness", "PinsAndNeedlesComedyWebsite"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
   },
   {
     slug: "salon-booking-website",
@@ -130,7 +132,8 @@ export const articles = [
     ],
     serviceSlugs: ["salon-booking-app-development", "website-development", "web-app-development"],
     projectIds: ["tlcmassagewellness"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
   },
   {
     slug: "restaurant-ordering-app",
@@ -175,7 +178,8 @@ export const articles = [
     ],
     serviceSlugs: ["restaurant-ordering-app-development", "web-app-development", "app-development"],
     projectIds: ["the-trip-handler"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
   },
   {
     slug: "spreadsheet-to-business-software",
@@ -219,7 +223,8 @@ export const articles = [
     ],
     serviceSlugs: ["custom-software-development", "web-app-development"],
     projectIds: ["Role-Call", "the-trip-handler"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
   },
   {
     slug: "first-version-app-features",
@@ -263,6 +268,7 @@ export const articles = [
     ],
     serviceSlugs: ["app-development", "web-app-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    closing: "4u Digital offers Zoom consultations and in-person consultations in the local New York City area by arrangement. Email admin@customtechbuilt4u.com with your app idea, intended users, and the first task it should handle. We can work through the scope together.",
+    modified: "2026-10-19",
+    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your app idea, intended users, and the first task it should handle. We can work through the scope together.",
   },
 ];

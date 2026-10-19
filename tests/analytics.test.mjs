@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { initAnalytics, sanitizeAnalyticsEvent, trackContact } from "../analytics.js";
 
+const bookingURL = "https://briefbooth.com/book/4u-digital";
+
 function fixture({ path = "/", enabled = true, robots = "index, follow", privacy = {}, host = "https://customtechbuilt4u.com" } = {}) {
   const calls = [];
   const listeners = [];
@@ -29,11 +31,11 @@ function fixture({ path = "/", enabled = true, robots = "index, follow", privacy
   return { doc, win, calls, scripts, listeners, meta, click };
 }
 
-function link(href, { id = "", format, panel = false } = {}) {
+function link(href, { id = "", format, panel = false, booking = false } = {}) {
   return {
     id, dataset: format ? { consultationFormat: format } : {},
     getAttribute: () => href,
-    hasAttribute: (name) => name === "data-consultation-format" && Boolean(format),
+    hasAttribute: (name) => (name === "data-consultation-format" && Boolean(format)) || (name === "data-booking-link" && booking),
     closest: () => panel ? {} : null,
   };
 }
@@ -93,26 +95,27 @@ test("dynamic inquiry clicks send only the public page and a fixed action", () =
   assert.doesNotMatch(JSON.stringify(events(setup)), /private|subject|body|mailto/i);
 });
 
-test("consultation email actions distinguish safe formats and preserve the originating public page", () => {
+test("booking clicks record only the current public page and the fixed booking action", () => {
   const setup = fixture();
   setup.win.location = new URL("https://customtechbuilt4u.com/?from=%2Fservices%2Fwebsite-development%2F&note=secret#consultation");
   initAnalytics(setup.doc, setup.win);
-  setup.click(link("mailto:admin@customtechbuilt4u.com?body=secret", { id: "consultation-email" }));
-  setup.click(link("mailto:admin@customtechbuilt4u.com", { format: "in-person" }));
-  assert.deepEqual(events(setup).map(({ data }) => data), [
-    { page: "/services/website-development/", action: "consultation-email-zoom" },
-    { page: "/services/website-development/", action: "consultation-email-in-person" },
-  ]);
+  setup.click(link(bookingURL, { booking: true }));
+  assert.deepEqual(events(setup), [{ name: "Contact intent", data: { page: "/", action: "consultation-booking" } }]);
+  assert.doesNotMatch(JSON.stringify(events(setup)), /secret|from=|briefbooth|note=/i);
 });
 
-test("request clicks are attributed to the page carrying the consultation button", () => {
+test("only the exact supplied booking destination is tracked from the page carrying its button", () => {
   const setup = fixture({ path: "/services/website-development/" });
   initAnalytics(setup.doc, setup.win);
-  setup.click(link("../../?from=%2Fservices%2Fwebsite-development%2F#consultation"));
-  setup.click(link("https://example.com/#consultation"));
-  setup.click(link("../../#services"));
+  setup.click(link(bookingURL)); // An unrelated external link is not a booking action.
+  setup.click(link(bookingURL, { booking: true }));
+  for (const href of [
+    `${bookingURL}?email=private@example.com`, `${bookingURL}#private-note`,
+    "https://briefbooth.com/book/another-business", "https://example.com/book/4u-digital",
+    "http://briefbooth.com/book/4u-digital", "https://briefbooth.com.evil.test/book/4u-digital",
+  ]) setup.click(link(href, { booking: true }));
   assert.deepEqual(events(setup), [{ name: "Contact intent", data: {
-    page: "/services/website-development/", action: "consultation-request",
+    page: "/services/website-development/", action: "consultation-booking",
   } }]);
 });
 
@@ -122,7 +125,7 @@ test("explicit copy hooks accept only approved actions and known public source p
   globalThis.document = setup.doc;
   try {
     initAnalytics(setup.doc, setup.win);
-    assert.equal(trackContact("consultation-copy-in-person", "/services/website-development/"), true);
+    assert.equal(trackContact("consultation-booking", "/services/website-development/"), true);
     assert.equal(trackContact("email-copy", "/"), true);
     assert.equal(trackContact("Sent an email", "/"), false);
     assert.equal(trackContact("email", "/?email=private@example.com"), false);
@@ -144,7 +147,7 @@ test("provider failures never throw into contact behavior", () => {
   assert.doesNotThrow(() => setup.click(link("mailto:admin@customtechbuilt4u.com")));
   const previous = globalThis.document;
   globalThis.document = setup.doc;
-  try { assert.equal(trackContact("consultation-copy"), false); }
+  try { assert.equal(trackContact("consultation-booking"), false); }
   finally {
     if (previous === undefined) delete globalThis.document;
     else globalThis.document = previous;

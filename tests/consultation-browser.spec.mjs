@@ -1,118 +1,87 @@
 import { test, expect } from "@playwright/test";
 
-function readDraft(href) {
-  const url = new URL(href);
-  expect(url.protocol).toBe("mailto:");
-  expect(url.pathname).toBe("admin@customtechbuilt4u.com");
-  return { subject: url.searchParams.get("subject"), body: url.searchParams.get("body") };
+const bookingURL = "https://briefbooth.com/book/4u-digital";
+
+async function expectBookingLink(link) {
+  await expect(link).toHaveAttribute("href", bookingURL);
+  await expect(link).toHaveAttribute("data-booking-link", "");
+  await expect(link).toHaveAttribute("target", "_blank");
+  await expect(link).toHaveAttribute("rel", /\bnoopener\b/);
+  await expect(link).toHaveAttribute("rel", /\bnoreferrer\b/);
+  await expect(link).toContainText("Book a consultation");
 }
 
 async function expectConsultationFit(page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
-    "The consultation section fits the page on this device").toBe(true);
-  const section = page.locator("#consultation");
-  const controlsFit = await section.locator("input:not([type='radio']), textarea, button, a")
+    "The booking section fits the page on this device").toBe(true);
+  const controlsFit = await page.locator("#consultation a")
     .evaluateAll((elements) => elements.filter((element) => element.getClientRects().length > 0).every((element) => {
       const bounds = element.getBoundingClientRect();
       return bounds.width > 0 && bounds.left >= -1 && bounds.right <= window.innerWidth + 1;
     }));
-  expect(controlsFit, "Visible consultation fields and actions fit the viewport").toBe(true);
+  expect(controlsFit, "Booking actions fit the viewport").toBe(true);
 }
 
-test("the homepage prepares a chosen consultation and provides a usable copy fallback", async ({ page }, testInfo) => {
-  await page.addInitScript(() => {
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: { writeText: async () => { throw new Error("Clipboard unavailable for consultation test"); } },
-    });
-  });
+async function expectNativeBookingOpens(page, link) {
+  await page.context().route(bookingURL, (route) => route.fulfill({
+    status: 200, contentType: "text/html", body: "<title>Booking destination test</title><h1>Booking destination test</h1>",
+  }));
+  const originalURL = page.url();
+  await link.focus();
+  const popupPromise = page.waitForEvent("popup");
+  await page.keyboard.press("Enter");
+  const popup = await popupPromise;
+  try {
+    await expect(popup).toHaveURL(bookingURL);
+    await expect(popup.getByRole("heading", { level: 1 })).toHaveText("Booking destination test");
+    await expect(page).toHaveURL(originalURL);
+  } finally { await popup.close(); }
+}
+
+test("homepage consultation actions open the supplied booking page and explain the meeting options", async ({ page }, testInfo) => {
   await page.goto("/");
   expect(await page.locator("#consultation").evaluate((section) => Boolean(
     document.querySelector("#process").compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
-  )), "Clients can see services and selected work before the full consultation form").toBe(true);
-  const heroAction = page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false });
-  await expect(heroAction).toHaveAttribute("href", "#consultation");
+  )), "Clients see services and selected work before the booking panel").toBe(true);
+  await expectBookingLink(page.locator(".intro-actions [data-booking-link]"));
   const menu = page.locator(".menu-toggle");
   if (testInfo.project.name === "phone") await menu.click();
-  const navAction = page.locator("#main-nav").getByRole("link", { name: "Request a consultation", exact: false });
-  await expect(navAction).toHaveAttribute("href", "#consultation");
-  if (testInfo.project.name === "phone") {
-    await navAction.click();
-    await expect(menu).toHaveAttribute("aria-expanded", "false");
-  } else {
-    await heroAction.click();
-  }
-  await expect(page).toHaveURL(/#consultation$/);
-
-  const form = page.locator("#consultation-form");
-  const times = form.getByLabel("Preferred days and times", { exact: false });
-  const project = form.getByLabel("About your project (optional)", { exact: false });
-  const email = page.locator("#consultation-email");
-  await expect(form).toBeVisible();
-  await expect(form.getByRole("radio", { name: /^Zoom(?:\s|$)/ })).toBeChecked();
-  await expect(times).toHaveAttribute("required", "");
-  await expect(times).toHaveAttribute("maxlength", "300");
-  await expect(project).toHaveAttribute("maxlength", "1000");
-
-  // Keep the test inside the page even when the product opens its prepared email.
-  await email.evaluate((element) => element.addEventListener("click", (event) => event.preventDefault()));
-  await form.getByRole("button", { name: "Open email request", exact: true }).click();
-  expect(await times.evaluate((element) => element.validity.valueMissing)).toBe(true);
-  await expect(email).toBeHidden();
-  await expect(times).toBeFocused();
-
-  await form.getByRole("radio", { name: /^In person · NYC(?:\s|$)/ }).check();
-  const preferredTimes = "Tuesday or Thursday after 2 pm, Eastern time";
-  const brief = "A salon booking website with a clear staff calendar & customer reminders.";
-  await times.fill(preferredTimes);
-  await project.fill(brief);
-  const draft = readDraft(await email.getAttribute("href"));
-  expect(draft.subject).toBe("4u Digital in-person consultation");
-  expect(draft.body).toContain("In person in the New York City area");
-  expect(draft.body).toContain(preferredTimes);
-  expect(draft.body).toContain(brief);
-  await form.getByRole("button", { name: "Open email request", exact: true }).click();
-  await expect(email).toBeVisible();
-  expect(readDraft(await email.getAttribute("href"))).toEqual(draft);
-
-  await page.locator("#consultation-copy").click();
-  const manualDraft = page.locator("#consultation-draft");
-  await expect(manualDraft).toBeVisible();
-  await expect(manualDraft).toHaveAttribute("readonly", "");
-  await expect(manualDraft).toHaveValue(new RegExp("4u Digital in-person consultation"));
-  await expect(manualDraft).toHaveValue(new RegExp(preferredTimes));
-  expect(await manualDraft.inputValue()).toContain(brief);
-  await expect(page.locator("#consultation-status")).toContainText(/clipboard|copy|select/i);
+  const navAction = page.locator("#main-nav .nav-contact");
+  await expectBookingLink(navAction);
+  if (testInfo.project.name === "phone") await menu.click();
+  const panel = page.locator("#consultation .consultation-panel");
+  await expect(panel).toBeVisible();
+  await expect(panel).toContainText(/Zoom/);
+  await expect(page.locator("#consultation")).toContainText(/in-person/i);
+  await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
+  await expect(page.locator(".consultation-how")).toContainText(/unsure what you need/i);
+  await expect(page.locator("#consultation")).toContainText(/Manhattan, Brooklyn, and parts of Queens/);
+  await expect(panel.locator(".booking-steps li > span:last-child")).toHaveText([
+    "Share a little about your business and project.",
+    "Choose an available time on BriefBooth.",
+    "Meet on Zoom to discuss the next step.",
+  ]);
+  await expect(panel.locator(".booking-destination")).toContainText(/BriefBooth.*new tab/i);
+  const booking = panel.locator(".booking-primary");
+  await expectBookingLink(booking);
+  await expect(page.locator("#consultation-form, #consultation-email, #consultation-copy, #consultation-draft, .consultation-fallback")).toHaveCount(0);
+  await expectNativeBookingOpens(page, booking);
   await expectConsultationFit(page);
 });
 
-test("clients can request either consultation directly from the homepage without JavaScript", async ({ browser }, testInfo) => {
-  const context = await browser.newContext({
-    javaScriptEnabled: false,
-    viewport: testInfo.project.use.viewport,
-  });
+test("consultation booking works directly from the homepage without JavaScript", async ({ browser }, testInfo) => {
+  const context = await browser.newContext({ javaScriptEnabled: false, viewport: testInfo.project.use.viewport });
   try {
     const page = await context.newPage();
     await page.goto(new URL("/", testInfo.project.use.baseURL || "http://127.0.0.1:4173").href);
-    await expect(page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false }))
-      .toHaveAttribute("href", "#consultation");
-    const fallback = page.locator("#consultation .consultation-fallback");
-    await expect(fallback).toBeVisible();
-    await expect(page.locator("#consultation-form")).toBeHidden();
-    for (const [label, subject, format] of [
-      ["Zoom", "4u Digital Zoom consultation", "Zoom"],
-      ["In person · NYC", "4u Digital in-person consultation", "In person in the New York City area"],
-    ]) {
-      const link = fallback.getByRole("link", { name: label, exact: false });
-      await expect(link).toBeVisible();
-      const draft = readDraft(await link.getAttribute("href"));
-      expect(draft.subject).toBe(subject);
-      expect(draft.body).toContain(format);
-      expect(draft.body).toMatch(/preferred.*(?:days|times)|(?:days|times).*preferred/i);
-    }
-    await expect(page.locator("#consultation")).toContainText(/confirm|arrange|by email/i);
+    const hero = page.locator(".intro-actions [data-booking-link]");
+    await expectBookingLink(hero);
+    await expectBookingLink(page.locator("#consultation .booking-primary"));
+    await expect(page.locator("#consultation")).toContainText(/Zoom/);
+    await expect(page.locator("#consultation")).toContainText(/in-person/i);
+    await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
+    await expect(page.locator("#consultation form, #consultation-email, [data-consultation-format]")).toHaveCount(0);
+    await expectNativeBookingOpens(page, hero);
     await expectConsultationFit(page);
-  } finally {
-    await context.close();
-  }
+  } finally { await context.close(); }
 });

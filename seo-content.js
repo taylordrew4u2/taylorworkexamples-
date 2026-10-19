@@ -249,7 +249,7 @@ export const services = [
     slug: "salon-booking-app-development",
     title: "Salon booking app development",
     serviceLabel: "Salon bookings",
-    modified: "2026-10-16",
+    modified: "2026-10-19",
     guideSlug: "salon-booking-website",
     metaTitle: "Custom Salon Booking Apps & Websites | 4u Digital",
     description: "Custom salon booking websites and apps for services, staff, appointment requests, and schedule management. Discuss your booking workflow with 4u Digital.",
@@ -302,7 +302,7 @@ export const services = [
       },
       {
         question: "How do I discuss a salon booking project?",
-        answer: "Request a Zoom consultation or an in-person consultation in the New York City area by arrangement. Email admin@customtechbuilt4u.com with your current booking process and what you want to improve. A rough outline is enough to start.",
+        answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth. Bring your current booking process and what you want to improve. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A rough outline is enough to start.",
       },
     ],
   },
@@ -310,7 +310,7 @@ export const services = [
     slug: "restaurant-ordering-app-development",
     title: "Restaurant ordering app development",
     serviceLabel: "Restaurant ordering",
-    modified: "2026-10-16",
+    modified: "2026-10-19",
     guideSlug: "restaurant-ordering-app",
     metaTitle: "Custom Restaurant Ordering Apps & Websites | 4u Digital",
     description: "Custom restaurant ordering websites and apps for menus, pickup, staff order queues, and payment workflows. Plan your ordering system with 4u Digital.",
@@ -363,7 +363,7 @@ export const services = [
       },
       {
         question: "How do I discuss a restaurant ordering project?",
-        answer: "Request a Zoom consultation or an in-person consultation in the New York City area by arrangement. Email admin@customtechbuilt4u.com with your menu, current ordering process, and POS system if you use one. A finished specification is not required.",
+        answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth. Bring your menu, current ordering process, and POS system if you use one. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A finished specification is not required.",
       },
     ],
   },
@@ -426,7 +426,7 @@ export const guide = {
     },
     {
       question: "How do I start a conversation with 4u Digital?",
-      answer: "Email admin@customtechbuilt4u.com with what your business does and what you want to build or improve. Include an existing website or example if available. Budget and timing information can help, but a finished plan is not required.",
+      answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth, or email a general project inquiry to admin@customtechbuilt4u.com. Bring what your business does and what you want to build or improve. An existing website or example can help, but a finished plan is not required.",
     },
   ],
 };

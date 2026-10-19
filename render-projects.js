@@ -1,5 +1,6 @@
-import { email } from "./public-projects.js?v=42";
-import { addInquirySource } from "./contact-context.js?v=42";
+import { bookingURL } from "./booking.js?v=43";
+import { email } from "./public-projects.js?v=43";
+import { addInquirySource } from "./contact-context.js?v=43";
 
 export const escape = (value) =>
   String(value).replace(
@@ -11,13 +12,13 @@ export const escape = (value) =>
   );
 export const external = 'target="_blank" rel="noopener noreferrer"';
 export function enquiryURL(topic = "general", reference = "", source = "/") {
+  if (topic === "consultation") return bookingURL;
   const topics = {
     general: "website, app, or business software",
     website: "website",
     "web-app": "web application",
     ios: "iOS app",
     software: "custom app or business software",
-    consultation: "consultation",
     salon: "salon booking website or app",
     restaurant: "restaurant ordering website or app",
   };
@@ -28,7 +29,6 @@ export function enquiryURL(topic = "general", reference = "", source = "/") {
     "web-app": "Web application project",
     ios: "iOS app project",
     software: "Custom app or software project",
-    consultation: "4u Digital consultation",
     salon: "Salon booking project",
     restaurant: "Restaurant ordering project",
   };
@@ -37,11 +37,8 @@ export function enquiryURL(topic = "general", reference = "", source = "/") {
     : subjects[topic] || subjects.general;
   const introduction = reference
     ? `I saw ${reference} in your portfolio and would like to discuss something similar.`
-    : topic === "consultation"
-      ? "I'd like to arrange a consultation about an app, website, or business software."
-      : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
-  const format = topic === "consultation" ? "\nConsultation format (Zoom or in-person in New York City):\nPreferred times:" : "";
-  const body = `Hi 4u Digital,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:${format}\n\nThanks!`;
+    : `I'm looking for help with ${topic === "ios" ? "an" : "a"} ${selected}.`;
+  const body = `Hi 4u Digital,\n\n${introduction}\n\nCompany/project:\nThe problem:\nWho will use it:\nWhat I need:\nExisting website (if any):\nBudget range (if known):\nTarget launch date:\n\nThanks!`;
   return addInquirySource(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`, source);
 }
 export const labels = {

@@ -377,6 +377,68 @@ button, a, input, select, textarea, summary {
   background: var(--surface-soft);
 }
 
+.consultation-panel h3 {
+  max-width: 20ch;
+  margin-top: 1rem;
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 2.4vw, 2.125rem);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.04em;
+}
+
+.booking-intro {
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
+
+.booking-steps {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  margin: 1.5rem 0;
+  border-block: 1px solid var(--line);
+  list-style: none;
+}
+
+.booking-steps li {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.booking-steps .mono {
+  color: var(--muted);
+}
+
+.consultation-panel .booking-primary {
+  width: 100%;
+  justify-content: space-between;
+}
+
+.booking-destination {
+  margin-top: 0.875rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.6;
+}
+
+.consultation-copy .consultation-question {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.consultation-question a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
 .consultation-formats {
   min-width: 0;
   margin: 0 0 1.5rem;

@@ -1,25 +1,29 @@
-# 4u Digital service pages and contact attribution
+# 4u Digital service pages, booking, and contact attribution
 
-Public brand: **4u Digital**. Tagline: **Custom tech build for you.** The primary domain and business email remain customtechbuilt4u.com and admin@customtechbuilt4u.com.
+Public brand: **4u Digital**. Tagline: **Custom tech build for you.** Primary domain: customtechbuilt4u.com. Business email: admin@customtechbuilt4u.com.
 
-The homepage services section now links to salon booking and restaurant ordering service pages. Both pages explain a prospective customer and staff workflow, scope decisions, questions, related planning guides, and genuine portfolio examples. Their examples do not claim completed salon or restaurant client work. All projects remain grouped before the process, consultation, and FAQ sections.
+## Consultations
 
-Consultation actions say **Request a consultation**. The form prepares an email; the meeting is agreed and confirmed by email. It does not promise automatic booking, availability, fees, or a meeting duration.
+Every consultation booking action opens https://briefbooth.com/book/4u-digital in a new tab. The exact destination is shared through booking.js. Booking links carry no source parameters, client answers, or other tracking values. Existing #consultation links still reach a homepage panel with the same booking destination.
+
+The booking page starts new clients with a Zoom consultation. In-person consultations help clients who are unsure what they need or whose software needs to fit a particular space or daily workflow. Visits are available in Manhattan, Brooklyn, and parts of Queens by arrangement, with farther travel discussed in advance. These discovery visits can help define the build. The portfolio does not invent fees, durations, office addresses, or availability. Intake details and scheduling are entered on BriefBooth; a click on the portfolio is not a booking confirmation.
+
+The homepage email consultation form has been retired from the public build. General website, app, and software inquiries still prepare emails to admin@customtechbuilt4u.com. The later project kickoff form remains available for scope and handover details after consultation.
 
 ## Received inquiries
 
-Business inquiry drafts include a terminal `Source page` line containing a known public canonical page URL. Links from other pages to the homepage consultation carry a `from` parameter containing only that public path. The form and clipboard draft retain it. Unknown paths, arbitrary URLs, query strings, and fragments cannot become source references. Attribution does not persist across visits or unrelated page navigation. A received email is the evidence of an actual inquiry; opening or copying a draft alone is not.
+General business inquiry drafts include a terminal Source page line containing a known public canonical URL. Unknown paths, arbitrary URLs, query strings, and fragments cannot become source references. Attribution does not persist across visits or unrelated navigation. A received email is evidence of an inquiry; opening or copying a draft alone is not.
 
-## Aggregate contact reports
+## Analytics
 
-The analytics module supports Vercel Web Analytics on the primary production domain. It sends `Contact intent` events with only two properties: `page` (known public path) and `action` (fixed action label). Consultation email actions distinguish Zoom and in-person; copy actions are recorded only after clipboard success. Invalid form submissions and failed copies produce no successful-contact event.
+The owner declined paid services. site.analyticsEnabled remains false: the public portfolio loads no visitor or click analytics provider and adds no analytics cookies or visitor identifiers. No new reporting service is enabled for BriefBooth.
 
-No project description, preferred time, search input, email body, arbitrary URL parameter, or visitor identifier added by the site is collected. The provider's page URLs are stripped to known public paths. Global Privacy Control and Do Not Track disable collection. No analytics is loaded on localhost, preview deployments, the GitHub Pages mirror, or the noindex 404 page. Provider failure leaves the contact flow usable.
+The inactive, mocked analytics hooks distinguish email, successful email copying, and opening the exact consultation booking link. Their payload is limited to a known public page and a fixed action label. They never receive project text, email bodies, questionnaire answers, preferred times, or arbitrary URL parameters. Opening a booking link measures intent only, not a completed appointment.
 
-Reporting location: Vercel → **4u-digital** project → **Analytics** → **Events** → **Contact intent**. Select a page/action breakdown to compare interest from the homepage, services, guides, and project pages. These are intent counts, not email delivery or booking confirmations.
+## Work presentation and verification
 
-The owner explicitly declined paid services. `site.analyticsEnabled` remains false, and Vercel Web Analytics remains disabled. The production site uses the free source references in inquiry emails described above; it does not collect aggregate visitor or contact-click analytics. The inactive module and mocked tests document the implementation, but no reporting service is activated and no new analytics charges are introduced.
+The opening includes actual TLC Massage Wellness website and SobStage desktop captures alongside the supplied BitBinder and My Gig Calendar banners. Capture status appears below each new image. Project imagery keeps its original colors and proportions.
 
-## Verification
+Salon booking and restaurant ordering pages describe proposed business workflows and link to genuine portfolio evidence; they do not claim completed sector clients. Project showcases remain grouped before process, questions, consultation, and guides.
 
-Source checks cover canonical routes, truthful examples, metadata/schema, source attribution, no-JS links, data bounds, redaction, initialization, and failure handling. Browser checks exercise the real UI hooks with a mocked analytics transport so test form text is never sent to a reporting provider. The public privacy page describes the active state and email-draft handling.
+Source and browser checks cover canonical routes, consistent booking destinations, no-JavaScript navigation, original image dimensions and colors, email source references, and the inactive analytics/privacy behavior. External booking intake is not submitted during portfolio verification.

@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-async function interceptEmail(page) {
+async function interceptContactNavigation(page) {
   await page.evaluate(() => document.addEventListener("click", (event) => {
-    if (event.target.closest?.('a[href^="mailto:"]')) event.preventDefault();
+    if (event.target.closest?.('a[href^="mailto:"], a[data-booking-link]')) event.preventDefault();
   }, true));
 }
 
@@ -29,7 +29,7 @@ async function enableTestAnalytics(page, { blocked = false, privacy = {} } = {})
         if (type === "event") window.__contactEvents.push(payload);
       },
     };
-    const analytics = await import("/analytics.js?v=42");
+    const analytics = await import("/analytics.js?v=43");
     window.__analyticsTestAPI = analytics;
     return analytics.initAnalytics(document, window.__analyticsTestWindow);
   }, { blocked, privacy });
@@ -39,60 +39,58 @@ async function contactEvents(page) {
   return page.evaluate(() => window.__contactEvents || []);
 }
 
-test("disabled analytics leaves the consultation usable and sends nothing", async ({ page }) => {
+const bookingURL = "https://briefbooth.com/book/4u-digital";
+
+test("disabled analytics leaves booking usable and sends nothing", async ({ page }) => {
   await page.goto("/");
-  await interceptEmail(page);
+  await interceptContactNavigation(page);
   const initialized = await page.evaluate(async () => {
     document.querySelector('meta[name="built4u-analytics"]')?.remove();
     window.__contactEvents = [];
-    const analytics = await import("/analytics.js?v=42");
+    const analytics = await import("/analytics.js?v=43");
     return analytics.initAnalytics(document, {
       location: new URL("https://customtechbuilt4u.com/"), navigator: {},
       va: (type, data) => { if (type === "event") window.__contactEvents.push(data); },
     });
   });
   expect(initialized).toBe(false);
-  await page.locator("#consultation-times").fill("Friday afternoon, Eastern time");
-  await page.locator('#consultation-form button[type="submit"]').click();
-  await expect(page.locator("#consultation-status")).toContainText(/ready|send|email/i);
+  const booking = page.locator(".intro-actions [data-booking-link]");
+  await expect(booking).toHaveAttribute("href", bookingURL);
+  await booking.focus();
+  await page.keyboard.press("Enter");
   expect(await contactEvents(page)).toEqual([]);
   await expect(page.locator('script[data-built4u-analytics]')).toHaveCount(0);
 });
 
-test("consultation tracking preserves its public source and excludes private form details", async ({ page }) => {
-  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", {
-    configurable: true, value: { writeText: async () => {} },
-  }));
+test("booking tracking records the current public page and excludes query values", async ({ page }) => {
   await page.goto("/?from=%2Fservices%2Fsalon-booking-app-development%2F&email=private@example.test#consultation");
-  await interceptEmail(page);
+  await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
   expect(await page.evaluate(() => window.__analyticsTestAPI.initAnalytics(document, window.__analyticsTestWindow))).toBe(false);
-  await page.locator('#consultation-form button[type="submit"]').click();
-  expect(await contactEvents(page)).toEqual([]);
-
-  await page.locator('#consultation-form input[value="in-person"]').check();
-  await page.locator("#consultation-times").fill("PRIVATE Tuesday at 14:30, Eastern time");
-  await page.locator("#consultation-project").fill("PRIVATE CLIENT private@example.test, proposed budget and customer records.");
-  await page.locator('#consultation-form button[type="submit"]').click();
-  await page.locator("#consultation-copy").click();
-  await expect(page.locator("#consultation-status")).toContainText(/copied/i);
+  const booking = page.locator("#consultation .booking-primary");
+  await expect(booking).toHaveAttribute("href", bookingURL);
+  await booking.focus();
+  await page.keyboard.press("Enter");
   const events = await contactEvents(page);
   expect(events).toEqual([
-    { name: "Contact intent", data: { page: "/services/salon-booking-app-development/", action: "consultation-email-in-person" } },
-    { name: "Contact intent", data: { page: "/services/salon-booking-app-development/", action: "consultation-copy" } },
+    { name: "Contact intent", data: { page: "/", action: "consultation-booking" } },
   ]);
-  expect(JSON.stringify(events)).not.toMatch(/PRIVATE|@|Tuesday|14:30|budget|records|subject|body|from=/i);
+  expect(JSON.stringify(events)).not.toMatch(/private|@|from=|email=|briefbooth|subject|body/i);
 });
 
-test("failed clipboard copying records no successful copy intent", async ({ page }) => {
-  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", {
-    configurable: true, value: { writeText: async () => { throw new Error("Clipboard unavailable"); } },
-  }));
+test("booking tracking rejects changed URLs and private query parameters", async ({ page }) => {
   await page.goto("/");
+  await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
-  await page.locator("#consultation-times").fill("Wednesday after 2 pm");
-  await page.locator("#consultation-copy").click();
-  await expect(page.locator("#consultation-draft-panel")).toBeVisible();
+  const booking = page.locator(".intro-actions [data-booking-link]");
+  for (const destination of [
+    `${bookingURL}?email=private@example.test`, `${bookingURL}#private-note`,
+    "https://briefbooth.com/book/another-business", "https://example.com/book/4u-digital",
+  ]) {
+    await booking.evaluate((element, href) => element.setAttribute("href", href), destination);
+    await booking.focus();
+    await page.keyboard.press("Enter");
+  }
   expect(await contactEvents(page)).toEqual([]);
 });
 
@@ -111,7 +109,7 @@ test("copying the business email address records intent only after clipboard suc
 
 test("dynamic project inquiry links are tracked once without reading their email draft", async ({ page }) => {
   await page.goto("/");
-  await interceptEmail(page);
+  await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
   await page.locator('#featured-projects [data-project="The-Bit-Binder"]').first().click();
   await expect(page.locator("#project-dialog")).toBeVisible();
@@ -128,19 +126,23 @@ test("service consultation requests identify the service carrying the button", a
   await consultation.evaluate((element) => element.addEventListener("click", (event) => event.preventDefault()));
   await consultation.click();
   expect(await contactEvents(page)).toEqual([
-    { name: "Contact intent", data: { page: "/services/restaurant-ordering-app-development/", action: "consultation-request" } },
+    { name: "Contact intent", data: { page: "/services/restaurant-ordering-app-development/", action: "consultation-booking" } },
   ]);
 });
 
-test("privacy preferences and blocked analytics leave email requests working", async ({ page }) => {
+test("privacy preferences and blocked analytics leave booking and email actions working", async ({ page }) => {
   await page.goto("/");
-  await interceptEmail(page);
+  await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page, { privacy: { globalPrivacyControl: true } })).toBe(false);
   expect(await contactEvents(page)).toEqual([]);
   expect(await enableTestAnalytics(page, { blocked: true })).toBe(true);
-  await page.locator("#consultation-times").fill("Thursday morning, Eastern time");
-  await page.locator('#consultation-form button[type="submit"]').click();
-  await expect(page.locator("#consultation-email")).toBeVisible();
-  await expect(page.locator("#consultation-status")).toContainText(/ready|send|email/i);
+  const booking = page.locator(".intro-actions [data-booking-link]");
+  await expect(booking).toHaveAttribute("href", bookingURL);
+  await booking.focus();
+  await page.keyboard.press("Enter");
+  const email = page.locator("#contact a[href^='mailto:']").first();
+  await expect(email).toHaveAttribute("href", /^mailto:admin@customtechbuilt4u\.com/);
+  await email.focus();
+  await page.keyboard.press("Enter");
   expect(await contactEvents(page)).toEqual([]);
 });

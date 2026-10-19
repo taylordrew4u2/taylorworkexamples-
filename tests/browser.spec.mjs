@@ -321,7 +321,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
   await expect(page.locator(".intro-description")).toHaveText(
-    "Work directly with the developer who designs, codes, and launches your project—from customer-facing websites to connected business tools and published iPhone apps.",
+    "Work directly with the developer who designs, codes, and launches your project—from business websites and iPhone apps to web platforms, desktop software, and connected business workflows.",
   );
   await expect(page.locator(".intro-description")).toBeVisible();
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");
@@ -701,16 +701,16 @@ test("the homepage gives clients clear next steps while keeping optional project
   await expect(processLink).toHaveAttribute("href", "#process");
   await expect(page.locator("#main-nav a[href*='github.com']")).toHaveCount(0);
   await expect(page.locator("footer a[href='https://github.com/taylordrew4u2']")).toBeVisible();
-  await expect(page.locator(".intro-actions").getByRole("link", { name: "Request a consultation", exact: false }))
-    .toHaveAttribute("href", "#consultation");
-  await expect(page.locator("#main-nav .nav-contact")).toHaveAttribute("href", "#consultation");
+  await expect(page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false }))
+    .toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
+  await expect(page.locator("#main-nav .nav-contact")).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
   await processLink.click();
   await expect(page).toHaveURL(/#process$/);
   if (testInfo.project.name === "phone") await expect(menu).toHaveAttribute("aria-expanded", "false");
   expect(await page.locator("#project-faq").evaluate((faq) => Boolean(
     document.querySelector("#process").compareDocumentPosition(faq) & Node.DOCUMENT_POSITION_FOLLOWING,
   ) && Boolean(faq.compareDocumentPosition(document.querySelector("#consultation")) & Node.DOCUMENT_POSITION_FOLLOWING)),
-  "Clients see the process and answers before the unchanged consultation section").toBe(true);
+  "Clients see the process and answers before the booking section").toBe(true);
 
   const comparison = page.locator("details.service-comparison");
   await expect(comparison).not.toHaveAttribute("open", "");

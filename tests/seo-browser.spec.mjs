@@ -4,6 +4,17 @@ import { services, guide, projectSlugs, site } from "../seo-content.js";
 import { articles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 
+const bookingURL = "https://briefbooth.com/book/4u-digital";
+
+async function expectBookingLink(link) {
+  await expect(link).toHaveAttribute("href", bookingURL);
+  await expect(link).toHaveAttribute("data-booking-link", "");
+  await expect(link).toHaveAttribute("target", "_blank");
+  await expect(link).toHaveAttribute("rel", /\bnoopener\b/);
+  await expect(link).toHaveAttribute("rel", /\bnoreferrer\b/);
+  await expect(link).toContainText("Book a consultation");
+}
+
 test.use({ javaScriptEnabled: false });
 
 async function linkTo(page, pathname) {
@@ -154,11 +165,7 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}${route}`);
 
     const consultationLink = page.locator(".page-nav .nav-contact");
-    await expect(consultationLink).toContainText("Request a consultation");
-    const consultation = new URL(await consultationLink.getAttribute("href"), page.url());
-    expect(consultation.pathname).toBe("/");
-    expect(consultation.searchParams.get("from")).toBe(route);
-    expect(consultation.hash).toBe("#consultation");
+    await expectBookingLink(consultationLink);
     await expectPageFit(page);
 
     const planning = await linkTo(page, `/insights/${service.guideSlug}/`);
@@ -288,11 +295,8 @@ for (const project of projects) {
     expect(draft.searchParams.get("body")).toContain("The problem:");
     expect(draft.searchParams.get("body")).toContain("Who will use it:");
     expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
-    await expect(page.locator(".page-nav .nav-contact")).toContainText("Request a consultation");
-    const consultation = new URL(await page.locator(".page-nav .nav-contact").getAttribute("href"), page.url());
-    expect(consultation.pathname).toBe("/");
-    expect(consultation.searchParams.get("from")).toBe(`/work/${projectSlugs[project.id]}/`);
-    expect(consultation.hash).toBe("#consultation");
+    await expectBookingLink(page.locator(".page-nav .nav-contact"));
+    await expectBookingLink(page.locator(".project-build-cta [data-booking-link]"));
     await expectPageFit(page);
   });
 }
@@ -333,12 +337,10 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   expect(draft.searchParams.get("body")).toContain("without sending passwords");
   expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/project-kickoff/`);
   await expectPageFit(page);
-  const consultation = new URL(await page.locator(".page-nav .nav-contact").getAttribute("href"), page.url());
-  expect(consultation.searchParams.get("from")).toBe("/project-kickoff/");
-  expect(consultation.hash).toBe("#consultation");
+  await expectBookingLink(page.locator(".page-nav .nav-contact"));
 });
 
-test("a business guide connects the idea to a service and an arranged Zoom or NYC consultation without JavaScript", async ({ page }) => {
+test("a business guide connects the idea to a service and the supplied consultation booking page without JavaScript", async ({ page }) => {
   const article = articles.find((entry) => entry.slug === "salon-booking-website");
   const service = services.find((entry) => entry.slug === article.serviceSlugs[0]);
   await page.goto("/");
@@ -367,15 +369,15 @@ test("a business guide connects the idea to a service and an arranged Zoom or NY
   await local.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(localConsultation.heading);
   await expect(page.locator("main")).toContainText(localConsultation.intro);
-  await expect(page.locator("main")).toContainText(/Zoom consultations by arrangement/);
-  const arrange = page.locator(".page-actions").getByRole("link", { name: "Request a consultation", exact: false });
+  await expect(page.locator("main")).toContainText(/Start with a Zoom consultation/i);
+  await expect(page.getByRole("heading", { name: "See the space before deciding on the software.", exact: true })).toBeVisible();
+  await expect(page.locator("main")).toContainText(/reception desk, booking handoff, order station/i);
+  for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
+    await expect(page.locator(".page-intro")).toContainText(option);
+  }
+  const arrange = page.locator(".page-intro .page-actions [data-booking-link]");
   await expect(arrange).toBeVisible();
-  const draft = new URL(await arrange.getAttribute("href"));
-  expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(draft.searchParams.get("subject")).toBe("4u Digital consultation");
-  expect(draft.searchParams.get("body")).toContain("Consultation format (Zoom or in-person in New York City):");
-  expect(draft.searchParams.get("body")).toContain("Preferred times:");
-  expect(draft.searchParams.get("body")).toContain("The problem:");
-  expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/new-york-city/`);
+  await expectBookingLink(arrange);
+  await expect(page.locator(".page-actions a[href^='mailto:']")).toHaveCount(0);
   await expectPageFit(page);
 });

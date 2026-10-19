@@ -1,12 +1,9 @@
-import { getContactPage, getConsultationSource, normalizeSource, sourceURL } from "./contact-context.js?v=42";
+import { bookingURL } from "./booking.js?v=43";
+import { getContactPage, normalizeSource, sourceURL } from "./contact-context.js?v=43";
 
 const controllers = new WeakMap();
 const eventName = "Contact intent";
-const actions = new Set([
-  "email", "email-copy", "consultation-request", "consultation-email", "consultation-copy",
-  "consultation-email-zoom", "consultation-email-in-person",
-  "consultation-copy-zoom", "consultation-copy-in-person",
-]);
+const actions = new Set(["email", "email-copy", "consultation-booking"]);
 
 function trackingAllowed(doc, win) {
   const enabled = doc.querySelector('meta[name="built4u-analytics"]')?.content === "vercel";
@@ -56,30 +53,18 @@ export function initAnalytics(doc = globalThis.document, win = globalThis.window
     }
   }
 
-  function consultationAction(link) {
-    const format = link.dataset?.consultationFormat ||
-      doc.querySelector('#consultation-form input[name="format"]:checked')?.value;
-    return ["zoom", "in-person"].includes(format)
-      ? `consultation-email-${format}` : "consultation-email";
-  }
-
   function onClick(event) {
     const link = event.target?.closest?.("a[href]");
     if (!link) return;
     const href = link.getAttribute("href") || "";
     if (/^mailto:/i.test(href)) {
-      const consultation = link.id === "consultation-email" ||
-        link.hasAttribute("data-consultation-format") ||
-        Boolean(link.closest("#consultation-draft-panel"));
-      track(consultation ? consultationAction(link) : "email",
-        consultation ? getConsultationSource(doc, win.location) : getContactPage(doc));
+      track("email");
       return;
     }
     try {
       const destination = new URL(href, win.location.href);
-      if (destination.origin === "https://customtechbuilt4u.com" &&
-          destination.pathname === "/" && destination.hash === "#consultation") {
-        track("consultation-request");
+      if (link.hasAttribute("data-booking-link") && destination.href === bookingURL) {
+        track("consultation-booking");
       }
     } catch {
       // Malformed links and an unavailable analytics provider leave contact actions usable.
