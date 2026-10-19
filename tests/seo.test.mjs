@@ -10,7 +10,7 @@ import sharp from "sharp";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
-import { articles } from "../seo-articles.js";
+import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
 
@@ -77,9 +77,9 @@ before(async () => {
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
   assert.equal(projects.length, 9);
-  assert.equal(articles.length, 6);
+  assert.equal(articles.length, 16);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 31);
+  assert.equal(routes.length, 41);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -225,9 +225,8 @@ test("structured data points to the canonical business and matches visible servi
       assert.equal(schema.publisher["@id"], org["@id"]);
       assert.equal(schema.mainEntityOfPage["@id"], page["@id"]);
       assert.equal(page.mainEntity["@id"], schema["@id"]);
-      assert.equal(schema.datePublished, "2026-10-14");
+      assert.equal(schema.datePublished, article.published || site.published);
       assert.equal(schema.dateModified, article.modified || site.modified || schema.datePublished);
-      assert.equal(schema.datePublished, site.published);
       assert.deepEqual(tags(html, "time").map((tag) => tag.datetime), [schema.datePublished]);
       assert.ok(visible.includes("by 4u digital"), `${route}: visible company author`);
     }
@@ -248,6 +247,39 @@ test("structured data points to the canonical business and matches visible servi
     }
     inspect(nodes, route);
   }
+});
+
+test("short reads form a complete topic index and a focused homepage preview", async () => {
+  const home = documents.get("/");
+  const homeCards = [...home.matchAll(/<article class="insight-card">([\s\S]*?)<\/article>/g)];
+  assert.equal(homeCards.length, 3, "the homepage stays focused on selected work");
+  assert.deepEqual(homeCards.map(([, card]) => pathname(tags(card, "a")[0].href, "/")),
+    homepageArticles.map((article) => `/insights/${article.slug}/`));
+  assert.ok(text(homeCards[0][1]).includes("Just need a website?"));
+  const hub = documents.get("/insights/");
+  const indexed = [];
+  for (const topic of articleTopics) {
+    const section = hub.match(new RegExp(`<section id="guides-${topic.id}"[^>]*>([\\s\\S]*?)</section>`))?.[1];
+    assert.ok(section, `${topic.label}: linked section exists`);
+    assert.ok(text(section).includes(topic.title));
+    assert.ok(tags(hub, "a").some((tag) => tag.href === `#guides-${topic.id}`));
+    const cards = [...section.matchAll(/<article class="insight-card">([\s\S]*?)<\/article>/g)];
+    const paths = cards.map(([, card]) => pathname(tags(card, "a")[0].href, "/insights/"));
+    assert.deepEqual(paths, articles.filter((article) => article.topic === topic.id).map((article) => `/insights/${article.slug}/`));
+    indexed.push(...paths);
+  }
+  assert.deepEqual(indexed.sort(), articles.map((article) => `/insights/${article.slug}/`).sort(), "each article appears exactly once");
+  for (const article of articles.filter((article) => article.format === "note")) {
+    const html = documents.get(`/insights/${article.slug}/`);
+    assert.match(html, /October 19, 2026/);
+    assert.equal(metadata(html, "og:type")[0].content, "article");
+    assert.equal(metadata(html, "article:published_time")[0].content, article.published);
+    assert.doesNotMatch(html, /class="seo-project-card"/, "short articles use compact related-work links");
+  }
+  const manifest = JSON.parse(await readFile(path.join(output, "search-manifest.json"), "utf8"));
+  const { contactPages } = await import(pathToFileURL(path.join(output, "contact-pages.js")));
+  assert.deepEqual(manifest.pages.map((page) => page.path).sort(), [...routes].sort());
+  assert.deepEqual([...contactPages].sort(), [...routes].sort(), "new articles retain inquiry source attribution");
 });
 
 test("business guides and consultation details are discoverable, truthful, and ready for booking", () => {
@@ -272,6 +304,11 @@ test("business guides and consultation details are discoverable, truthful, and r
     assert.ok(linksTo(hub, hubRoute, route), `${article.title}: reachable from the hub`);
     assert.ok(text(hub).includes(article.summary));
     assert.ok(text(html).includes(article.intro), `${article.title}: crawlable explanatory content`);
+    for (const section of article.sections) {
+      assert.ok(text(html).includes(section.heading));
+      for (const paragraph of section.paragraphs || [section.text]) assert.ok(text(html).includes(paragraph));
+    }
+    assert.ok(text(html).includes(article.closing));
     assert.ok(linksTo(html, route, hubRoute));
     assert.ok(linksTo(html, route, localRoute));
     for (const slug of article.serviceSlugs) {

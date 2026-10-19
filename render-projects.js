@@ -1,7 +1,7 @@
-import { bookingURL } from "./booking.js?v=49";
-import { email } from "./public-projects.js?v=49";
-import { addInquirySource } from "./contact-context.js?v=49";
-import { responsiveAttributes, gallerySizes, dialogSizes } from "./responsive-images.js?v=49";
+import { bookingURL } from "./booking.js?v=50";
+import { email } from "./public-projects.js?v=50";
+import { addInquirySource } from "./contact-context.js?v=50";
+import { responsiveAttributes, gallerySizes, dialogSizes } from "./responsive-images.js?v=50";
 
 export const escape = (value) =>
   String(value).replace(

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { projects, featuredProjects } from "../public-projects.js";
 import { services, guide, projectSlugs, site } from "../seo-content.js";
-import { articles } from "../seo-articles.js";
+import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 
 const bookingURL = "https://briefbooth.com/book/4u-digital";
@@ -427,11 +427,46 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   await expectPageFit(page);
 });
 
+test("website-only readers can browse short articles and reach booking without JavaScript", async ({ page }) => {
+  const article = articles.find((entry) => entry.slug === "simple-business-website");
+  await page.goto("/");
+  const preview = page.locator("#business-guides .insight-card h3 a").first();
+  await preview.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+  await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", "2026-10-19");
+  await expect(page.locator(".article-byline time")).toHaveText("October 19, 2026");
+  await expect(page.locator("main")).toContainText("You don’t need an app idea");
+  const faq = page.locator(".faq-item").first();
+  await faq.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(faq.locator("p")).toBeVisible();
+  await expectBookingLink(page.locator(".guide-article .page-callout [data-booking-link]"));
+  await expectPageFit(page);
+  const allGuides = page.getByRole("link", { name: "All 4u Digital business guides", exact: true });
+  await allGuides.focus();
+  await page.keyboard.press("Enter");
+  for (const topic of articleTopics) {
+    const jump = page.getByRole("navigation", { name: "Browse guide topics" }).locator(`a[href="#guides-${topic.id}"]`);
+    await jump.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.locator(`#guides-${topic.id} > h2`)).toHaveText(topic.title);
+    await expect(page.locator(`#guides-${topic.id} .insight-card`)).toHaveCount(articles.filter((entry) => entry.topic === topic.id).length);
+  }
+  const pricing = page.locator('#guides-pricing h3 a[href*="why-website-quotes-vary/"]');
+  await pricing.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Why can two quotes for a website be so different?");
+  await expect(page.getByRole("navigation", { name: "Related development services" }).getByRole("link", { name: services.find((service) => service.slug === "website-development").title, exact: true })).toBeVisible();
+  await expectPageFit(page);
+});
+
 test("a business guide connects the idea to a service and the supplied consultation booking page without JavaScript", async ({ page }) => {
   const article = articles.find((entry) => entry.slug === "salon-booking-website");
   const service = services.find((entry) => entry.slug === article.serviceSlugs[0]);
   await page.goto("/");
-  await expect(page.locator("#business-guides .insight-card")).toHaveCount(articles.length);
+  await expect(page.locator("#business-guides .insight-card")).toHaveCount(3);
+  await expect(page.locator("#business-guides .insight-card h3")).toHaveText(homepageArticles.map((entry) => entry.title));
   const guides = await linkTo(page, "/insights/");
   await guides.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Useful reads for your next business build.");
@@ -444,7 +479,7 @@ test("a business guide connects the idea to a service and the supplied consultat
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
   await expectHeaderSection(page, "/insights/");
   await expect(page.locator(".article-byline")).toContainText("By 4u Digital");
-  await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", site.published);
+  await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", article.published || site.published);
   await expect(page.locator("main")).toContainText(article.intro);
   const contents = page.getByRole("navigation", { name: "Guide sections", exact: true });
   await expect(contents).toBeVisible();

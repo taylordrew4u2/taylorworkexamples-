@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { site, services, guide, projectSlugs } from "../seo-content.js";
-import { articles } from "../seo-articles.js";
+import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { localConsultation } from "../seo-local.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projectStories } from "../project-stories.js";
@@ -14,7 +14,7 @@ import { renderKickoffForm } from "../kickoff-view.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "49";
+export const release = "50";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -63,7 +63,7 @@ function graph(page) {
     nodes.push({ "@type": "Article", "@id": `${url}#article`, url,
       headline: page.article.title, description: page.article.description,
       author: { "@id": organizationId }, publisher: { "@id": organizationId },
-      datePublished: site.published, dateModified: page.article.modified || site.modified || site.published,
+      datePublished: page.article.published || site.published, dateModified: page.article.modified || site.modified || site.published,
       mainEntityOfPage: { "@id": webPage["@id"] }, inLanguage: "en",
     });
   }
@@ -98,7 +98,9 @@ export function pageHead(page, homepage = false) {
     <title>${escape(page.title)}</title>
     <meta name="description" content="${escape(page.description)}" />
     <link rel="canonical" href="${escape(origin + page.path)}" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="${page.article ? "article" : "website"}" />
+    ${page.article ? `<meta property="article:published_time" content="${page.article.published || site.published}" />
+    <meta property="article:modified_time" content="${page.article.modified || site.modified || site.published}" />` : ""}
     <meta property="og:site_name" content="4u Digital" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:url" content="${escape(origin + page.path)}" />
@@ -198,7 +200,12 @@ function serviceCards(route) {
 }
 
 function articleCards(route, collection = articles) {
-  return `<div class="insight-grid">${collection.map((article) => `<article class="insight-card"><p class="eyebrow">BUSINESS TECHNOLOGY</p><h3><a href="${local(route, `insights/${article.slug}/`)}">${escape(article.title)}</a></h3><p>${escape(article.summary)}</p><a class="text-link" href="${local(route, `insights/${article.slug}/`)}">Read the guide <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
+  return `<div class="insight-grid">${collection.map((article) => `<article class="insight-card"><p class="eyebrow">${escape(articleTopics.find((topic) => topic.id === article.topic)?.label || "Business technology")} · ${article.format === "note" ? "Short read" : "Guide"}</p><h3><a href="${local(route, `insights/${article.slug}/`)}">${escape(article.title)}</a></h3><p>${escape(article.summary)}</p><a class="text-link" href="${local(route, `insights/${article.slug}/`)}">${article.format === "note" ? "Read the article" : "Read the guide"} <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
+}
+
+function articleIndex(route) {
+  return `<nav class="page-section-nav" aria-label="Browse guide topics"><span class="mono">FIND YOUR STARTING POINT</span>${articleTopics.map((topic) => `<a href="#guides-${topic.id}">${escape(topic.label)} <span aria-hidden="true">↓</span></a>`).join("")}</nav>` +
+    articleTopics.map((topic) => `<section id="guides-${topic.id}" class="page-section insight-topic" aria-labelledby="topic-${topic.id}"><h2 id="topic-${topic.id}">${escape(topic.title)}</h2><p>${escape(topic.description)}</p>${articleCards(route, articles.filter((article) => article.topic === topic.id))}</section>`).join("");
 }
 
 function consultationCallout(route) {
@@ -231,7 +238,16 @@ function articlePage(article) {
   const sections = article.sections.map(({ heading, text, paragraphs }, index) => `<section id="guide-section-${index + 1}" class="page-section"><h2>${escape(heading)}</h2>${(paragraphs || [text]).filter(Boolean).map((paragraph) => `<p>${escape(paragraph)}</p>`).join("")}</section>`).join("");
   const contents = `<nav class="article-contents" aria-label="Guide sections"><p class="eyebrow">IN THIS GUIDE</p><ol>${article.sections.map(({ heading }, index) => `<li><a href="#guide-section-${index + 1}">${escape(heading)}</a></li>`).join("")}</ol></nav>`;
   const examples = article.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
-  const content = `<article class="guide-article">${intro("A 4u Digital BUSINESS GUIDE", article.title, article.intro)}<p class="article-byline">By 4u Digital · <time datetime="${site.published}">October 14, 2026</time></p><div class="article-layout">${contents}<div class="article-body">${sections}${article.faq?.length ? faqBlock("A few useful answers", article.faq) : ""}</div></div><section class="page-section"><h2>Relevant work from the 4u Digital portfolio</h2><p>See the product screens and development details behind these related software projects. Each project page explains its purpose and the context of its images.</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section><section class="page-section"><h2>What would help your business?</h2><p>${escape(article.closing)}</p><nav class="related-links" aria-label="Related development services">${article.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav></section>${consultationCallout(route)}<nav class="related-links" aria-label="More business guides"><a href="${local(route, "insights/")}">All 4u Digital business guides</a><a href="${local(route, "guides/website-or-app/")}">Website, web app, or native app?</a></nav></article>`;
+  const published = article.published || site.published;
+  const dateLabel = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${published}T00:00:00Z`));
+  const related = articles.filter((entry) => entry.slug !== article.slug && entry.topic === article.topic).slice(0, 2);
+  const work = article.format === "note"
+    ? `<section class="page-section article-related-work"><h2>See related personal projects.</h2><p>Explore the product screens and development details in the portfolio.</p><nav class="related-links" aria-label="Related personal projects">${examples.map((project) => `<a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)} <span aria-hidden="true">↗</span></a>`).join("")}</nav></section>`
+    : `<section class="page-section"><h2>Relevant work from the 4u Digital portfolio</h2><p>See the product screens and development details behind these related software projects. Each project page explains its purpose and the context of its images.</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section>`;
+  const consultation = article.format === "note"
+    ? `<aside class="page-callout"><h2>Want to talk it through?</h2><p>Start with a Zoom consultation through BriefBooth. A rough idea or an existing website is enough to begin.</p><div class="page-actions">${bookingLink()}<a class="text-link" href="${local(route, "new-york-city/")}">About NYC in-person consultations ↗</a></div></aside>`
+    : consultationCallout(route);
+  const content = `<article class="guide-article${article.format === "note" ? " short-article" : ""}">${intro(article.format === "note" ? "A SHORT READ FROM 4u Digital" : "A 4u Digital BUSINESS GUIDE", article.title, article.intro)}<p class="article-byline">By 4u Digital · <time datetime="${published}">${dateLabel}</time></p><div class="article-layout">${contents}<div class="article-body">${sections}${article.faq?.length ? faqBlock("A few useful answers", article.faq) : ""}</div></div><section class="page-section"><h2>What would help your business?</h2><p>${escape(article.closing)}</p><nav class="related-links" aria-label="Related development services">${article.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}</nav></section>${consultation}${work}<section class="page-section"><h2>Keep reading.</h2><nav class="related-links" aria-label="More business guides">${related.map((entry) => `<a href="${local(route, `insights/${entry.slug}/`)}">${escape(entry.title)}</a>`).join("")}<a href="${local(route, "insights/")}">All 4u Digital business guides</a><a href="${local(route, "guides/website-or-app/")}">Website, web app, or native app?</a></nav></section></article>`;
   return { ...page, html: frame(page, content) };
 }
 
@@ -326,7 +342,7 @@ export async function generateSEO(output) {
   html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
   html = html.replace('<section id="range-proof" class="range-proof" aria-label="Development range and published app proof"></section>', `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${renderRangeProof()}</section>`);
   html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
-  html = html.replace('<div id="home-insights"></div>', articleCards("/"));
+  html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
   html = html.replace('></p>\n            <div id="archive-projects"', `>${projects.length} OF ${projects.length} PROJECTS</p>\n            <div id="archive-projects"`);
   // Also give client-only controls a working route when JavaScript is unavailable.
   html = html.replace(/<noscript[\s\S]*?<\/noscript>/, '<noscript><p class="no-js-help">The projects below are available without JavaScript. Use each “Full project story” link to see every image and detail.</p></noscript>');
@@ -350,7 +366,7 @@ export async function generateSEO(output) {
     type: "ContactPage", breadcrumbs: [{ name: "Contact 4u Digital", path: "/contact/" }],
   };
   const insights = { path: "/insights/", title: "Business Website, App & Software Guides | 4u Digital",
-    description: "Practical 4u Digital guides to hiring a freelance developer, choosing a custom build, salon bookings, restaurant ordering, and scoping business software.",
+    description: "Short, practical 4u Digital articles on business websites, hourly vs fixed pricing, comparing quotes, ongoing costs, and planning apps or software.",
     type: "CollectionPage", breadcrumbs: [{ name: "Business guides", path: "/insights/" }],
   };
   const privacy = { path: "/privacy/", title: "Privacy & Site Analytics | 4u Digital",
@@ -364,7 +380,7 @@ export async function generateSEO(output) {
     { ...work, html: frame(work, intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `${projects.length} selected websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.`) + `<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside><div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>`) },
     ...projects.map(projectPage),
     guidePage(),
-    { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Choose a development approach, think through your customer workflow, and decide what belongs in the first version. These short 4u Digital guides give you a practical starting point.") + articleCards(insights.path) + consultationCallout(insights.path)) },
+    { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Just need a website? Start there. These short articles also explain pricing, comparing quotes, and planning apps or business software, in plain language.") + articleIndex(insights.path) + consultationCallout(insights.path)) },
     ...articles.map(articlePage),
     localPage(),
     kickoffPage(),

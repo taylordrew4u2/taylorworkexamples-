@@ -138,6 +138,10 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .insight-card > p:not(.eyebrow) { line-height: 1.7; color: var(--muted); }
 .insight-card .text-link { display: inline-flex; margin-top: auto; padding-top: 1.75rem; font-size: 0.875rem; }
 .insights-home > .text-link { display: inline-flex; margin-top: 1.5rem; }
+.insight-topic { scroll-margin-top: 2rem; }
+.insight-topic > p { margin-block: 1rem 1.75rem; }
+.insight-topic .insight-grid { margin-top: 1.75rem; }
+.short-article .article-related-work { padding-block: 2rem; }
 .consultation-offer { color: var(--muted); line-height: 1.7; margin-top: 1.25rem; }
 .consultation-offer a { text-decoration: underline; text-underline-offset: 0.25rem; }
 .site-footer .consultation-offer { color: #e6e6e6; }

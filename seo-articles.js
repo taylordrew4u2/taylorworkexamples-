@@ -1,4 +1,8 @@
-export const articles = [
+import { websiteNotes } from "./content/website-notes.js";
+import { pricingNotes } from "./content/pricing-notes.js";
+import { businessNotes } from "./content/business-notes.js";
+
+const guides = [
   {
     slug: "freelance-developer-vs-agency",
     title: "Freelance developer or agency: which fits your build?",
@@ -272,3 +276,17 @@ export const articles = [
     closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your app idea, intended users, and the first task it should handle. We can work through the scope together.",
   },
 ];
+
+export const articleTopics = [
+  { id: "websites", title: "Just need a website?", label: "Websites", description: "Start with the pages, content, and contact options your business needs." },
+  { id: "pricing", title: "Understand the price.", label: "Pricing", description: "Compare quotes, pricing arrangements, changes, and the costs after launch." },
+  { id: "planning", title: "Plan the right build.", label: "Planning", description: "Prepare for the conversation, choose useful features, and think through the work behind the screen." },
+];
+
+export const articles = [...websiteNotes, ...pricingNotes, ...businessNotes, ...guides].map((article) => ({
+  ...article,
+  topic: article.topic || (article.slug === "diy-vs-custom-website" ? "websites" : "planning"),
+}));
+
+export const homepageArticles = ["simple-business-website", "why-website-quotes-vary", "what-to-bring-to-a-developer"]
+  .map((slug) => articles.find((article) => article.slug === slug));

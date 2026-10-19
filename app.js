@@ -1,9 +1,9 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=49";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=49";
-import { dialogSizes } from "./responsive-images.js?v=49";
-import { trackContact } from "./analytics.js?v=49";
-import { renderRangeProof } from "./range-proof.js?v=49";
-import { bookingURL } from "./booking.js?v=49";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=50";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=50";
+import { dialogSizes } from "./responsive-images.js?v=50";
+import { trackContact } from "./analytics.js?v=50";
+import { renderRangeProof } from "./range-proof.js?v=50";
+import { bookingURL } from "./booking.js?v=50";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
