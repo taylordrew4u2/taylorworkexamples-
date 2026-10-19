@@ -29,7 +29,9 @@ async function enableTestAnalytics(page, { blocked = false, privacy = {} } = {})
         if (type === "event") window.__contactEvents.push(payload);
       },
     };
-    const analytics = await import("/analytics.js?v=43");
+    const analyticsModuleURL = document.querySelector('script[type="module"][src*="analytics.js"]')?.src;
+    if (!analyticsModuleURL) throw new Error("The page is missing its analytics module script.");
+    const analytics = await import(analyticsModuleURL);
     window.__analyticsTestAPI = analytics;
     return analytics.initAnalytics(document, window.__analyticsTestWindow);
   }, { blocked, privacy });
@@ -47,7 +49,9 @@ test("disabled analytics leaves booking usable and sends nothing", async ({ page
   const initialized = await page.evaluate(async () => {
     document.querySelector('meta[name="built4u-analytics"]')?.remove();
     window.__contactEvents = [];
-    const analytics = await import("/analytics.js?v=43");
+    const analyticsModuleURL = document.querySelector('script[type="module"][src*="analytics.js"]')?.src;
+    if (!analyticsModuleURL) throw new Error("The page is missing its analytics module script.");
+    const analytics = await import(analyticsModuleURL);
     return analytics.initAnalytics(document, {
       location: new URL("https://customtechbuilt4u.com/"), navigator: {},
       va: (type, data) => { if (type === "event") window.__contactEvents.push(data); },
