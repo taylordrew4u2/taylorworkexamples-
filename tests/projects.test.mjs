@@ -10,6 +10,7 @@ import {
 } from "../projects.js";
 import { publicRepositories, repositoryVerifiedAt } from "../repository-state.js";
 import { projectIdentities } from "../identities.js";
+import { projects as publicProjects } from "../public-projects.js";
 
 // Check the actual asset headers so stale dimensions cannot stretch a preview.
 function assetDimensions(image) {
@@ -138,25 +139,26 @@ test("removed repositories cannot appear in the catalog or search results", () =
   }
 });
 
-test("the homepage hero uses the BitBinder and My Gig Calendar supplied banners without extra visible copy", () => {
+test("the homepage opening shows real website and desktop work while preserving the supplied app banners", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const capabilities = html.match(/<nav\b[^>]*class="hero-capabilities"[^>]*>[\s\S]*?<\/nav>/)?.[0];
   assert.ok(capabilities, "The opening includes native navigation for the development range");
-  assert.ok(html.indexOf(capabilities) < html.indexOf('<div class="hero-stage"'), "Clients see the range before the app banners");
   assert.equal([...capabilities.matchAll(/<a\b[^>]*class="hero-capability"/g)].length, 4);
   for (const label of ["iPhone & iPad apps", "Business websites", "Web apps & platforms", "Desktop software"]) {
     assert.ok(capabilities.replaceAll("&amp;", "&").includes(label), `${label}: visible in the opening`);
   }
-  const hero = html.match(/<div class="hero-stage"[\s\S]*?<\/section>/)?.[0];
+  const hero = html.match(/<section class="intro wrap"[\s\S]*?<\/section>/)?.[0];
   assert.ok(hero, "Hero banners must be present");
-  assert.match(hero, /aria-label="Featured app previews"/);
-  const buttons = [...hero.matchAll(/<button class="hero-project" data-project="([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/button>/g)];
+  assert.match(hero, /aria-label="Featured websites, desktop software, and iPhone apps"/);
+  const appPreviews = hero.match(/<div class="hero-app-previews">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(appPreviews, "The supplied banners stay in their own image-only group");
+  const buttons = [...appPreviews.matchAll(/<button class="hero-project" data-project="([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/button>/g)];
   assert.deepEqual(buttons.map(([, id, label]) => [id, label]), [
     ["The-Bit-Binder", "View the BitBinder project"],
     ["MyGigCalendar", "View the My Gig Calendar project"],
   ]);
   assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 2);
-  assert.equal([...hero.matchAll(/<img\b/g)].length, 2);
+  assert.equal([...appPreviews.matchAll(/<img\b/g)].length, 2);
   for (const [, id, , contents] of buttons) {
     const project = projects.find((entry) => entry.id === id);
     assert.equal(project.sourceAvailable, true);
@@ -165,6 +167,28 @@ test("the homepage hero uses the BitBinder and My Gig Calendar supplied banners 
     assert.match(project.image, /\/banner-1920x1080\.png$/);
     assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
     assert.equal(contents.replace(/<img\b[^>]*>/g, "").trim(), "", `${id}: only the banner is inside its button`);
+  }
+  const platformCards = [...hero.matchAll(/<a class="hero-platform-project"([^>]*)>([\s\S]*?)<\/a>/g)];
+  assert.equal(platformCards.length, 2, "Real website and desktop projects appear beside the app banners");
+  for (const [index, [id, status]] of [
+    ["tlcmassagewellness", "Website · Development preview"],
+    ["usbmic", "Desktop software · Demo capture"],
+  ].entries()) {
+    const project = publicProjects.find((entry) => entry.id === id);
+    const frame = project.gallery[0];
+    const [, attributes, contents] = platformCards[index];
+    assert.ok(attributes.includes(`href="${project.caseUrl}"`), `${id}: the preview links to its real project story`);
+    const screen = contents.match(/<img class="hero-platform-screen"[^>]*>/)?.[0];
+    assert.ok(screen, `${id}: the real application screen is present`);
+    assert.ok(screen.includes(`src="${frame.image}"`), `${id}: the real screenshot matches the catalog`);
+    assert.ok(screen.includes(`width="${frame.width}" height="${frame.height}"`), `${id}: screenshot dimensions match the original`);
+    assert.match(screen, new RegExp(`alt="${project.title}[^\"]+"`), `${id}: the screenshot has a project-specific description`);
+    assert.ok(contents.includes(`src="${project.icon}" alt="" width="${project.iconWidth}" height="${project.iconHeight}"`),
+      `${id}: the project uses its authentic icon`);
+    assert.match(contents, /class="hero-platform-caption"/);
+    assert.ok(contents.includes(project.title));
+    assert.ok(contents.includes(status), `${id}: the preview identifies its development or demo status`);
+    assert.deepEqual(assetDimensions(frame.image), { width: frame.width, height: frame.height });
   }
   assert.doesNotMatch(hero, /hero-web|hero-phone|hero-orbit|hero-asterisk|hero-project-info|hero-project-icon|hero-project-copy|hero-project-arrow/);
   assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);

@@ -288,9 +288,10 @@ button, a, input, select, textarea, summary {
 
 .hero-capabilities {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: .625rem;
-  margin-top: 1.5rem;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .75rem;
+  margin: 0;
 }
 
 .hero-capability {
@@ -512,8 +513,83 @@ button, a, input, select, textarea, summary {
 
 .hero-stage {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
   min-width: 0;
+}
+
+.hero-app-previews,
+.hero-platform-previews {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.hero-platform-project {
+  display: block;
+  min-width: 0;
+  border: 1px solid #4a4a4a;
+  border-radius: .875rem;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.hero-platform-project:hover {
+  border-color: #aaa;
+}
+
+.hero-platform-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 10;
+  padding: .375rem;
+  background: #222;
+  border-bottom: 1px solid #393939;
+}
+
+.hero-platform-screen {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.hero-platform-caption {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem;
+}
+
+.hero-platform-caption .project-icon-frame {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: .3125rem;
+}
+
+.hero-platform-caption strong,
+.hero-platform-caption > span > span {
+  display: block;
+}
+
+.hero-platform-caption strong {
+  font-size: .8125rem;
+  line-height: 1.4;
+  font-weight: 650;
+}
+
+.hero-platform-caption > span > span {
+  margin-top: .1875rem;
+  font-size: .625rem;
+  line-height: 1.45;
+  color: #bdbdbd;
+}
+
+.hero-platform-caption > span:last-child {
+  color: #bdbdbd;
 }
 
 .hero-project {
@@ -2096,10 +2172,11 @@ dialog::backdrop {
     max-width: 22ch;
   }
   .hero-stage {
-    max-width: 40rem;
+    max-width: 44rem;
     width: 100%;
     justify-self: center;
   }
+  .hero-capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width:800px) {
@@ -2335,6 +2412,20 @@ dialog::backdrop {
   .hero-capability strong { font-size: .75rem; }
   .hero-capability > span > span { font-size: .625rem; }
   .hero-capability-arrow { display: none; }
+  .hero-stage { grid-template-columns: minmax(0, 1fr); }
+  .hero-platform-previews {
+    grid-row: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .75rem;
+  }
+  .hero-platform-caption {
+    grid-template-columns: 1.25rem minmax(0, 1fr);
+    gap: .375rem;
+    padding: .625rem;
+  }
+  .hero-platform-caption .project-icon-frame { width: 1.25rem; height: 1.25rem; }
+  .hero-platform-caption strong { font-size: .75rem; }
+  .hero-platform-caption > span:last-child { display: none; }
   .capability-strip {
     font-size: 0.75rem;
     padding-block: 1.25rem;
@@ -2688,3 +2779,7 @@ dialog::backdrop {
 }
 #featured-projects .product-cover .visual-badge,
 #featured-projects .product-cover .preview-arrow { display: none; }
+
+@media (max-width: 380px) {
+  .hero-platform-previews { grid-template-columns: minmax(0, 1fr); }
+}

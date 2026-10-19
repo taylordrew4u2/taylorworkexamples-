@@ -171,19 +171,27 @@ const heroPreviews = [
   ["MyGigCalendar", "View the My Gig Calendar project"],
 ];
 
+const heroPlatformPreviews = [
+  ["tlcmassagewellness", "Website · Development preview", /TLC Massage Wellness.*homepage.*Development preview/i],
+  ["usbmic", "Desktop software · Demo capture", /SobStage.*recording.*Virtual microphone demo/i],
+];
+
 async function expectHeroPreview(page) {
   const stage = page.locator(".hero-stage");
-  await expect(stage).toHaveAttribute("aria-label", "Featured app previews");
+  const appPreviews = stage.locator(".hero-app-previews");
+  await expect(stage).toHaveAttribute("aria-label", "Featured websites, desktop software, and iPhone apps");
+  await expect(appPreviews).toHaveCount(1);
   await expect(stage.locator("button.hero-project")).toHaveCount(2);
   expect(await stage.locator("button.hero-project").evaluateAll((buttons) =>
     buttons.map((button) => button.dataset.project),
   )).toEqual(heroPreviews.map(([id]) => id));
   await expect(stage.locator("img.hero-project-screen")).toHaveCount(2);
-  await expect(stage.locator("img")).toHaveCount(2);
+  await expect(appPreviews.locator("img")).toHaveCount(2);
+  await expect(stage.locator("img")).toHaveCount(6);
   await expect(stage.locator(
     ".hero-web, .hero-phone, .hero-orbit, .hero-asterisk, .hero-project-info, .hero-project-icon, .hero-project-copy, .hero-project-arrow",
   )).toHaveCount(0);
-  expect((await stage.innerText()).trim(), "The artwork has no added visible text or labels").toBe("");
+  expect((await appPreviews.innerText()).trim(), "The supplied app artwork has no added visible text or labels").toBe("");
   await expect(stage).toHaveCSS("filter", "none");
   for (const [id, label] of heroPreviews) {
     const project = projects.find((entry) => entry.id === id);
@@ -233,6 +241,63 @@ async function expectHeroPreview(page) {
     const second = buttons[1].getBoundingClientRect();
     return second.top >= first.bottom - 1;
   }), "Both opening banners remain separate without overlap").toBe(true);
+  const platforms = stage.locator(".hero-platform-previews");
+  await expect(platforms.locator("a.hero-platform-project")).toHaveCount(2);
+  for (const [id, status, imageDescription] of heroPlatformPreviews) {
+    const project = projects.find((entry) => entry.id === id);
+    const frame = project.gallery[0];
+    const link = platforms.locator(`a.hero-platform-project[href="${project.caseUrl}"]`);
+    await expect(link).toHaveCount(1);
+    const image = link.locator("img.hero-platform-screen");
+    await image.scrollIntoViewIfNeeded();
+    await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+    await expect(image).toHaveAttribute("src", frame.image);
+    await expect(image).toHaveAttribute("alt", imageDescription);
+    await expect(image).toHaveAttribute("width", String(frame.width));
+    await expect(image).toHaveAttribute("height", String(frame.height));
+    await expect(image).toHaveCSS("object-fit", "contain");
+    await expect(image).toHaveCSS("filter", "none");
+    await expect(image).toHaveCSS("mix-blend-mode", "normal");
+    await expect(image).toHaveCSS("opacity", "1");
+    await expect(link).toHaveCSS("filter", "none");
+    const caption = link.locator(".hero-platform-caption");
+    await expect(caption).toContainText(project.title);
+    await expect(caption).toContainText(status);
+    const icon = caption.locator("img.project-icon");
+    await expect(icon).toHaveAttribute("src", project.icon);
+    await expect(icon).toHaveAttribute("width", String(project.iconWidth));
+    await expect(icon).toHaveAttribute("height", String(project.iconHeight));
+    await expect(icon).toHaveCSS("object-fit", "contain");
+    await expect(icon).toHaveCSS("filter", "none");
+    const geometry = await link.evaluate((element) => {
+      const box = element.getBoundingClientRect();
+      const screen = element.querySelector(".hero-platform-screen");
+      const imageBox = screen.getBoundingClientRect();
+      const captionBox = element.querySelector(".hero-platform-caption").getBoundingClientRect();
+      return {
+        naturalWidth: screen.naturalWidth,
+        naturalHeight: screen.naturalHeight,
+        completeInside: imageBox.width > 0 && imageBox.height > 0 &&
+          imageBox.left >= box.left - 1 && imageBox.right <= box.right + 1 &&
+          imageBox.top >= box.top - 1 && imageBox.bottom <= box.bottom + 1,
+        captionBelow: captionBox.top >= imageBox.bottom - 1,
+        fitsViewport: box.left >= -1 && box.right <= window.innerWidth + 1,
+      };
+    });
+    expect(geometry.naturalWidth).toBe(frame.width);
+    expect(geometry.naturalHeight).toBe(frame.height);
+    expect(geometry.completeInside, `${project.title}: the complete original fits its card`).toBe(true);
+    expect(geometry.captionBelow, `${project.title}: its caption sits below the image without an overlay`).toBe(true);
+    expect(geometry.fitsViewport, `${project.title}: its preview fits the viewport`).toBe(true);
+  }
+  expect(await platforms.evaluate((element) => {
+    const platformBox = element.getBoundingClientRect();
+    const appBox = document.querySelector(".hero-app-previews").getBoundingClientRect();
+    const cards = [...element.querySelectorAll(".hero-platform-project")].map((card) => card.getBoundingClientRect());
+    const width = window.innerWidth;
+    return width > 600 || (platformBox.bottom <= appBox.top + 1 &&
+      (width <= 380 ? cards[1].top >= cards[0].bottom - 1 : Math.abs(cards[0].top - cards[1].top) <= 1));
+  }), "On smaller screens the website and desktop previews appear before the apps, with a readable narrow-phone layout").toBe(true);
 }
 
 test("portfolio renders, previews load, and the page fits the viewport", async ({
@@ -294,7 +359,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   }
   await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(2);
   await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(0);
-  await expect(page.locator(".hero-stage img")).toHaveCount(2);
+  await expect(page.locator(".hero-app-previews img")).toHaveCount(2);
+  await expect(page.locator(".hero-platform-previews .hero-platform-screen")).toHaveCount(2);
   for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
     await image.scrollIntoViewIfNeeded();
     await expect
