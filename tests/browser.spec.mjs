@@ -67,18 +67,23 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
   await openSelectedGallery(card);
   const screen = card.locator(screenSelector);
   const productCover = screenSelector !== ".archive-preview" && frame.portrait !== true &&
-    !frame.companion && !frame.workflow && frame.width * 9 === frame.height * 16 &&
+    !frame.companion && !frame.workflow && frame.width > frame.height &&
     /product-artwork$/.test(frame.sourceKind || "");
   expect(await screen.evaluate((element) => element.classList.contains("product-cover")),
     `${project.title}: only unpaired landscape product banners use the full composition frame`).toBe(productCover);
   if (productCover) {
     await expect(screen.locator(".visual-badge")).toBeHidden();
     await expect(screen.locator(".preview-arrow")).toBeHidden();
-    const aspectError = await screen.evaluate((element) => {
+    const ratio = `${frame.width} / ${frame.height}`;
+    expect(await screen.evaluate((element) => element.style.getPropertyValue("--product-cover-ratio").trim())).toBe(ratio);
+    const aspectError = await screen.evaluate((element, heightPerWidth) => {
       const box = element.getBoundingClientRect();
-      return Math.abs(box.height - box.width * 9 / 16);
-    });
-    expect(aspectError, `${frame.label}: the cover frame retains its full 16:9 composition`).toBeLessThanOrEqual(1);
+      return Math.abs(box.height - box.width * heightPerWidth);
+    }, frame.height / frame.width);
+    expect(aspectError, `${frame.label}: the full cover frame retains the original image proportions`).toBeLessThanOrEqual(1);
+  } else {
+    expect(await screen.evaluate((element) => element.style.getPropertyValue("--product-cover-ratio").trim()),
+      "Switching to an ordinary capture removes the artwork ratio").toBe("");
   }
   await expectLoadedImageToFit(screen.locator(".primary-screen"), frame);
   await expect(screen.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
@@ -173,7 +178,7 @@ const heroPreviews = [
 
 const heroPlatformPreviews = [
   ["tlcmassagewellness", "Website · Development preview", /TLC Massage Wellness.*homepage.*Development preview/i],
-  ["usbmic", "Desktop software · Demo capture", /SobStage.*recording.*Virtual microphone demo/i],
+  ["usbmic", "Desktop software · Product overview", /SobStage.*repository product artwork.*microphone.*recording/i],
 ];
 
 async function expectHeroPreview(page) {
@@ -394,8 +399,9 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     has: page.getByRole("button", { name: "RoleCall", exact: true }),
   });
   await expect(roleCard.locator(".visual-badge")).toHaveText("DEV PREVIEW");
-  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("src", /rolecall-shots-capture\.(webp|png)$/);
-  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("alt", /shot list.*fictional.*sample/i);
+  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("src", "./assets/readme-overviews/rolecall.png");
+  await expect(roleCard.locator(".project-visual img")).toHaveAttribute("alt", /RoleCall repository product artwork.*fictional.*shot list/i);
+  await expect(roleCard.locator(".project-visual")).toHaveClass(/product-cover/);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -1518,7 +1524,9 @@ for (const project of projects) {
         image: entry.querySelector(".archive-preview .primary-screen").getAttribute("src"),
         pressed: [...entry.querySelectorAll('[data-gallery][aria-pressed="true"]')].map((button) => button.dataset.screen),
       })), project.id);
-    for (const [order, index] of [0, project.gallery.length - 1].entries()) {
+    const gallerySteps = project.gallery[0].image.startsWith("./assets/readme-overviews/")
+      ? [...new Set([0, 1, project.gallery.length - 1])] : [0, project.gallery.length - 1];
+    for (const [order, index] of gallerySteps.entries()) {
       const choice = choices.nth(index);
       await choice.scrollIntoViewIfNeeded();
       await choice.focus();

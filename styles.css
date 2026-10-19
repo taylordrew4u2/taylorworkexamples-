@@ -2826,9 +2826,10 @@ dialog::backdrop {
 /* Product artwork is already a complete composition. Let it fill its own frame. */
 #featured-projects .project-visual.product-cover {
   height: auto;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: var(--product-cover-ratio, 16 / 9);
   padding: 0;
   gap: 0;
+  border-radius: 0;
 }
 #featured-projects .project-visual.product-cover .primary-screen {
   display: block;
@@ -2836,6 +2837,7 @@ dialog::backdrop {
   height: auto;
   max-width: 100%;
   max-height: none;
+  object-fit: contain;
   border-radius: 0;
   box-shadow: none;
 }

@@ -1,5 +1,5 @@
-import { projects } from "./public-projects.js?v=43";
-import { escape, external, projectIcon } from "./render-projects.js?v=43";
+import { projects } from "./public-projects.js?v=44";
+import { escape, external, projectIcon } from "./render-projects.js?v=44";
 
 export const appStoreIds = ["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"];
 export function publishedApps() {

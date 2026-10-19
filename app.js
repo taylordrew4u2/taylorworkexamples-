@@ -1,7 +1,7 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=43";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=43";
-import { trackContact } from "./analytics.js?v=43";
-import { renderRangeProof } from "./range-proof.js?v=43";
+import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=44";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=44";
+import { trackContact } from "./analytics.js?v=44";
+import { renderRangeProof } from "./range-proof.js?v=44";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -26,8 +26,14 @@ function changeShowcaseImage(event) {
     button.setAttribute("aria-pressed", String(button === choice));
   });
   const screen = story.querySelector(".case-screen, .supporting-screen, .archive-preview");
+  const productCover = !story.classList.contains("archive-card") && isProductCover(frame);
   screen.classList.toggle("portrait", frame.portrait === true);
-  screen.classList.toggle("product-cover", !story.classList.contains("archive-card") && isProductCover(frame));
+  screen.classList.toggle("product-cover", productCover);
+  if (productCover) {
+    screen.style.setProperty("--product-cover-ratio", `${frame.width} / ${frame.height}`);
+  } else {
+    screen.style.removeProperty("--product-cover-ratio");
+  }
   screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
   screen.innerHTML = `<span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
   story.querySelector(".screen-caption").textContent = frame.caption;

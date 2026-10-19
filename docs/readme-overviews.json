@@ -1,0 +1,85 @@
+{
+  "verifiedAt": "2026-10-19",
+  "kind": "repository-product-artwork",
+  "preservation": "Original repository PNG files; no resizing, cropping, recoloring, or overlays. Promotional artwork, separate from runtime capture evidence.",
+  "images": [
+    {
+      "project": "bleepkit",
+      "file": "assets/readme-overviews/bleepkit.png",
+      "repository": "taylordrew4u2/bleepkit",
+      "commit": "35903d2b3398648f9095f6d761b8988f28a0fe03",
+      "sourcePath": "docs/promo/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/bleepkit/blob/35903d2b3398648f9095f6d761b8988f28a0fe03/docs/promo/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 407806,
+      "gitBlobSha": "a48e0ce431cc1344a5014191f9c998309f1a7155",
+      "sha256": "b9ed3db8f976d06ea57cc5515c22c0672330388c19cc68bd6891e7a79ad22781"
+    },
+    {
+      "project": "dictype",
+      "file": "assets/readme-overviews/dictype.png",
+      "repository": "taylordrew4u2/dictype",
+      "commit": "66a5e7964410ed3d18062a7c8bd89ba1830f2720",
+      "sourcePath": "docs/promo/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/dictype/blob/66a5e7964410ed3d18062a7c8bd89ba1830f2720/docs/promo/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 957677,
+      "gitBlobSha": "65e034336c31c4fa252d4ace152ddfdedd8403de",
+      "sha256": "042f24386f5cead359a97d2544b5392e8c1268e9e9318e790a796eb611311776"
+    },
+    {
+      "project": "usbmic",
+      "file": "assets/readme-overviews/sobstage.png",
+      "repository": "taylordrew4u2/SobStage",
+      "commit": "8843186a58f62c91911ad6df99f879391144938e",
+      "sourcePath": "docs/images/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/SobStage/blob/8843186a58f62c91911ad6df99f879391144938e/docs/images/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 563540,
+      "gitBlobSha": "92e9ed19fc06192b3480d1835fe098326247314d",
+      "sha256": "0e0bb60eba493857cd504af1b0b620c9a07737754f858eaa241e01d4cee95b42"
+    },
+    {
+      "project": "PinsAndNeedlesComedyWebsite",
+      "file": "assets/readme-overviews/pins-and-needles.png",
+      "repository": "taylordrew4u2/PinsAndNeedlesComedyWebsite",
+      "commit": "0c3cea8cfb74297e75c00f4c4408a571fa7392d7",
+      "sourcePath": "docs/promo/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/0c3cea8cfb74297e75c00f4c4408a571fa7392d7/docs/promo/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 827205,
+      "gitBlobSha": "9e9a516365b653a295eb403639267336682b2a72",
+      "sha256": "ebfe01a6fab2b176a760a0b67fc29f1a31f793b145969d5d9cc8d5d357ee9131"
+    },
+    {
+      "project": "Role-Call",
+      "file": "assets/readme-overviews/rolecall.png",
+      "repository": "taylordrew4u2/Role-Call",
+      "commit": "d138489bc7b61a4f02f92f0a0f548662451effbf",
+      "sourcePath": "docs/screenshots/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/d138489bc7b61a4f02f92f0a0f548662451effbf/docs/screenshots/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 692057,
+      "gitBlobSha": "aa1c2301079d90f7b357260e5b77101b856d4be0",
+      "sha256": "947cb3d11eeff8888ef164f60df73943f630d3278442075d96e475d49ea75f96"
+    },
+    {
+      "project": "the-trip-handler",
+      "file": "assets/readme-overviews/trip-handler.png",
+      "repository": "taylordrew4u2/the-trip-handler",
+      "commit": "765fe03d725033e1352ff221412b982c316be9ce",
+      "sourcePath": "docs/screenshots/overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/765fe03d725033e1352ff221412b982c316be9ce/docs/screenshots/overview.png",
+      "width": 2400,
+      "height": 1500,
+      "bytes": 883521,
+      "gitBlobSha": "bbb4c109a73ef9d6ac1c118715230f4ef9124e47",
+      "sha256": "7a1f5d4183f6cf30f9e48bce8f7a3bd2d872ce9cd6b858726566655de6c3bd19"
+    }
+  ]
+}

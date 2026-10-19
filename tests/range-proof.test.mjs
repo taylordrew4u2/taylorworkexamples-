@@ -25,10 +25,20 @@ test("full composition cover mode excludes portrait artwork, native captures, an
   const banner = { width: 1920, height: 1080, sourceKind: "owner-supplied-product-artwork" };
   assert.equal(isProductCover(banner), true);
   assert.equal(isProductCover({ ...banner, width: 2560, height: 1440, sourceKind: "repository-product-artwork" }), true);
+  assert.equal(isProductCover({ ...banner, width: 2400, height: 1500, sourceKind: "repository-product-artwork" }), true,
+    "Repository artwork preserves its native 8:5 composition");
+  assert.equal(isProductCover({ ...banner, width: 1800, height: 800 }), true,
+    "Explicit landscape artwork is not restricted to one aspect ratio");
   for (const [reason, overrides] of [
     ["explicit portrait mode", { portrait: true }],
     ["portrait promotional dimensions", { width: 1320, height: 2868 }],
-    ["a non-16:9 composition", { width: 1600, height: 1000 }],
+    ["square artwork", { width: 1000, height: 1000 }],
+    ["missing width", { width: undefined }],
+    ["zero height", { height: 0 }],
+    ["negative height", { height: -1000 }],
+    ["non-finite width", { width: Infinity }],
+    ["invalid height", { height: NaN }],
+    ["unparsed dimension strings", { width: "2400", height: "1500" }],
     ["a companion image", { companion: { image: "./native-screen.png" } }],
     ["a workflow illustration", { workflow: ["Import", "Review"] }],
     ["a native capture at the same aspect ratio", { sourceKind: "repository-app-capture" }],

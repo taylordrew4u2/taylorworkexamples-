@@ -1,4 +1,4 @@
-// Image evidence, source links, and accurate capture labels. Public-only catalog updated 2026-10-12.
+// Image evidence, source links, and accurate capture labels. README artwork refreshed 2026-10-19.
 export const projectVisuals = {
   "Showrunner-ICanRunAShow": {
     "image": "./assets/showrunner/banner-1920x1080.png",
@@ -356,15 +356,29 @@ export const projectVisuals = {
     "previewContext": "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
   },
   "the-trip-handler": {
-    "image": "./assets/triphandler-meals-current.webp",
-    "imageAlt": "Trip Handler meal polls with participant votes, dietary tags, and cooking roles",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
+    "image": "./assets/readme-overviews/trip-handler.png",
+    "imageAlt": "The Trip Handler repository product artwork combining a sample trip dashboard, applicant approvals, itinerary, and two mobile views.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "app-screenshot",
-    "imageLabel": "App screenshot",
-    "imageCaption": "Running app · Meal voting with seeded demo data",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Trip dashboard, applicant approvals, itinerary, and mobile planning.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/trip-handler.png",
+        "imageAlt": "The Trip Handler repository product artwork combining a sample trip dashboard, applicant approvals, itinerary, and two mobile views.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Trip dashboard, applicant approvals, itinerary, and mobile planning.",
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/765fe03d725033e1352ff221412b982c316be9ce/docs/screenshots/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Meal voting",
         "image": "./assets/triphandler-meals-current.webp",
@@ -373,7 +387,10 @@ export const projectVisuals = {
         "height": 1000,
         "portrait": false,
         "caption": "Running app · Meal voting with seeded demo data",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/meals.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/meals.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Running app · Seeded demo trip; no real payment transaction"
       },
       {
         "label": "Approvals",
@@ -383,7 +400,10 @@ export const projectVisuals = {
         "height": 1000,
         "portrait": false,
         "caption": "Running app · Invitations and applicants with seeded demo data",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/my-trips.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/my-trips.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Running app · Seeded demo trip; no real payment transaction"
       },
       {
         "label": "Shared board",
@@ -393,7 +413,10 @@ export const projectVisuals = {
         "height": 1000,
         "portrait": false,
         "caption": "Running app · Shared posts and reactions with seeded demo data",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/board.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/board.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Running app · Seeded demo trip; no real payment transaction"
       },
       {
         "label": "Itinerary",
@@ -403,7 +426,10 @@ export const projectVisuals = {
         "height": 1000,
         "portrait": false,
         "caption": "Running app · Itinerary and comments with seeded demo data",
-        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/itinerary.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/itinerary.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Running app · Seeded demo trip; no real payment transaction"
       },
       {
         "label": "On mobile",
@@ -420,21 +446,39 @@ export const projectVisuals = {
           "width": 780,
           "height": 1328,
           "sourceUrl": "https://github.com/taylordrew4u2/the-trip-handler/blob/50e8bb807c50d7acc09ca7d209c36cc7c276e8dc/docs/screenshots/sleeping-mobile.png"
-        }
+        },
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Running app · Seeded demo trip; no real payment transaction"
       }
     ],
-    "notes": "Screenshots come from the running application with seeded demo data. The public site leads to sign-in; screenshots do not represent a real payment transaction."
+    "notes": "The product overview is repository promotional artwork combining sample trip screens. The separate screenshots come from the running application with seeded demo data. The public site leads to sign-in; screenshots do not represent a real payment transaction.",
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
   },
   "Role-Call": {
-    "image": "./assets/rolecall-shots-capture.webp",
-    "imageAlt": "RoleCall shot list generated from a fictional sample screenplay",
-    "imageWidth": 1440,
-    "imageHeight": 900,
+    "image": "./assets/readme-overviews/rolecall.png",
+    "imageAlt": "RoleCall repository product artwork pairing a fictional screenplay with an illustrated generated shot list and extracted cast.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "development-capture",
-    "imageLabel": "Development preview",
-    "imageCaption": "Development capture · Actual shot-list component with a sample screenplay",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Screenplay, generated shot list, and extracted cast.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/rolecall.png",
+        "imageAlt": "RoleCall repository product artwork pairing a fictional screenplay with an illustrated generated shot list and extracted cast.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Screenplay, generated shot list, and extracted cast.",
+        "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/d138489bc7b61a4f02f92f0a0f548662451effbf/docs/screenshots/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Shot list",
         "image": "./assets/rolecall-shots-capture.webp",
@@ -443,7 +487,10 @@ export const projectVisuals = {
         "height": 900,
         "portrait": false,
         "caption": "Development capture · Actual shot-list component with a sample screenplay",
-        "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/921e9d94d18dbfee7a7a2580c8f05918daad9c3a/components/ShotListBoard.tsx"
+        "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/921e9d94d18dbfee7a7a2580c8f05918daad9c3a/components/ShotListBoard.tsx",
+        "imageKind": "development-capture",
+        "imageLabel": "Development preview",
+        "previewContext": "Isolated development capture · Fictional screenplay and parser-generated sample shots"
       },
       {
         "label": "Script workspace",
@@ -453,11 +500,15 @@ export const projectVisuals = {
         "height": 900,
         "portrait": false,
         "caption": "Development capture · Actual script workspace with sample writing",
-        "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/921e9d94d18dbfee7a7a2580c8f05918daad9c3a/components/ScriptWorkspace.tsx"
+        "sourceUrl": "https://github.com/taylordrew4u2/Role-Call/blob/921e9d94d18dbfee7a7a2580c8f05918daad9c3a/components/ScriptWorkspace.tsx",
+        "imageKind": "development-capture",
+        "imageLabel": "Development preview",
+        "previewContext": "Isolated development capture · Fictional screenplay and parser-generated sample shots"
       }
     ],
-    "notes": "Screens render the current app components in an isolated development build with a fictional screenplay. The sample shot list comes from the project’s real parser. The production workspace requires signing in.",
-    "badge": "DEV PREVIEW"
+    "notes": "The product overview is repository promotional artwork illustrating the screenplay-to-shot-list and cast workflow with fictional writing. The separate development screens render the app components in an isolated build with a fictional screenplay. The sample shot list comes from the project’s real parser. The production workspace requires signing in.",
+    "badge": "DEV PREVIEW",
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
   },
   "Bill-Spilt": {
     "image": "./assets/billspilt/hero.png",
@@ -760,15 +811,29 @@ export const projectVisuals = {
     "notes": "Published screenshots use fictional open-mic listings for demonstration."
   },
   "PinsAndNeedlesComedyWebsite": {
-    "image": "./assets/pinsandneedles-home-current.webp",
-    "imageAlt": "Pins and Needles Comedy homepage with show branding and navigation",
-    "imageWidth": 1400,
-    "imageHeight": 748,
+    "image": "./assets/readme-overviews/pins-and-needles.png",
+    "imageAlt": "Pins and Needles repository product artwork combining the public website, producer controls, live audience display, and phone submission view.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "app-screenshot",
-    "imageLabel": "Website screenshot",
-    "imageCaption": "Repository website capture · Public show page",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Public website, producer controls, and audience display.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/pins-and-needles.png",
+        "imageAlt": "Pins and Needles repository product artwork combining the public website, producer controls, live audience display, and phone submission view.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Public website, producer controls, and audience display.",
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/0c3cea8cfb74297e75c00f4c4408a571fa7392d7/docs/promo/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Public website",
         "image": "./assets/pinsandneedles-home-current.webp",
@@ -777,7 +842,10 @@ export const projectVisuals = {
         "height": 748,
         "portrait": false,
         "caption": "Repository website capture · Public show page",
-        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/home.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/home.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "Website screenshot",
+        "previewContext": "Repository website capture · Public show and producer workflows"
       },
       {
         "label": "Control center",
@@ -787,7 +855,10 @@ export const projectVisuals = {
         "height": 1100,
         "portrait": false,
         "caption": "Repository website capture · Producer control center",
-        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/control-center.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/control-center.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "Website screenshot",
+        "previewContext": "Repository website capture · Public show and producer workflows"
       },
       {
         "label": "Audience countdown",
@@ -797,20 +868,39 @@ export const projectVisuals = {
         "height": 844,
         "portrait": true,
         "caption": "Repository website capture · Audience submission countdown",
-        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/bad-decisions.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite/blob/36d86ff5006afe23d2b1a9b4f030f1baa07085e3/docs/images/bad-decisions.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "Website screenshot",
+        "previewContext": "Repository website capture · Public show and producer workflows"
       }
-    ]
+    ],
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved",
+    "notes": "The product overview is repository promotional artwork combining the public website, producer controls, and audience display. The separate repository website captures retain their original capture context. Promotional artwork does not establish new validation of live audience submissions or synchronized show operation."
   },
   "usbmic": {
-    "image": "./assets/sobstage-recording-current.webp",
-    "imageAlt": "SobStage recording with virtual microphone channels, elapsed time, and file information",
-    "imageWidth": 1180,
-    "imageHeight": 603,
+    "image": "./assets/readme-overviews/sobstage.png",
+    "imageAlt": "SobStage repository product artwork illustrating four microphone channels, recording controls, and a saved-take file list.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "app-screenshot",
-    "imageLabel": "App screenshot",
-    "imageCaption": "Repository app capture · Virtual microphones · Recording a demo take",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Multiple microphone channels, recording controls, and saved tracks.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/sobstage.png",
+        "imageAlt": "SobStage repository product artwork illustrating four microphone channels, recording controls, and a saved-take file list.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Multiple microphone channels, recording controls, and saved tracks.",
+        "sourceUrl": "https://github.com/taylordrew4u2/SobStage/blob/8843186a58f62c91911ad6df99f879391144938e/docs/images/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Recording",
         "image": "./assets/sobstage-recording-current.webp",
@@ -819,7 +909,10 @@ export const projectVisuals = {
         "height": 603,
         "portrait": false,
         "caption": "Repository app capture · Virtual microphones · Recording a demo take",
-        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recording.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recording.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Repository app capture · Virtual microphones; earlier interface"
       },
       {
         "label": "Take alerts",
@@ -829,7 +922,10 @@ export const projectVisuals = {
         "height": 420,
         "portrait": false,
         "caption": "Repository app capture · Virtual microphones · Simulated input interruptions",
-        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/mid-take-alert.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/mid-take-alert.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Repository app capture · Virtual microphones; earlier interface"
       },
       {
         "label": "Saved take",
@@ -839,7 +935,10 @@ export const projectVisuals = {
         "height": 603,
         "portrait": false,
         "caption": "Repository app capture · Virtual microphones · Saved demo files and warning",
-        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/saved-take.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/saved-take.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Repository app capture · Virtual microphones; earlier interface"
       },
       {
         "label": "Recovery",
@@ -849,21 +948,39 @@ export const projectVisuals = {
         "height": 570,
         "portrait": false,
         "caption": "Repository app capture · Virtual microphones · Simulated crash recovery",
-        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recovered.png"
+        "sourceUrl": "https://github.com/taylordrew4u2/usbmic/blob/5c64a7da3ef2a47603c17564e66f4610da8f3154/docs/images/recovered.png",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Repository app capture · Virtual microphones; earlier interface"
       }
     ],
-    "notes": "Repository app captures use virtual microphones and display an earlier UI version. The v1.13.25 source includes headphone output routing and recording-stem alignment. Physical microphone validation remains in progress."
+    "notes": "The product overview is repository promotional artwork illustrating microphone channels and saved tracks. Its depicted recording durations, device names, file sizes, and alignment figures are not measurements taken for this portfolio. The separate repository app captures use virtual microphones and display an earlier UI version. The v1.13.25 source includes headphone output routing and recording-stem alignment. Physical microphone validation remains in progress.",
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
   },
   "bleepkit": {
-    "image": "./assets/bleepkit-overview-mono.svg",
-    "imageAlt": "BleepKit source-derived overview: Import video: Photos or Files; Transcribe: Timed, editable words; Review & censor: Captions, audio, overlays",
-    "imageWidth": 1600,
-    "imageHeight": 1000,
+    "image": "./assets/readme-overviews/bleepkit.png",
+    "imageAlt": "BleepKit repository product artwork showing a sample video editor, censor controls, and video export in three phone frames.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "project-overview",
-    "imageLabel": "Source overview",
-    "imageCaption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Import, transcription and editing services. Technical overview of implemented code; no product interface is depicted.",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Video editing, censor controls, and export overview.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/bleepkit.png",
+        "imageAlt": "BleepKit repository product artwork showing a sample video editor, censor controls, and video export in three phone frames.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Video editing, censor controls, and export overview.",
+        "sourceUrl": "https://github.com/taylordrew4u2/bleepkit/blob/35903d2b3398648f9095f6d761b8988f28a0fe03/docs/promo/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Workflow overview",
         "image": "./assets/bleepkit-overview-mono.svg",
@@ -872,10 +989,14 @@ export const projectVisuals = {
         "height": 1000,
         "portrait": false,
         "caption": "Project overview / From source. SOURCE-DERIVED WORKFLOW · Import, transcription and editing services. Technical overview of implemented code; no product interface is depicted.",
-        "sourceUrl": "https://github.com/taylordrew4u2/bleepkit/blob/cfd67a5f4d48eec2a943dd55715aeb0288babf7b/bleepkit/ViewModels/EditorViewModel.swift"
+        "sourceUrl": "https://github.com/taylordrew4u2/bleepkit/blob/cfd67a5f4d48eec2a943dd55715aeb0288babf7b/bleepkit/ViewModels/EditorViewModel.swift",
+        "imageKind": "project-overview",
+        "imageLabel": "Source overview",
+        "previewContext": "Source-derived workflow · Implemented code overview; no product interface depicted"
       }
     ],
-    "notes": "ImportViewModel.swift imports Photos/Files video. EditorViewModel.swift extracts/transcribes audio, persists timed tokens and manual overrides, and rebuilds audio/caption/overlay preview layers."
+    "notes": "The product overview is repository promotional artwork illustrating video editing, censor controls, and export; it is not a fresh runtime capture or validation of transcription or exported-video output. The separate source-derived workflow describes implemented code and does not depict the product interface. ImportViewModel.swift imports Photos/Files video. EditorViewModel.swift extracts/transcribes audio, persists timed tokens and manual overrides, and rebuilds audio/caption/overlay preview layers.",
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
   },
   "vlognudge": {
     "image": "./assets/vlognudge-home.webp",
@@ -1071,15 +1192,29 @@ export const projectVisuals = {
     "notes": "Captured from the actual local website build with repository-default text and the existing portfolio portrait. This is a development example, not a live booking schedule."
   },
   "dictype": {
-    "image": "./assets/dictype-native-onboarding.webp",
-    "imageAlt": "DicType macOS onboarding showing microphone and speech permissions pending",
-    "imageWidth": 1800,
-    "imageHeight": 1416,
+    "image": "./assets/readme-overviews/dictype.png",
+    "imageAlt": "DicType repository product artwork illustrating recognized speech being typed character by character into Notes on a Mac.",
+    "imageWidth": 2400,
+    "imageHeight": 1500,
     "portrait": false,
-    "imageKind": "app-screenshot",
-    "imageLabel": "App screenshot",
-    "imageCaption": "Actual native onboarding capture. Permissions were not granted and dictation was not exercised.",
+    "imageKind": "product-artwork",
+    "imageLabel": "Repository product artwork",
+    "imageCaption": "Repository product artwork · Speech-to-text typing into another Mac application.",
     "gallery": [
+      {
+        "label": "Product overview",
+        "image": "./assets/readme-overviews/dictype.png",
+        "imageAlt": "DicType repository product artwork illustrating recognized speech being typed character by character into Notes on a Mac.",
+        "width": 2400,
+        "height": 1500,
+        "portrait": false,
+        "caption": "Repository product artwork · Speech-to-text typing into another Mac application.",
+        "sourceUrl": "https://github.com/taylordrew4u2/dictype/blob/66a5e7964410ed3d18062a7c8bd89ba1830f2720/docs/promo/overview.png",
+        "sourceKind": "repository-product-artwork",
+        "imageKind": "product-artwork",
+        "imageLabel": "Repository product artwork",
+        "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
+      },
       {
         "label": "Onboarding",
         "image": "./assets/dictype-native-onboarding.webp",
@@ -1088,10 +1223,14 @@ export const projectVisuals = {
         "height": 1416,
         "portrait": false,
         "caption": "Actual native onboarding capture. Permissions were not granted and dictation was not exercised.",
-        "sourceUrl": "https://github.com/taylordrew4u2/dictype/blob/9af75740e3caf861b999396b372caea58ae1f96b/DicType/Sources/DicType/RootView.swift"
+        "sourceUrl": "https://github.com/taylordrew4u2/dictype/blob/9af75740e3caf861b999396b372caea58ae1f96b/DicType/Sources/DicType/RootView.swift",
+        "imageKind": "app-screenshot",
+        "imageLabel": "App screenshot",
+        "previewContext": "Actual native onboarding · Microphone and speech permissions pending; dictation not exercised"
       }
     ],
-    "notes": "Actual native onboarding capture. Permissions were not granted and dictation was not exercised."
+    "notes": "The product overview is repository promotional artwork illustrating speech being typed into Notes. Its displayed speed and latency figures are not performance measurements from this portfolio update. The separate image is an actual native onboarding capture: permissions were not granted and dictation was not exercised.",
+    "previewContext": "Repository promotional artwork · Illustrative sample data; original colors preserved"
   },
   "tlcmassagewellness": {
     "image": "./assets/tlc-homepage.webp",

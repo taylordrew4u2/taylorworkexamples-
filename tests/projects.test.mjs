@@ -172,7 +172,7 @@ test("the homepage opening shows real website and desktop work while preserving 
   assert.equal(platformCards.length, 2, "Real website and desktop projects appear beside the app banners");
   for (const [index, [id, status]] of [
     ["tlcmassagewellness", "Website · Development preview"],
-    ["usbmic", "Desktop software · Demo capture"],
+    ["usbmic", "Desktop software · Product overview"],
   ].entries()) {
     const project = publicProjects.find((entry) => entry.id === id);
     const frame = project.gallery[0];
@@ -337,11 +337,13 @@ test("App Store listings, RoleCall development captures, and known unavailable d
   assert.equal(find("Role-Call").demoUrl, "https://rolecall.space");
   const role = find("Role-Call");
   assert.equal(role.badge, "DEV PREVIEW");
-  assert.equal(role.imageKind, "development-capture");
-  assert.match(role.imageAlt, /shot list.*fictional.*sample/i);
-  assert.match(role.imageCaption, /development capture.*actual.*component.*sample/i);
-  assert.deepEqual(role.gallery.map((frame) => frame.label), ["Shot list", "Script workspace"]);
-  for (const frame of role.gallery) {
+  assert.equal(role.imageKind, "product-artwork");
+  assert.equal(role.gallery[0].sourceKind, "repository-product-artwork");
+  assert.deepEqual(role.gallery.map((frame) => frame.label), ["Product overview", "Shot list", "Script workspace"]);
+  for (const frame of role.gallery.slice(1)) {
+    assert.equal(frame.imageKind, "development-capture");
+    assert.equal(frame.imageLabel, "Development preview");
+    assert.match(frame.previewContext, /development capture.*fictional/i);
     assert.match(frame.image, /\.(webp|png)$/);
     assert.match(frame.caption, /development capture.*actual.*sample/i);
     assert.match(frame.sourceUrl, /\/components\/(ShotListBoard|ScriptWorkspace)\.tsx$/);
@@ -406,7 +408,8 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         assert.equal(project.imageWidth, 1920);
         assert.equal(project.imageHeight, 1080);
       } else {
-        assert.ok(["Bill-Spilt", "Showrunner-ICanRunAShow"].includes(project.id));
+        assert.ok(["Bill-Spilt", "Showrunner-ICanRunAShow", "bleepkit", "dictype", "usbmic",
+          "Role-Call", "the-trip-handler", "PinsAndNeedlesComedyWebsite"].includes(project.id));
         assert.equal(project.gallery[0].sourceKind, "repository-product-artwork");
         assert.equal(project.imageLabel, "Repository product artwork");
         assert.match(project.imageCaption, /^Repository product artwork/);
@@ -414,7 +417,7 @@ test("all 16 public projects have traceable covers and galleries with accurate a
         const source = new URL(project.gallery[0].sourceUrl);
         assert.ok(["github.com", "raw.githubusercontent.com"].includes(source.hostname));
         assert.match(source.pathname,
-          new RegExp(`^/taylordrew4u2/${project.id}/${source.hostname === "github.com" ? "blob/" : ""}[a-f0-9]{40}/`));
+          new RegExp(`^/taylordrew4u2/${project.id === "usbmic" ? "SobStage" : project.id}/${source.hostname === "github.com" ? "blob/" : ""}[a-f0-9]{40}/`));
       }
     }
   }
@@ -736,16 +739,115 @@ test("I Can Run A Show uses thirteen repository views with fifteen original imag
   }
 });
 
-test("limited capture states retain their user-facing disclosures", () => {
+test("six README product covers keep pinned repository pixels and every earlier gallery view", () => {
+  const manifest = JSON.parse(readFileSync(new URL("../docs/readme-overviews.json", import.meta.url), "utf8"));
+  const expected = {
+    bleepkit: {
+      file: "bleepkit", repository: "bleepkit", commit: "35903d2b3398648f9095f6d761b8988f28a0fe03",
+      sha256: "b9ed3db8f976d06ea57cc5515c22c0672330388c19cc68bd6891e7a79ad22781",
+      labels: ["Workflow overview"], evidence: "2f7f81ffae7f7cf22446e7e7ed44cffd35a544f0153dee290fbe336b0e890c6b",
+    },
+    dictype: {
+      file: "dictype", repository: "dictype", commit: "66a5e7964410ed3d18062a7c8bd89ba1830f2720",
+      sha256: "042f24386f5cead359a97d2544b5392e8c1268e9e9318e790a796eb611311776",
+      labels: ["Onboarding"], evidence: "b3ae2561619c80c2fe18a7e0bb7e254ee95d024b7030fe19a13a7e47b4d40d2c",
+    },
+    usbmic: {
+      file: "sobstage", repository: "SobStage", commit: "8843186a58f62c91911ad6df99f879391144938e",
+      sha256: "0e0bb60eba493857cd504af1b0b620c9a07737754f858eaa241e01d4cee95b42",
+      labels: ["Recording", "Take alerts", "Saved take", "Recovery"], evidence: "fe5143c8e88cd61a898a1203ae40d3815adf0dd3bca64f55a56085fade7207d3",
+    },
+    "Role-Call": {
+      file: "rolecall", repository: "Role-Call", commit: "d138489bc7b61a4f02f92f0a0f548662451effbf",
+      sha256: "947cb3d11eeff8888ef164f60df73943f630d3278442075d96e475d49ea75f96",
+      labels: ["Shot list", "Script workspace"], evidence: "8e6c61501de7f3219d886d217747a7a0daa628d122c8bacaf2885fd098fef29f",
+    },
+    "the-trip-handler": {
+      file: "trip-handler", repository: "the-trip-handler", commit: "765fe03d725033e1352ff221412b982c316be9ce",
+      sha256: "7a1f5d4183f6cf30f9e48bce8f7a3bd2d872ce9cd6b858726566655de6c3bd19",
+      labels: ["Meal voting", "Approvals", "Shared board", "Itinerary", "On mobile"], evidence: "5d1e21a5270c87d51142bf084d38e3d15193d7f597cc08ec670f1a15a3555e9b",
+    },
+    PinsAndNeedlesComedyWebsite: {
+      file: "pins-and-needles", repository: "PinsAndNeedlesComedyWebsite", commit: "0c3cea8cfb74297e75c00f4c4408a571fa7392d7",
+      sha256: "ebfe01a6fab2b176a760a0b67fc29f1a31f793b145969d5d9cc8d5d357ee9131",
+      labels: ["Public website", "Control center", "Audience countdown"], evidence: "805501561899afccf991da6a59c61f3ebec6b7377024628814517b1fedde03bf",
+    },
+  };
+  assert.equal(manifest.kind, "repository-product-artwork");
+  assert.equal(manifest.images.length, 6);
+  assert.deepEqual(manifest.images.map((record) => record.project).sort(), Object.keys(expected).sort());
+  // Capture the original evidence fields in their original order, while allowing new display labels.
+  const originalEvidence = (frame) => Object.fromEntries([
+    "label", "image", "imageAlt", "width", "height", "portrait", "caption", "sourceUrl", "sourceKind", "companion", "workflow",
+  ].filter((key) => frame[key] !== undefined).map((key) => [key, frame[key]]));
+  for (const record of manifest.images) {
+    const contract = expected[record.project];
+    const project = projects.find((entry) => entry.id === record.project);
+    const cover = project.gallery[0];
+    const image = `./assets/readme-overviews/${contract.file}.png`;
+    assert.equal(record.file, image.slice(2));
+    assert.equal(record.repository, `taylordrew4u2/${contract.repository}`);
+    assert.equal(record.commit, contract.commit);
+    assert.match(record.commit, /^[a-f0-9]{40}$/);
+    assert.equal(record.sourceUrl, `https://github.com/${record.repository}/blob/${record.commit}/${record.sourcePath}`);
+    assert.equal(cover.sourceUrl, record.sourceUrl);
+    assert.ok(project.sources.includes(record.sourceUrl));
+    assert.equal(project.image, image);
+    assert.equal(cover.image, image);
+    assert.equal(project.imageKind, "product-artwork");
+    assert.equal(cover.sourceKind, "repository-product-artwork");
+    assert.equal(cover.imageKind, "product-artwork");
+    assert.equal(cover.imageLabel, "Repository product artwork");
+    assert.equal(cover.label, "Product overview");
+    assert.equal(cover.portrait, false);
+    assert.deepEqual({ width: record.width, height: record.height }, { width: 2400, height: 1500 });
+    assert.deepEqual(assetDimensions(image), { width: cover.width, height: cover.height });
+    assert.equal(cover.width, 2400);
+    assert.equal(cover.height, 1500);
+    const bytes = readFileSync(new URL(`../${image}`, import.meta.url));
+    assert.equal(bytes.length, record.bytes);
+    assert.equal(record.sha256, contract.sha256);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), contract.sha256,
+      `${project.title}: the original repository artwork pixels are unchanged`);
+    assert.equal(createHash("sha1").update(`blob ${bytes.length}\0`).update(bytes).digest("hex"), record.gitBlobSha,
+      `${project.title}: the original file matches its repository Git blob`);
+    const previous = project.gallery.slice(1);
+    assert.deepEqual(previous.map((frame) => frame.label), contract.labels);
+    assert.equal(createHash("sha256").update(JSON.stringify(previous.map(originalEvidence))).digest("hex"), contract.evidence,
+      `${project.title}: all earlier images, captions, dimensions, source links, and ordering are retained`);
+    for (const frame of previous) {
+      assert.ok(frame.imageLabel?.trim(), `${project.title}: old views keep their own capture label`);
+      assert.ok(frame.previewContext?.trim(), `${project.title}: old views keep their own evidence limits`);
+      assert.notEqual(frame.imageKind, "product-artwork", `${project.title}: a real capture or code diagram is not relabeled as new product artwork`);
+    }
+  }
+});
+
+test("limited capture states retain their user-facing disclosures beside their original images", () => {
   const find = (id) => projects.find((project) => project.id === id);
-  assert.match(find("dictype").imageCaption, /onboarding/i);
-  assert.match(find("dictype").imageCaption, /permissions were not granted/i);
-  assert.match(find("dictype").imageCaption, /dictation was not exercised/i);
-  assert.ok(find("usbmic").gallery.every((frame) => /virtual microphones/i.test(frame.caption)));
-  assert.match(find("usbmic").previewContext, /virtual microphone demo/i);
-  assert.match(find("dictype").previewContext, /onboarding.*permissions pending/i);
-  assert.match(find("bleepkit").previewContext, /workflow overview.*source/i);
-  assert.match(find("Role-Call").previewContext, /development capture.*fictional/i);
+  const onboarding = find("dictype").gallery.find((frame) => frame.label === "Onboarding");
+  assert.match(onboarding.caption, /onboarding/i);
+  assert.match(onboarding.caption, /permissions were not granted/i);
+  assert.match(onboarding.caption, /dictation was not exercised/i);
+  assert.match(onboarding.previewContext, /onboarding.*permissions pending.*dictation not exercised/i);
+  assert.equal(onboarding.imageKind, "app-screenshot");
+  const virtualCaptures = find("usbmic").gallery.slice(1);
+  assert.equal(virtualCaptures.length, 4);
+  assert.ok(virtualCaptures.every((frame) => /virtual microphones/i.test(frame.caption)));
+  assert.ok(virtualCaptures.every((frame) => /virtual microphones/i.test(frame.previewContext)));
+  assert.ok(virtualCaptures.every((frame) => frame.imageKind === "app-screenshot"));
+  assert.match(find("usbmic").notes, /physical[- ]microphone validation/i);
+  const sourceOverview = find("bleepkit").gallery.find((frame) => frame.label === "Workflow overview");
+  assert.equal(sourceOverview.imageKind, "project-overview");
+  assert.equal(sourceOverview.imageLabel, "Source overview");
+  assert.match(sourceOverview.caption, /overview.*source/i);
+  assert.match(sourceOverview.previewContext, /source-derived workflow.*no product interface/i);
+  for (const frame of find("Role-Call").gallery.slice(1)) {
+    assert.match(frame.previewContext, /development capture.*fictional/i);
+  }
+  for (const frame of find("the-trip-handler").gallery.slice(1)) {
+    assert.match(frame.previewContext, /seeded demo.*no real payment/i);
+  }
   assert.match(find("tlcmassagewellness").previewContext, /development capture.*sample/i);
   const binder = find("The-Bit-Binder");
   assert.match(binder.previewContext, /owner-supplied.*promotional artwork/i);

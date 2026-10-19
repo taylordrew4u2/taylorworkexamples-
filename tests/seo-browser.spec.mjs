@@ -258,6 +258,19 @@ for (const project of projects) {
     const cover = page.locator(".project-story-hero .project-page-gallery > figure");
     await expect(cover).toHaveCount(1);
     await expect(cover).toHaveAttribute("data-view", "0");
+    if (project.image.startsWith("./assets/readme-overviews/")) {
+      await expect(cover.locator("figcaption strong")).toHaveText("Product overview");
+      await expect(cover.locator("figcaption p")).toHaveText(/^Repository product artwork/);
+      await expect(cover.locator("img")).toHaveAttribute("width", "2400");
+      await expect(cover.locator("img")).toHaveAttribute("height", "1500");
+      const layout = await cover.evaluate((element) => {
+        const media = element.querySelector(":scope > div").getBoundingClientRect();
+        const caption = element.querySelector("figcaption").getBoundingClientRect();
+        return { noOverlay: caption.top >= media.bottom - 1, filter: getComputedStyle(element).filter };
+      });
+      expect(layout.noOverlay, "Repository artwork and its evidence caption remain separate without JavaScript").toBe(true);
+      expect(layout.filter).toBe("none");
+    }
     await expect(page.locator("#project-views .project-page-frame")).toHaveCount(project.gallery.length - 1);
     await expect(page.locator(".project-gallery-detail")).toHaveCount(0);
     for (const [index, original] of project.gallery.entries()) {
