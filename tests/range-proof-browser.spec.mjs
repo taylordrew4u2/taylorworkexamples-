@@ -67,7 +67,7 @@ test("published apps and the development range are visible and usable without Ja
     const projectLink = capabilities.locator("a.hero-capability").first();
     const expectedProject = projects.find((entry) => entry.id === openingProjects[0][1]);
     const projectURL = new URL(expectedProject.caseUrl, page.url()).href;
-    await projectLink.scrollIntoViewIfNeeded();
+    // Native focus and Enter work while the earlier hash navigation is still scrolling.
     await projectLink.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(projectURL);
