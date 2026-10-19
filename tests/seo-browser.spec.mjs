@@ -93,6 +93,8 @@ test("a service page leads to relevant project proof and a complete business inq
   await page.goto("/");
   const comparison = page.locator("details.service-comparison");
   await expect(comparison).not.toHaveAttribute("open", "");
+  // Focus an already visible summary so native smooth scrolling has finished before the pointer step.
+  await comparison.locator("summary").scrollIntoViewIfNeeded();
   await comparison.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(comparison).toHaveAttribute("open", "");
