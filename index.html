@@ -81,6 +81,7 @@
       <div class="hero-shell">
       <section class="intro wrap" aria-labelledby="hero-title">
         <div class="intro-copy">
+          <div class="intro-heading">
           <div class="hero-kicker">
             <p class="hero-tagline">Custom tech build for you.</p>
             <a class="hero-range-proof" href="#app-store-proof">3 apps published on the App Store <span aria-hidden="true">↗</span></a>
@@ -89,36 +90,67 @@
             <span class="headline-first">You know your business.</span>
             <span class="headline-last">I’ll build the technology.</span>
           </h1>
+          </div>
+          <div class="intro-summary">
           <p class="intro-descriptor">Apps, websites, and software for your business.</p>
-          <p class="intro-description">
-            Work directly with the developer designing, coding, and launching your
-            website, app, or software.
-          </p>
-
           <div class="intro-actions">
             <a class="button button-dark" href="https://briefbooth.com/book/4u-digital" data-booking-link target="_blank" rel="noopener noreferrer">Book a consultation <span aria-hidden="true">↗</span></a>
             <a class="text-link" href="#work">Explore my work <span aria-hidden="true">↓</span></a>
           </div>
-          <p class="hero-consultation-note">Book through BriefBooth for a Zoom consultation. NYC visits by arrangement to understand your space and workflow.</p>
+          </div>
         </div>
         <div class="hero-stage" aria-label="Featured websites, desktop software, and iPhone apps">
           <div class="hero-platform-previews">
-            <a class="hero-platform-project" href="./work/briefbooth/" aria-label="Explore the BriefBooth booking web app project">
+            <fieldset class="hero-explorer" aria-describedby="hero-explorer-instruction">
+              <legend>Explore a real build.</legend>
+              <p id="hero-explorer-instruction">Pick a type of project to explore.</p>
+              <div class="hero-explorer-options">
+                <label class="hero-project-choice">
+                  <input class="sr-only" type="radio" name="hero-project" value="briefbooth" checked aria-controls="hero-briefbooth" />
+                  <img class="hero-choice-screen" src="./assets/briefbooth/home-desktop.png" alt="" width="1440" height="900" decoding="async" />
+                  <span><strong>Web app</strong><small>BriefBooth</small></span>
+                </label>
+                <label class="hero-project-choice">
+                  <input class="sr-only" type="radio" name="hero-project" value="website" aria-controls="hero-website" />
+                  <img class="hero-choice-screen" src="./assets/readme-overviews/pins-and-needles.png" alt="" width="2400" height="1500" decoding="async" />
+                  <span><strong>Website</strong><small>Pins &amp; Needles</small></span>
+                </label>
+                <label class="hero-project-choice">
+                  <input class="sr-only" type="radio" name="hero-project" value="desktop" aria-controls="hero-desktop" />
+                  <img class="hero-choice-screen" src="./assets/readme-overviews/sobstage.png" alt="" width="2400" height="1500" decoding="async" />
+                  <span><strong>Desktop</strong><small>SobStage</small></span>
+                </label>
+              </div>
+              <div class="hero-platform-panels">
+            <a class="hero-platform-project" data-hero-panel="briefbooth" id="hero-briefbooth" href="./work/briefbooth/" aria-label="View project: BriefBooth">
               <div class="hero-platform-media"><img class="hero-platform-screen" src="./assets/briefbooth/home-desktop.png" alt="BriefBooth live website introducing its consultation booking platform and an illustrative consultant booking page." width="1440" height="900" decoding="async" /></div>
               <div class="hero-platform-caption">
                 <span class="project-icon-frame" aria-hidden="true"><img class="project-icon" src="./assets/project-icons/briefbooth.svg" alt="" width="64" height="64" decoding="async" /></span>
-                <span><strong>BriefBooth</strong><span>Web app · Live website capture</span></span><span aria-hidden="true">↗</span>
+                <span class="hero-project-description"><strong>BriefBooth</strong><span>Web app · Live website capture</span><span class="hero-project-purpose">Client questions, availability, and consultation requests in one place.</span></span>
+                <span class="hero-project-link">View project <span aria-hidden="true">↗</span></span>
               </div>
             </a>
-            <a class="hero-platform-project" href="./work/sobstage/" aria-label="Explore the SobStage desktop software project">
+            <a class="hero-platform-project" data-hero-panel="website" id="hero-website" href="./work/pins-and-needles-comedy/" aria-label="View project: Pins &amp; Needles">
+              <div class="hero-platform-media"><img class="hero-platform-screen" src="./assets/readme-overviews/pins-and-needles.png" alt="Pins and Needles repository product artwork combining the public website, producer controls, live audience display, and phone submission view." width="2400" height="1500" decoding="async" /></div>
+              <div class="hero-platform-caption">
+                <span class="project-icon-frame" aria-hidden="true"><img class="project-icon" src="./assets/project-icons/pins-and-needles-comedy-website.svg" alt="" width="512" height="512" decoding="async" /></span>
+                <span class="hero-project-description"><strong>Pins &amp; Needles</strong><span>Website · Repository product artwork</span><span class="hero-project-purpose">Public pages, content controls, and audience submissions.</span></span>
+                <span class="hero-project-link">View project <span aria-hidden="true">↗</span></span>
+              </div>
+            </a>
+            <a class="hero-platform-project" data-hero-panel="desktop" id="hero-desktop" href="./work/sobstage/" aria-label="View project: SobStage">
               <div class="hero-platform-media"><img class="hero-platform-screen" src="./assets/readme-overviews/sobstage.png" alt="SobStage repository product artwork illustrating multiple microphone channels, recording controls, and a saved-track summary." width="2400" height="1500" decoding="async" /></div>
               <div class="hero-platform-caption">
                 <span class="project-icon-frame" aria-hidden="true"><img class="project-icon" src="./assets/project-icons/usbmic.png" alt="" width="512" height="512" decoding="async" /></span>
-                <span><strong>SobStage</strong><span>Desktop software · Release candidate</span></span><span aria-hidden="true">↗</span>
+                <span class="hero-project-description"><strong>SobStage</strong><span>Desktop software · Release candidate</span><span class="hero-project-purpose">Multitrack audio and input routing. Repository product artwork; physical microphone validation is still pending.</span></span>
+                <span class="hero-project-link">View project <span aria-hidden="true">↗</span></span>
               </div>
             </a>
+              </div>
+            </fieldset>
           </div>
           <div class="hero-app-previews">
+          <p class="hero-app-heading">iPhone &amp; iPad apps</p>
           <button class="hero-project" data-project="The-Bit-Binder" aria-label="View the BitBinder project">
             <img class="hero-project-screen" src="./assets/bitbinder/banner-1920x1080.png" alt="BitBinder supplied product banner with its app icon, notebook home, and example joke library." width="1920" height="1080" fetchpriority="high" decoding="async" />
           </button>
@@ -126,6 +158,10 @@
             <img class="hero-project-screen" src="./assets/my-gig-calendar/banner-1920x1080.png" alt="My Gig Calendar supplied product banner with app icon, a native calendar, and the public fan calendar." width="1920" height="1080" decoding="async" />
           </button>
           </div>
+        </div>
+        <div class="hero-opening-notes">
+          <p class="intro-description">Work directly with the developer designing, coding, and launching your website, app, or software.</p>
+          <p class="hero-consultation-note">Book through BriefBooth for a Zoom consultation. NYC visits by arrangement to understand your space and workflow.</p>
         </div>
           <nav class="hero-capabilities" aria-label="Explore my development range">
             <a class="hero-capability" href="./work/bitbinder/">

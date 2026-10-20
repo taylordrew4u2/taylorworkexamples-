@@ -209,9 +209,17 @@ const heroPreviews = [
 ];
 
 const heroPlatformPreviews = [
-  ["BriefBooth.com", "Web app · Live website capture", /BriefBooth.*(?:booking|consultation|homepage)/i],
-  ["usbmic", "Desktop software · Release candidate", /SobStage.*repository product artwork.*microphone.*recording/i],
+  ["BriefBooth.com", "briefbooth", "Web app BriefBooth", /Live website capture/i, /BriefBooth.*(?:booking|consultation|homepage)/i],
+  ["PinsAndNeedlesComedyWebsite", "website", "Website Pins & Needles", /Repository product artwork/i, /Pins.*Needles.*repository product artwork/i],
+  ["usbmic", "desktop", "Desktop SobStage", /Release candidate/i, /SobStage.*repository product artwork.*microphone.*recording/i],
 ];
+
+async function selectHeroProject(page, value) {
+  const radio = page.locator(`.hero-explorer-options input[name="hero-project"][value="${value}"]`);
+  await page.locator(`.hero-project-choice:has(input[name="hero-project"][value="${value}"])`).click();
+  await expect(radio).toBeChecked();
+  return radio;
+}
 
 async function expectHeroPreview(page) {
   const stage = page.locator(".hero-stage");
@@ -224,11 +232,13 @@ async function expectHeroPreview(page) {
   )).toEqual(heroPreviews.map(([id]) => id));
   await expect(stage.locator("img.hero-project-screen")).toHaveCount(2);
   await expect(appPreviews.locator("img")).toHaveCount(2);
-  await expect(stage.locator("img")).toHaveCount(6);
+  await expect(stage.locator("img.hero-choice-screen")).toHaveCount(3);
   await expect(stage.locator(
     ".hero-web, .hero-phone, .hero-orbit, .hero-asterisk, .hero-project-info, .hero-project-icon, .hero-project-copy, .hero-project-arrow",
   )).toHaveCount(0);
-  expect((await appPreviews.innerText()).trim(), "The supplied app artwork has no added visible text or labels").toBe("");
+  expect(await appPreviews.locator(".hero-project").evaluateAll((buttons) =>
+    buttons.every((button) => button.innerText.trim() === "")),
+  "The supplied app artwork has no added visible text inside its controls").toBe(true);
   await expect(stage).toHaveCSS("filter", "none");
   for (const [id, label] of heroPreviews) {
     const project = projects.find((entry) => entry.id === id);
@@ -280,12 +290,32 @@ async function expectHeroPreview(page) {
     return second.top >= first.bottom - 1;
   }), "Both opening banners remain separate without overlap").toBe(true);
   const platforms = stage.locator(".hero-platform-previews");
-  await expect(platforms.locator("a.hero-platform-project")).toHaveCount(2);
-  for (const [id, status, imageDescription] of heroPlatformPreviews) {
+  const explorer = platforms.getByRole("group", { name: "Explore a real build.", exact: true });
+  await expect(explorer).toHaveClass(/\bhero-explorer\b/);
+  await expect(explorer.getByRole("radio")).toHaveCount(3);
+  await expect(platforms.locator("a.hero-platform-project")).toHaveCount(3);
+  for (const [id, value, label, status, imageDescription] of heroPlatformPreviews) {
     const project = projects.find((entry) => entry.id === id);
     const frame = project.gallery[0];
+    const radio = explorer.getByRole("radio", { name: label, exact: true });
+    await expect(radio).toHaveAttribute("type", "radio");
+    await expect(radio).toHaveAttribute("name", "hero-project");
+    await expect(radio).toHaveAttribute("value", value);
+    await expect(radio).toHaveAttribute("aria-controls", `hero-${value}`);
+    const choice = explorer.locator(`.hero-project-choice:has(input[value="${value}"])`);
+    const thumbnail = choice.locator("img.hero-choice-screen");
+    await expect(thumbnail).toHaveAttribute("src", frame.image);
+    await expect(thumbnail).toHaveAttribute("alt", "");
+    await expect(thumbnail).toHaveCSS("filter", "none");
+    await choice.click();
+    await expect(radio).toBeChecked();
+    await expect(explorer.locator('input[type="radio"]:checked')).toHaveCount(1);
     const link = platforms.locator(`a.hero-platform-project[href="${project.caseUrl}"]`);
     await expect(link).toHaveCount(1);
+    await expect(link).toHaveAttribute("id", `hero-${value}`);
+    await expect(link).toHaveAttribute("data-hero-panel", value);
+    await expect(link).toBeVisible();
+    await expect(platforms.locator("a.hero-platform-project:visible")).toHaveCount(1);
     const image = link.locator("img.hero-platform-screen");
     await image.scrollIntoViewIfNeeded();
     await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
@@ -301,8 +331,14 @@ async function expectHeroPreview(page) {
     await expect(image).toHaveCSS("opacity", "1");
     await expect(link).toHaveCSS("filter", "none");
     const caption = link.locator(".hero-platform-caption");
-    await expect(caption).toContainText(project.title);
+    await expect(caption.locator(".hero-project-link")).toBeVisible();
+    await expect(caption.locator(".hero-project-link")).toContainText("View project");
+    await expect(caption).toContainText(value === "website" ? "Pins & Needles" : project.title);
     await expect(caption).toContainText(status);
+    if (value === "desktop") {
+      await expect(caption).toContainText(/repository product artwork/i);
+      await expect(caption).toContainText(/physical.*microphone.*(?:pending|progress)/i);
+    }
     const icon = caption.locator("img.project-icon");
     await expect(icon).toHaveAttribute("src", project.icon);
     await expect(icon).toHaveAttribute("width", String(project.iconWidth));
@@ -332,11 +368,8 @@ async function expectHeroPreview(page) {
   expect(await platforms.evaluate((element) => {
     const platformBox = element.getBoundingClientRect();
     const appBox = document.querySelector(".hero-app-previews").getBoundingClientRect();
-    const cards = [...element.querySelectorAll(".hero-platform-project")].map((card) => card.getBoundingClientRect());
-    const width = window.innerWidth;
-    return width > 600 || (platformBox.bottom <= appBox.top + 1 &&
-      (width <= 380 ? cards[1].top >= cards[0].bottom - 1 : Math.abs(cards[0].top - cards[1].top) <= 1));
-  }), "On smaller screens the website and desktop previews appear before the apps, with a readable narrow-phone layout").toBe(true);
+    return window.innerWidth > 600 || platformBox.bottom <= appBox.top + 1;
+  }), "On smaller screens the selected platform preview appears above both upright app banners").toBe(true);
 }
 
 test("portfolio renders, previews load, and the page fits the viewport", async ({
@@ -368,14 +401,16 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   expect(await headline.evaluate((element) => {
     const headlineBox = element.getBoundingClientRect();
     const copy = element.closest(".intro-copy");
-    const copyBox = copy.getBoundingClientRect();
+    const headingBox = element.closest(".intro-heading").getBoundingClientRect();
     const descriptorBox = copy.querySelector(".intro-descriptor").getBoundingClientRect();
     const content = document.createRange();
     content.selectNodeContents(element);
-    return descriptorBox.top >= headlineBox.bottom && [...content.getClientRects()].every((box) =>
-      box.left >= copyBox.left - 1 && box.right <= copyBox.right + 1,
+    const descriptorBelow = descriptorBox.top >= headlineBox.bottom - 1;
+    const descriptorBeside = window.innerWidth > 900 && descriptorBox.left >= headingBox.right - 1;
+    return (descriptorBelow || descriptorBeside) && [...content.getClientRects()].every((box) =>
+      box.left >= headingBox.left - 1 && box.right <= headingBox.right + 1,
     );
-  }), "Long headline stays within its copy column").toBe(true);
+  }), "The headline stays inside its heading column, with the descriptor beside it on desktop or below on phones").toBe(true);
   await expect(page.locator(".project-card")).toHaveCount(featuredProjects.length);
   await expect(page.locator(".case-study")).toHaveCount(3);
   await expect(page.locator(".case-study .project-title")).toHaveText(featuredProjects.slice(0, 3).map((project) => project.title));
@@ -391,8 +426,10 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(2);
   await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(0);
   await expect(page.locator(".hero-app-previews img")).toHaveCount(2);
-  await expect(page.locator(".hero-platform-previews .hero-platform-screen")).toHaveCount(2);
+  await expect(page.locator(".hero-platform-previews .hero-platform-screen")).toHaveCount(3);
   for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
+    const panel = await image.evaluate((element) => element.closest("[data-hero-panel]")?.dataset.heroPanel);
+    if (panel) await selectHeroProject(page, panel);
     await image.scrollIntoViewIfNeeded();
     await expect
       .poll(() =>
@@ -479,6 +516,70 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
         .locator(".primary-screen")
         .evaluate((element) => getComputedStyle(element).transform),
     ).toBe(restingTransform);
+  }
+});
+
+test("the hero explorer follows native radio controls and opens only the chosen project", async ({ page }) => {
+  await page.clock.install();
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto("/");
+  const explorer = page.getByRole("group", { name: "Explore a real build.", exact: true });
+  const webApp = explorer.getByRole("radio", { name: "Web app BriefBooth", exact: true });
+  const website = explorer.getByRole("radio", { name: "Website Pins & Needles", exact: true });
+  const desktop = explorer.getByRole("radio", { name: "Desktop SobStage", exact: true });
+  const panels = page.locator(".hero-platform-panels .hero-platform-project");
+  const visiblePanel = page.locator(".hero-platform-panels .hero-platform-project:visible");
+  await expect(panels).toHaveCount(3);
+  await expect(webApp).toBeChecked();
+  await expect(visiblePanel).toHaveAttribute("data-hero-panel", "briefbooth");
+
+  for (const [id, value, name] of heroPlatformPreviews) {
+    const radio = await selectHeroProject(page, value);
+    await expect(radio).toHaveAccessibleName(name);
+    await expect(radio).toBeFocused();
+    const panel = page.locator(`.hero-platform-project[data-hero-panel="${value}"]`);
+    await expect(visiblePanel).toHaveCount(1);
+    await expect(panel).toBeVisible();
+    await expect(panel.locator(".hero-platform-caption")).toContainText(value === "website"
+      ? "Pins & Needles" : projects.find((project) => project.id === id).title);
+  }
+
+  await webApp.focus();
+  await page.keyboard.press("Space");
+  await expect(webApp).toBeChecked();
+  await expect(webApp).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(website).toBeChecked();
+  await expect(website).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(desktop).toBeChecked();
+  await expect(desktop).toBeFocused();
+  await page.clock.fastForward("05:00");
+  await expect(desktop).toBeChecked();
+  await expect(desktop).toBeFocused();
+  await expect(visiblePanel).toHaveAttribute("data-hero-panel", "desktop");
+  await page.keyboard.press("ArrowRight");
+  await expect(webApp).toBeChecked();
+  await expect(webApp).toBeFocused();
+  await page.keyboard.press("ArrowLeft");
+  await expect(desktop).toBeChecked();
+  await expect(desktop).toBeFocused();
+  await expect(page.locator(".hero-app-previews .hero-project")).toHaveCount(2);
+  for (const banner of await page.locator(".hero-app-previews .hero-project").all()) await expect(banner).toBeVisible();
+  await expect(page.locator(".mobile-consultation [data-booking-link]")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    "The explorer and native radio controls fit a 320px phone").toBe(true);
+
+  for (const [id, value] of heroPlatformPreviews) {
+    await page.goto("/");
+    await selectHeroProject(page, value);
+    const project = projects.find((entry) => entry.id === id);
+    const link = page.locator(`.hero-platform-project[data-hero-panel="${value}"]`);
+    await expect(link).toHaveAttribute("href", project.caseUrl);
+    const destination = new URL(project.caseUrl, page.url()).href;
+    await link.click();
+    await expect(page).toHaveURL(destination);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
   }
 });
 
@@ -837,6 +938,7 @@ test("BriefBooth is featured as a real product and opens its own story without s
   await expect(firstStory).toHaveAttribute("data-case-id", project.id);
   await expect(firstStory.locator(".project-title")).toHaveText("BriefBooth");
   await expect(firstStory.locator(".case-highlights li strong")).toHaveText(project.highlights.map((item) => item.title));
+  await selectHeroProject(page, "briefbooth");
   const opening = page.locator(`.hero-platform-project[href="${project.caseUrl}"]`);
   await expect(opening).toHaveCount(1);
   await expect(opening.locator(".hero-platform-caption")).toContainText("BriefBooth");

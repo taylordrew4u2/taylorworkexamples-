@@ -39,13 +39,13 @@ test("published apps and the development range are visible and usable without Ja
       return !element.closest(".hero-stage") && (links.top >= previews.bottom - 1 ||
         links.bottom <= previews.top + 1 || links.right <= previews.left + 1 || links.left >= previews.right - 1);
     }), "The range navigation stays separate from the real project images").toBe(true);
-    const platformProjects = ["BriefBooth.com", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
+    const platformProjects = ["BriefBooth.com", "PinsAndNeedlesComedyWebsite", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
     const platformPreviews = page.locator(".hero-platform-previews a.hero-platform-project");
-    await expect(platformPreviews).toHaveCount(2);
+    await expect(platformPreviews).toHaveCount(3);
     for (const project of platformProjects) {
       const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
       await expect(preview.locator(".hero-platform-screen")).toHaveAttribute("src", project.gallery[0].image);
-      await expect(preview.locator(".hero-platform-caption")).toContainText(project.title);
+      await expect(preview.locator(".hero-platform-caption")).toContainText(project.id === "PinsAndNeedlesComedyWebsite" ? "Pins & Needles" : project.title);
       await expect(preview.locator("img.project-icon")).toHaveAttribute("src", project.icon);
     }
     const opening = page.locator(".hero-range-proof");
@@ -88,6 +88,8 @@ test("published apps and the development range are visible and usable without Ja
     for (const project of platformProjects) {
       await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
       const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
+      const panel = await preview.getAttribute("data-hero-panel");
+      await page.locator(`.hero-project-choice`).filter({ has: page.locator(`input[value="${panel}"]`) }).click();
       const destination = new URL(project.caseUrl, page.url()).href;
       // Keyboard activation follows the real project URL without depending on JavaScript or pointer scrolling.
       await preview.focus();

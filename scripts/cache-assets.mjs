@@ -22,10 +22,13 @@ export function responsiveHTML(html, route, manifest) {
     const variants = { [source]: manifest[key].map((variant) => ({ ...variant, src: relative(route, variant.src) })) };
     let sizes = /loading="lazy"/.test(tag) ? gallerySizes
       : "(max-width: 600px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 64px), 1136px";
+    // The hero uses full-width media through 900px, then a 60/40 split minus its 1.25rem gap.
     if (/\bhero-project-screen\b/.test(tag)) {
-      sizes = "(max-width: 600px) calc(100vw - 40px), (max-width: 980px) calc(50vw - 40px), (max-width: 1440px) calc(25vw - 44px), 320px";
+      sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(40vw - 2.1rem), (max-width: 88rem) calc(40vw - 2.9rem), 32.3rem";
     } else if (/\bhero-platform-screen\b/.test(tag)) {
-      sizes = "(max-width: 380px) calc(100vw - 56px), (max-width: 600px) calc(50vw - 38px), (max-width: 980px) calc(50vw - 52px), (max-width: 1440px) calc(25vw - 56px), 308px";
+      sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(60vw - 3.15rem), (max-width: 88rem) calc(60vw - 4.35rem), 48.45rem";
+    } else if (/\bhero-choice-screen\b/.test(tag)) {
+      sizes = "64px";
     } else if (/^\/work\/[^/]+\/$/.test(route) && /fetchpriority="high"/.test(tag)) {
       sizes = "(max-width: 600px) calc(100vw - 40px), (max-width: 1050px) calc(100vw - 64px), (max-width: 1440px) calc(61.4vw - 100px), 766px";
     }

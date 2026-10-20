@@ -114,6 +114,127 @@ async function expectOriginalImage(image, frame) {
   expect(geometry.fits, "The full original remains inside its figure").toBe(true);
 }
 
+test("the hero lets visitors choose a real build with native controls without JavaScript or autoplay", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.clock.install();
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+  const previews = page.locator(".hero-platform-previews");
+  const explorer = previews.getByRole("group", { name: "Explore a real build.", exact: true });
+  await expect(explorer).toHaveClass(/\bhero-explorer\b/);
+  const choices = [
+    { value: "briefbooth", name: "Web app BriefBooth", title: "BriefBooth", id: "BriefBooth.com", status: /live website capture/i },
+    { value: "website", name: "Website Pins & Needles", title: "Pins & Needles", id: "PinsAndNeedlesComedyWebsite", status: /Website.*Repository product artwork/i },
+    { value: "desktop", name: "Desktop SobStage", title: "SobStage", id: "usbmic", status: /release candidate/i },
+  ].map((choice) => ({ ...choice, project: projects.find((project) => project.id === choice.id) }));
+  const panels = previews.locator(".hero-platform-panels a.hero-platform-project");
+  await expect(explorer.getByRole("radio")).toHaveCount(choices.length);
+  await expect(explorer.locator(".hero-explorer-options label.hero-project-choice")).toHaveCount(choices.length);
+  await expect(panels).toHaveCount(choices.length);
+  await expect(previews.locator("[hidden]")).toHaveCount(0);
+
+  const expectOriginalHeroImage = async (image, frame) => {
+    await expect(image).toBeVisible();
+    await expect(image).toHaveAttribute("src", frame.image);
+    await expect(image).toHaveAttribute("width", String(frame.width));
+    await expect(image).toHaveAttribute("height", String(frame.height));
+    // Hero media loads eagerly; keep the focused choice in place while checking its artwork.
+    await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+    await expect(image).toHaveCSS("object-fit", "contain");
+    await expect(image).toHaveCSS("filter", "none");
+    await expect(image).toHaveCSS("mix-blend-mode", "normal");
+    expect(await image.evaluate((element) => {
+      let originalAppearance = true;
+      for (let ancestor = element; ancestor && !ancestor.matches(".hero-shell"); ancestor = ancestor.parentElement) {
+        const style = getComputedStyle(ancestor);
+        originalAppearance &&= style.filter === "none" && style.transform === "none" && style.opacity === "1";
+      }
+      return originalAppearance;
+    }), "Hero images remain upright and in their original colors").toBe(true);
+    const bounds = await image.boundingBox();
+    expect(bounds.x).toBeGreaterThanOrEqual(-1);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(321);
+    const natural = await image.evaluate((element) => ({ width: element.naturalWidth, height: element.naturalHeight }));
+    expect(Math.abs(natural.width - natural.height * frame.width / frame.height), "The source image keeps its original proportions")
+      .toBeLessThanOrEqual(1 + frame.width / frame.height);
+  };
+
+  for (const choice of choices) {
+    const radio = explorer.getByRole("radio", { name: choice.name, exact: true });
+    await expect(radio).toHaveAttribute("type", "radio");
+    await expect(radio).toHaveAttribute("name", "hero-project");
+    await expect(radio).toHaveAttribute("value", choice.value);
+    await expect(radio).toHaveAttribute("aria-controls", `hero-${choice.value}`);
+    const label = explorer.locator(`label.hero-project-choice:has(input[value="${choice.value}"])`);
+    await expect(label.locator("img.hero-choice-screen")).toHaveAttribute("src", choice.project.gallery[0].image);
+    await expect(label.locator("img.hero-choice-screen")).toHaveAttribute("alt", "");
+    // The panel itself is the controlled link, rather than a scripted tab body.
+    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("data-hero-panel", choice.value);
+    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("href", choice.project.caseUrl);
+    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("aria-label", `View project: ${choice.title}`);
+  }
+
+  const banners = page.locator(".hero-app-previews .hero-project");
+  await expect(banners).toHaveCount(2);
+  const expectSelection = async (value, focused = true) => {
+    const selected = choices.find((choice) => choice.value === value);
+    const radio = explorer.getByRole("radio", { name: selected.name, exact: true });
+    await expect(radio).toBeChecked();
+    if (focused) await expect(radio).toBeFocused();
+    await expect(explorer.locator('input[name="hero-project"]:checked')).toHaveCount(1);
+    await expect(previews.locator(".hero-platform-panels a.hero-platform-project:visible")).toHaveCount(1);
+    for (const choice of choices) {
+      const panel = previews.locator(`a.hero-platform-project[data-hero-panel="${choice.value}"]`);
+      if (choice.value !== value) {
+        await expect(panel).toBeHidden();
+        continue;
+      }
+      await expect(panel).toBeVisible();
+      await expect(panel).toHaveAccessibleName(`View project: ${choice.title}`);
+      const image = panel.locator("img.hero-platform-screen");
+      await expectOriginalHeroImage(image, choice.project.gallery[0]);
+      const caption = panel.locator(".hero-platform-caption");
+      await expect(caption).toBeVisible();
+      await expect(caption).toContainText(choice.title);
+      await expect(caption).toContainText(choice.project.gallery[0].imageLabel);
+      await expect(caption).toContainText(choice.status);
+      await expect(caption).toContainText("View project");
+      if (choice.value === "desktop") await expect(caption).toContainText(/physical[- ]microphone.*(?:pending|in progress)|(?:pending|in progress).*physical[- ]microphone/i);
+      await expect(caption.locator("img.project-icon")).toHaveAttribute("src", choice.project.icon);
+      expect(await panel.evaluate((element) => {
+        const image = element.querySelector(".hero-platform-screen").getBoundingClientRect();
+        const caption = element.querySelector(".hero-platform-caption").getBoundingClientRect();
+        return caption.top >= image.bottom - 1 && caption.left >= -1 && caption.right <= window.innerWidth + 1;
+      }), "The source and status caption stays below its image without an overlay").toBe(true);
+    }
+    for (const id of ["The-Bit-Binder", "MyGigCalendar"]) {
+      const project = projects.find((entry) => entry.id === id);
+      await expectOriginalHeroImage(page.locator(`.hero-app-previews .hero-project[data-project="${id}"] .hero-project-screen`), project.gallery[0]);
+    }
+    const dock = page.getByRole("complementary", { name: "Consultation booking", exact: true });
+    await expect(dock).toBeInViewport({ ratio: 1 });
+    await expectBookingLink(dock.locator("[data-booking-link]"));
+    await expectPageFit(page);
+    if (focused) await expect(radio).toBeFocused();
+  };
+
+  await expectSelection("briefbooth", false);
+  await page.clock.fastForward(120_000);
+  await expectSelection("briefbooth", false);
+  const website = explorer.getByRole("radio", { name: "Website Pins & Needles", exact: true });
+  await explorer.locator('label.hero-project-choice:has(input[value="website"])').click();
+  await expectSelection("website");
+  await page.keyboard.press("ArrowRight");
+  await expectSelection("desktop");
+  await page.keyboard.press("ArrowRight");
+  await expectSelection("briefbooth");
+  await website.focus();
+  await page.keyboard.press("Space");
+  await expectSelection("website");
+  await page.clock.fastForward(120_000);
+  await expectSelection("website");
+});
+
 test("the homepage exposes the portfolio and project navigation without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
