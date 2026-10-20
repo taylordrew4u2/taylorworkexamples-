@@ -11,6 +11,7 @@ import { projects, featuredProjects } from "../public-projects.js";
 import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
 import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
 
@@ -441,7 +442,28 @@ test("salon and restaurant services explain the business workflow and connect to
   }
 });
 
-test("the homepage keeps all project showcases together before process, questions, and consultation", () => {
+test("the homepage preserves every supplied testimonial with a clear attribution and optional additional reading", () => {
+  const html = documents.get("/");
+  const section = html.match(/<section id="testimonials"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+  assert.ok(section, "client feedback has its own section");
+  assert.equal(clientTestimonials.length, 9);
+  assert.equal([...section.matchAll(/<blockquote>/g)].length, 9);
+  assert.equal([...section.matchAll(/<figcaption>/g)].length, 9);
+  const [featured, more] = section.split('<details class="testimonial-more">');
+  assert.equal([...featured.matchAll(/class="testimonial-card"/g)].length, 3);
+  assert.equal([...more.matchAll(/class="testimonial-card"/g)].length, 6);
+  for (const testimonial of clientTestimonials) {
+    assert.ok(text(section).includes(testimonial.quote));
+    for (const value of [testimonial.name, testimonial.role || testimonial.business, testimonial.location]) {
+      assert.ok(text(section).includes(value), `${testimonial.name}: supplied attribution is present`);
+    }
+  }
+  assert.ok(tags(section, "a").some((tag) => tag.href === bookingURL));
+  assert.doesNotMatch(section, /Gemini|Grok|AggregateRating|verified review|star rating/i);
+  assert.ok(!schemaNodes(html).some((node) => hasType(node, "Review") || hasType(node, "AggregateRating")), "quotes do not invent review ratings");
+});
+
+test("the homepage keeps all project showcases together before client feedback, process, questions, and consultation", () => {
   const home = documents.get("/");
   const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
   const workStart = sectionTags.findIndex(([tag]) => attributes(tag).id === "work");
@@ -459,11 +481,11 @@ test("the homepage keeps all project showcases together before process, question
       `${id} belongs to the same work section`);
   }
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["work", "process", "project-faq", "consultation", "business-guides"].map(sectionPosition);
+  const destinations = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
-    "work is followed by process, questions, consultation, and useful reads");
-  assert.ok(workEnd <= sectionPosition("process"), "the whole archive finishes before the process or consultation");
+    "work is followed by client feedback, process, questions, consultation, and useful reads");
+  assert.ok(workEnd <= sectionPosition("testimonials"), "the whole personal-project archive finishes before client feedback");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation panel or questions");
 });

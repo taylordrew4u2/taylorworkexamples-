@@ -2952,6 +2952,29 @@ a, button, summary { touch-action: manipulation; }
 .archive-card .archive-purpose { font-size: .9375rem; line-height: 1.7; }
 .archive-card .preview-context { font-size: .75rem; }
 .archive-card .project-links { gap: .75rem 1.25rem; }
+.testimonials-section { padding-block: clamp(3rem, 5vw, 5rem); border-top: 1px solid var(--line); scroll-margin-top: 1.5rem; }
+.testimonials-intro { max-width: 39rem; margin-top: 1rem; color: var(--muted); font-size: 1rem; line-height: 1.75; }
+.testimonials-section > .section-heading > .text-link { flex-shrink: 0; min-height: 44px; }
+.testimonial-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.testimonial-card { display: flex; flex-direction: column; min-width: 0; margin: 0; padding: clamp(1.5rem, 2.5vw, 2rem); border: 1px solid var(--line); border-radius: var(--corner); background: #fafafa; }
+.testimonial-mark { display: block; font-family: Georgia, serif; font-size: 3.75rem; line-height: .8; color: #666; }
+.testimonial-card blockquote { margin: 1rem 0 1.75rem; }
+.testimonial-card blockquote p { font-size: 1.0625rem; line-height: 1.8; letter-spacing: -.012em; }
+.testimonial-card figcaption { display: grid; gap: .35rem; margin-top: auto; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.testimonial-card figcaption strong { font-size: .9375rem; font-weight: 650; }
+.testimonial-card figcaption > span { color: var(--muted); font-size: .8125rem; line-height: 1.6; }
+.testimonial-card figcaption .testimonial-location { color: #686868; font-size: .75rem; }
+.testimonial-more { margin-top: 1.5rem; }
+.testimonial-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1rem; min-height: 44px; border-bottom: 1px solid var(--line); font-size: .875rem; font-weight: 600; cursor: pointer; list-style: none; }
+.testimonial-more > summary::-webkit-details-marker { display: none; }
+.testimonial-more > summary > span { font-size: 1.25rem; font-weight: 400; }
+.testimonial-more[open] > summary > span { transform: rotate(45deg); }
+.testimonial-more > .testimonial-grid { margin-top: 1.5rem; }
+@media (max-width: 900px) {
+  .testimonial-grid { grid-template-columns: 1fr; }
+  .testimonial-card { padding: 1.5rem; }
+  .testimonial-card blockquote { max-width: 44rem; }
+}
 .process-section { padding-block: clamp(3rem, 5vw, 5rem); }
 .process-steps { gap: 1.25rem; }
 .process-steps li { background: #fafafa; border: 1px solid var(--line); border-radius: var(--corner); padding: 1.75rem; }

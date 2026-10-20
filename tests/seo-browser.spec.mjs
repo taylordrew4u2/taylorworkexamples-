@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { projects, featuredProjects } from "../public-projects.js";
 import { services, guide, projectSlugs, site } from "../seo-content.js";
 import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 
 const bookingURL = "https://briefbooth.com/book/4u-digital";
@@ -124,7 +125,7 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
     const featured = document.querySelector("#featured-projects");
     const rangeProof = document.querySelector("#range-proof");
     const groups = [...document.querySelectorAll("#featured-projects, #archive-projects, .project-card, .archive-card")];
-    const sections = ["work", "process", "project-faq", "consultation", "business-guides"]
+    const sections = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"]
       .map((id) => document.getElementById(id));
     return work.contains(archive) && work.contains(rangeProof) && groups.every((group) => work.contains(group)) &&
       Boolean(featured.compareDocumentPosition(rangeProof) & Node.DOCUMENT_POSITION_FOLLOWING) &&
@@ -132,7 +133,7 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
       sections.every((section, index) => section && (index === 0 || Boolean(
         sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
-  }), "All projects stay together before the process, questions, consultation, and guides").toBe(true);
+  }), "All projects stay together before client feedback, process, questions, consultation, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.locator(".archive-disclosure summary").click();
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
@@ -425,6 +426,31 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   await expectBookingLink(page.locator(".page-nav .nav-contact"));
   await page.setViewportSize({ width: 768, height: 1024 });
   await expectPageFit(page);
+});
+
+test("client testimonials expand by keyboard and remain readable on smaller screens without JavaScript", async ({ page }) => {
+  await page.goto("/#testimonials");
+  const section = page.locator("#testimonials");
+  await expect(section.getByRole("heading", { name: "In their own words.", exact: true })).toBeVisible();
+  await expect(section.locator(".testimonial-card")).toHaveCount(clientTestimonials.length);
+  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
+  const toggle = section.locator(".testimonial-more > summary");
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
+  await expect(section.locator("figcaption strong")).toHaveText(clientTestimonials.map((item) => item.name));
+  await expectBookingLink(section.locator("[data-booking-link]"));
+  for (const width of [768, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    expect(await section.locator(".testimonial-card").evaluateAll((cards) => cards.every((card) => {
+      const box = card.getBoundingClientRect(); return box.left >= 0 && box.right <= innerWidth;
+    }))).toBe(true);
+    expect((await toggle.boundingBox()).height).toBeGreaterThanOrEqual(44);
+  }
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
 });
 
 test("local businesses can find their website guide and reach consultation without JavaScript", async ({ page }) => {

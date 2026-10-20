@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { site, services, guide, projectSlugs } from "../seo-content.js";
 import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projectStories } from "../project-stories.js";
@@ -212,6 +213,14 @@ function articleCards(route, collection = articles) {
   return `<div class="insight-grid">${collection.map((article) => `<article class="insight-card${article.businessType ? " business-guide-card" : ""}">${article.businessType ? `<div class="business-guide-label"><span class="business-guide-icon">${businessIcon(article.businessType)}</span><p class="eyebrow">${escape(article.businessLabel)}<span>Website guide</span></p></div>` : `<p class="eyebrow">${escape(articleTopics.find((topic) => topic.id === article.topic)?.label || "Business technology")} · ${article.format === "note" ? "Short read" : "Guide"}</p>`}<h3><a href="${local(route, `insights/${article.slug}/`)}">${escape(article.title)}</a></h3><p>${escape(article.summary)}</p><a class="text-link" href="${local(route, `insights/${article.slug}/`)}">${article.businessType ? "Read the guide" : article.format === "note" ? "Read the article" : "Read the guide"} <span aria-hidden="true">↗</span></a></article>`).join("")}</div>`;
 }
 
+function testimonialCard(testimonial) {
+  return `<figure class="testimonial-card" id="testimonial-${escape(testimonial.id)}"><span class="testimonial-mark" aria-hidden="true">“</span><blockquote><p>${escape(testimonial.quote)}</p></blockquote><figcaption><strong>${escape(testimonial.name)}</strong><span>${escape(testimonial.role || testimonial.business)}</span><span class="testimonial-location">${escape(testimonial.location)}</span></figcaption></figure>`;
+}
+
+function testimonialsSection() {
+  return `<div class="section-heading"><div><p class="eyebrow">CLIENT FEEDBACK</p><h2 id="testimonials-title">In their own words.</h2><p class="testimonials-intro">Clients on taking an idea from the first conversation to a working product.</p></div>${bookingLink("text-link")}</div><div class="testimonial-grid">${clientTestimonials.slice(0, 3).map(testimonialCard).join("")}</div><details class="testimonial-more"><summary>Read six more testimonials <span aria-hidden="true">+</span></summary><div class="testimonial-grid">${clientTestimonials.slice(3).map(testimonialCard).join("")}</div></details>`;
+}
+
 function articleIndex(route) {
   return `<nav class="page-section-nav" aria-label="Browse guide topics"><span class="mono">FIND YOUR STARTING POINT</span>${articleTopics.map((topic) => `<a href="#guides-${topic.id}">${escape(topic.label)} <span aria-hidden="true">↓</span></a>`).join("")}</nav>` +
     articleTopics.map((topic) => `<section id="guides-${topic.id}" class="page-section insight-topic" aria-labelledby="topic-${topic.id}"><h2 id="topic-${topic.id}">${escape(topic.title)}</h2><p>${escape(topic.description)}</p>${articleCards(route, articles.filter((article) => article.topic === topic.id))}</section>`).join("");
@@ -359,6 +368,7 @@ export async function generateSEO(output) {
   html = html.replace('<section id="range-proof" class="range-proof" aria-label="Development range and published app proof"></section>', `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${renderRangeProof()}</section>`);
   html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
   html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
+  html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);
   html = html.replace('></p>\n            <div id="archive-projects"', `>${projects.length} OF ${projects.length} PROJECTS</p>\n            <div id="archive-projects"`);
   // Also give client-only controls a working route when JavaScript is unavailable.
   html = html.replace(/<noscript[\s\S]*?<\/noscript>/, '<noscript><p class="no-js-help">The projects below are available without JavaScript. Use each “Full project story” link to see every image and detail.</p></noscript>');
