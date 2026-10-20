@@ -159,7 +159,7 @@ function frame(page, content) {
     "/project-kickoff/": "kickoff-page", "/contact/": "contact-page", "/about/": "about-page",
     "/privacy/": "privacy-page", "/guides/website-or-app/": "comparison-page",
   }[page.path] || "");
-  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`, page.path);
+  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${mobileConsultation()}</body></html>`, page.path);
 }
 
 function sourceEmailLinks(html, route) {
@@ -178,6 +178,10 @@ function inquiry(topic = "general", text = "Tell me what you need", reference = 
 
 function bookingLink(className = "button button-dark") {
   return `<a class="${className}" data-booking-link href="${bookingURL}" target="_blank" rel="noopener noreferrer">Book a consultation <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`;
+}
+
+function mobileConsultation() {
+  return `<aside class="mobile-consultation" aria-label="Consultation booking"><p>Start on Zoom<span>BriefBooth · new tab</span></p>${bookingLink()}</aside>`;
 }
 
 function faqBlock(title, faqs, id = "") {

@@ -135,6 +135,9 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
   }), "All projects stay together before client feedback, process, questions, consultation, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
+  await page.evaluate(() => document.fonts.ready);
+  await page.locator(".archive-disclosure summary").evaluate((element) =>
+    element.scrollIntoView({ block: "center", behavior: "instant" }));
   await page.locator(".archive-disclosure summary").click();
   await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
   const project = projects.find((entry) => entry.id === "Bill-Spilt");

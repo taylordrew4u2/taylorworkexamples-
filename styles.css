@@ -3059,3 +3059,72 @@ a, button, summary { touch-action: manipulation; }
 @media (prefers-reduced-motion: reduce) {
   .hero-platform-project, .hero-project, .industry-services > a, .menu-toggle span { transition: none; }
 }
+
+/* Keep the external consultation link within reach on smaller screens. */
+.mobile-consultation { display: none; }
+
+@media (max-width: 900px) {
+  html:has(.mobile-consultation) {
+    --mobile-consultation-space: calc(6rem + env(safe-area-inset-bottom, 0px));
+    scroll-padding-bottom: var(--mobile-consultation-space);
+  }
+
+  body:has(.mobile-consultation) { padding-bottom: var(--mobile-consultation-space); }
+  body:has(.mobile-consultation) :is(a, button, input, textarea, select, summary, [tabindex], section[id]) {
+    scroll-margin-bottom: var(--mobile-consultation-space);
+  }
+
+  .mobile-consultation {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 16;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    min-height: calc(5rem + env(safe-area-inset-bottom, 0px));
+    padding: .75rem max(.75rem, env(safe-area-inset-right, 0px)) calc(.75rem + env(safe-area-inset-bottom, 0px)) max(.75rem, env(safe-area-inset-left, 0px));
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 0 -.25rem 1.5rem #0000000d;
+  }
+
+  .mobile-consultation > p {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .mobile-consultation > p > span {
+    display: block;
+    margin-top: .25rem;
+    color: var(--muted);
+    font-size: .6875rem;
+    font-weight: 400;
+  }
+
+  .mobile-consultation > .button {
+    flex: 0 1 auto;
+    justify-content: center;
+    gap: .375rem;
+    min-height: 44px;
+    padding: .75rem;
+    font-size: .8125rem;
+    line-height: 1.4;
+    overflow-wrap: normal;
+  }
+
+  body:has(dialog[open]) .mobile-consultation,
+  body:has(:is(input, textarea, select):focus) .mobile-consultation { display: none; }
+}
+
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 450px) {
+  html:has(.mobile-consultation) {
+    --mobile-consultation-space: 0px;
+    scroll-padding-bottom: 1rem;
+  }
+  .mobile-consultation { display: none; }
+}
