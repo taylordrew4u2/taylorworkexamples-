@@ -77,9 +77,9 @@ before(async () => {
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
   assert.equal(projects.length, 9);
-  assert.equal(articles.length, 16);
+  assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 41);
+  assert.equal(routes.length, 44);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -227,6 +227,8 @@ test("structured data points to the canonical business and matches visible servi
       assert.equal(page.mainEntity["@id"], schema["@id"]);
       assert.equal(schema.datePublished, article.published || site.published);
       assert.equal(schema.dateModified, article.modified || site.modified || schema.datePublished);
+      assert.equal(metadata(html, "article:modified_time")[0].content, schema.dateModified);
+      assert.ok(schema.dateModified >= schema.datePublished, `${route}: modification does not precede publication`);
       assert.deepEqual(tags(html, "time").map((tag) => tag.datetime), [schema.datePublished]);
       assert.ok(visible.includes("by 4u digital"), `${route}: visible company author`);
     }
@@ -271,7 +273,8 @@ test("short reads form a complete topic index and a focused homepage preview", a
   assert.deepEqual(indexed.sort(), articles.map((article) => `/insights/${article.slug}/`).sort(), "each article appears exactly once");
   for (const article of articles.filter((article) => article.format === "note")) {
     const html = documents.get(`/insights/${article.slug}/`);
-    assert.match(html, /October 19, 2026/);
+    const dateLabel = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${article.published}T00:00:00Z`));
+    assert.ok(text(html).includes(dateLabel), `${article.slug}: visible publication date matches the article`);
     assert.equal(metadata(html, "og:type")[0].content, "article");
     assert.equal(metadata(html, "article:published_time")[0].content, article.published);
     assert.doesNotMatch(html, /class="seo-project-card"/, "short articles use compact related-work links");
@@ -429,9 +432,13 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-19");
-  assert.equal(sitemapDates.get("/"), "2026-10-19");
-  for (const route of routes) assert.equal(sitemapDates.get(route), "2026-10-19",
-    `${route}: its changed booking navigation has the actual modification date`);
+  assert.equal(sitemapDates.get("/"), "2026-10-20");
+  assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
+  for (const route of routes) {
+    const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
+    const modified = route === "/" || route === "/insights/" ? "2026-10-20" : article?.modified || "2026-10-19";
+    assert.equal(sitemapDates.get(route), modified, `${route}: unchanged content retains its previous modification date`);
+  }
 });
 
 test("the homepage keeps all project showcases together before process, questions, and consultation", () => {

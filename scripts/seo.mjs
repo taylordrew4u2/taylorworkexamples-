@@ -335,7 +335,7 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-19",
+    modified: "2026-10-20",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
@@ -366,7 +366,8 @@ export async function generateSEO(output) {
     type: "ContactPage", breadcrumbs: [{ name: "Contact 4u Digital", path: "/contact/" }],
   };
   const insights = { path: "/insights/", title: "Business Website, App & Software Guides | 4u Digital",
-    description: "Short, practical 4u Digital articles on business websites, hourly vs fixed pricing, comparing quotes, ongoing costs, and planning apps or software.",
+    description: "Practical website guides for salons, restaurants, and local shops, plus advice on pricing, comparing quotes, and planning apps or business software.",
+    modified: "2026-10-20",
     type: "CollectionPage", breadcrumbs: [{ name: "Business guides", path: "/insights/" }],
   };
   const privacy = { path: "/privacy/", title: "Privacy & Site Analytics | 4u Digital",
@@ -380,7 +381,7 @@ export async function generateSEO(output) {
     { ...work, html: frame(work, intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `${projects.length} selected websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.`) + `<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside><div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>`) },
     ...projects.map(projectPage),
     guidePage(),
-    { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Just need a website? Start there. These short articles also explain pricing, comparing quotes, and planning apps or business software, in plain language.") + articleIndex(insights.path) + consultationCallout(insights.path)) },
+    { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Just need a website? Find practical advice for your salon, restaurant, or local shop, along with short reads on pricing and planning apps or business software.") + articleIndex(insights.path) + consultationCallout(insights.path)) },
     ...articles.map(articlePage),
     localPage(),
     kickoffPage(),

@@ -1,6 +1,7 @@
 import { websiteNotes } from "./content/website-notes.js";
 import { pricingNotes } from "./content/pricing-notes.js";
 import { businessNotes } from "./content/business-notes.js";
+import { industryWebsiteNotes } from "./content/industry-website-notes.js";
 
 const guides = [
   {
@@ -279,11 +280,12 @@ const guides = [
 
 export const articleTopics = [
   { id: "websites", title: "Just need a website?", label: "Websites", description: "Start with the pages, content, and contact options your business needs." },
+  { id: "business-websites", title: "A website for your kind of business.", label: "By business", description: "Practical starting points for salons, restaurants, and local shops that need a straightforward website." },
   { id: "pricing", title: "Understand the price.", label: "Pricing", description: "Compare quotes, pricing arrangements, changes, and the costs after launch." },
   { id: "planning", title: "Plan the right build.", label: "Planning", description: "Prepare for the conversation, choose useful features, and think through the work behind the screen." },
 ];
 
-export const articles = [...websiteNotes, ...pricingNotes, ...businessNotes, ...guides].map((article) => ({
+export const articles = [...websiteNotes, ...industryWebsiteNotes, ...pricingNotes, ...businessNotes, ...guides].map((article) => ({
   ...article,
   topic: article.topic || (article.slug === "diy-vs-custom-website" ? "websites" : "planning"),
 }));

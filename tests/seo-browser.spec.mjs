@@ -427,6 +427,30 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   await expectPageFit(page);
 });
 
+test("local businesses can find their website guide and reach consultation without JavaScript", async ({ page }) => {
+  await page.goto("/");
+  const businessGuides = page.getByRole("navigation", { name: "Business website guides" }).getByRole("link", { name: "Website guides for salons, restaurants, and local shops" });
+  await businessGuides.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/insights\/#guides-business-websites$/);
+  await expect(page.locator("#guides-business-websites .insight-card")).toHaveCount(3);
+  await expectPageFit(page);
+  for (const article of articles.filter((entry) => entry.topic === "business-websites")) {
+    const guide = page.locator(`#guides-business-websites h3 a[href$="${article.slug}/"]`);
+    await guide.focus();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
+    await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", "2026-10-20");
+    await expect(page.locator(".article-byline time")).toHaveText("October 20, 2026");
+    await expect(page.locator("main")).toContainText(article.intro);
+    await expectBookingLink(page.locator(".guide-article .page-callout [data-booking-link]"));
+    await expectPageFit(page);
+    const hub = page.getByRole("link", { name: "All 4u Digital business guides", exact: true });
+    await hub.focus();
+    await page.keyboard.press("Enter");
+  }
+});
+
 test("website-only readers can browse short articles and reach booking without JavaScript", async ({ page }) => {
   const article = articles.find((entry) => entry.slug === "simple-business-website");
   await page.goto("/");
