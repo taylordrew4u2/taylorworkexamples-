@@ -104,7 +104,8 @@ function showcaseGallery(project, frame, className, collapsed = false) {
 }
 
 function featuredLinks(project) {
-  return `<div class="project-links">${caseLink(project)}${liveLink(project)}<details class="project-more"><summary>More project details <span aria-hidden="true">+</span></summary><div class="project-more-links">${detailsButton(project, "Project details", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></details></div>`;
+  const capabilities = `<div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>`;
+  return `<div class="project-links">${caseLink(project)}${liveLink(project)}<details class="project-more"><summary>More project details <span aria-hidden="true">+</span></summary><div class="project-more-links">${capabilities}${detailsButton(project, "Quick preview", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></details></div>`;
 }
 
 function productStory(project, index) {
@@ -125,13 +126,13 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${featuredLinks(project)}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar", true)}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p>${featuredLinks(project)}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar", true)}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
   const frame = project.gallery[0];
   const anchor = project.id === "MyGigCalendar" ? 'id="my-gig-calendar-showcase"' : `id="${escape(project.id.toLowerCase())}-showcase"`;
-  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p><div class="project-tags capability-tags" aria-label="Capabilities demonstrated">${tags(project.demonstrates || project.stack, 3)}</div>${projectWorkflows(project)}${featuredLinks(project)}${showcaseGallery(project, frame, "supporting-gallery", true)}</article>`;
+  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${featuredLinks(project)}${showcaseGallery(project, frame, "supporting-gallery", true)}</article>`;
 }
 
 function archiveCard(project) {
@@ -147,7 +148,7 @@ export function dialogVisual(project, index = 0) {
 }
 
 
-const caseLink = (project) => `<a class="case-page-link" href="${escape(project.caseUrl)}">Full project story <span aria-hidden="true">↗</span></a>`;
+const caseLink = (project) => `<a class="case-page-link" href="${escape(project.caseUrl)}" aria-label="View project: ${escape(project.title)}">View project <span aria-hidden="true">↗</span></a>`;
 
 export function renderFeaturedProjects(collection) {
   return `<div class="product-stories">${collection.slice(0, 3).map(productStory).join("")}</div><div class="supporting-section"><h3 class="supporting-title">More selected projects</h3><div class="supporting-grid">${collection.slice(3).map((project, index) => supportingCard(project, index + 3)).join("")}</div></div>`;

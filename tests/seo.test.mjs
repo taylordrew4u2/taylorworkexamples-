@@ -402,7 +402,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], service.heading);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), "2026-10-19");
+    assert.equal(sitemapDates.get(route), service.modified || "2026-10-19");
     assert.ok(linksTo(homeServices, "/", route), `${service.title}: homepage services entry`);
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
@@ -437,8 +437,10 @@ test("salon and restaurant services explain the business workflow and connect to
   assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
   for (const route of routes) {
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
-    const modified = route === "/" || route === "/insights/" ? "2026-10-20" : article?.modified || "2026-10-19";
-    assert.equal(sitemapDates.get(route), modified, `${route}: unchanged content retains its previous modification date`);
+    const service = services.find((entry) => route === `/services/${entry.slug}/`);
+    const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
+    const modified = route === "/" || route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
+    assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }
 });
 

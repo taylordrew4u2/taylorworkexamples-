@@ -153,6 +153,31 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
   await expectPageFit(page);
 });
 
+test("homepage shortcuts let visitors skip to the service, work, or client feedback without JavaScript", async ({ page }) => {
+  await page.goto("/");
+  const shortcuts = page.getByRole("navigation", { name: "Explore 4u Digital", exact: true });
+  await expect(shortcuts.locator("a")).toHaveCount(3);
+  for (const id of ["services", "work", "testimonials"]) {
+    const link = shortcuts.locator(`a[href="#${id}"]`);
+    await expect(link).toBeVisible();
+    expect(await link.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    await link.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+    await expect(page.locator(`#${id} > .section-heading, #${id} > .services-heading`).getByRole("heading", { level: 2 })).toBeVisible();
+  }
+  const originalViewport = page.viewportSize();
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expectPageFit(page);
+    expect(await shortcuts.evaluate((element) => {
+      const bounds = element.getBoundingClientRect();
+      return bounds.left >= 0 && bounds.right <= innerWidth;
+    })).toBe(true);
+  }
+  await page.setViewportSize(originalViewport);
+});
+
 test("a service page leads to relevant project proof and a complete business inquiry without JavaScript", async ({ page }, testInfo) => {
   const service = services.find((entry) => entry.slug === "website-development");
   const project = projects.find((entry) => entry.id === service.projectIds[0]);
@@ -304,6 +329,9 @@ for (const project of projects) {
 
     const navigation = page.getByRole("navigation", { name: "On this project page", exact: true });
     await expect(navigation).toBeVisible();
+    expect(await navigation.evaluate((element) => Boolean(
+      element.compareDocumentPosition(document.querySelector("#project-cover")) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )), "Project shortcuts are available before the large cover image").toBe(true);
     await expect(navigation.locator("a")).toHaveCount(3);
     for (const target of ["overview", "project-views", "development"]) {
       const link = navigation.locator(`a[href="#${target}"]`);
@@ -507,6 +535,21 @@ test("website-only readers can browse short articles and reach booking without J
   await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", "2026-10-19");
   await expect(page.locator(".article-byline time")).toHaveText("October 19, 2026");
   await expect(page.locator("main")).toContainText("You don’t need an app idea");
+  const jump = page.locator(".article-jump");
+  const jumpSummary = jump.locator("summary");
+  await expect(jump).not.toHaveAttribute("open", "");
+  await expect(jump.locator(".article-contents")).toBeHidden();
+  await jumpSummary.focus();
+  await page.keyboard.press("Enter");
+  await expect(jump.locator(".article-contents")).toBeVisible();
+  const firstSection = jump.getByRole("link", { name: article.sections[0].heading, exact: true });
+  await firstSection.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#guide-section-1$/);
+  await jumpSummary.focus();
+  await page.keyboard.press("Space");
+  await expect(jump.locator(".article-contents")).toBeHidden();
+  await expect(page.locator("#guide-section-1").getByRole("heading", { level: 2 })).toHaveText(article.sections[0].heading);
   const faq = page.locator(".faq-item").first();
   await faq.locator("summary").focus();
   await page.keyboard.press("Enter");

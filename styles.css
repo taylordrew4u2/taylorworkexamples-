@@ -709,6 +709,14 @@ button, a, input, select, textarea, summary {
   color: #757575;
 }
 
+.homepage-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; }
+.homepage-shortcuts a { display: inline-flex; align-items: center; justify-content: space-between; gap: .5rem; min-height: 44px; color: var(--ink); font-weight: 550; }
+.homepage-shortcuts a:hover { text-decoration: underline; text-underline-offset: .3rem; }
+@media (max-width: 600px) {
+  .homepage-shortcuts { display: grid; grid-template-columns: 1fr; gap: .25rem; width: 100%; }
+  .homepage-shortcuts a { padding: .625rem .75rem; border: 1px solid var(--line); border-radius: .5rem; background: #fafafa; font-size: .8125rem; }
+}
+
 .work-section {
   padding-block: 5.5rem;
 }

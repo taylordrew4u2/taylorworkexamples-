@@ -360,7 +360,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
   await expect(page.locator(".intro-description")).toHaveText(
-    "From your first idea to launch, work directly with the developer building your website, app, or software. One point of contact for the design, code, and systems behind it.",
+    "Work directly with the developer designing, coding, and launching your website, app, or software.",
   );
   await expect(page.locator(".intro-description")).toBeVisible();
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");
@@ -757,6 +757,7 @@ test("the homepage gives clients clear next steps while keeping optional project
 
   const cards = page.locator("#featured-projects .project-card");
   await expect(cards).toHaveCount(featuredProjects.length);
+  await expect(cards.locator(".project-title")).toHaveText(featuredProjects.map((project) => project.title));
   await expect(page.locator("#featured-projects details.gallery-disclosure:not([open])")).toHaveCount(featuredProjects.length);
   for (const project of featuredProjects) {
     const card = cards.filter({ has: page.locator(`.project-visual[data-project="${project.id}"]`) });
@@ -765,13 +766,29 @@ test("the homepage gives clients clear next steps while keeping optional project
     const choices = disclosure.locator("button[data-gallery][data-screen]");
     await expect(summary).toHaveText(`Browse ${project.gallery.length} screens +`);
     await expect(choices.first()).toBeHidden();
-    const story = card.getByRole("link", { name: "Full project story", exact: true });
+    const story = card.getByRole("link", { name: `View project: ${project.title}`, exact: true });
     await expect(story).toBeVisible();
+    await expect(story).toHaveText("View project ↗");
     await expect(story).toHaveAttribute("href", project.caseUrl);
     await expect(card.locator(".project-links > :first-child")).toHaveClass(/case-page-link/);
     const more = card.locator("details.project-more");
+    const moreLinks = more.locator(".project-more-links");
+    const capabilityTags = moreLinks.locator(".capability-tags .tag");
+    const tagTexts = (project.demonstrates || project.stack).slice(0, 3);
+    await expect(card.locator(".capability-tags .tag")).toHaveCount(3);
+    await expect(capabilityTags).toHaveText(tagTexts);
+    const isLeadStory = featuredProjects.indexOf(project) < 3;
+    const overview = card.locator(".project-description, .project-visual .primary-screen, .case-highlights li, .project-workflows li");
+    await expect(overview).toHaveCount(2 + (isLeadStory ? project.highlights.length : project.workflows.length));
+    await expect(card.locator(".project-description")).toHaveText(isLeadStory
+      ? project.clientSummary || project.summary
+      : project.purpose || project.clientSummary || project.summary);
+    if (isLeadStory) await expect(card.locator(".case-highlights strong")).toHaveText(project.highlights.map((item) => item.title));
+    else await expectProjectWorkflows(card, project);
     await expect(more).not.toHaveAttribute("open", "");
-    await expect(more.locator(".project-more-links")).toBeHidden();
+    await expect(moreLinks).toBeHidden();
+    for (const tag of await capabilityTags.all()) await expect(tag).toBeHidden();
+    for (const item of await overview.all()) await expect(item).toBeVisible();
     await summary.focus();
     await page.keyboard.press("Enter");
     await expect(disclosure).toHaveAttribute("open", "");
@@ -791,15 +808,24 @@ test("the homepage gives clients clear next steps while keeping optional project
     await expect(card.locator(".project-visual .primary-screen")).toHaveAttribute("src", project.gallery.at(-1).image);
     await more.locator("summary").focus();
     await page.keyboard.press("Enter");
+    await expect(more).toHaveAttribute("open", "");
+    await expect(more.locator("summary")).toBeFocused();
+    await expect(more.getByRole("button", { name: `Quick preview for ${project.title}`, exact: true })).toBeVisible();
+    for (const tag of await capabilityTags.all()) await expect(tag).toBeVisible();
+    for (const item of await overview.all()) await expect(item).toBeVisible();
     const source = more.getByRole("link", { name: project.codeAvailable === false ? "Project repository" : "Source code", exact: true });
     await expect(source).toBeVisible();
     await expect(source).toHaveAttribute("href", project.repoUrl);
     await more.locator("summary").focus();
     await page.keyboard.press("Space");
-    await expect(more.locator(".project-more-links")).toBeHidden();
+    await expect(more).not.toHaveAttribute("open", "");
+    await expect(more.locator("summary")).toBeFocused();
+    await expect(moreLinks).toBeHidden();
+    for (const tag of await capabilityTags.all()) await expect(tag).toBeHidden();
+    for (const item of await overview.all()) await expect(item).toBeVisible();
   }
   await expect(page.locator("#featured-projects details.gallery-disclosure[open]")).toHaveCount(0);
-  await cards.first().getByRole("link", { name: "Full project story", exact: true }).click();
+  await cards.first().getByRole("link", { name: `View project: ${featuredProjects[0].title}`, exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(featuredProjects[0].title);
 });
 
@@ -1064,8 +1090,10 @@ test("all published archive projects explain their purpose and workflows with ge
       await expect(liveLink).toHaveAttribute("target", "_blank");
       await expect(liveLink).toHaveAttribute("rel", /noopener/);
     }
-    await expect(card.locator(".case-page-link")).toHaveAttribute("href", project.caseUrl);
-    await expect(card.locator(".case-page-link")).toBeVisible();
+    const story = card.getByRole("link", { name: `View project: ${project.title}`, exact: true });
+    await expect(story).toHaveAttribute("href", project.caseUrl);
+    await expect(story).toHaveText("View project ↗");
+    await expect(story).toBeVisible();
     await expect(card.locator(".project-links > a")).toHaveCount(project.demoUrl ? 3 : 2);
   }
   expect(errors).toEqual([]);
@@ -1140,7 +1168,7 @@ for (const project of projects) {
     await expect(dialog.locator(".dialog-summary")).toBeVisible();
     await expect(dialog.locator(".dialog-summary")).toHaveText(project.purpose);
     await expectProjectWorkflows(dialog, project);
-    const fullStory = dialog.getByRole("link", { name: "Full project story", exact: true });
+    const fullStory = dialog.getByRole("link", { name: `View project: ${project.title}`, exact: true });
     await expect(fullStory).toHaveCount(1);
     await expect(fullStory).toHaveAttribute("href", project.caseUrl);
     expect(await fullStory.getAttribute("target"), "The full story continues in the same tab").toBeNull();

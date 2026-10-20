@@ -117,7 +117,8 @@ document.addEventListener("click", (event) => {
   const storyLink = document.createElement("a");
   storyLink.className = "button button-outline dialog-story-link";
   storyLink.href = project.caseUrl;
-  storyLink.textContent = "Full project story";
+  storyLink.textContent = "View project";
+  storyLink.setAttribute("aria-label", `View project: ${project.title}`);
   const storyArrow = document.createElement("span");
   storyArrow.setAttribute("aria-hidden", "true");
   storyArrow.textContent = "↗";
