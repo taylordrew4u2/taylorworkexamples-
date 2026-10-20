@@ -443,8 +443,25 @@ test("local businesses can find their website guide and reach consultation witho
     await expect(page.locator(".article-byline time")).toHaveAttribute("datetime", "2026-10-20");
     await expect(page.locator(".article-byline time")).toHaveText("October 20, 2026");
     await expect(page.locator("main")).toContainText(article.intro);
+    const essentials = page.getByRole("complementary", { name: `${article.businessLabel} website essentials`, exact: true });
+    await expect(essentials).toContainText(article.takeaway);
+    await expect(essentials.locator("li")).toHaveText(article.essentials);
+    const sectionToggle = page.locator(".industry-contents > summary");
+    await sectionToggle.focus();
+    await page.keyboard.press("Enter");
+    const firstSection = page.getByRole("navigation", { name: "Guide sections", exact: true }).getByRole("link", { name: article.sections[0].heading, exact: true });
+    await firstSection.focus();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/#guide-section-1$/);
+    await expect(page.locator(".industry-guide-cta").getByRole("heading", { level: 2 })).toHaveText(`Let’s plan your ${{ salon: "salon", restaurant: "restaurant", shop: "shop" }[article.businessType]} website.`);
     await expectBookingLink(page.locator(".guide-article .page-callout [data-booking-link]"));
     await expectPageFit(page);
+    const originalViewport = page.viewportSize();
+    for (const width of [768, 320]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expectPageFit(page);
+    }
+    await page.setViewportSize(originalViewport);
     const hub = page.getByRole("link", { name: "All 4u Digital business guides", exact: true });
     await hub.focus();
     await page.keyboard.press("Enter");

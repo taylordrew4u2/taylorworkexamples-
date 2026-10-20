@@ -142,6 +142,36 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .insight-topic > p { margin-block: 1rem 1.75rem; }
 .insight-topic .insight-grid { margin-top: 1.75rem; }
 .short-article .article-related-work { padding-block: 2rem; }
+.business-guide-card { background: #fafafa; }
+.business-guide-label { display: flex; align-items: center; gap: 1rem; }
+.business-guide-icon { display: inline-grid; place-items: center; flex: 0 0 auto; width: 3rem; height: 3rem; border: 1px solid var(--line); border-radius: .75rem; background: #fff; color: var(--ink); }
+.business-guide-symbol { display: block; }
+.business-guide-label .eyebrow { color: var(--ink); font-size: .75rem; letter-spacing: .05em; }
+.business-guide-label .eyebrow span { display: block; margin-top: .4rem; color: var(--muted); font-size: .625rem; letter-spacing: .08em; }
+.business-guide-card h3 { font-size: 1.55rem; line-height: 1.3; margin-block: 1.5rem .9rem; }
+.guide-article.industry-guide .page-intro { max-width: 51rem; }
+.industry-guide .page-intro h1 { max-width: 19ch; text-wrap: balance; }
+.industry-guide-sidebar { padding-top: 2.5rem; min-width: 0; }
+.industry-guide-summary { padding: 1.5rem; background: #fafafa; border: 1px solid var(--line); border-radius: var(--corner); }
+.industry-guide-summary > .eyebrow { margin-top: 1.25rem; }
+.industry-guide-takeaway { font-family: var(--display); font-size: 1.125rem; font-weight: 600; letter-spacing: -.025em; line-height: 1.5; margin-top: .75rem; }
+.industry-guide-summary ul { padding: 0; margin: 1.25rem 0 0; list-style: none; }
+.industry-guide-summary li { display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: .5rem; margin-top: .75rem; font-size: .875rem; line-height: 1.65; color: var(--muted); }
+.industry-guide-summary li::before { content: "✓"; color: var(--ink); }
+.industry-contents { margin-top: 1rem; }
+.industry-contents > summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; padding-block: .875rem; border-bottom: 1px solid var(--line); font-size: .8125rem; cursor: pointer; list-style: none; }
+.industry-contents > summary::-webkit-details-marker { display: none; }
+.industry-contents[open] > summary > span { transform: rotate(45deg); }
+.industry-contents .article-contents { padding-top: .5rem; }
+.industry-contents .article-contents ol { display: block; margin-top: .5rem; }
+.industry-contents .article-contents a { display: block; min-height: 44px; padding-block: .5rem; }
+.industry-guide-cta > .eyebrow { margin: 0 0 1rem; }
+.industry-guide-cta > .related-links { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
+@media (max-width: 900px) {
+  .industry-guide-sidebar { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .industry-guide .article-layout { gap: 0; }
+  .industry-guide-summary { padding: 1.25rem; }
+}
 .consultation-offer { color: var(--muted); line-height: 1.7; margin-top: 1.25rem; }
 .consultation-offer a { text-decoration: underline; text-underline-offset: 0.25rem; }
 .site-footer .consultation-offer { color: #e6e6e6; }

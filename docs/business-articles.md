@@ -8,6 +8,8 @@ The October 19 update adds ten short articles alongside the six existing guides 
 
 The October 20 update adds three website-only articles for salons, restaurants, and local shops. They cover useful public information, photographs, mobile contact routes, and links to existing business tools. These are distinct from the older salon booking-system and restaurant ordering-app guides.
 
+The industry guides use short headlines, decorative monochrome business icons, and a concise takeaway with three essentials. Their section navigation is a native expandable control, so mobile readers can choose whether to open it. A single business-specific closing callout combines preparation advice and the outbound BriefBooth link. The other sixteen article layouts are unchanged.
+
 The homepage previews three articles and links directly to the new “By business” topic. All nineteen are grouped on the guide index, with native topic links that work without JavaScript. Short articles use compact portfolio links so a small read does not become a large image gallery. Booking remains a direct link to BriefBooth.
 
 New copy lives in `content/website-notes.js`, `content/industry-website-notes.js`, `content/pricing-notes.js`, and `content/business-notes.js`. `seo-articles.js` combines it with the original guides and defines the topic labels and homepage selection. These are build-time modules; they do not add a browser framework, service, subscription, or tracking script.

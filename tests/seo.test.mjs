@@ -265,7 +265,7 @@ test("short reads form a complete topic index and a focused homepage preview", a
     assert.ok(section, `${topic.label}: linked section exists`);
     assert.ok(text(section).includes(topic.title));
     assert.ok(tags(hub, "a").some((tag) => tag.href === `#guides-${topic.id}`));
-    const cards = [...section.matchAll(/<article class="insight-card">([\s\S]*?)<\/article>/g)];
+    const cards = [...section.matchAll(/<article class="[^"]*\binsight-card\b[^"]*">([\s\S]*?)<\/article>/g)];
     const paths = cards.map(([, card]) => pathname(tags(card, "a")[0].href, "/insights/"));
     assert.deepEqual(paths, articles.filter((article) => article.topic === topic.id).map((article) => `/insights/${article.slug}/`));
     indexed.push(...paths);
