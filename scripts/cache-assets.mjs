@@ -29,6 +29,8 @@ export function responsiveHTML(html, route, manifest) {
       sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(60vw - 3.15rem), (max-width: 88rem) calc(60vw - 4.35rem), 48.45rem";
     } else if (/\bhero-choice-screen\b/.test(tag)) {
       sizes = "64px";
+    } else if (/\bservice-example-image\b/.test(tag)) {
+      sizes = "(max-width: 600px) calc(100vw - 8rem), (max-width: 900px) calc(100vw - 10rem), 22rem";
     } else if (/^\/work\/[^/]+\/$/.test(route) && /fetchpriority="high"/.test(tag)) {
       sizes = "(max-width: 600px) calc(100vw - 40px), (max-width: 1050px) calc(100vw - 64px), (max-width: 1440px) calc(61.4vw - 100px), 766px";
     }

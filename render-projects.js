@@ -108,6 +108,10 @@ function featuredLinks(project) {
   return `<div class="project-links">${caseLink(project)}${liveLink(project)}<details class="project-more"><summary>More project details <span aria-hidden="true">+</span></summary><div class="project-more-links">${capabilities}${detailsButton(project, "Quick preview", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></details></div>`;
 }
 
+const workType = (project) => project.id === "PinsAndNeedlesComedyWebsite"
+  ? "website"
+  : project.category === "ios" ? "ios" : "web-app";
+
 function productStory(project, index) {
   const views = project.gallery || [
     {
@@ -126,13 +130,13 @@ function productStory(project, index) {
         `<li><strong>${escape(item.title)}</strong><p>${escape(item.text)}</p></li>`,
     )
     .join("");
-  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p>${featuredLinks(project)}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar", true)}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
+  return `<article ${anchor} class="project-card case-study" data-card-index="${index + 1}" data-case-id="${escape(project.id)}" data-work-type="${workType(project)}"><div class="case-header"><div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span><span class="mono project-id">${String(index + 1).padStart(2, "0")}</span></div>${projectHeading(project)}<p class="project-description">${escape(project.clientSummary || project.summary)}</p>${featuredLinks(project)}</div><div class="case-media"><button class="project-visual case-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion || frame.workflow ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${showcaseGallery(project, frame, "screen-toolbar", true)}</div><div class="case-proof"><ul class="case-highlights">${highlights}</ul></div></article>`;
 }
 
 function supportingCard(project, index) {
   const frame = project.gallery[0];
   const anchor = project.id === "MyGigCalendar" ? 'id="my-gig-calendar-showcase"' : `id="${escape(project.id.toLowerCase())}-showcase"`;
-  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${featuredLinks(project)}${showcaseGallery(project, frame, "supporting-gallery", true)}</article>`;
+  return `<article ${anchor} class="project-card supporting-card has-gallery" data-card-index="${index + 1}" data-supporting-id="${escape(project.id)}" data-work-type="${workType(project)}"><button class="project-visual supporting-screen ${escape(project.tone)} ${isProductCover(frame) ? "product-cover" : ""} ${frame.portrait ? "portrait" : ""} ${frame.companion ? "paired" : ""}"${productCoverStyle(frame)} data-project="${escape(project.id)}" aria-label="Explore ${escape(project.title)}"><span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span></button>${projectHeading(project)}<div class="project-meta"><span class="mono project-category">${escape(project.projectType)}</span></div><p class="project-description">${escape(project.purpose || project.clientSummary || project.summary)}</p>${projectWorkflows(project)}${featuredLinks(project)}${showcaseGallery(project, frame, "supporting-gallery", true)}</article>`;
 }
 
 function archiveCard(project) {

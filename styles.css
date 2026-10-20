@@ -3198,3 +3198,69 @@ a, button, summary { touch-action: manipulation; }
   .hero-project-choice small { font-size: .625rem; }
   .hero-platform-caption { padding: 1rem; }
 }
+
+/* Let visitors open concrete examples before choosing a service. */
+.services-grid { align-items: start; }
+.service-example { width: 100%; margin-bottom: 1.5rem; border-block: 1px solid var(--line); }
+.service-example > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 44px; padding-block: .875rem; cursor: pointer; list-style: none; font-size: .8125rem; font-weight: 600; }
+.service-example > summary::-webkit-details-marker { display: none; }
+.service-example > summary > span { flex: none; font-size: 1.25rem; font-weight: 400; }
+.service-example[open] > summary > span { transform: rotate(45deg); }
+.service-example-content { padding-bottom: 1rem; }
+.service-item .service-example-content > p { margin: 0 0 1rem; font-size: .8125rem; line-height: 1.7; }
+.service-example-flow { display: grid; gap: .5rem; list-style: none; margin: 0 0 1rem; padding: 0; }
+.service-example-flow > li { display: flex; align-items: center; gap: .625rem; font-size: .75rem; line-height: 1.5; }
+.service-example-step { display: inline-grid; place-items: center; flex: none; width: 1.5rem; height: 1.5rem; border: 1px solid var(--line); border-radius: 50%; font-size: .6875rem; }
+.service-example figure { margin: 0 0 .75rem; }
+.service-example-image { display: block; width: 100%; height: auto; object-fit: contain; border: 1px solid var(--line); border-radius: .5rem; }
+.service-example figcaption { margin-top: .5rem; color: var(--muted); font-size: .6875rem; line-height: 1.6; }
+.service-example-content > .text-link { min-height: 44px; font-size: .8125rem; }
+
+/* Native choices focus the existing showcases without rebuilding their galleries. */
+.work-filter { min-width: 0; margin: 1.5rem 0 0; padding: 1.25rem; border: 1px solid var(--line); border-radius: .875rem; background: #fafafa; }
+.work-filter > legend { padding-inline: .5rem; font-family: var(--display); font-size: 1.25rem; font-weight: 650; letter-spacing: -.025em; }
+#work-filter-help { margin: 0; font-size: .875rem; line-height: 1.6; color: var(--muted); }
+.work-filter-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .625rem; margin-top: 1rem; }
+.work-filter-choice { position: relative; display: flex; align-items: center; justify-content: space-between; gap: .5rem; min-width: 0; min-height: 48px; padding: .75rem 1rem; border: 1px solid #ccc; border-radius: .5rem; background: #fff; font-size: .8125rem; line-height: 1.4; font-weight: 600; cursor: pointer; }
+.work-filter-choice:hover { border-color: #555; }
+.work-filter-choice > span:last-child { font-size: .75rem; font-weight: 400; opacity: .75; }
+.work-filter-choice:has(input:checked) { background: #111; border-color: #111; color: #fff; }
+.work-filter-choice:has(input:focus-visible) { outline: 2px solid #111; outline-offset: 3px; }
+.work-filter-status { margin-top: .875rem; font-size: .8125rem; line-height: 1.5; }
+.work-desktop-link { display: flex; align-items: baseline; flex-wrap: wrap; gap: .25rem .625rem; margin: .75rem 0 2rem; font-size: .8125rem; line-height: 1.6; color: var(--muted); }
+.work-desktop-link > a { min-height: 44px; color: var(--ink); }
+@supports selector(:has(input:checked)) {
+  #work:has(input[name="work-type"][value="website"]:checked) #featured-projects .project-card:not([data-work-type="website"]),
+  #work:has(input[name="work-type"][value="web-app"]:checked) #featured-projects .project-card:not([data-work-type="web-app"]),
+  #work:has(input[name="work-type"][value="ios"]:checked) #featured-projects .project-card:not([data-work-type="ios"]) { display: none; }
+  #work:has(input[name="work-type"][value="website"]:checked) :is(.product-stories, .supporting-section):not(:has([data-work-type="website"])),
+  #work:has(input[name="work-type"][value="web-app"]:checked) :is(.product-stories, .supporting-section):not(:has([data-work-type="web-app"])),
+  #work:has(input[name="work-type"][value="ios"]:checked) :is(.product-stories, .supporting-section):not(:has([data-work-type="ios"])) { display: none; }
+  #work:has(input[name="work-type"]:not([value="all"]):checked) .supporting-title { display: none; }
+  #work:has(input[name="work-type"][value="website"]:checked) .supporting-section { margin-top: 0; }
+}
+@supports not selector(:has(input:checked)) {
+  .work-filter, .work-filter-status { display: none; }
+}
+
+/* Mobile feedback advances only when the visitor uses the rail or its controls. */
+.feedback-controls { display: none; }
+@media (max-width: 900px) {
+  .work-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feedback-controls:not([hidden]) { display: grid; grid-template-columns: 44px auto 44px minmax(0, 1fr); align-items: center; gap: .5rem; margin-bottom: 1rem; padding: .75rem; background: #111; color: #fff; border-radius: .75rem; }
+  .feedback-arrow, .feedback-all { display: inline-flex; justify-content: center; align-items: center; min-width: 44px; min-height: 44px; padding: .5rem; border: 1px solid #666; border-radius: .5rem; background: #111; color: #fff; cursor: pointer; font-family: inherit; }
+  .feedback-arrow { font-size: 1.125rem; }
+  .feedback-arrow:disabled { color: #888; border-color: #444; cursor: default; }
+  .feedback-position { min-width: 2.5rem; text-align: center; font-size: .75rem; font-variant-numeric: tabular-nums; }
+  .feedback-all { justify-self: end; font-size: .75rem; line-height: 1.4; font-weight: 600; }
+  .feedback-controls :focus-visible { outline-color: #fff; }
+  .feedback-ready > .testimonial-grid { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc(100% - 1rem); gap: 1rem; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; padding: .25rem .25rem 1rem; scroll-padding-inline: .25rem; }
+  .feedback-ready > .testimonial-grid > .testimonial-card { scroll-snap-align: start; }
+  .feedback-ready > .testimonial-grid:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: .5rem; }
+}
+@media (max-width: 600px) {
+  .work-filter { padding: 1rem; }
+  .work-filter-choice { padding: .75rem .625rem; font-size: .75rem; }
+  .feedback-controls:not([hidden]) { padding: .625rem; gap: .375rem; }
+  .feedback-all { padding-inline: .5rem; font-size: .6875rem; }
+}

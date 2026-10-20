@@ -17,6 +17,15 @@ Updated October 20, 2026, following the request to make the site engaging and ea
 
 Browsers without CSS relational selector support show all three linked project previews and omit the unavailable switcher. Modern browsers retain the same native selection with JavaScript enabled or disabled.
 
+## Exploring the rest of the homepage
+
+- Each service has an optional native “What could this look like?” example with a short customer journey, genuine project artwork, an accurate source label, and a dedicated project link. The core service description and action stay visible.
+- Native radio filters focus the seven featured projects by website, web app, or iPhone/iPad app. All projects remain the default; a dedicated link keeps the desktop engineering example discoverable. Filtering hides existing cards rather than rebuilding them, preserving a visitor’s gallery selections. The archive keeps its separate filters and search. JavaScript adds only the current result announcement; CSS filtering works without it. Older browsers show all featured work.
+- On mobile with JavaScript, featured client feedback becomes a manually controlled horizontal rail. Previous/next buttons, rail keyboard controls, native scrolling, and a position indicator make every quote reachable. “Read all feedback” opens the existing six-more disclosure. Desktop and no-JavaScript layouts retain the original readable quote groups. Every quote and attribution stays unchanged.
+- Keep the project, feedback, process, FAQ, consultation, and guide sections in their established order. Native FAQ and gallery disclosures remain available; booking stays a direct BriefBooth link.
+
+These enhancements add no dependencies, autoplay, paid tools, or tracking. The two small homepage modules are delivered through the existing versioned caching pipeline.
+
 The existing full-color artwork, neutral site palette, reduced-motion support, nine selected projects, testimonials, and section order are preserved. No autoplay, rotating copy, extra tracking, or paid services are added.
 
 ## Basis and limits
