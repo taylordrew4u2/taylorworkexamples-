@@ -24,7 +24,7 @@ Browsers without CSS relational selector support show all three linked project p
 - All nine client reviews are visible in one grid, with a Reviews link in the top navigation. Mobile uses a readable single column without sliders or disclosures. Every quote and attribution stays unchanged and remains available without JavaScript.
 - Keep the project, feedback, process, FAQ, consultation, and guide sections in their established order. Native FAQ and gallery disclosures remain available; booking stays a direct BriefBooth link.
 
-These enhancements add no dependencies, autoplay, paid tools, or tracking. The two small homepage modules are delivered through the existing versioned caching pipeline.
+These enhancements add no dependencies, autoplay, paid tools, or tracking. The small work-filter module is delivered through the existing versioned caching pipeline. Reviews render directly in HTML without an extra module.
 
 The existing full-color artwork, neutral site palette, reduced-motion support, nine selected projects, testimonials, and section order are preserved. No autoplay, rotating copy, extra tracking, or paid services are added.
 
