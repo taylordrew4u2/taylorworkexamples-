@@ -580,16 +580,14 @@ test("the later kickoff checklist is reachable from the process and prepares an 
   await expectPageFit(page);
 });
 
-test("client testimonials expand by keyboard and remain readable on smaller screens without JavaScript", async ({ page }) => {
+test("all client testimonials are directly readable on smaller screens without JavaScript", async ({ page }) => {
   await page.goto("/#testimonials");
   const section = page.locator("#testimonials");
   await expect(section.getByRole("heading", { name: "In their own words.", exact: true })).toBeVisible();
   await expect(section.locator(".testimonial-card")).toHaveCount(clientTestimonials.length);
-  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
-  const toggle = section.locator(".testimonial-more > summary");
-  await toggle.focus();
-  await page.keyboard.press("Enter");
   await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
+  await expect(section.locator("details, .feedback-controls, [data-feedback-next], [data-feedback-prev]")).toHaveCount(0);
+  await expect(section.locator("blockquote p")).toHaveText(clientTestimonials.map((item) => item.quote));
   await expect(section.locator("figcaption strong")).toHaveText(clientTestimonials.map((item) => item.name));
   await expectBookingLink(section.locator("[data-booking-link]"));
   for (const width of [768, 320]) {
@@ -598,11 +596,8 @@ test("client testimonials expand by keyboard and remain readable on smaller scre
     expect(await section.locator(".testimonial-card").evaluateAll((cards) => cards.every((card) => {
       const box = card.getBoundingClientRect(); return box.left >= 0 && box.right <= innerWidth;
     }))).toBe(true);
-    expect((await toggle.boundingBox()).height).toBeGreaterThanOrEqual(44);
+    await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
   }
-  await toggle.focus();
-  await page.keyboard.press("Enter");
-  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
 });
 
 test("local businesses can find their website guide and reach consultation without JavaScript", async ({ page }) => {

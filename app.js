@@ -5,7 +5,6 @@ import { trackContact } from "./analytics.js?v=50";
 import { renderRangeProof } from "./range-proof.js?v=50";
 import { bookingURL } from "./booking.js?v=50";
 import { initWorkExplorer } from "./homepage-explore.js?v=50";
-import { initTestimonialExplorer } from "./testimonial-explorer.js?v=50";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
@@ -19,7 +18,6 @@ if (!$("#featured-projects").children.length) {
   $("#featured-projects").innerHTML = renderFeaturedProjects(featuredProjects);
 }
 initWorkExplorer();
-initTestimonialExplorer();
 
 function changeShowcaseImage(event) {
   const choice = event.target.closest("[data-gallery]");

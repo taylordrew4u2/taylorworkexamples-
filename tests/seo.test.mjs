@@ -444,16 +444,17 @@ test("salon and restaurant services explain the business workflow and connect to
   }
 });
 
-test("the homepage preserves every supplied testimonial with a clear attribution and optional additional reading", () => {
+test("the homepage displays all nine supplied testimonials directly with their original attribution", () => {
   const html = documents.get("/");
   const section = html.match(/<section id="testimonials"[^>]*>([\s\S]*?)<\/section>/)?.[1];
   assert.ok(section, "client feedback has its own section");
   assert.equal(clientTestimonials.length, 9);
   assert.equal([...section.matchAll(/<blockquote>/g)].length, 9);
   assert.equal([...section.matchAll(/<figcaption>/g)].length, 9);
-  const [featured, more] = section.split('<details class="testimonial-more">');
-  assert.equal([...featured.matchAll(/class="testimonial-card"/g)].length, 3);
-  assert.equal([...more.matchAll(/class="testimonial-card"/g)].length, 6);
+  assert.equal([...section.matchAll(/class="testimonial-grid"/g)].length, 1);
+  assert.equal([...section.matchAll(/class="testimonial-card"/g)].length, 9);
+  assert.doesNotMatch(section, /feedback-controls|feedback-ready|testimonial-more|<details\b|\shidden\b|data-feedback-/);
+  assert.match(html, /<a\b[^>]*href="#testimonials"[^>]*>Reviews<\/a>/, "the header links directly to Reviews");
   for (const testimonial of clientTestimonials) {
     assert.ok(text(section).includes(testimonial.quote));
     for (const value of [testimonial.name, testimonial.role || testimonial.business, testimonial.location]) {

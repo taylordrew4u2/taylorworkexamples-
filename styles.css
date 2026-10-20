@@ -2972,12 +2972,6 @@ a, button, summary { touch-action: manipulation; }
 .testimonial-card figcaption strong { font-size: .9375rem; font-weight: 650; }
 .testimonial-card figcaption > span { color: var(--muted); font-size: .8125rem; line-height: 1.6; }
 .testimonial-card figcaption .testimonial-location { color: #686868; font-size: .75rem; }
-.testimonial-more { margin-top: 1.5rem; }
-.testimonial-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1rem; min-height: 44px; border-bottom: 1px solid var(--line); font-size: .875rem; font-weight: 600; cursor: pointer; list-style: none; }
-.testimonial-more > summary::-webkit-details-marker { display: none; }
-.testimonial-more > summary > span { font-size: 1.25rem; font-weight: 400; }
-.testimonial-more[open] > summary > span { transform: rotate(45deg); }
-.testimonial-more > .testimonial-grid { margin-top: 1.5rem; }
 @media (max-width: 900px) {
   .testimonial-grid { grid-template-columns: 1fr; }
   .testimonial-card { padding: 1.5rem; }
@@ -3243,24 +3237,10 @@ a, button, summary { touch-action: manipulation; }
   .work-filter, .work-filter-status { display: none; }
 }
 
-/* Mobile feedback advances only when the visitor uses the rail or its controls. */
-.feedback-controls { display: none; }
 @media (max-width: 900px) {
   .work-filter-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .feedback-controls:not([hidden]) { display: grid; grid-template-columns: 44px auto 44px minmax(0, 1fr); align-items: center; gap: .5rem; margin-bottom: 1rem; padding: .75rem; background: #111; color: #fff; border-radius: .75rem; }
-  .feedback-arrow, .feedback-all { display: inline-flex; justify-content: center; align-items: center; min-width: 44px; min-height: 44px; padding: .5rem; border: 1px solid #666; border-radius: .5rem; background: #111; color: #fff; cursor: pointer; font-family: inherit; }
-  .feedback-arrow { font-size: 1.125rem; }
-  .feedback-arrow:disabled { color: #888; border-color: #444; cursor: default; }
-  .feedback-position { min-width: 2.5rem; text-align: center; font-size: .75rem; font-variant-numeric: tabular-nums; }
-  .feedback-all { justify-self: end; font-size: .75rem; line-height: 1.4; font-weight: 600; }
-  .feedback-controls :focus-visible { outline-color: #fff; }
-  .feedback-ready > .testimonial-grid { display: grid; grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: calc(100% - 1rem); gap: 1rem; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; padding: .25rem .25rem 1rem; scroll-padding-inline: .25rem; }
-  .feedback-ready > .testimonial-grid > .testimonial-card { scroll-snap-align: start; }
-  .feedback-ready > .testimonial-grid:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: .5rem; }
 }
 @media (max-width: 600px) {
   .work-filter { padding: 1rem; }
   .work-filter-choice { padding: .75rem .625rem; font-size: .75rem; }
-  .feedback-controls:not([hidden]) { padding: .625rem; gap: .375rem; }
-  .feedback-all { padding-inline: .5rem; font-size: .6875rem; }
 }
