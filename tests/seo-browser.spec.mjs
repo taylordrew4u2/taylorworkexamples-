@@ -124,7 +124,7 @@ test("the hero lets visitors choose a real build with native controls without Ja
   await expect(explorer).toHaveClass(/\bhero-explorer\b/);
   const choices = [
     { value: "briefbooth", name: "Web app BriefBooth", title: "BriefBooth", id: "BriefBooth.com", status: /live website capture/i },
-    { value: "website", name: "Website Pins & Needles", title: "Pins & Needles", id: "PinsAndNeedlesComedyWebsite", status: /Website.*Repository product artwork/i },
+    { value: "website", name: "Website Micro-short", title: "Micro-short Film Website", id: "micro-short-website", status: /Website.*Repository website capture/i },
     { value: "desktop", name: "Desktop SobStage", title: "SobStage", id: "usbmic", status: /release candidate/i },
   ].map((choice) => ({ ...choice, project: projects.find((project) => project.id === choice.id) }));
   const panels = previews.locator(".hero-platform-panels a.hero-platform-project");
@@ -200,7 +200,12 @@ test("the hero lets visitors choose a real build with native controls without Ja
       await expect(caption).toContainText(choice.status);
       await expect(caption).toContainText("View project");
       if (choice.value === "desktop") await expect(caption).toContainText(/physical[- ]microphone.*(?:pending|in progress)|(?:pending|in progress).*physical[- ]microphone/i);
-      await expect(caption.locator("img.project-icon")).toHaveAttribute("src", choice.project.icon);
+      if (choice.project.icon) {
+        await expect(caption.locator("img.project-icon")).toHaveAttribute("src", choice.project.icon);
+      } else {
+        await expect(caption.locator("img.project-icon")).toHaveCount(0);
+        await expect(caption.locator(".project-initials")).toHaveText("MS");
+      }
       expect(await panel.evaluate((element) => {
         const image = element.querySelector(".hero-platform-screen").getBoundingClientRect();
         const caption = element.querySelector(".hero-platform-caption").getBoundingClientRect();
@@ -221,7 +226,7 @@ test("the hero lets visitors choose a real build with native controls without Ja
   await expectSelection("briefbooth", false);
   await page.clock.fastForward(120_000);
   await expectSelection("briefbooth", false);
-  const website = explorer.getByRole("radio", { name: "Website Pins & Needles", exact: true });
+  const website = explorer.getByRole("radio", { name: "Website Micro-short", exact: true });
   await explorer.locator('label.hero-project-choice:has(input[value="website"])').click();
   await expectSelection("website");
   await page.keyboard.press("ArrowRight");
@@ -266,7 +271,7 @@ test("the homepage exposes the portfolio and project navigation without JavaScri
   await expect(story).toBeVisible();
   await story.click();
   await expect(page).toHaveURL(new RegExp(`/work/${projectSlugs[project.id]}/$`));
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
   const portfolio = await linkTo(page, "/work/");
   await portfolio.click();
   await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
@@ -323,7 +328,7 @@ test("a service page leads to relevant project proof and a complete business inq
   // Native activation remains usable while the section-link scroll is finishing.
   await proof.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
   await expectHeaderSection(page, "/work/");
     await expect(page.getByRole("link", { name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
   const inquiry = page.locator(".page-actions a[href^='mailto:']");

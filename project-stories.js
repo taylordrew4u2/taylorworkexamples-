@@ -76,9 +76,9 @@ export const projectStories = {
   "micro-short-website": {
     audience: "Film teams promoting a short film",
     workflowDescriptions: [
-      "See the film’s artwork and stills in a responsive promotional website.",
-      "Browse the film’s festival and award gallery.",
-      "Find cast and crew information alongside the film’s contact details.",
+      "Explore a poster-style film homepage with full-color stills and navigation between five views.",
+      "Browse a dedicated gallery of the film’s festival selections and awards.",
+      "Move between cast, crew, and IMDb contact views, each with its own direct link.",
     ],
   },
   nycstandupopenmicmaster: {

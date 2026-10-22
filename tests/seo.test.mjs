@@ -77,10 +77,10 @@ before(async () => {
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 9);
+  assert.equal(projects.length, 10);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 44);
+  assert.equal(routes.length, 45);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -433,13 +433,14 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-19");
-  assert.equal(sitemapDates.get("/"), "2026-10-20");
+  assert.equal(sitemapDates.get("/"), "2026-10-22");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
   for (const route of routes) {
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
     const service = services.find((entry) => route === `/services/${entry.slug}/`);
     const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const modified = route === "/" || route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
+    const microShortUpdate = ["/", "/work/", "/work/micro-short-film-website/"].includes(route);
+    const modified = microShortUpdate ? "2026-10-22" : route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
     assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }
 });
@@ -778,10 +779,10 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the nine selected projects", async () => {
-  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness", "taylordrewwebsite"];
+test("published pages, data, routes, and assets contain only the ten selected projects", async () => {
+  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
-  assert.equal(excludedProjects.length, 8, "Unselected projects still exist in the internal audited inventory");
+  assert.equal(excludedProjects.length, 7, "Unselected projects still exist in the internal audited inventory");
   const excluded = ["https://www.taylordrew4u.com", ...excludedIds,
     ...excludedProjects.map((project) => project.title), ...excludedProjects.map((project) => `/work/${projectSlugs[project.id]}/`)];
   const outputFiles = await filesUnder(output);

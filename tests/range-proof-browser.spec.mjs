@@ -10,7 +10,7 @@ test("published apps and the development range are visible and usable without Ja
     await expect(capabilities.locator("a.hero-capability")).toHaveCount(4);
     const openingProjects = [
       ["iPhone & iPad apps", "The-Bit-Binder"],
-      ["Business websites", "PinsAndNeedlesComedyWebsite"],
+      ["Business websites", "micro-short-website"],
       ["Web apps & platforms", "BriefBooth.com"],
       ["Desktop software", "usbmic"],
     ];
@@ -20,14 +20,19 @@ test("published apps and the development range are visible and usable without Ja
       await expect(link).toHaveCount(1);
       await expect(link).toHaveAttribute("href", project.caseUrl);
       const icon = link.locator("img.project-icon");
-      await expect(icon).toHaveAttribute("src", project.icon);
-      await icon.scrollIntoViewIfNeeded();
-      await expect.poll(() => icon.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-      await expect(icon).toHaveCSS("filter", "none");
+      if (project.icon) {
+        await expect(icon).toHaveAttribute("src", project.icon);
+        await icon.scrollIntoViewIfNeeded();
+        await expect.poll(() => icon.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
+        await expect(icon).toHaveCSS("filter", "none");
+      } else {
+        await expect(icon).toHaveCount(0);
+        await expect(link.locator(".project-initials")).toHaveText("MS");
+      }
       await expect(link.locator(".project-icon-frame")).toHaveCSS("filter", "none");
       expect(await link.evaluate((element) => {
         const linkBox = element.getBoundingClientRect();
-        const iconBox = element.querySelector("img").getBoundingClientRect();
+        const iconBox = element.querySelector("img, .project-initials").getBoundingClientRect();
         return linkBox.width > 0 && linkBox.left >= -1 && linkBox.right <= window.innerWidth + 1 &&
           iconBox.left >= linkBox.left && iconBox.right <= linkBox.right &&
           iconBox.top >= linkBox.top && iconBox.bottom <= linkBox.bottom;
@@ -39,14 +44,18 @@ test("published apps and the development range are visible and usable without Ja
       return !element.closest(".hero-stage") && (links.top >= previews.bottom - 1 ||
         links.bottom <= previews.top + 1 || links.right <= previews.left + 1 || links.left >= previews.right - 1);
     }), "The range navigation stays separate from the real project images").toBe(true);
-    const platformProjects = ["BriefBooth.com", "PinsAndNeedlesComedyWebsite", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
+    const platformProjects = ["BriefBooth.com", "micro-short-website", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
     const platformPreviews = page.locator(".hero-platform-previews a.hero-platform-project");
     await expect(platformPreviews).toHaveCount(3);
     for (const project of platformProjects) {
       const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
       await expect(preview.locator(".hero-platform-screen")).toHaveAttribute("src", project.gallery[0].image);
-      await expect(preview.locator(".hero-platform-caption")).toContainText(project.id === "PinsAndNeedlesComedyWebsite" ? "Pins & Needles" : project.title);
-      await expect(preview.locator("img.project-icon")).toHaveAttribute("src", project.icon);
+      await expect(preview.locator(".hero-platform-caption")).toContainText(project.title);
+      if (project.icon) await expect(preview.locator("img.project-icon")).toHaveAttribute("src", project.icon);
+      else {
+        await expect(preview.locator("img.project-icon")).toHaveCount(0);
+        await expect(preview.locator(".project-initials")).toHaveText("MS");
+      }
     }
     const opening = page.locator(".hero-range-proof");
     await expect(opening).toHaveAttribute("href", "#app-store-proof");
@@ -84,7 +93,7 @@ test("published apps and the development range are visible and usable without Ja
     await projectLink.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(projectURL);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(expectedProject.title);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(expectedProject.title);
     for (const project of platformProjects) {
       await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
       const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
@@ -95,7 +104,7 @@ test("published apps and the development range are visible and usable without Ja
       await preview.focus();
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(destination);
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
     }
   } finally { await context.close(); }
 });

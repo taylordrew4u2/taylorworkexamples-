@@ -49,8 +49,9 @@ export const publicRepositories = {
     "description": "website promoting our micro short and the festivals it was in and awards won",
     "homepage": "https://micro-short-website.vercel.app",
     "defaultBranch": "main",
-    "headSha": "3749d50a8d43420bfa3da4f83c0efe52678cc17e",
-    "pushedAt": "2026-10-06T05:53:18Z",
+    "headSha": "f55e1f820e78a99bf9a9ebbb97a1ac47be6e812f",
+    "pushedAt": "2026-10-15T20:01:41Z",
+    "verifiedAt": "2026-10-22",
     "archived": false,
     "readmeAvailable": true
   },

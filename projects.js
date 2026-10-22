@@ -608,9 +608,11 @@ export const projects = [
     id: "micro-short-website",
     title: "Micro-short Film Website",
     category: "web",
+    projectType: "Website",
     summary:
       "A cinematic promotional website for the short film Oh Shit, Did We Just Kill a Guy?, with festival recognition, stills, cast, and crew.",
     stack: ["HTML", "CSS", "JavaScript", "Vercel"],
+    demonstrates: ["Responsive website design", "Hash-based navigation", "Dependency-free frontend"],
     features: [
       "Responsive film promotion",
       "Festival and award gallery",

@@ -11,7 +11,7 @@ const removedProjectIds = [
   "comedysub",
   "staybusy",
   "taylordrewwebsite",
-  "Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness",
+  "Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness",
 ];
 
 async function expectResponsiveImageSource(image, expected) {
@@ -210,7 +210,7 @@ const heroPreviews = [
 
 const heroPlatformPreviews = [
   ["BriefBooth.com", "briefbooth", "Web app BriefBooth", /Live website capture/i, /BriefBooth.*(?:booking|consultation|homepage)/i],
-  ["PinsAndNeedlesComedyWebsite", "website", "Website Pins & Needles", /Repository product artwork/i, /Pins.*Needles.*repository product artwork/i],
+  ["micro-short-website", "website", "Website Micro-short", /Repository website capture/i, /Micro-short.*(?:film|website).*home/i],
   ["usbmic", "desktop", "Desktop SobStage", /Release candidate/i, /SobStage.*repository product artwork.*microphone.*recording/i],
 ];
 
@@ -333,18 +333,13 @@ async function expectHeroPreview(page) {
     const caption = link.locator(".hero-platform-caption");
     await expect(caption.locator(".hero-project-link")).toBeVisible();
     await expect(caption.locator(".hero-project-link")).toContainText("View project");
-    await expect(caption).toContainText(value === "website" ? "Pins & Needles" : project.title);
+    await expect(caption).toContainText(project.title);
     await expect(caption).toContainText(status);
     if (value === "desktop") {
       await expect(caption).toContainText(/repository product artwork/i);
       await expect(caption).toContainText(/physical.*microphone.*(?:pending|progress)/i);
     }
-    const icon = caption.locator("img.project-icon");
-    await expect(icon).toHaveAttribute("src", project.icon);
-    await expect(icon).toHaveAttribute("width", String(project.iconWidth));
-    await expect(icon).toHaveAttribute("height", String(project.iconHeight));
-    await expect(icon).toHaveCSS("object-fit", "contain");
-    await expect(icon).toHaveCSS("filter", "none");
+    await expectProjectIcon(caption, project);
     const geometry = await link.evaluate((element) => {
       const box = element.getBoundingClientRect();
       const screen = element.querySelector(".hero-platform-screen");
@@ -525,7 +520,7 @@ test("the hero explorer follows native radio controls and opens only the chosen 
   await page.goto("/");
   const explorer = page.getByRole("group", { name: "Explore a real build.", exact: true });
   const webApp = explorer.getByRole("radio", { name: "Web app BriefBooth", exact: true });
-  const website = explorer.getByRole("radio", { name: "Website Pins & Needles", exact: true });
+  const website = explorer.getByRole("radio", { name: "Website Micro-short", exact: true });
   const desktop = explorer.getByRole("radio", { name: "Desktop SobStage", exact: true });
   const panels = page.locator(".hero-platform-panels .hero-platform-project");
   const visiblePanel = page.locator(".hero-platform-panels .hero-platform-project:visible");
@@ -540,8 +535,7 @@ test("the hero explorer follows native radio controls and opens only the chosen 
     const panel = page.locator(`.hero-platform-project[data-hero-panel="${value}"]`);
     await expect(visiblePanel).toHaveCount(1);
     await expect(panel).toBeVisible();
-    await expect(panel.locator(".hero-platform-caption")).toContainText(value === "website"
-      ? "Pins & Needles" : projects.find((project) => project.id === id).title);
+    await expect(panel.locator(".hero-platform-caption")).toContainText(projects.find((project) => project.id === id).title);
   }
 
   await webApp.focus();
@@ -579,7 +573,7 @@ test("the hero explorer follows native radio controls and opens only the chosen 
     const destination = new URL(project.caseUrl, page.url()).href;
     await link.click();
     await expect(page).toHaveURL(destination);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
   }
 });
 
@@ -927,7 +921,7 @@ test("the homepage gives clients clear next steps while keeping optional project
   }
   await expect(page.locator("#featured-projects details.gallery-disclosure[open]")).toHaveCount(0);
   await cards.first().getByRole("link", { name: `View project: ${featuredProjects[0].title}`, exact: true }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(featuredProjects[0].title);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(featuredProjects[0].title);
 });
 
 test("BriefBooth is featured as a real product and opens its own story without starting a booking", async ({ page }) => {
@@ -968,7 +962,7 @@ test("services lead to relevant project proof and restore keyboard focus", async
   await expect(services.locator("article.service-item")).toHaveCount(3);
 
   const examples = [
-    ["website", "PinsAndNeedlesComedyWebsite", "See Pins & Needles website project"],
+    ["website", "micro-short-website", "See Micro-short film website project"],
     ["web-app", "BriefBooth.com", "See BriefBooth booking platform project"],
     ["software", "MyGigCalendar", "See My Gig Calendar app project"],
   ];
@@ -1208,8 +1202,8 @@ test("removed repositories stay out of archive, search and hero while public sou
   expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
-  expect(projects.length).toBe(9);
-  await expect(page.locator("#archive-title")).toHaveText("Explore 9 selected projects");
+  expect(projects.length).toBe(10);
+  await expect(page.locator("#archive-title")).toHaveText("Explore 10 selected projects");
   await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".source-note")).toHaveCount(0);
   await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
@@ -1317,7 +1311,7 @@ for (const project of projects) {
     await fullStory.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new URL(project.caseUrl, test.info().project.use.baseURL || "http://127.0.0.1:4173").href);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
   });
 }
 

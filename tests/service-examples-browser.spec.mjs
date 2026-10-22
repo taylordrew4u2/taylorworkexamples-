@@ -9,7 +9,7 @@ for (const javaScriptEnabled of [true, false]) {
       const cards = page.locator("#services .service-item");
       await expect(cards).toHaveCount(3);
       const examples = [
-        ["website", "./assets/readme-overviews/pins-and-needles.png", "./work/pins-and-needles-comedy/", "Repository product artwork"],
+        ["website", "./assets/micro-short/home.jpg", "./work/micro-short-film-website/", "Micro-short Film Website · Repository website capture"],
         ["web-app", "./assets/briefbooth/home-desktop.png", "./work/briefbooth/", "Live website capture"],
         ["software", "./assets/my-gig-calendar/banner-1920x1080.png", "./work/my-gig-calendar/", "Supplied product artwork"],
       ];

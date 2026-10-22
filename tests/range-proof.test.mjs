@@ -13,7 +13,7 @@ test("the range proof identifies three real App Store products and distinct engi
     assert.ok(html.includes(app.icon));
     assert.ok(html.includes(app.caseUrl));
   }
-  for (const route of ["trip-handler", "bill-spilt", "pins-and-needles-comedy", "sobstage"]) {
+  for (const route of ["trip-handler", "bill-spilt", "micro-short-film-website", "pins-and-needles-comedy", "sobstage"]) {
     assert.ok(html.includes(`./work/${route}/`));
   }
   assert.ok(html.includes("3 PUBLISHED iOS APPS"));

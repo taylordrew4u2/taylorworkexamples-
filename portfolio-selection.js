@@ -9,12 +9,14 @@ export const portfolioProjectIds = [
   "PinsAndNeedlesComedyWebsite",
   "usbmic",
   "BriefBooth.com",
+  "micro-short-website",
 ];
 
 export const featuredProjectIds = [
   "BriefBooth.com",
   "Showrunner-ICanRunAShow",
   "The-Bit-Binder",
+  "micro-short-website",
   "the-trip-handler",
   "Bill-Spilt",
   "PinsAndNeedlesComedyWebsite",

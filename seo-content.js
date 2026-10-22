@@ -13,7 +13,7 @@ export const services = [
     slug: "website-development",
     title: "Custom website development",
     serviceLabel: "Websites",
-    modified: "2026-10-20",
+    modified: "2026-10-22",
     metaTitle: "Custom Website Development for Your Business | 4u Digital",
     description: "Custom business websites with clear content, mobile layouts, and useful inquiry or booking flows. See 4u Digital projects and discuss your website.",
     heading: "Give your business a website people can use.",
@@ -48,8 +48,8 @@ export const services = [
         text: "A website may need a domain, hosting, business email, or an existing booking service. We identify those connections, service costs, launch checks, and maintenance responsibilities. Page titles and descriptions can be included in the build; search placement is not guaranteed.",
       },
     ],
-    projectIds: ["PinsAndNeedlesComedyWebsite"],
-    proofIntro: "Pins & Needles Comedy connects a public website with producer controls, audience submissions, and a live display. Its project page shows how public information and operator workflows can work together, with original product artwork and separate website captures.",
+    projectIds: ["micro-short-website", "PinsAndNeedlesComedyWebsite"],
+    proofIntro: "The Micro-short Film Website brings film artwork, cast, crew, and festival recognition into a focused promotional site. Pins & Needles Comedy connects a public website with producer controls and audience screens. Explore both projects through their original website captures and clearly labeled product artwork.",
     faq: [
       {
         question: "Do I need finished website copy before contacting you?",

@@ -11,7 +11,7 @@ Updated October 20, 2026, following the request to make the site engaging and ea
 - Put project-page navigation before the large cover image. Visitors can choose the workflow, project images, or build details without scrolling through every image first.
 - Collapse the contents list on short articles under “Jump to a section.” Keep the article itself visible, and retain the existing summaries for salon, restaurant, and shop guides.
 - Keep the mobile consultation link reachable, with space beneath the page and automatic hiding during text entry or project dialogs. All booking continues directly on BriefBooth.
-- Make the homepage opening a visitor-controlled project explorer. Native radio choices switch between BriefBooth, Pins & Needles, and SobStage; genuine thumbnail artwork keeps the range visible. Each active preview has an original-color image, an authentic icon, a purpose, an accurate capture/status label, and a visible project link below the image. The two supplied native-app banners remain separate and upright alongside it on desktop, then below it on mobile.
+- Make the homepage opening a visitor-controlled project explorer. Native radio choices switch between BriefBooth, Micro-short Film Website, and SobStage; genuine thumbnails keep the range visible. Each active preview has an original-color image, an authentic icon or neutral initials when no project icon exists, a purpose, an accurate capture/status label, and a visible project link below the image. The two supplied native-app banners remain separate and upright alongside it on desktop, then below it on mobile.
 - Bring the mobile explorer earlier by putting supporting introduction and consultation copy after the artwork. Keep the service descriptor and primary booking link above it. Selection works with mouse, touch, native keyboard controls, and JavaScript disabled. Selecting a project never hides the mobile booking dock; text-entry controls still do.
 - Keep responsive lossless images and content-versioned caching. Update image sizing for the larger visual stage and small choice thumbnails without changing any original artwork. Selection has no autoplay or added script dependency.
 
@@ -20,13 +20,13 @@ Browsers without CSS relational selector support show all three linked project p
 ## Exploring the rest of the homepage
 
 - Each service has an optional native “What could this look like?” example with a short customer journey, genuine project artwork, an accurate source label, and a dedicated project link. The core service description and action stay visible.
-- Native radio filters focus the seven featured projects by website, web app, or iPhone/iPad app. All projects remain the default; a dedicated link keeps the desktop engineering example discoverable. Filtering hides existing cards rather than rebuilding them, preserving a visitor’s gallery selections. The archive keeps its separate filters and search. JavaScript adds only the current result announcement; CSS filtering works without it. Older browsers show all featured work.
+- Native radio filters focus the eight featured projects by website, web app, or iPhone/iPad app. The website choice includes Micro-short and Pins & Needles. All projects remain the default; a dedicated link keeps the desktop engineering example discoverable. Filtering hides existing cards rather than rebuilding them, preserving a visitor’s gallery selections. The archive keeps its separate filters and search. JavaScript adds only the current result announcement; CSS filtering works without it. Older browsers show all featured work.
 - All nine client reviews are visible in one grid, with a Reviews link in the top navigation. Mobile uses a readable single column without sliders or disclosures. Every quote and attribution stays unchanged and remains available without JavaScript.
 - Keep the project, feedback, process, FAQ, consultation, and guide sections in their established order. Native FAQ and gallery disclosures remain available; booking stays a direct BriefBooth link.
 
 These enhancements add no dependencies, autoplay, paid tools, or tracking. The small work-filter module is delivered through the existing versioned caching pipeline. Reviews render directly in HTML without an extra module.
 
-The existing full-color artwork, neutral site palette, reduced-motion support, nine selected projects, testimonials, and section order are preserved. No autoplay, rotating copy, extra tracking, or paid services are added.
+The full-color artwork, neutral site palette, reduced-motion support, testimonials, and section order are preserved. The curated selection now contains ten projects following the owner's Micro-short addition. No autoplay, rotating copy, extra tracking, or paid services are added.
 
 ## Basis and limits
 

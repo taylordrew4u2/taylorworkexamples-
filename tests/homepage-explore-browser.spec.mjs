@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { featuredProjects } from "../public-projects.js";
 
 const bookingURL = "https://briefbooth.com/book/4u-digital";
-const projectType = (project) => project.id === "PinsAndNeedlesComedyWebsite"
+const projectType = (project) => ["micro-short-website", "PinsAndNeedlesComedyWebsite"].includes(project.id)
   ? "website" : project.category === "ios" ? "ios" : "web-app";
 const values = ["all", "website", "web-app", "ios"];
 const matchingProjects = (value) => featuredProjects.filter((project) => value === "all" || projectType(project) === value);
@@ -149,7 +149,7 @@ test.describe("native featured-work browsing without JavaScript", () => {
     await page.locator("#featured-projects .project-card:visible").first()
       .getByRole("link", { name: `View project: ${website.title}`, exact: true }).focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/work\/pins-and-needles-comedy\/$/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(website.title);
+    await expect(page).toHaveURL(/\/work\/micro-short-film-website\/$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(website.title);
   });
 });

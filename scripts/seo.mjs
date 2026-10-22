@@ -334,7 +334,7 @@ function projectPage(project) {
   const route = `/work/${projectSlugs[project.id]}/`;
   const page = { path: route, title: `${project.title} — ${projectType(project)} | 4u Digital`,
     description: `${project.purpose} See the screens, workflows, and development details in the 4u Digital portfolio.`,
-    project, modified: "2026-10-20", image: project.image, imageAlt: project.imageAlt,
+    project, modified: project.id === "micro-short-website" ? "2026-10-22" : "2026-10-20", image: project.image, imageAlt: project.imageAlt,
     imageWidth: project.imageWidth, imageHeight: project.imageHeight,
     breadcrumbs: [{ name: "Projects", path: "/work/" }, { name: project.title, path: route }],
   };
@@ -366,7 +366,7 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-20",
+    modified: "2026-10-22",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
@@ -387,7 +387,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", modified: "2026-10-22", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",

@@ -32,6 +32,23 @@ function assetDimensions(image) {
     assert.equal(bytes.subarray(1, 4).toString(), "PNG");
     return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
   }
+  if (/\.jpe?g$/i.test(image)) {
+    assert.equal(bytes.readUInt16BE(0), 0xffd8, `${image}: JPEG start marker`);
+    for (let offset = 2; offset + 4 <= bytes.length;) {
+      assert.equal(bytes[offset], 0xff, `${image}: JPEG segment marker`);
+      while (bytes[offset] === 0xff) offset += 1;
+      const marker = bytes[offset++];
+      if (marker === 0xd9 || marker === 0xda) break;
+      if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) continue;
+      const size = bytes.readUInt16BE(offset);
+      assert.ok(size >= 2 && offset + size <= bytes.length, `${image}: valid JPEG segment length`);
+      if ([0xc0, 0xc1, 0xc2, 0xc3, 0xc5, 0xc6, 0xc7, 0xc9, 0xca, 0xcb, 0xcd, 0xce, 0xcf].includes(marker)) {
+        return { width: bytes.readUInt16BE(offset + 5), height: bytes.readUInt16BE(offset + 3) };
+      }
+      offset += size;
+    }
+    assert.fail(`${image}: JPEG dimensions missing`);
+  }
   assert.equal(bytes.subarray(0, 4).toString(), "RIFF", `${image}: WebP header`);
   assert.equal(bytes.subarray(8, 12).toString(), "WEBP", `${image}: WebP type`);
   for (let offset = 12; offset + 8 <= bytes.length;) {
@@ -114,26 +131,30 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("the public portfolio selects nine complete projects while the audited inventory stays internal", () => {
+test("the public portfolio selects ten complete projects while the audited inventory stays internal", () => {
   const expectedPublic = [
     "Showrunner-ICanRunAShow", "The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "Bill-Spilt",
-    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com",
+    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website",
   ];
   const expectedFeatured = [
-    "BriefBooth.com", "Showrunner-ICanRunAShow", "The-Bit-Binder", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
+    "BriefBooth.com", "Showrunner-ICanRunAShow", "The-Bit-Binder", "micro-short-website", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
   ];
   assert.deepEqual(portfolioProjectIds, expectedPublic);
   assert.deepEqual(featuredProjectIds, expectedFeatured);
-  assert.equal(publicProjects.length, 9);
+  assert.equal(publicProjects.length, 10);
   assert.deepEqual(publicProjects.map((project) => project.id).sort(), [...expectedPublic].sort());
   assert.deepEqual(publicFeaturedProjects.map((project) => project.id), expectedFeatured);
+  assert.deepEqual(publicFeaturedProjects.filter((project) => project.projectType === "Website").map((project) => project.id),
+    ["micro-short-website", "PinsAndNeedlesComedyWebsite"], "The featured range includes two distinct websites");
+  assert.equal(publicFeaturedProjects.filter((project) => /web application$/i.test(project.projectType)).length, 4);
+  assert.equal(publicFeaturedProjects.filter((project) => project.category === "ios").length, 2);
   assert.equal(projects.length, 17, "Unselected evidence remains in the internal audited inventory");
   for (const project of publicProjects) {
     assert.ok(project.sourceAvailable);
     assert.match(project.caseUrl, /^\.\/work\/[a-z0-9-]+\/$/);
   }
   for (const project of publicFeaturedProjects) assert.equal(project, publicProjects.find((entry) => entry.id === project.id));
-  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "micro-short-website", "tlcmassagewellness", "taylordrewwebsite"]) {
+  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness", "taylordrewwebsite"]) {
     assert.ok(projects.some((project) => project.id === id), `${id}: internal evidence is retained`);
     assert.equal(publicProjects.some((project) => project.id === id), false, `${id}: excluded from public pages and search data`);
   }
@@ -173,6 +194,8 @@ test("the audited catalog preserves inventory dates and canonical source links",
   assert.equal(Object.keys(publicRepositories).length, 17);
   assert.equal(publicRepositories["BriefBooth.com"].verifiedAt, "2026-10-19");
   assert.equal(publicRepositories["BriefBooth.com"].codeAvailable, false);
+  assert.equal(publicRepositories["micro-short-website"].verifiedAt, "2026-10-22");
+  assert.equal(publicRepositories["micro-short-website"].headSha, "f55e1f820e78a99bf9a9ebbb97a1ac47be6e812f");
   assert.deepEqual(
     projects.map((project) => project.id).sort(),
     Object.keys(publicRepositories).sort(),
@@ -263,7 +286,7 @@ test("the homepage opening shows real website and desktop work while preserving 
   assert.equal(thumbnails.length, 3, "Every native choice includes its genuine project thumbnail");
   for (const [index, [id, status, imageDescription, displayName]] of [
     ["BriefBooth.com", "Live website capture", /BriefBooth.*(?:booking|consultation|homepage)/i, "BriefBooth"],
-    ["PinsAndNeedlesComedyWebsite", "Repository product artwork", /Pins.*Needles.*repository product artwork/i, "Pins & Needles"],
+    ["micro-short-website", "Repository website capture", /Micro-short.*(?:film|website).*home/i, "Micro-short Film Website"],
     ["usbmic", "Release candidate", /SobStage.*repository product artwork/i, "SobStage"],
   ].entries()) {
     const project = publicProjects.find((entry) => entry.id === id);
@@ -282,8 +305,13 @@ test("the homepage opening shows real website and desktop work while preserving 
     assert.equal(attribute(thumbnail, "width"), String(frame.width));
     assert.equal(attribute(thumbnail, "height"), String(frame.height));
     assert.equal(attribute(thumbnail, "alt"), "", `${id}: its choice label supplies the thumbnail's accessible name`);
-    assert.ok(contents.includes(`src="${project.icon}" alt="" width="${project.iconWidth}" height="${project.iconHeight}"`),
-      `${id}: the project uses its authentic icon`);
+    if (project.icon) {
+      assert.ok(contents.includes(`src="${project.icon}" alt="" width="${project.iconWidth}" height="${project.iconHeight}"`),
+        `${id}: the project uses its authentic icon`);
+    } else {
+      assert.match(contents, /class="project-initials">MS<\/span>/,
+        "Micro-short uses its honest neutral initials rather than an invented logo");
+    }
     const caption = contents.match(/<div\b[^>]*class="hero-platform-caption"[^>]*>([\s\S]*?)<\/div>/)?.[1];
     assert.ok(caption, `${id}: its project caption is outside the image`);
     assert.ok(caption.replaceAll("&amp;", "&").includes(displayName));
@@ -364,7 +392,7 @@ test("catalog entries have usable content, owned HTTPS source links, and known l
       assert.equal(new URL(link).protocol, "https:");
     }
     if (project.image) {
-      assert.match(project.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg)$/);
+      assert.match(project.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg|jpe?g)$/);
       assert.ok(
         existsSync(new URL(`../${project.image}`, import.meta.url)),
         `${project.id}: missing ${project.image}`,
@@ -419,15 +447,42 @@ test("all 16 genuine project icons match their asset dimensions and have primary
   }
 });
 
-test("the film website uses neutral initials rather than an invented project logo", () => {
+test("the film website uses neutral initials and preserves its five original repository captures", () => {
   const withoutIcons = projects.filter((project) => !project.icon);
   assert.deepEqual(withoutIcons.map((project) => project.id), ["micro-short-website"]);
-  const film = withoutIcons[0];
+  const film = publicProjects.find((project) => project.id === "micro-short-website");
+  assert.ok(film, "The original film website is part of the approved public selection");
   assert.equal(film.icon, null);
   assert.equal(film.iconFallback, "MS");
   assert.equal(film.iconKind, "neutral-initials");
   assert.equal(film.iconSource, undefined);
   assert.match(film.iconNotes, /not an official project logo/i);
+  assert.equal(film.caseUrl, "./work/micro-short-film-website/");
+  assert.equal(film.image, "./assets/micro-short/home.jpg");
+  assert.equal(film.imageKind, "app-screenshot");
+  assert.equal(film.imageLabel, "Repository website capture");
+  const originals = [
+    ["home", "Film homepage", "55f83607570f9496adac9d84d93673b5f23833d572cce651451c0dfabac0d8a7"],
+    ["awards", "Festival recognition", "701c3c042ce3658320cb2b42336ba0e55abada719e9abdbb53d50206c14d42a2"],
+    ["cast", "Cast", "0346f0a2815a4d8880882005e536a660f655a4c35b6badf80902d9528c417841"],
+    ["crew", "Crew", "ce5f775dc2509b89a774db6379f44b8a7e8c4c821e3389fcced56a08ccf2cd4d"],
+    ["contact", "Film contact", "b36983f25dd4683e6a67b10c39a0fcf2152e1d0d0db024809a8799013bb84f5d"],
+  ];
+  assert.deepEqual(film.gallery.map((frame) => frame.label), originals.map(([, label]) => label));
+  for (const [index, [file, , sha256]] of originals.entries()) {
+    const frame = film.gallery[index];
+    assert.equal(frame.image, `./assets/micro-short/${file}.jpg`);
+    assert.equal(frame.sourceKind, "repository-website-capture");
+    assert.equal(frame.imageKind, "app-screenshot");
+    assert.equal(frame.imageLabel, "Repository website capture");
+    assert.equal(frame.portrait, false);
+    assert.equal(frame.sourceUrl, `https://github.com/taylordrew4u2/micro-short-website/blob/f55e1f820e78a99bf9a9ebbb97a1ac47be6e812f/docs/media/screen-${file}.jpg`);
+    assert.deepEqual(assetDimensions(frame.image), { width: 1600, height: 1000 });
+    assert.equal(frame.width, 1600);
+    assert.equal(frame.height, 1000);
+    assert.equal(createHash("sha256").update(readFileSync(new URL(`../${frame.image}`, import.meta.url))).digest("hex"), sha256,
+      `${file}: original repository bytes preserve the image's composition and color`);
+  }
 });
 
 test("App Store listings, RoleCall development captures, and known unavailable demos are represented accurately", () => {
@@ -482,7 +537,7 @@ test("all 17 public projects have traceable covers and galleries with accurate a
       assert.ok(frame.caption?.trim(), `${project.id}: view disclosure required`);
       assert.equal(typeof frame.portrait, "boolean", `${project.id}: view orientation declared`);
       for (const image of [frame, frame.companion].filter(Boolean)) {
-        assert.match(image.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg)$/);
+        assert.match(image.image, /^\.\/assets\/(?:[a-z0-9-]+\/)*[a-z0-9-]+\.(webp|png|svg|jpe?g)$/);
         assert.ok(image.imageAlt?.trim(), `${project.id}: descriptive image alternative required`);
         assert.ok(Number.isInteger(image.width) && image.width > 0);
         assert.ok(Number.isInteger(image.height) && image.height > 0);
@@ -498,7 +553,7 @@ test("all 17 public projects have traceable covers and galleries with accurate a
       assert.match(project.image, /\.svg$/);
       assert.ok(project.gallery.every((frame) => /source|overview/i.test(frame.caption)));
     } else {
-      assert.match(project.image, /\.(webp|png)$/);
+      assert.match(project.image, /\.(webp|png|jpe?g)$/);
     }
     if (project.imageKind === "development-capture") {
       assert.match(`${project.imageLabel} ${project.imageCaption}`, /development/i);
