@@ -7,5 +7,5 @@ export const contactPages = [
   "/", "/services/", ...services.map(({ slug }) => `/services/${slug}/`),
   "/work/", ...portfolioProjectIds.map((id) => `/work/${projectSlugs[id]}/`),
   "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/privacy/", "/insights/",
-  ...articles.map(({ slug }) => `/insights/${slug}/`), "/new-york-city/",
+  ...articles.map(({ slug }) => `/insights/${slug}/`), "/new-york-city/", "/offer/",
 ];
