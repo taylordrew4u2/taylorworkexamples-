@@ -389,5 +389,5 @@
 .brief-main { padding:clamp(1rem,4vw,2.5rem); }
 .brief-progress { margin-bottom:1.75rem; }
 .project-brief-page .page-intro { padding-block:1rem; }
-.project-brief-page .page-intro .page-lead { display:none; }
+.project-brief-page .page-intro .page-lead { display:block; max-width: 46rem; font-size: .9375rem; line-height: 1.65; }
 @media(max-width:600px) { .brief-sidebar { padding:.75rem; gap:.5rem; } .brief-brand img { width:32px;height:32px;flex-basis:32px; } .brief-options { grid-template-columns:1fr; } .brief-navigation-next { gap:.5rem; } }

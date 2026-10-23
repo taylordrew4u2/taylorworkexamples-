@@ -110,7 +110,7 @@ test("the kickoff checklist is a later project step with a complete, attributed 
   const html = documents.get(route);
   const linksTo = (html, base, target) => tags(html, "a").some(tag =>
     tag.href && sameSite(tag.href, base) && pathname(tag.href, base) === target);
-  assert.ok(linksTo(documents.get("/"), "/", route));
+  assert.ok(!linksTo(documents.get("/"), "/", route), "new clients use the project planner; kickoff is a later existing-client step");
   assert.ok(linksTo(documents.get("/contact/"), "/contact/", route));
   assert.match(text(html), /AFTER THE CONSULTATION/);
   assert.match(text(html), /You don’t need this worked out before getting in touch/);
