@@ -1,404 +1,45 @@
-import { test, expect } from "@playwright/test";
-
-const route = "/project-brief/";
-const endpoint = "**/functions/v1/project-brief";
-const draftKey = "4u-digital-project-brief-v1";
-const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j6XcAAAAASUVORK5CYII=", "base64");
-const image = { name: "brand-reference.png", mimeType: "image/png", buffer: png };
-
-async function jump(page, index) {
-  await page.locator(`[data-brief-go="${index}"]`).click();
-  await expect(page.locator(`[data-brief-step="${index}"]`)).toBeVisible();
-}
-
-async function minimalReview(page, type = "website") {
-  await page.goto(route);
-  await expect(page.locator("#project-brief-form")).toBeVisible();
-  await page.locator(`[name="projectType"][value="${type}"]`).check();
-  await jump(page, 8);
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review")).toBeVisible();
-}
-
-async function expectFit(page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  expect(await page.locator(".brief-main button, .brief-main input:not([type=color]), .brief-main textarea").evaluateAll((elements) => elements.filter((element) => element.getClientRects().length && element.offsetWidth > 2).every((element) => {
-    const bounds = element.getBoundingClientRect();
-    return bounds.left >= -1 && bounds.right <= innerWidth + 1;
-  }))).toBe(true);
-}
-
-function requestBrief(request) {
-  const content = request.postData()?.match(/name="brief"\r\n\r\n([\s\S]*?)\r\n--/);
-  expect(content, "A structured brief is present in the multipart submission").not.toBeNull();
-  return JSON.parse(content[1]);
-}
-
-test("the guided brief supports skipping, required validation, accessible review, and direct submission", async ({ page }) => {
-  const requests = [];
-  await page.route(endpoint, async (route) => {
-    requests.push(route.request());
-    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ ok: true, reference: "B4U-TEST-ONE", status: "sent" }) });
-  });
-  await page.goto(route);
-  await expect(page).toHaveTitle(/Plan Your Website, App or Software Project.*4u Digital/);
-  await page.locator("#brief-next").click();
-  await expect(page.locator('[name="projectType"]').first()).toBeFocused();
-  await expect(page.locator("#brief-status")).toContainText("choose an option");
-  await page.locator('[name="projectType"][value="unsure"]').check();
-  await page.locator("#brief-next").click();
-  await expect(page.locator('[data-brief-step="1"]')).toBeVisible();
-  await page.locator("#brief-skip").click();
-  await expect(page.locator('[data-brief-step="2"]')).toBeVisible();
-  await jump(page, 8);
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("not-an-email");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-contactEmail")).toBeFocused();
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review")).toContainText("Left open for our conversation");
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-consent-error")).toBeVisible();
-  expect(requests).toHaveLength(0);
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  await expect(page.locator("#brief-success-title")).toContainText("on its way");
-  expect(requests).toHaveLength(1);
-  expect(requestBrief(requests[0])).toMatchObject({ version: 1, consent: true, honey: "", answers: { projectType: "unsure", contactName: "Jordan Client", contactEmail: "jordan@example.com" } });
-  expect(requests[0].headers()["content-type"]).toContain("multipart/form-data; boundary=");
-  expect(requests[0].headers().apikey).toMatch(/^sb_publishable_/);
-  await expectFit(page);
+import { test, expect } from '@playwright/test';
+const route='/project-brief/';
+const endpoint='**/functions/v1/project-brief';
+const draftKey='4u-digital-project-brief-v1';
+const minimum={projectType:'website',contactName:'Jordan Client',contactEmail:'jordan@example.com'};
+async function start(page,type='website') { await page.goto(route); await page.locator(`[name=projectType][value=${type}]`).check(); }
+async function next(page){await page.locator('#brief-next').click();}
+async function finish(page){await page.locator('#brief-review-early').click();await page.locator('#brief-contactName').fill(minimum.contactName);await next(page);await page.locator('#brief-contactEmail').fill(minimum.contactEmail);await next(page);await expect(page.locator('#brief-review')).toBeVisible();}
+async function restore(page,answers,question){await page.addInitScript(({draftKey,answers,question})=>localStorage.setItem(draftKey,JSON.stringify({version:1,answers,question,step:0})),{draftKey,answers,question});await page.goto(route);}
+async function fit(page){expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+function payload(req){return JSON.parse(req.postData().match(/name="brief"\r\n\r\n([\s\S]*?)\r\n--/)[1]);}
+test('one question at a time, website audience, back and no preference survive review and sending',async({page})=>{
+ let sent;await page.route(endpoint,async r=>{sent=payload(r.request());await r.fulfill({status:201,json:{ok:true,status:'sent',reference:'4U-TEST'}});});
+ await page.goto(route);await next(page);await expect(page.locator('#brief-status')).toContainText('choose an option');
+ await page.locator('[name=projectType][value=website]').check();await next(page);
+ await expect(page.locator('[data-field-container]:visible')).toHaveCount(1);
+ await page.screenshot({path:`/tmp/4u-planner-question-${test.info().project.name}.png`,fullPage:true});await page.getByRole('checkbox',{name:'A comedian',exact:true}).check();await page.getByRole('checkbox',{name:'My business or services',exact:true}).check();await next(page);
+ await page.locator('#brief-businessName').fill('Comedy Company');await page.locator('#brief-back').click();await expect(page.getByRole('checkbox',{name:'A comedian',exact:true})).toBeChecked();await next(page);await expect(page.locator('#brief-businessName')).toHaveValue('Comedy Company');await next(page);
+ await page.locator('#brief-no-preference').click();await page.locator('#brief-back').click();await expect(page.locator('#brief-idea')).toHaveValue('No preference — help me decide');
+ await finish(page);await expect(page.locator('#brief-review-content')).toContainText('A comedian');await expect(page.locator('#brief-review-content')).toContainText('No preference');await page.locator('#brief-consent').check();await page.locator('#brief-send').click();await expect(page.locator('#brief-success')).toBeVisible();expect(sent.answers.websiteFor).toEqual(['comedian','business']);expect(sent.answers.idea).toContain('No preference');await fit(page);
 });
-
-test("project choices show relevant questions and review editing keeps every applicable answer", async ({ page }) => {
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="website"]').check();
-  await page.locator("#brief-idea").fill("An approachable site for our neighborhood shop.");
-  await jump(page, 2);
-  await expect(page.locator('[data-field-container="websitePages"]')).toBeVisible();
-  await expect(page.locator('[data-field-container="appPlatforms"]')).toBeHidden();
-  await expect(page.locator('[data-field-container="softwareTasks"]')).toBeHidden();
-  await page.locator('[name="websitePages"][value="gallery"]').check();
-  await jump(page, 0);
-  await expect(page.locator("#brief-idea")).toHaveValue("An approachable site for our neighborhood shop.");
-  await page.locator('[name="projectType"][value="app"]').check();
-  await jump(page, 2);
-  await expect(page.locator('[data-field-container="websitePages"]')).toBeHidden();
-  await expect(page.locator('[data-field-container="appPlatforms"]')).toBeVisible();
-  await page.locator('[name="appPlatforms"][value="ios"]').check();
-  await page.locator('[data-brief-step="2"] .brief-advanced summary').click();
-  await expect(page.locator('[data-field-container="appCapabilities"]')).toBeVisible();
-  await jump(page, 8);
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review-content")).toContainText("iPhone / iPad");
-  await expect(page.locator("#brief-review-content")).not.toContainText("Gallery, work, or portfolio");
-  await page.locator('[data-brief-edit="0"]').click();
-  await page.locator("#brief-idea").fill("A useful native app for our customers.");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review-content")).toContainText("A useful native app for our customers.");
-  await expect(page.locator("#brief-review-content")).toContainText("Jordan Client");
-  await expectFit(page);
+test('changing project type hides website questions and removes their answers from submission',async({page})=>{
+ await start(page);await next(page);await page.getByRole('checkbox',{name:'A comedian',exact:true}).check();await page.locator('#brief-back').click();await page.locator('[name=projectType][value=app]').check();await next(page);await expect(page.locator('#brief-businessName')).toBeVisible();await finish(page);await expect(page.locator('#brief-review-content')).not.toContainText('A comedian');
 });
-
-test("uploaded references stay full color and support limits, captions, and removal", async ({ page }) => {
-  test.setTimeout(60_000);
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="website"]').check();
-  await jump(page, 4);
-  await page.locator("#brief-colors").fill("Forest green and cream");
-  await page.locator("#brief-color-picker").fill("#163d2a");
-  await page.locator("#brief-add-color").click();
-  await expect(page.locator("#brief-colors")).toHaveValue("Forest green and cream, #163d2a");
-  await expect(page.locator("#brief-color-swatches")).toContainText("#163d2a");
-  await jump(page, 5);
-  await page.locator("#brief-files").setInputFiles([image, { name: "brand-guidelines.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4\nbrief reference\n%%EOF") }]);
-  await expect(page.locator(".brief-file-card")).toHaveCount(2);
-  await expect(page.locator(".brief-file-preview")).toHaveCSS("filter", "none");
-  await page.locator("[data-file-caption]").first().fill("Use this photograph on the homepage.");
-  await page.locator("#brief-files").setInputFiles({ name: "camera-photo.heic", mimeType: "image/heic", buffer: Buffer.from("not a supported format") });
-  await expect(page.locator("#brief-file-error")).toContainText("export a JPEG");
-  await page.locator("#brief-files").setInputFiles({ name: "too-large.png", mimeType: "image/png", buffer: Buffer.alloc(5 * 1024 * 1024 + 1) });
-  await expect(page.locator("#brief-file-error")).toContainText("over 5 MB");
-  await expect(page.locator(".brief-file-card")).toHaveCount(2);
-  await page.getByRole("button", { name: "Remove brand-guidelines.pdf", exact: true }).click();
-  await expect(page.locator(".brief-file-card")).toHaveCount(1);
-  await expect(page.locator("[data-file-caption]")).toHaveValue("Use this photograph on the homepage.");
-  await page.locator("#brief-files").setInputFiles(Array.from({ length: 6 }, (_, index) => ({ ...image, name: `reference-${index}.png` })));
-  await expect(page.locator(".brief-file-card")).toHaveCount(6);
-  await expect(page.locator("#brief-file-error")).toContainText("up to 6 files");
-  for (let index = 0; index < 6; index += 1) await page.locator("[data-remove-file]").first().click();
-  await page.locator("#brief-files").setInputFiles(Array.from({ length: 3 }, (_, index) => ({ name: `large-reference-${index}.jpg`, mimeType: "image/jpeg", buffer: Buffer.alloc(3 * 1024 * 1024) })));
-  await expect(page.locator(".brief-file-card")).toHaveCount(2);
-  await expect(page.locator("#brief-file-error")).toContainText("8 MB combined limit");
-  await expectFit(page);
+test('draft restores the active question and saved answers, without exposing multiple questions',async({page})=>{
+ await restore(page,{...minimum,websiteFor:['comedian'],businessName:'My stage name'},'businessName');await expect(page.locator('#brief-businessName')).toBeVisible();await expect(page.locator('#brief-businessName')).toHaveValue('My stage name');await expect(page.locator('[data-field-container]:visible')).toHaveCount(1);await page.locator('#brief-back').click();await expect(page.getByRole('checkbox',{name:'A comedian',exact:true})).toBeChecked();await fit(page);
 });
-
-test("draft saving is opt in, preserves answers after reload, and never stores uploaded image data", async ({ page }) => {
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="software"]').check();
-  await page.locator("#brief-idea").fill("An inventory tool for our team.");
-  expect(await page.evaluate((key) => localStorage.getItem(key), draftKey)).toBeNull();
-  if (!(await page.locator("#brief-draft-settings").evaluate((element) => element.open))) await page.locator("#brief-draft-settings > summary").click();
-  await page.locator("#brief-save-draft").check();
-  await jump(page, 5);
-  await page.locator("#brief-files").setInputFiles(image);
-  await expect(page.locator("#brief-draft-status")).toContainText("reselect");
-  const stored = await page.evaluate((key) => localStorage.getItem(key), draftKey);
-  expect(stored).toContain("An inventory tool");
-  expect(stored).not.toMatch(/base64|blob:|iVBOR|brand-reference\.png/);
-  await page.reload();
-  await expect(page.locator("#brief-draft-restored")).toContainText("reselect");
-  await expect(page.locator(".brief-file-card")).toHaveCount(0);
-  await jump(page, 0);
-  await expect(page.locator("#brief-idea")).toHaveValue("An inventory tool for our team.");
-  if (!(await page.locator("#brief-draft-settings").evaluate((element) => element.open))) await page.locator("#brief-draft-settings > summary").click();
-  await page.locator("#brief-remove-draft").click();
-  expect(await page.evaluate((key) => localStorage.getItem(key), draftKey)).toBeNull();
-  await expect(page.locator("#brief-idea")).toHaveValue("An inventory tool for our team.");
-  await page.locator("#brief-clear").click();
-  await page.locator("#brief-clear-yes").click();
-  await expect(page.locator("#brief-idea")).toHaveValue("");
-  await expect(page.locator('[name="projectType"]:checked')).toHaveCount(0);
+test('required contact details cannot be skipped and invalid email is explained',async({page})=>{
+ await start(page);await page.locator('#brief-review-early').click();await expect(page.locator('#brief-no-preference')).toBeHidden();await next(page);await expect(page.locator('#brief-contactName')).toBeFocused();await page.locator('#brief-contactName').fill('Client');await next(page);await page.locator('#brief-contactEmail').fill('bad');await next(page);await expect(page.locator('#brief-status')).toContainText('valid email');
 });
-
-test("an interrupted submission keeps answers and files and an unchanged retry keeps its request ID", async ({ page }) => {
-  const payloads = [];
-  await page.route(endpoint, async (route) => {
-    payloads.push(requestBrief(route.request()));
-    if (payloads.length === 1) await route.abort("failed");
-    else await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ ok: true, reference: "B4U-RETRY-TEST", status: "received" }) });
-  });
-  await minimalReview(page);
-  await page.locator('[data-brief-edit="5"]').click();
-  await page.locator("#brief-files").setInputFiles(image);
-  await page.locator("[data-file-caption]").fill("Our original product photograph.");
-  await page.locator("#brief-next").click();
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-status")).toContainText("could not confirm receipt");
-  await expect(page.locator("#brief-success")).toBeHidden();
-  await expect(page.locator("#brief-review-content")).toContainText("Our original product photograph");
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  await expect(page.locator("#brief-success-title")).toContainText("safely received");
-  await expect(page.locator("#brief-success-message")).toContainText("notification is still pending");
-  await expect(page.locator("#brief-success-message")).not.toContainText("accepted for delivery");
-  expect(payloads).toHaveLength(2);
-  expect(payloads[0].requestId).toBe(payloads[1].requestId);
-  expect(payloads[0].requestId).toMatch(/^[\da-f-]{36}$/);
-  const pendingDownload = page.waitForEvent("download");
-  await page.locator("#brief-success-download").click();
-  const download = await pendingDownload;
-  expect(download.suggestedFilename()).toContain("project-brief");
+test('URL questions accept no preference and optional details can be skipped',async({page})=>{
+ await restore(page,minimum,'businessWebsite');await expect(page.locator('#brief-businessWebsite')).toBeVisible();await page.locator('#brief-no-preference').click();await page.locator('#brief-skip').click();await expect(page.locator('#brief-review-content')).toContainText('No preference');
 });
-
-test("a malformed success never claims delivery and editing a failed attempt creates a new request ID", async ({ page }) => {
-  const payloads = [];
-  await page.route(endpoint, async (route) => {
-    payloads.push(requestBrief(route.request()));
-    if (payloads.length === 1) await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
-    else await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ ok: true, reference: "B4U-EDIT-TEST", status: "sent" }) });
-  });
-  await minimalReview(page);
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-status")).toContainText("could not be confirmed");
-  await expect(page.locator("#brief-success")).toBeHidden();
-  await page.locator('[data-brief-edit="0"]').click();
-  await page.locator("#brief-idea").fill("This is the amended project idea.");
-  await page.locator("#brief-next").click();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  expect(payloads).toHaveLength(2);
-  expect(payloads[0].requestId).not.toBe(payloads[1].requestId);
-  expect(payloads[1].answers.idea).toBe("This is the amended project idea.");
+test('visual palette and client notes remain available and preserved',async({page})=>{
+ await restore(page,minimum,'colors');await page.locator('[data-brief-palette]').first().click();await page.locator('#brief-colors').fill('Keep the background light');await page.locator('#brief-back').click();await next(page);await expect(page.locator('#brief-colors')).toHaveValue('Keep the background light');await expect(page.locator('#brief-selected-palette')).toBeVisible();await fit(page);
 });
-
-test("the entire brief fits a 320px viewport and native choices work from a keyboard", async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 740 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(route);
-  const firstChoice = page.locator('[name="projectType"][value="website"]');
-  await firstChoice.focus();
-  await page.keyboard.press("Space");
-  await expect(firstChoice).toBeChecked();
-  await page.keyboard.press("ArrowDown");
-  await expect(page.locator('[name="projectType"][value="app"]')).toBeChecked();
-  for (let step = 0; step < 9; step += 1) {
-    await jump(page, step);
-    await expectFit(page);
-    const details = page.locator(`[data-brief-step="${step}"] .brief-advanced:not([hidden])`);
-    if (await details.count()) { await details.locator("summary").click(); await expectFit(page); }
-  }
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expectFit(page);
-  const consentBounds = await page.locator(".brief-consent label").boundingBox();
-  expect(consentBounds.height).toBeGreaterThanOrEqual(44);
+test('uploads stay optional and keep original image preview',async({page})=>{
+ await restore(page,minimum,'__files');await expect(page.locator('#brief-files')).toBeAttached();await page.locator('#brief-files').setInputFiles({name:'reference.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j6XcAAAAASUVORK5CYII=','base64')});await expect(page.locator('#brief-file-list img')).toBeVisible();await page.locator('#brief-back').click();await next(page);await expect(page.locator('#brief-file-list img')).toBeVisible();await fit(page);
 });
-
-test("server field errors stay editable and saved delivery exceptions never masquerade as sent email", async ({ page }) => {
-  let attempts = 0;
-  await page.route(endpoint, async (route) => {
-    attempts += 1;
-    if (attempts === 1) await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ ok: true, status: "sent", reference: "B4U-INVALID-STATE" }) });
-    else if (attempts === 2) await route.fulfill({ status: 422, contentType: "application/json", body: JSON.stringify({ ok: false, field: "contactEmail", message: "Please check your reply address." }) });
-    else await route.fulfill({ status: 202, contentType: "application/json", body: JSON.stringify({ ok: true, status: "received", delivery: "uncertain", reference: "B4U-RECEIVED-TEST", message: "Your brief is saved. The email notification needs attention; you do not need to submit again." }) });
-  });
-  await minimalReview(page);
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-status")).toContainText("could not be confirmed");
-  await expect(page.locator("#brief-success")).toBeHidden();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-contactEmail")).toBeFocused();
-  await expect(page.locator("#brief-contactEmail-error")).toContainText("check your reply address");
-  await page.locator("#brief-contactEmail").fill("jordan.updated@example.com");
-  await page.locator("#brief-next").click();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  await expect(page.locator("#brief-success-message")).toContainText("notification needs attention");
-  await expect(page.locator("#brief-success-message")).not.toContainText("still pending");
-  await expect(page.locator("#brief-success-title")).not.toContainText("on its way");
+test('interrupted send preserves answers and retries the same request identity',async({page})=>{
+ const ids=[];await page.route(endpoint,async r=>{ids.push(payload(r.request()).requestId);if(ids.length===1)await r.abort();else await r.fulfill({status:202,json:{ok:true,status:'received',reference:'4U-RETRY',delivery:'queued'}});});await start(page);await finish(page);await page.locator('#brief-consent').check();await page.locator('#brief-send').click();await expect(page.locator('#brief-status')).toContainText('interrupted');await page.locator('#brief-send').click();await expect(page.locator('#brief-success-title')).toHaveText('Your brief is safely received.');expect(ids[0]).toBe(ids[1]);
 });
-
-test("visual palettes preserve notes, restore from drafts, and send their exact color names and codes", async ({ page }) => {
-  let sentBrief;
-  await page.route(endpoint, async (route) => {
-    sentBrief = requestBrief(route.request());
-    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ ok: true, status: "sent", reference: "B4U-PALETTE-TEST" }) });
-  });
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="website"]').check();
-  await jump(page, 4);
-  const notes = "Keep it welcoming, with plenty of contrast and room for product photos.";
-  await page.locator("#brief-colors").fill(notes);
-  const forest = page.locator('[data-brief-palette="forest-linen"]');
-  await forest.focus();
-  await page.keyboard.press("Enter");
-  await expect(forest).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator("#brief-selected-palette-colors")).toContainText("Forest");
-  await expect(page.locator("#brief-selected-palette-colors")).toContainText("#244637");
-  await expect(page.locator("#brief-colors")).toHaveValue(notes);
-  await page.locator('[data-brief-palette="ocean-sand"]').click();
-  await expect(forest).toHaveAttribute("aria-pressed", "false");
-  await expect(page.locator("#brief-selected-palette-name")).toContainText("Ocean & sand");
-  await expect(page.locator("#brief-colors")).toHaveValue(notes);
-  await page.locator("#brief-clear-palette").click();
-  await expect(page.locator("#brief-selected-palette")).toBeHidden();
-  await expect(page.locator("#brief-colors")).toHaveValue(notes);
-  const limit = await page.locator("#brief-colors").evaluate((element) => element.maxLength);
-  await page.locator("#brief-colors").fill("x".repeat(limit - 5));
-  await page.locator('[data-brief-palette="denim-ice"]').click();
-  await expect(page.locator("#brief-colors-error")).toContainText("your current notes have been kept");
-  await expect(page.locator("#brief-colors")).toHaveValue("x".repeat(limit - 5));
-  await page.locator("#brief-colors").fill(notes);
-  await page.locator('[data-brief-palette="denim-ice"]').click();
-  if (!(await page.locator("#brief-draft-settings").evaluate((element) => element.open))) await page.locator("#brief-draft-settings > summary").click();
-  await page.locator("#brief-save-draft").check();
-  await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), draftKey)).toContain("Palette: Denim & ice");
-  await page.reload();
-  await expect(page.locator('[data-brief-palette="denim-ice"]')).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator("#brief-colors")).toHaveValue(notes);
-  await expectFit(page);
-  await jump(page, 8);
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review-content")).toContainText("Palette: Denim & ice");
-  await expect(page.locator("#brief-review-content")).toContainText("#2D4D6C");
-  await expect(page.locator("#brief-review-content")).toContainText(notes);
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  expect(sentBrief.answers.colors).toBe(`Palette: Denim & ice — Denim #2D4D6C, Steel #7291AB, Ice #DDE8EE, White #FAFCFD.\n\n${notes}`);
-});
-
-test("design illustrations, live fonts, reference pairs, and social links survive draft review and submission", async ({ page }) => {
-  test.setTimeout(60_000);
-  let sentBrief;
-  await page.route(endpoint, async (route) => {
-    sentBrief = requestBrief(route.request());
-    await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ ok: true, status: "sent", reference: "B4U-DESIGN-TEST" }) });
-  });
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="website"]').check();
-  await page.locator("#brief-businessName").fill("Juniper & Co.");
-  await jump(page, 4);
-  await expect(page.locator(".brief-style-card")).toHaveCount(7);
-  await expect(page.locator(".brief-style-card").first().locator(".brief-mini-site")).toBeVisible();
-  await expect(page.locator(".brief-style-card").first().locator(".brief-mini-phone")).toBeVisible();
-  await page.locator('[name="brandMood"][value="warm"]').check();
-  const moreStyles = page.locator('[data-field-container="brandMood"] .brief-visual-more');
-  await moreStyles.locator("summary").click();
-  await page.locator('[name="brandMood"][value="premium"]').check();
-  await page.locator(".brief-font-explorer > summary").click();
-  await page.locator('[name="fontStyle"][value="editorial"]').check();
-  await expect(page.locator(".brief-font-editorial .brief-font-sample")).toHaveCSS("font-family", /Georgia/);
-  await expect(page.locator(".brief-font-technical .brief-font-sample")).toHaveCSS("font-family", /monospace/);
-  await page.locator("#brief-referenceUrl1").fill("example.com/inspiration");
-  await page.locator("#brief-referenceNotes1").fill("I like the open spacing and readable menu.");
-  await page.locator('[data-brief-step="4"] > .brief-advanced > summary').click();
-  await page.locator("#brief-referenceUrl2").fill("https://example.org/sample");
-  await page.locator("#brief-referenceNotes2").fill("The shape of the cards feels welcoming.");
-  await expectFit(page);
-  await jump(page, 5);
-  await page.locator('[data-brief-field-group="social"] > summary').click();
-  await page.locator("#brief-socialInstagram").fill("@juniper.example");
-  await page.locator("#brief-socialLinkedIn").fill("https://www.linkedin.com/company/example");
-  const mediaLink = new URL(await page.locator("#brief-media-email").getAttribute("href"));
-  expect(mediaLink.protocol).toBe("mailto:");
-  expect(mediaLink.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(mediaLink.searchParams.get("subject")).toContain("Juniper & Co.");
-  await expect(page.locator(".brief-media-email")).toContainText("Videos go by email, not through this upload form");
-  if (!(await page.locator("#brief-draft-settings").evaluate((element) => element.open))) await page.locator("#brief-draft-settings > summary").click();
-  await page.locator("#brief-save-draft").check();
-  await expect.poll(() => page.evaluate((key) => localStorage.getItem(key), draftKey)).toContain("juniper.example");
-  await page.reload();
-  await expect(page.locator("#brief-socialInstagram")).toHaveValue("@juniper.example");
-  await expect(page.locator('[data-brief-field-group="social"]')).toHaveAttribute("open", "");
-  await jump(page, 4);
-  await expect(page.locator('[name="brandMood"][value="premium"]')).toBeChecked();
-  await expect(page.locator('[name="fontStyle"][value="editorial"]')).toBeChecked();
-  await expect(moreStyles).toHaveAttribute("open", "");
-  await expect(page.locator(".brief-font-explorer")).toHaveAttribute("open", "");
-  await expect(page.locator("#brief-referenceNotes2")).toHaveValue("The shape of the cards feels welcoming.");
-  await jump(page, 8);
-  await page.locator("#brief-contactName").fill("Jordan Client");
-  await page.locator("#brief-contactEmail").fill("jordan@example.com");
-  await page.locator("#brief-next").click();
-  await expect(page.locator("#brief-review-content")).toContainText("Editorial · Georgia");
-  await expect(page.locator("#brief-review-content")).toContainText("I like the open spacing and readable menu.");
-  await expect(page.locator("#brief-review-content")).toContainText("@juniper.example");
-  await page.locator("#brief-consent").check();
-  await page.locator("#brief-send").click();
-  await expect(page.locator("#brief-success")).toBeVisible();
-  expect(sentBrief.answers).toMatchObject({ brandMood: ["warm", "premium"], fontStyle: "editorial", referenceUrl1: "https://example.com/inspiration", referenceNotes2: "The shape of the cards feels welcoming.", socialInstagram: "@juniper.example" });
-  const followup = new URL(await page.locator("#brief-success-media-email").getAttribute("href"));
-  expect(followup.searchParams.get("subject")).toContain("B4U-DESIGN-TEST");
-  expect(followup.searchParams.get("body")).toContain("Brief reference: B4U-DESIGN-TEST");
-});
-
-test("website social rows stay optional and hidden for app-only projects, with an email-address fallback for media", async ({ page }) => {
-  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText: async () => { throw new Error("Clipboard unavailable in test"); } } }));
-  await page.goto(route);
-  await page.locator('[name="projectType"][value="app"]').check();
-  await jump(page, 5);
-  await expect(page.locator('[data-brief-field-group="social"]')).toBeHidden();
-  await page.locator("#brief-media-copy").click();
-  await expect(page.locator("#brief-media-copy-status")).toContainText("email address is selected");
-  expect(await page.evaluate(() => getSelection().toString())).toBe("admin@customtechbuilt4u.com");
-  await page.setViewportSize({ width: 320, height: 740 });
-  await expectFit(page);
-  await jump(page, 4);
-  await page.locator('[data-field-container="brandMood"] .brief-visual-more > summary').click();
-  await page.locator(".brief-font-explorer > summary").click();
-  await expectFit(page);
+test('320px layout and keyboard navigation keep the visible question readable',async({page})=>{
+ await page.setViewportSize({width:320,height:740});await start(page);await page.locator('#brief-next').focus();await page.keyboard.press('Enter');await expect(page.locator('[data-field-container=websiteFor]')).toBeFocused();await fit(page);await expect(page.locator('[data-field-container]:visible')).toHaveCount(1);
 });

@@ -369,3 +369,25 @@
   .brief-success-actions { flex-direction: column; align-items: stretch; }
 }
 @media (prefers-reduced-motion: reduce) { .project-brief *, .project-brief *::before, .project-brief *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }
+
+/* Guided conversation: a single question, with optional navigation tucked away. */
+.brief-layout { grid-template-columns: minmax(0,1fr); max-width: 850px; margin-inline:auto; }
+.brief-sidebar { display:flex; align-items:center; flex-wrap:wrap; gap:1rem; border-right:0; border-bottom:1px solid var(--brief-line); padding:1rem 1.5rem; }
+.brief-sidebar-note, .brief-sidebar .brief-brand span { display:none; }
+.brief-sidebar .brief-draft { margin:0; padding:0; border:0; }
+.brief-section-menu { flex:1; }
+.brief-section-menu summary, .brief-draft summary { cursor:pointer; padding:.6rem; font-size:.8125rem; }
+.brief-panel:not(.brief-review) > .brief-panel-heading, .brief-panel-footer { display:none; }
+.brief-panel .brief-advanced { border:0; padding:0; margin:0; }
+.brief-panel .brief-advanced > summary, .brief-panel .brief-advanced > .brief-hint { display:none; }
+.brief-field > label, .brief-field > legend { font-size:clamp(1.25rem,3vw,1.8rem); line-height:1.3; margin-bottom:1.2rem; }
+.brief-field > label .brief-optional, .brief-field > legend .brief-optional { display:block; margin:.5rem 0 0; }
+.brief-question-tools { display:flex; flex-wrap:wrap; justify-content:space-between; gap:.75rem; margin-top:1.5rem; font-size:.75rem; color:var(--brief-muted); }
+.brief-question-tools label { display:flex; align-items:center; gap:.5rem; }
+.brief-navigation { align-items:center; gap:.75rem; flex-wrap:wrap; }
+.brief-navigation-next { flex-wrap:wrap; }
+.brief-main { padding:clamp(1rem,4vw,2.5rem); }
+.brief-progress { margin-bottom:1.75rem; }
+.project-brief-page .page-intro { padding-block:1rem; }
+.project-brief-page .page-intro .page-lead { display:none; }
+@media(max-width:600px) { .brief-sidebar { padding:.75rem; gap:.5rem; } .brief-brand img { width:32px;height:32px;flex-basis:32px; } .brief-options { grid-template-columns:1fr; } .brief-navigation-next { gap:.5rem; } }

@@ -42,6 +42,7 @@ export function initProjectBrief(doc = document) {
   if (!win || panels.length !== briefSteps.length || !reviewPanel || !status || !saveDraft) return false;
   initialized.add(form);
   let stepIndex = 0;
+  let questionId = "projectType";
   let editingReview = false;
   let busy = false;
   let submitted = false;
@@ -83,7 +84,8 @@ export function initProjectBrief(doc = document) {
     if (field) {
       const index = briefSteps.findIndex((step) => step.id === field.stepId);
       editingReview = false;
-      navigate(index, { validate: false });
+      questionId = id;
+      navigate(index, { validate: false, preserveQuestion: true });
       const container = form.querySelector(`[data-field-container="${id}"]`);
       let disclosure = container?.closest("details");
       while (disclosure) { disclosure.open = true; disclosure = disclosure.parentElement?.closest("details"); }
@@ -102,7 +104,7 @@ export function initProjectBrief(doc = document) {
     for (const field of briefFields) {
       const visible = applicable(field, answers.projectType);
       const container = form.querySelector(`[data-field-container="${field.id}"]`);
-      if (container) container.hidden = !visible;
+      if (container) container.hidden = !visible || field.id !== questionId;
       controlsFor(field.id).forEach((control) => { control.disabled = busy || !visible; });
     }
     form.querySelectorAll(".brief-advanced").forEach((details) => {
@@ -111,6 +113,10 @@ export function initProjectBrief(doc = document) {
     form.querySelectorAll("[data-brief-field-group]").forEach((group) => {
       group.hidden = ![...group.querySelectorAll("[data-field-container]")].some((container) => !container.hidden);
     });
+    for (const extra of form.querySelectorAll(".brief-upload, .brief-media-email")) extra.hidden = questionId !== "__files";
+    form.querySelectorAll(".brief-advanced").forEach(details => { details.open = true; });
+    form.querySelectorAll("[data-brief-field-group]").forEach(group => { if (group.tagName === "DETAILS") group.open = true; });
+    form.querySelectorAll(".brief-social-row").forEach(row => { row.hidden = row.querySelector("[data-field-container]").hidden; });
     updateMediaEmailLinks();
     const answeredCount = briefFields.filter((field) => applicable(field, answers.projectType) && meaningful(answers[field.id])).length;
     get("brief-answered-count").textContent = answeredCount ? `${answeredCount} ${answeredCount === 1 ? "answer" : "answers"} shared. The rest can wait.` : "Make it yours, one step at a time.";
@@ -126,7 +132,7 @@ export function initProjectBrief(doc = document) {
     win.clearTimeout(draftTimer);
     if (!saveDraft.checked || submitted) return;
     try {
-      win.localStorage.setItem(draftKey, JSON.stringify({ version: 1, answers: rawAnswers(), step: stepIndex, hadFiles: files.length > 0, savedAt: new Date().toISOString() }));
+      win.localStorage.setItem(draftKey, JSON.stringify({ version: 1, answers: rawAnswers(), step: stepIndex, question: questionId, hadFiles: files.length > 0, savedAt: new Date().toISOString() }));
       get("brief-draft-status").textContent = files.length ? "Answers saved on this device. Files are not saved; reselect them after a reload." : "Answers saved on this device. Files are never saved. Remove this draft when using a shared device.";
       get("brief-remove-draft").hidden = false;
     } catch {
@@ -155,35 +161,61 @@ export function initProjectBrief(doc = document) {
     if (saveDraft.checked) draftTimer = win.setTimeout(persistDraft, 350);
   }
 
-  function validateStep(index) {
-    if (index >= briefSteps.length) return true;
-    const answers = rawAnswers();
-    for (const id of briefSteps[index].fields) {
-      const field = fieldsById.get(id);
-      if (!field.required || !applicable(field, answers.projectType)) continue;
-      const controls = controlsFor(id);
-      if (!meaningful(answers[id])) { showFieldError(id, `Please ${field.type === "radio" ? "choose an option" : `enter ${id === "contactName" ? "your name" : "your email address"}`}.`); return false; }
-      if (field.type === "email" && !controls[0].checkValidity()) { showFieldError(id, "Please enter a valid email address so I can reply."); return false; }
-    }
+  const coreQuestions = new Set(["projectType", "websiteFor", "businessName", "idea", "websitePurpose", "appCapabilities", "softwareTasks", "brandMood", "colors", "referenceUrl1", "referenceNotes1", "budgetRange", "timing", "contactName", "contactEmail"]);
+
+  function questionPath() {
+    const type = rawAnswers().projectType;
+    const extra = get("brief-extra-questions").checked;
+    return briefSteps.flatMap(step => [
+      ...step.fields.filter(id => { const field = fieldsById.get(id); return applicable(field, type) && (coreQuestions.has(id) || extra || meaningful(rawAnswers()[id]) || id === questionId); }),
+      ...(step.id === "assets" ? ["__files"] : [])
+    ]);
+  }
+
+  function validateStep() {
+    const field = fieldsById.get(questionId);
+    if (!field?.required) return true;
+    const value = rawAnswers()[questionId];
+    if (!meaningful(value)) { showFieldError(questionId, field.type === "radio" ? "Please choose an option." : `Please enter ${questionId === "contactName" ? "your name" : "your email address"}.`); return false; }
+    if (field.type === "email" && !controlsFor(questionId)[0].checkValidity()) { showFieldError(questionId, "Please enter a valid email address so I can reply."); return false; }
     return true;
+  }
+
+  function goQuestion(id, { focus = true } = {}) {
+    questionId = id;
+    stepIndex = id === "__files" ? briefSteps.findIndex(step => step.id === "assets") : briefSteps.findIndex(step => step.fields.includes(id));
+    announce(""); updateVisibility(); updateNavigation({ focus });
+    form.querySelector(".brief-section-menu").open = false;
+  }
+
+  function advance() {
+    if (!validateStep()) return;
+    const path = questionPath();
+    const next = path[path.indexOf(questionId) + 1];
+    if (next) goQuestion(next); else renderReview();
   }
 
   function updateNavigation({ focus = true } = {}) {
     const reviewing = stepIndex === briefSteps.length;
     panels.forEach((panel, index) => { panel.hidden = index !== stepIndex; });
     reviewPanel.hidden = !reviewing;
-    get("brief-back").hidden = stepIndex === 0;
+    get("brief-back").hidden = !reviewing && questionId === "projectType";
     get("brief-next").hidden = reviewing;
     get("brief-send").hidden = !reviewing;
-    get("brief-skip").hidden = reviewing || stepIndex === 0 || briefSteps[stepIndex]?.id === "contact" || editingReview;
-    get("brief-next").innerHTML = `${editingReview ? "Update review" : stepIndex === briefSteps.length - 1 ? "Review my brief" : "Continue"} <span aria-hidden="true">→</span>`;
-    get("brief-progress-label").textContent = `Step ${stepIndex + 1} of ${briefSteps.length + 1}${reviewing ? " · Review & send" : ""}`;
-    get("brief-progress-bar").value = stepIndex + 1;
+    get("brief-skip").hidden = reviewing || Boolean(fieldsById.get(questionId)?.required);
+    get("brief-no-preference").hidden = reviewing || questionId === "__files" || Boolean(fieldsById.get(questionId)?.required);
+    get("brief-review-early").hidden = reviewing || stepIndex === briefSteps.length - 1;
+    get("brief-extra-questions").closest("label").hidden = reviewing;
+    get("brief-next").innerHTML = `${questionId === questionPath().at(-1) ? "Review my brief" : "Next"} <span aria-hidden="true">→</span>`;
+    get("brief-progress-label").textContent = reviewing ? "Review & send" : `${briefSteps[stepIndex].title} · Question ${questionPath().indexOf(questionId) + 1}`;
+    get("brief-progress-bar").max = questionPath().length + 1;
+    get("brief-progress-bar").value = reviewing ? questionPath().length + 1 : questionPath().indexOf(questionId) + 1;
     form.querySelectorAll(".brief-step-link").forEach((button) => button.removeAttribute("aria-current"));
     const currentLink = reviewing ? form.querySelector("[data-brief-review-link]") : form.querySelector(`[data-brief-go="${stepIndex}"]`);
     currentLink?.setAttribute("aria-current", "step");
     if (focus) {
-      const title = reviewing ? get("brief-review-title") : get(`brief-step-title-${stepIndex}`);
+      const title = reviewing ? get("brief-review-title") : questionId === "__files" ? get("brief-upload-title") : form.querySelector(`[data-field-container="${questionId}"]`);
+      if (title) title.tabIndex = -1;
       title?.focus({ preventScroll: true });
       title?.scrollIntoView({ behavior: "auto", block: "start" });
       if (win.matchMedia("(max-width: 700px)").matches && currentLink) {
@@ -191,13 +223,15 @@ export function initProjectBrief(doc = document) {
         scroller?.scrollTo({ left: currentLink.offsetLeft - scroller.offsetLeft - 12, behavior: "auto" });
       }
     }
+    form.querySelector(".brief-section-menu").open = false;
     if (saveDraft.checked) persistDraft();
   }
 
-  function navigate(index, { validate = true, focus = true } = {}) {
+  function navigate(index, { validate = true, focus = true, preserveQuestion = false } = {}) {
     if (busy || submitted) return false;
     if (validate && stepIndex === 0 && index !== 0 && !validateStep(0)) return false;
     stepIndex = Math.max(0, Math.min(briefSteps.length - 1, index));
+    if (!preserveQuestion) questionId = questionPath().find(id => briefSteps[stepIndex].fields.includes(id)) || "__files";
     announce("");
     updateVisibility();
     updateNavigation({ focus });
@@ -337,6 +371,12 @@ export function initProjectBrief(doc = document) {
 
   form.addEventListener("input", (event) => {
     if (busy) return;
+    const answerField = fieldsById.get(event.target.dataset.briefField);
+    if (answerField?.type === "checkboxes" && event.target.checked) {
+      for (const control of controlsFor(answerField.id)) {
+        if (control !== event.target && (event.target.value === "no_preference" || control.value === "no_preference")) control.checked = false;
+      }
+    }
     const captionId = event.target.dataset.fileCaption;
     if (captionId) {
       const entry = files.find((file) => file.id === captionId);
@@ -371,12 +411,24 @@ export function initProjectBrief(doc = document) {
       if (entry?.url) win.URL.revokeObjectURL(entry.url);
       files = files.filter((file) => file !== entry);
       changed(); renderFiles(); get("brief-files").focus();
-    } else if (target.id === "brief-next") {
-      if (!validateStep(stepIndex)) return;
-      if (editingReview || stepIndex === briefSteps.length - 1) renderReview();
-      else navigate(stepIndex + 1);
-    } else if (target.id === "brief-skip") navigate(stepIndex + 1);
-    else if (target.id === "brief-back") { editingReview = false; navigate(stepIndex - 1, { validate: false }); }
+    } else if (target.id === "brief-next" || target.id === "brief-skip") advance();
+    else if (target.id === "brief-no-preference") {
+      const field = fieldsById.get(questionId);
+      if (!field || field.required) return;
+      if (field.type === "colors") selectedPalette = null;
+      for (const control of controlsFor(questionId)) {
+        if (["radio", "checkboxes"].includes(field.type)) control.checked = control.value === "no_preference";
+        else control.value = "No preference — help me decide";
+      }
+      changed(); advance();
+    } else if (target.id === "brief-review-early") {
+      if (!rawAnswers().projectType) { showFieldError("projectType", "Please choose an option."); return; }
+      goQuestion("contactName");
+    } else if (target.id === "brief-back") {
+      editingReview = false;
+      const path = questionPath();
+      goQuestion(stepIndex === briefSteps.length ? path.at(-1) : path[Math.max(0, path.indexOf(questionId) - 1)]);
+    }
     else if (target.id === "brief-remove-draft") removeDraft();
     else if (target.id === "brief-clear") { get("brief-clear-confirm").hidden = false; get("brief-clear-yes").focus(); }
     else if (target.id === "brief-clear-no") { get("brief-clear-confirm").hidden = true; get("brief-clear").focus(); }
@@ -414,7 +466,7 @@ export function initProjectBrief(doc = document) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (busy || submitted) return;
-    if (stepIndex !== briefSteps.length) { if (validateStep(stepIndex)) { if (stepIndex === briefSteps.length - 1) renderReview(); else navigate(stepIndex + 1); } return; }
+    if (stepIndex !== briefSteps.length) { advance(); return; }
     clearErrors();
     let answers;
     try { answers = normalizeBrief(rawAnswers()); }
@@ -490,13 +542,15 @@ export function initProjectBrief(doc = document) {
       }
       saveDraft.checked = true;
       stepIndex = Number.isInteger(stored.step) ? Math.max(0, Math.min(briefSteps.length - 1, stored.step)) : 0;
+      questionId = fieldsById.has(stored.question) || stored.question === "__files" ? stored.question : briefSteps[stepIndex].fields[0];
+      if (fieldsById.get(questionId)?.advanced) get("brief-extra-questions").checked = true;
       get("brief-draft-restored").textContent = stored.hadFiles ? "Your saved answers are back. Files are not saved on this device by the form. Please reselect any photos or PDFs before sending." : "Your saved answers are back. Pick up where you left off, or use Start over for a new project.";
       get("brief-draft-restored").hidden = false;
       get("brief-remove-draft").hidden = false;
     }
   } catch { /* A corrupt or unavailable local draft must not block a new brief. */ }
   get("brief-fallback").hidden = true;
-  get("brief-draft-settings").open = win.matchMedia("(min-width: 701px)").matches;
+  get("brief-draft-settings").open = false;
   form.querySelectorAll(".brief-advanced, [data-brief-reveal-selection]").forEach((details) => {
     if ([...details.querySelectorAll("input, textarea")].some((control) => ["radio", "checkbox"].includes(control.type) ? control.checked : Boolean(control.value.trim()))) details.open = true;
   });
@@ -505,7 +559,7 @@ export function initProjectBrief(doc = document) {
   renderFiles();
   renderColorSwatches();
   renderPaletteSelection();
-  updateNavigation({ focus: false });
+  goQuestion(questionId, { focus: false });
   return true;
 }
 

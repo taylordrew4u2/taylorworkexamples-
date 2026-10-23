@@ -7,10 +7,11 @@ const software = ["software", "mixed", "unsure"];
 
 const definitions = [
   {
-    id: "idea", title: "Start with your idea", description: "A rough idea is enough. Describe the business problem in your own words; you can skip anything you have not decided.",
+    id: "idea", title: "Start with your idea", description: "A rough idea is enough. Tell me what you have in mind; you can skip anything you have not decided.",
     fields: [
       { id: "projectType", label: "What are you thinking of building?", type: "radio", required: true, options: [choice("website", "A website"), choice("app", "An app"), choice("software", "Custom software or an internal tool"), choice("mixed", "A combination of these"), choice("unsure", "I'm not sure — I need help working it out")] },
-      { id: "businessName", label: "What is your business or organization called?", type: "text", maxLength: 160, placeholder: "A working name is fine." },
+      { id: "websiteFor", label: "Who is the website for?", type: "checkboxes", projectTypes: website, hint: "Choose all that fit. Your personal brand can be your business too.", options: [choice("comedian", "A comedian"), choice("actor", "An actor or performer"), choice("musician", "A musician or band"), choice("creator", "A creator or entertainer"), choice("personal", "Me personally / my portfolio"), choice("business", "My business or services"), choice("organization", "A community, nonprofit, or organization"), choice("event", "A show, event, or creative project"), choice("other", "Something else"), unsure] },
+      { id: "businessName", label: "What name should appear on it?", type: "text", maxLength: 160, placeholder: "A working name is fine." },
       { id: "idea", label: "What would you like to build or make easier?", type: "textarea", maxLength: 3000, hint: "Tell me the problem, the idea, or the thing that frustrates you. No technical language needed." },
       { id: "audience", label: "Who will use it, and what will they need from it?", type: "textarea", maxLength: 1800, placeholder: "Customers, staff, members, patients, students, or someone else…" },
       { id: "outcome", label: "What would make this project a success for you?", type: "textarea", maxLength: 1800, hint: "For example: more enquiries, less admin, easier ordering, or giving customers something they cannot do today." },
@@ -31,8 +32,8 @@ const definitions = [
   {
     id: "project", title: "Shape your project", description: "Choose only what sounds useful. These are conversation starters, not commitments to a bigger project.",
     fields: [
-      { id: "websitePurpose", label: "What should your website help people do?", type: "checkboxes", projectTypes: website, options: [choice("learn", "Understand the business and services"), choice("contact", "Get in touch or request a quote"), choice("book", "Reach a booking service"), choice("buy", "Buy products or place orders"), choice("visit", "Find a location, hours, or directions"), choice("explore", "Browse work, menus, listings, or a catalog"), unsure] },
-      { id: "websitePages", label: "Which pages or content areas might you need?", type: "checkboxes", projectTypes: website, options: [choice("home", "Home"), choice("about", "About the business or team"), choice("services", "Services and pricing"), choice("products", "Products or shop"), choice("gallery", "Gallery, work, or portfolio"), choice("menu", "Menu"), choice("contact", "Contact and location"), choice("faq", "Common questions"), choice("articles", "Articles, news, or resources"), choice("other", "Something else — describe it in your priorities"), unsure] },
+      { id: "websitePurpose", label: "What should your website help people do?", type: "checkboxes", projectTypes: website, options: [choice("learn", "Learn about me, my work, or my business"), choice("shows", "Find upcoming shows and get tickets"), choice("watch", "Watch clips, a reel, or listen to my work"), choice("hire", "Book me for a show or project"), choice("press", "Find my bio, credits, or press kit"), choice("contact", "Get in touch or request a quote"), choice("book", "Reach a booking service"), choice("buy", "Buy products or place orders"), choice("visit", "Find a location, hours, or directions"), choice("explore", "Browse work, menus, listings, or a catalog"), unsure] },
+      { id: "websitePages", label: "Which pages or content areas might you need?", type: "checkboxes", projectTypes: website, options: [choice("home", "Home"), choice("about", "About me, my business, or my team"), choice("shows", "Show dates and ticket links"), choice("clips", "Comedy clips, videos, or a reel"), choice("press", "Press kit, bio, and credits"), choice("services", "Services and pricing"), choice("products", "Products or shop"), choice("gallery", "Gallery, work, or portfolio"), choice("menu", "Menu"), choice("contact", "Contact and location"), choice("faq", "Common questions"), choice("articles", "Articles, news, or resources"), choice("other", "Something else — describe it in your priorities"), unsure] },
       { id: "websiteFeatures", label: "Does the website need anything beyond information pages?", type: "checkboxes", projectTypes: website, options: [choice("forms", "Enquiry or quote forms"), choice("booking", "A booking connection or custom booking flow"), choice("payments", "Payments or checkout"), choice("members", "Customer accounts or a members area"), choice("updates", "A way for me or my staff to update content"), choice("search", "Search or filtering"), choice("simple", "Just a good website for now"), unsure] },
       { id: "searchLocations", label: "What do customers search for, and which places do you serve?", type: "textarea", maxLength: 1800, projectTypes: website, advanced: true, hint: "Share services, neighborhoods, cities, or the kinds of searches you want the site to answer. Search placement cannot be guaranteed." },
       { id: "appPlatforms", label: "Where would you like the app to run?", type: "checkboxes", projectTypes: app, options: [choice("ios", "iPhone / iPad"), choice("android", "Android"), choice("web", "In a web browser"), choice("mac", "Mac"), choice("windows", "Windows"), unsure] },
@@ -129,7 +130,7 @@ const definitions = [
 ];
 
 function freezeField(field, stepId) {
-  const options = field.options?.map((option) => Object.freeze({ ...option }));
+  const options = field.options ? [...field.options, ...(!field.required ? [choice("no_preference", "No preference — help me decide")] : [])].map((option) => Object.freeze({ ...option })) : undefined;
   return Object.freeze({
     ...field, stepId,
     ...(options ? { options: Object.freeze(options) } : {}),
@@ -159,6 +160,7 @@ function normalizeText(field, value) {
   }
   const text = value.replace(/\r\n?/gu, "\n").trim();
   if (!text) return "";
+  if (!field.required && text === "No preference — help me decide") return text;
   if (field.type === "email") {
     const local = text.split("@")[0];
     if (!emailPattern.test(text) || local.length > 64 || local.startsWith(".") || local.endsWith(".") || local.includes("..")) {

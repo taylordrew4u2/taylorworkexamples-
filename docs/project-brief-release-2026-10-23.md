@@ -30,3 +30,11 @@ All 108 source tests passed and the production build generated 47 pages. All 22 
 The feature uses the existing Supabase and Brevo Free resources, bounded storage and email volume, and no paid fallback. The existing static website hosting is reused. Inbox placement can vary even when the provider accepts a message.
 
 See [project-brief-operations.md](project-brief-operations.md) for retention, quota and operator recovery details. No real client data, private management links or credentials are included in release evidence.
+
+## Conversational planner update
+
+The default flow now shows one question at a time, with Back/Next and preserved answers. A shorter core path replaces the nine dense question pages; clients can finish early and provide reply details, or opt into extra questions. Section navigation and draft settings are collapsed. Required contact details and final consent remain enforced.
+
+Website clients can describe themselves as comedians, actors, musicians, creators, personal portfolios, businesses, organizations, or creative projects, with multiple choices allowed. Website goals/content include show dates, tickets, clips, reels, booking enquiries, and press kits. Optional project answers accept an explicit “No preference — help me decide,” including URL questions. The server validates and formats these answers with the same shared schema; no delivery quotas, accounts, or paid services changed.
+
+Updated browser cases cover single-question visibility, multiple website audiences, Back, drafts, project-type changes, early finish, required identity, no-preference URLs, palette preservation, original image previews, interrupted-request idempotency, and narrow phone/keyboard use.

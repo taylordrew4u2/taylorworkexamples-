@@ -131,11 +131,11 @@ test("summaries keep human labels, deterministic choices, and unmodified text fo
 
 test("visual styles retain saved choice values and font selections reach the summary by their human names", () => {
   const mood = briefFields.find((field) => field.id === "brandMood");
-  assert.deepEqual(mood.options.map((option) => option.value), ["clean", "warm", "bold", "premium", "playful", "professional", "practical", "not_sure"]);
+  assert.deepEqual(mood.options.map((option) => option.value), ["clean", "warm", "bold", "premium", "playful", "professional", "practical", "not_sure", "no_preference"]);
   const fonts = briefFields.find((field) => field.id === "fontStyle");
   assert.equal(fonts.stepId, "design");
   assert.equal(fonts.required, undefined);
-  assert.deepEqual(fonts.options.map((option) => option.value), ["modern", "friendly", "editorial", "classic", "technical", "unsure"]);
+  assert.deepEqual(fonts.options.map((option) => option.value), ["modern", "friendly", "editorial", "classic", "technical", "unsure", "no_preference"]);
   for (const font of fonts.options) {
     const answers = normalizeBrief({ ...minimum, brandMood: ["professional", "warm"], fontStyle: font.value });
     assert.equal(answers.fontStyle, font.value);
@@ -207,4 +207,16 @@ test("website social profiles accept handles or URLs, remain optional, and disap
     assert.throws(() => normalizeBrief({ ...minimum, socialInstagram }), (error) => error.field === "socialInstagram");
   }
   assert.equal(maxBriefLength, 60000);
+});
+
+test('website audiences and performer needs reach the email, but disappear for app-only projects', () => {
+  const input = {...minimum,websiteFor:['comedian','business'],websitePurpose:['shows','watch','hire'],websitePages:['shows','clips','press']};
+  const summary = formatBriefText(input);
+  assert.ok(summary.includes('A comedian') && summary.includes('Show dates and ticket links'));
+  assert.equal(normalizeBrief({...input,projectType:'app'}).websiteFor,undefined);
+});
+test('no preference is allowed on optional answers including URLs, without relaxing contact identity', () => {
+  const input={...minimum,businessWebsite:'No preference — help me decide',websiteFor:['no_preference'],colors:'No preference — help me decide'};
+  assert.ok(formatBriefText(input).includes('No preference — help me decide'));
+  assert.throws(()=>normalizeBrief({...input,contactEmail:'No preference — help me decide'}));
 });
