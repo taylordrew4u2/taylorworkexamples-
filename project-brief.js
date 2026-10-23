@@ -231,7 +231,7 @@ export function initProjectBrief(doc = document) {
     if (busy || submitted) return false;
     if (validate && stepIndex === 0 && index !== 0 && !validateStep(0)) return false;
     stepIndex = Math.max(0, Math.min(briefSteps.length - 1, index));
-    if (!preserveQuestion) questionId = questionPath().find(id => briefSteps[stepIndex].fields.includes(id)) || "__files";
+    if (!preserveQuestion) questionId = questionPath().find(id => briefSteps[stepIndex].fields.includes(id)) || briefSteps[stepIndex].fields.find(id => applicable(fieldsById.get(id), rawAnswers().projectType)) || "__files";
     announce("");
     updateVisibility();
     updateNavigation({ focus });

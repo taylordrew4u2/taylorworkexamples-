@@ -43,3 +43,12 @@ test('interrupted send preserves answers and retries the same request identity',
 test('320px layout and keyboard navigation keep the visible question readable',async({page})=>{
  await page.setViewportSize({width:320,height:740});await start(page);await page.locator('#brief-next').focus();await page.keyboard.press('Enter');await expect(page.locator('[data-field-container=websiteFor]')).toBeFocused();await fit(page);await expect(page.locator('[data-field-container]:visible')).toHaveCount(1);
 });
+
+test('every optional section opens a question even when extra details are off', async ({page}) => {
+  await start(page);
+  for (let index = 0; index < 9; index++) {
+    await page.locator('.brief-section-menu summary').click();
+    await page.locator(`[data-brief-go="${index}"]`).click();
+    await expect(page.locator('[data-field-container]:visible')).toHaveCount(1);
+  }
+});
