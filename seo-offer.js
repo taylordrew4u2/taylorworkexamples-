@@ -21,7 +21,7 @@ export const launchOffer = {
     },
     {
       heading: "How it works.",
-      text: "Start with a Zoom consultation to discuss the fit. If seeing your space or workflow would help, we can arrange a visit in Manhattan, Brooklyn, or parts of Queens. A consultation does not commit you to a paid project. Before the build, we agree the scope, price, project start, and target launch date in writing, including the pages, form or booking flow, and who supplies the content and access. Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.",
+      text: "Start with a video consultation to discuss the fit. If seeing your space or workflow would help, we can arrange a visit in Manhattan, Brooklyn, or parts of Queens. A consultation does not commit you to a paid project. Before the build, we agree the scope, price, project start, and target launch date in writing, including the pages, form or booking flow, and who supplies the content and access. Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.",
     },
     {
       heading: "What you own.",
@@ -55,7 +55,7 @@ export const launchOffer = {
     },
     ...clientCare.faq,
   ],
-  bookingIntro: "Book a Zoom consultation through BriefBooth to discuss whether the offer fits your business. A rough idea is enough to start, and the consultation does not commit you to a paid project. For project questions, email admin@customtechbuilt4u.com.",
+  bookingIntro: "Book a video consultation through BriefBooth to discuss whether the offer fits your business. A rough idea is enough to start, and the consultation does not commit you to a paid project. For project questions, email admin@customtechbuilt4u.com.",
   serviceSlugs: [
     "website-development",
     "salon-booking-app-development",

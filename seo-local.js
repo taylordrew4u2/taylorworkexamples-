@@ -1,9 +1,9 @@
 export const localConsultation = {
   title: "Consultations for New York City businesses",
   metaTitle: "NYC Website, App & Software Consultations | 4u Digital",
-  description: "Start with a 4u Digital Zoom consultation. Arrange an NYC in-person visit to clarify your needs or plan technology for your space and daily workflow.",
+  description: "Start with a 4u Digital video consultation. Arrange an NYC in-person visit to clarify your needs or plan technology for your space and daily workflow.",
   heading: "Not sure what to build? Let’s look at your business.",
-  intro: "You might need a website, a mobile app, a web platform, desktop software, or a custom tool for the way your business works. You don’t need to know which one yet. Start with a Zoom consultation through BriefBooth. When seeing your space or day-to-day workflow would help clarify what to build, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance.",
+  intro: "You might need a website, a mobile app, a web platform, desktop software, or a custom tool for the way your business works. You don’t need to know which one yet. Start with a video consultation through BriefBooth. When seeing your space or day-to-day workflow would help clarify what to build, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance.",
   sections: [
     {
       heading: "See the space before deciding on the software.",
@@ -24,8 +24,8 @@ export const localConsultation = {
   ],
   faq: [
     {
-      question: "Can we meet on Zoom or in person?",
-      answer: "Start with a Zoom consultation booked through the 4u Digital page on BriefBooth. If you are unsure what you need, or the application or software needs to fit a particular space, an in-person consultation can help us understand the work before choosing what to build. Visits are available in Manhattan, Brooklyn, and parts of Queens, with travel farther afield discussed in advance.",
+      question: "Can we meet online or in person?",
+      answer: "Start with a video consultation booked through the 4u Digital page on BriefBooth. If you are unsure what you need, or the application or software needs to fit a particular space, an in-person consultation can help us understand the work before choosing what to build. Visits are available in Manhattan, Brooklyn, and parts of Queens, with travel farther afield discussed in advance.",
     },
     {
       question: "Do I need a finished plan before we meet?",
@@ -36,7 +36,7 @@ export const localConsultation = {
       answer: "Yes. We can compare the task, users, devices, and existing tools before choosing a platform. Public information, shared browser workflows, and native device features create different requirements. The meeting can help identify a practical starting point for the project.",
     },
   ],
-  bookingIntro: "Open the 4u Digital booking page on BriefBooth to start with a Zoom consultation. Tell me what your business does, what could work better, and whether seeing your space would help us understand it. A finished plan or a platform choice is not required.",
+  bookingIntro: "Open the 4u Digital booking page on BriefBooth to start with a video consultation. Tell me what your business does, what could work better, and whether seeing your space would help us understand it. A finished plan or a platform choice is not required.",
   serviceSlugs: [
     "website-development",
     "web-app-development",

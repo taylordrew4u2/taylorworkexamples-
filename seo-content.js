@@ -306,7 +306,7 @@ export const services = [
       },
       {
         question: "How do I discuss a salon booking project?",
-        answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth. Bring your current booking process and what you want to improve. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A rough outline is enough to start.",
+        answer: "Book your first video consultation through the 4u Digital page on BriefBooth. Bring your current booking process and what you want to improve. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A rough outline is enough to start.",
       },
     ],
   },
@@ -367,7 +367,7 @@ export const services = [
       },
       {
         question: "How do I discuss a restaurant ordering project?",
-        answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth. Bring your menu, current ordering process, and POS system if you use one. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A finished specification is not required.",
+        answer: "Book your first video consultation through the 4u Digital page on BriefBooth. Bring your menu, current ordering process, and POS system if you use one. If you are unsure what you need or the software depends on your space or workflow, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance. A finished specification is not required.",
       },
     ],
   },
@@ -430,7 +430,7 @@ export const guide = {
     },
     {
       question: "How do I start a conversation with 4u Digital?",
-      answer: "Book your first Zoom consultation through the 4u Digital page on BriefBooth, or email a general project inquiry to admin@customtechbuilt4u.com. Bring what your business does and what you want to build or improve. An existing website or example can help, but a finished plan is not required.",
+      answer: "Book your first video consultation through the 4u Digital page on BriefBooth, or email a general project inquiry to admin@customtechbuilt4u.com. Bring what your business does and what you want to build or improve. An existing website or example can help, but a finished plan is not required.",
     },
   ],
 };

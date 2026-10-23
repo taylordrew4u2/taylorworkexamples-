@@ -294,7 +294,7 @@ test("business guides and consultation details are discoverable, truthful, and r
   for (const route of ["/", "/contact/", hubRoute]) {
     const html = documents.get(route);
     assert.ok(linksTo(html, route, localRoute), `${route}: reachable consultation page`);
-    assert.match(text(html), /Zoom/);
+    assert.match(text(html), /video consultation/i);
     assert.match(text(html), /New York City|Manhattan/);
     assert.match(text(html), /in-person/i);
     assert.match(text(html), /space|workflow/i);
@@ -345,7 +345,7 @@ test("business guides and consultation details are discoverable, truthful, and r
     assert.match(action.rel, /\bnoopener\b/);
     assert.match(action.rel, /\bnoreferrer\b/);
   }
-  assert.match(text(local), /Start with a Zoom consultation/);
+  assert.match(text(local), /Start with a video consultation/i);
   assert.match(text(local), /See the space before deciding on the software\./);
   assert.match(text(local), /reception desk, booking handoff, order station/);
   assert.match(text(local), /in-person consultation can help us understand the work before choosing what to build/);
@@ -419,9 +419,10 @@ test("salon and restaurant services explain the business workflow and connect to
       assert.ok(linksTo(html, route, `/work/${projectSlugs[id]}/`), `${service.title}: published portfolio evidence`);
     }
     const guideRoute = `/insights/${service.guideSlug}/`;
+    const serviceGuide = articles.find((entry) => entry.slug === service.guideSlug);
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
-    assert.equal(sitemapDates.get(guideRoute), "2026-10-19");
+    assert.equal(sitemapDates.get(guideRoute), serviceGuide.modified || "2026-10-19");
     const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
       .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
     assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
@@ -439,7 +440,8 @@ test("salon and restaurant services explain the business workflow and connect to
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
     const service = services.find((entry) => route === `/services/${entry.slug}/`);
     const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/"].includes(route);
+    const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
+      "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
     const modified = offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
       route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
@@ -534,7 +536,7 @@ test("project stories explain the original workflows and preserve real developme
       `${project.title}: original cover introduces the project before the workflow`);
     const buildCallout = html.match(/<section\b[^>]*class="[^"]*\bproject-build-cta\b[^"]*"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
     assert.ok(buildCallout, `${project.title}: business inquiry follows the project evidence`);
-    assert.match(text(buildCallout), /Zoom/);
+    assert.match(text(buildCallout), /Meet online/i);
     assert.match(text(buildCallout), /space or workflow would help define the build/);
     assert.match(text(buildCallout), /in-person consultation/i);
     const inquiryLinks = tags(buildCallout, "a");

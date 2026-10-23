@@ -7,7 +7,7 @@ export function renderKickoffForm() {
     return `<div class="kickoff-field${multiline ? " kickoff-field-wide" : ""}"><label for="${id}">${escape(label)}${required ? ' <span aria-hidden="true">*</span>' : ""}</label>${multiline ? `<textarea ${attrs} rows="3"></textarea>` : `<input ${attrs} type="${type}" autocomplete="${autocomplete}" />`}${hint ? `<p id="${id}-help" class="kickoff-hint">${escape(hint)}</p>` : ""}</div>`;
   };
   return `<form id="kickoff-form" class="kickoff-form" aria-label="Project kickoff brief" hidden>
-    <div class="kickoff-form-intro"><p class="eyebrow">YOUR PROJECT BRIEF</p><h2>Start with what you know.</h2><p>Fill this out here, review your brief, then email it when you’re ready. Fields marked * are required. Everything else can be worked through together.</p></div>
+    <div class="kickoff-form-intro"><p class="eyebrow">EXISTING CLIENTS · AGREED PROJECT DETAILS</p><h2>Record what we’ve agreed.</h2><p>Use this after we’ve discussed working together. Review the details, then email them when ready. Fields marked * are required. Everything else can be worked through together.</p></div>
     <fieldset class="kickoff-group"><legend><span class="kickoff-step" aria-hidden="true">01</span>Your business</legend><div class="kickoff-fields">
       ${field("company", "Business name", { required: true, autocomplete: "organization" })}
       ${field("contactName", "Your name", { required: true, autocomplete: "name" })}

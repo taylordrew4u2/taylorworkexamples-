@@ -90,10 +90,10 @@ export const businessNotes = [
     serviceSlugs: ["website-development", "custom-software-development"],
     projectIds: ["BriefBooth.com"],
     published: "2026-10-19",
-    modified: "2026-10-19",
+    modified: "2026-10-23",
     topic: "planning",
     format: "note",
-    closing: "First consultations with 4u Digital are on Zoom through BriefBooth. If your needs are unclear or the software must fit a physical workflow, NYC visits are available by arrangement.",
+    closing: "First consultations with 4u Digital take place online through BriefBooth. If your needs are unclear or the software must fit a physical workflow, NYC visits are available by arrangement.",
   },
   {
     slug: "client-portal-for-small-business",

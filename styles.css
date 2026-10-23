@@ -92,7 +92,7 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  scroll-behavior: auto;
   scroll-padding-top: 2rem;
 }
 
@@ -344,10 +344,12 @@ button, a, input, select, textarea, summary {
 }
 
 .hero-planner-note { max-width: 36rem; margin-top: .8rem; color: inherit; font-size: .8125rem; line-height: 1.65; }
+.hero-booking-note { margin-top: .8rem; font-size: .75rem; line-height: 1.65; }
 .consultation-planner { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
 .consultation-planner h4 { font-size: 1rem; margin-bottom: .65rem; }
 .consultation-planner > p { font-size: .875rem; line-height: 1.7; }
 .consultation-planner .text-link { display: inline-flex; min-height: 2.75rem; align-items: center; }
+.consultation-planner .planner-destination { color: #ccc; font-size: .8125rem; }
 
 .intro-actions .button-dark {
   color: #111;

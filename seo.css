@@ -211,6 +211,8 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .guide-article > .page-section > p + p { margin-top: 1rem; }
 .contact-page .page-intro, .about-page .page-intro, .local-consultation-page .page-intro { max-width: 60rem; }
 .contact-page .page-intro .page-actions { gap: 1rem 1.5rem; }
+.contact-choice-note, .contact-page .page-intro .booking-destination { max-width: 44rem; margin-top: 1rem; font-size: .9375rem; line-height: 1.7; color: var(--muted); }
+.page-footer nav .footer-link-group > a { display: flex; align-items: center; min-height: 2.75rem; }
 .contact-page .page-intro .page-actions .text-link { font-size: .9375rem; overflow-wrap: anywhere; }
 .privacy-page .page-main { max-width: 68rem; }
 .work-index-page .seo-project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }

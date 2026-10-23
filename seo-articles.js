@@ -46,8 +46,8 @@ const guides = [
     ],
     serviceSlugs: ["website-development", "custom-software-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task you want to solve and any existing website or app. A finished technical plan is not required.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task you want to solve and any existing website or app. A finished technical plan is not required.",
   },
   {
     slug: "diy-vs-custom-website",
@@ -91,8 +91,8 @@ const guides = [
     ],
     serviceSlugs: ["website-development", "web-app-development"],
     projectIds: ["PinsAndNeedlesComedyWebsite"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current website and the part you want to improve. We can discuss a focused change or a wider rebuild.",
   },
   {
     slug: "salon-booking-website",
@@ -137,8 +137,8 @@ const guides = [
     ],
     serviceSlugs: ["salon-booking-app-development", "website-development", "web-app-development"],
     projectIds: ["PinsAndNeedlesComedyWebsite", "MyGigCalendar"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
   },
   {
     slug: "restaurant-ordering-app",
@@ -183,8 +183,8 @@ const guides = [
     ],
     serviceSlugs: ["restaurant-ordering-app-development", "web-app-development", "app-development"],
     projectIds: ["the-trip-handler"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
   },
   {
     slug: "spreadsheet-to-business-software",
@@ -228,8 +228,8 @@ const guides = [
     ],
     serviceSlugs: ["custom-software-development", "web-app-development"],
     projectIds: ["Showrunner-ICanRunAShow", "the-trip-handler"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
   },
   {
     slug: "first-version-app-features",
@@ -273,8 +273,8 @@ const guides = [
     ],
     serviceSlugs: ["app-development", "web-app-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    modified: "2026-10-19",
-    closing: "Start with a 4u Digital Zoom consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your app idea, intended users, and the first task it should handle. We can work through the scope together.",
+    modified: "2026-10-23",
+    closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your app idea, intended users, and the first task it should handle. We can work through the scope together.",
   },
 ];
 

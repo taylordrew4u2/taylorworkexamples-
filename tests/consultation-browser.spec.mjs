@@ -51,7 +51,7 @@ test("homepage consultation actions open the supplied booking page and explain t
   if (testInfo.project.name === "phone") await menu.click();
   const panel = page.locator("#consultation .consultation-panel");
   await expect(panel).toBeVisible();
-  await expect(page.locator(".hero-consultation-note")).toContainText(/Zoom/);
+  await expect(page.locator(".hero-consultation-note")).toContainText(/video consultation/i);
   await expect(page.locator("#consultation")).toContainText(/in-person/i);
   await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
   await expect(page.locator(".consultation-how")).toContainText(/unsure what you need/i);
@@ -73,7 +73,7 @@ test("consultation booking works directly from the homepage without JavaScript",
     const hero = page.locator(".intro-actions [data-booking-link]");
     await expectBookingLink(hero);
     await expectBookingLink(page.locator("#consultation .booking-primary"));
-    await expect(page.locator("#consultation")).toContainText(/Zoom/);
+    await expect(page.locator("#consultation")).toContainText(/First consultations happen online/i);
     await expect(page.locator("#consultation .booking-steps")).toHaveCount(0);
     await expect(page.locator("#consultation")).toContainText(/in-person/i);
     await expect(page.locator("#consultation")).toContainText(/space|workflow/i);

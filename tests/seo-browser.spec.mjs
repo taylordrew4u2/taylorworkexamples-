@@ -553,20 +553,51 @@ test("the comparison guide, business information, and contact remain usable with
   const contact = await linkTo(page, "/contact/");
   await contact.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("What would you like to build?");
+  const contactActions = page.locator(".page-intro .page-actions");
+  await expectBookingLink(contactActions.locator("a").first());
+  const contactPlanner = contactActions.getByRole("link", { name: "Open project planner", exact: false });
+  expect(new URL(await contactPlanner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
+  await expect(page.locator(".page-intro")).toContainText(/optional/i);
+  await expect(page.getByRole("navigation", { name: "Project inquiry types", exact: true })).toHaveCount(0);
   for (const link of await page.locator("main a[href^='mailto:']").all()) {
     expect(new URL(await link.getAttribute("href")).pathname).toBe("admin@customtechbuilt4u.com");
   }
   await expectPageFit(page);
   await page.setViewportSize({ width: 768, height: 1024 });
   await expectPageFit(page);
+  await contactPlanner.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
+  await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
+  await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await expectPageFit(page);
 });
 
-test("the later kickoff checklist is reachable from the process and prepares an attributed email without JavaScript", async ({ page }) => {
+test("homepage visitors can open the optional planner without booking or finding the later kickoff form", async ({ page }) => {
   await page.goto("/");
-  const kickoff = page.locator("#process").getByRole("link", { name: "Fill out the project kickoff form", exact: false });
+  for (const entry of ["#main-nav", ".intro-actions", "#process", "#consultation"]) {
+    const planner = page.locator(entry).getByRole("link", { name: /project planner/i });
+    await expect(planner).toHaveCount(1);
+    expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
+  }
+  await expect(page.locator(".hero-planner-note")).toContainText(/optional.*planner/i);
+  await expect(page.locator(".hero-planner-note")).toContainText(/before or after/i);
+  await expect(page.locator(".hero-planner-note")).toContainText(/doesn.t book/i);
+  await expect(page.locator("#process")).toContainText("before or after a consultation");
+  await expect(page.locator("#process a[href*='project-kickoff'], .footer-pages a[href*='project-kickoff']")).toHaveCount(0);
+  const planner = page.locator("#process").getByRole("link", { name: /project planner/i });
   // Native keyboard activation does not wait on pointer stability during smooth scrolling.
-  await kickoff.focus();
+  await planner.focus();
   await page.keyboard.press("Enter");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
+  await expect(page.locator(".page-intro")).toContainText("Skip anything undecided.");
+  await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
+  await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await expectPageFit(page);
+});
+
+test("the later existing-client kickoff resource still prepares an attributed email without JavaScript", async ({ page }) => {
+  await page.goto("/project-kickoff/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
   await expect(page.locator("main")).toContainText("You don’t need this worked out before getting in touch.");
   for (const heading of ["1. Agree the first useful version.", "2. Know who makes the decisions.", "3. Plan the assets, access, and handover."])
@@ -709,7 +740,9 @@ test("a business guide connects the idea to a service and the supplied consultat
   await expectPageFit(page);
 
   const guide = await linkTo(page, `/insights/${article.slug}/`);
-  await guide.click();
+  // Native activation avoids pointer-stability retries while the guide list scrolls.
+  await guide.focus();
+  await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
   await expectHeaderSection(page, "/insights/");
   await expect(page.locator(".article-byline")).toContainText("By 4u Digital");
@@ -744,7 +777,7 @@ test("a business guide connects the idea to a service and the supplied consultat
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(localConsultation.heading);
   await expect(page.locator("main")).toContainText(localConsultation.intro);
-  await expect(page.locator("main")).toContainText(/Start with a Zoom consultation/i);
+  await expect(page.locator("main")).toContainText(/Start with a video consultation/i);
   await expect(page.getByRole("heading", { name: "See the space before deciding on the software.", exact: true })).toBeVisible();
   await expect(page.locator("main")).toContainText(/reception desk, booking handoff, order station/i);
   for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
