@@ -24,7 +24,15 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
-      - run: npx playwright install --with-deps chromium
+      - name: Install Chromium for browser checks
+        timeout-minutes: 6
+        run: |
+          # Avoid a stalled regional mirror blocking publication indefinitely.
+          printf 'Acquire::http::Timeout "20";\nAcquire::https::Timeout "20";\nAcquire::Retries "1";\n' | sudo tee /etc/apt/apt.conf.d/99-browser-check-timeouts > /dev/null
+          if [ -f /etc/apt/apt-mirrors.txt ]; then
+            sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
+          fi
+          npx playwright install --with-deps --only-shell chromium
       - run: npm run test:browser -- --reporter=line
       - uses: actions/upload-artifact@v4
         if: failure()
