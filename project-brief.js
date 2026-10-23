@@ -288,7 +288,7 @@ export function initProjectBrief(doc = document) {
     const project = oneLine(answers.projectName || answers.businessName || "My project");
     const reference = oneLine(receiptReference);
     const subject = wellFormed(`4u Digital project photos and videos — ${project}${reference ? ` — ${reference}` : ""}`.slice(0, 240));
-    const body = `Please attach photos to this email before sending.\n\nHi 4u Digital,\n\nHere are the photos or videos for my project.\n\nBusiness / project: ${project}${reference ? `\nBrief reference: ${reference}` : ""}\n\nPhotos and videos related to my project (performances, business, restaurant, products, space, or other references):\n\nWhat I would like you to use them for:\n\n`;
+    const body = `Please attach photos and videos to this email before sending.\n\nHi 4u Digital,\n\nHere are the photos or videos for my project.\n\nBusiness / project: ${project}${reference ? `\nBrief reference: ${reference}` : ""}\n\nPhotos and videos related to my project (performances, business, restaurant, products, space, or other references):\n\nWhat I would like you to use them for:\n\n`;
     const href = `mailto:admin@customtechbuilt4u.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     for (const id of ["brief-media-email", "brief-success-media-email"]) {
       const link = get(id);
