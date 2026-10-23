@@ -1,17 +1,19 @@
+import { clientCare } from "./client-care.js";
+
 export const launchOffer = {
   title: "Website offer for New York City businesses",
   metaTitle: "Website Offer for New York City Businesses | 4u Digital",
-  description: "Through November 30, 2026, the first ten New York City businesses get a custom website for $1,200, or $1,900 with booking or ordering built in. Scope and price agreed first; the code is yours.",
+  description: "A custom website for $1,200, or $1,900 with booking or ordering built in, for the first ten eligible New York City business projects agreed by November 30, 2026. Subject to scope and capacity; the code is yours.",
   eyebrow: "THROUGH NOVEMBER 30 · FIRST TEN NEW YORK CITY BUSINESSES",
   heading: "A website you own, for $1,200.",
-  intro: "Through November 30, 2026, the first ten New York City businesses get a custom website for $1,200, or $1,900 with booking or ordering built in. One person builds it, so ten is the real limit.",
-  modified: "2026-10-22",
+  intro: "A custom website for $1,200, or $1,900 with booking or ordering built in. Available for the first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity. Start with a consultation to discuss whether it fits your business.",
+  modified: "2026-10-23",
   price: "1200",
   validUntil: "2026-11-30",
   sections: [
     {
       heading: "What the $1,200 site includes.",
-      text: "Up to five pages, built in code and laid out for phones first: what you do, your services or menu, hours, address, examples of your work, and a contact or request form that lands in your inbox. The domain and hosting are set up in your name. Three months of content changes after launch are included, so hours, prices, and photos can settle in.",
+      text: "Up to five pages, built in code and laid out for phones first: what you do, your services or menu, hours, address, examples of your work, and a contact or request form that lands in your inbox. The domain and hosting are set up in your name. This website offer also includes three months of content changes after launch, so hours, prices, and photos can settle in. That offer-specific benefit is in addition to the 30-day money-back guarantee and reasonable changes included with every project.",
     },
     {
       heading: "What $1,900 adds.",
@@ -19,7 +21,7 @@ export const launchOffer = {
     },
     {
       heading: "How it works.",
-      text: "Describe the problem. Book fifteen minutes on Zoom, or arrange a visit in Manhattan, Brooklyn, or parts of Queens if seeing the space would help. Agree the scope and price. The pages, the form or booking flow, and who supplies what are written down before anything is built. Build, review, launch. Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.",
+      text: "Start with a Zoom consultation to discuss the fit. If seeing your space or workflow would help, we can arrange a visit in Manhattan, Brooklyn, or parts of Queens. A consultation does not commit you to a paid project. Before the build, we agree the scope, price, project start, and target launch date in writing, including the pages, form or booking flow, and who supplies the content and access. Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.",
     },
     {
       heading: "What you own.",
@@ -29,7 +31,11 @@ export const launchOffer = {
   faq: [
     {
       question: "Why ten, and why November 30?",
-      answer: "4u Digital is one developer. Ten sites at this price is what can be built well before the end of the year. The offer closes on November 30 or when the tenth business books, whichever comes first.",
+      answer: "4u Digital is one developer, so the offer is limited to the first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity. A consultation is a discussion about fit; it does not reserve one of the ten projects or commit you to paid work. The scope, price, project start, and target launch date are agreed in writing before the build.",
+    },
+    {
+      question: "When could my project start and launch?",
+      answer: "We agree the project start and target launch date in writing before building. Timing depends on the scope, capacity, and when content and account access are available. The consultation helps identify those requirements; booking it does not promise a project start or launch date.",
     },
     {
       question: "What happens after November 30?",
@@ -47,8 +53,9 @@ export const launchOffer = {
       question: "Do I need content ready?",
       answer: "No. Bring what you have, even a service list and a few photos. Missing content is identified at the start and who supplies it is agreed before building.",
     },
+    ...clientCare.faq,
   ],
-  bookingIntro: "Book fifteen minutes on Zoom through BriefBooth, or email admin@customtechbuilt4u.com with what your business does and what needs to work better. A rough idea is enough to start.",
+  bookingIntro: "Book a Zoom consultation through BriefBooth to discuss whether the offer fits your business. A rough idea is enough to start, and the consultation does not commit you to a paid project. For project questions, email admin@customtechbuilt4u.com.",
   serviceSlugs: [
     "website-development",
     "salon-booking-app-development",

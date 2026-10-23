@@ -43,6 +43,10 @@ const assets = new Set(projects.flatMap((project) => [
   project.icon,
   ...project.gallery.flatMap((frame) => [frame.image, frame.companion?.image]),
 ]).filter(Boolean));
+const fontManifest = JSON.parse(await readFile(path.join(root, "assets/fonts/manifest.json"), "utf8"));
+for (const filename of [...fontManifest.files.map((font) => font.file), ...fontManifest.licenses]) {
+  assets.add(`./assets/fonts/${filename}`);
+}
 const html = await readFile(path.join(root, "index.html"), "utf8");
 for (const match of html.matchAll(/(?:src|href)="(\.\/assets\/[^"?]+)(?:\?[^\"]*)?"/g)) {
   assets.add(match[1]);

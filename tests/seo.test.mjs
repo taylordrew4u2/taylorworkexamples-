@@ -433,14 +433,16 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-19");
-  assert.equal(sitemapDates.get("/"), "2026-10-22");
+  assert.equal(sitemapDates.get("/"), "2026-10-23");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
   for (const route of routes) {
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
     const service = services.find((entry) => route === `/services/${entry.slug}/`);
     const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const microShortUpdate = ["/", "/work/", "/work/micro-short-film-website/", "/offer/"].includes(route);
-    const modified = microShortUpdate ? "2026-10-22" : route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
+    const offerUpdate = ["/", "/offer/"].includes(route);
+    const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
+    const modified = offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
+      route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
     assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }
 });

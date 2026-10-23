@@ -1,4 +1,14 @@
 /* Shared 4u Digital service and project pages. Product pixels keep their source colors. */
+.offer-proof-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 1.5rem; margin-top: 2rem; align-items: start; }
+.offer-proof-grid > * { min-width: 0; }
+.offer-image-context { padding: 0 1.25rem 1.25rem; font-size: .8125rem; line-height: 1.7; color: var(--muted); }
+.offer-client-feedback blockquote { margin: 1rem 0; font-size: 1.125rem; line-height: 1.7; }
+.offer-client-feedback .text-link { margin-top: 1.5rem; }
+.service-website-offer { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 2rem; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid #bbb; border-radius: .75rem; background: #f6f6f6; }
+.service-website-offer > .eyebrow { flex-basis: 100%; }
+.service-website-offer > p:not(.eyebrow) { flex: 1 1 25rem; max-width: 50rem; color: var(--muted); font-size: .9375rem; line-height: 1.7; }
+.service-website-offer > a { flex: 0 1 auto; }
+@media (max-width: 700px) { .offer-proof-grid { grid-template-columns: minmax(0, 1fr); } }
 .service-discovery { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
 .service-discovery > p { color: var(--muted); line-height: 1.7; max-width: 48rem; }
 .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; margin-top: 1.5rem; }

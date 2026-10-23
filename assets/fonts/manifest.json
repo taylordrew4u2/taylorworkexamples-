@@ -1,0 +1,59 @@
+{
+  "provider": "Google Fonts",
+  "retrieved": "2026-10-23",
+  "cssSource": "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400..750&family=Manrope:wght@400..800&display=swap",
+  "files": [
+    {
+      "file": "dm-sans.219b02c7d8884817.woff2",
+      "source": "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu6-K6z9mXgjU0.woff2",
+      "sha256": "219b02c7d8884817d3d6ad4c8771f2c000ce4c5669a67ef4e2e5617ffa25c4cc",
+      "bytes": 18192
+    },
+    {
+      "file": "dm-sans.468d56b6b25b05b7.woff2",
+      "source": "https://fonts.gstatic.com/s/dmsans/v17/rP2Yp2ywxg089UriI5-g4vlH9VoD8Cmcqbu0-K6z9mXg.woff2",
+      "sha256": "468d56b6b25b05b70190b6c233d773f6f1770e8579827ce022a57f03fa8002fb",
+      "bytes": 36980
+    },
+    {
+      "file": "manrope.e8c0b39992f06b3d.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggqxSvfedN62Zw.woff2",
+      "sha256": "e8c0b39992f06b3dc9a9834494088014859f363bf6ca8792b6bb07e17c7965f3",
+      "bytes": 2592
+    },
+    {
+      "file": "manrope.95a493061fe0a8d0.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggOxSvfedN62Zw.woff2",
+      "sha256": "95a493061fe0a8d0d027c2892747134ba747141112d3be4d5022e70ab7d3a1a6",
+      "bytes": 14544
+    },
+    {
+      "file": "manrope.40af11327fe53081.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggSxSvfedN62Zw.woff2",
+      "sha256": "40af11327fe5308166c6cb5787808b042db6da889abf602f0a4876c49675d87e",
+      "bytes": 9360
+    },
+    {
+      "file": "manrope.bab757f8a0a1bc04.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggixSvfedN62Zw.woff2",
+      "sha256": "bab757f8a0a1bc04055ee98cb5777f3254aab11f6d222366e1f40a36f390506a",
+      "bytes": 8492
+    },
+    {
+      "file": "manrope.ce093b341d9c1065.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggmxSvfedN62Zw.woff2",
+      "sha256": "ce093b341d9c10658ee1eaa85c5f8042ff3307bc6ccfc5f405616eb437f0009e",
+      "bytes": 15240
+    },
+    {
+      "file": "manrope.e310b55a7fd9677f.woff2",
+      "source": "https://fonts.gstatic.com/s/manrope/v20/xn7gYHE41ni1AdIRggexSvfedN4.woff2",
+      "sha256": "e310b55a7fd9677f5e3555e6c6c4d064fa1f1d24393f0ddbe217cea12a8c432f",
+      "bytes": 24576
+    }
+  ],
+  "licenses": [
+    "dmsans-OFL.txt",
+    "manrope-OFL.txt"
+  ]
+}

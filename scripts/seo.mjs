@@ -5,6 +5,7 @@ import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { launchOffer } from "../seo-offer.js";
+import { clientCare } from "../client-care.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projectStories } from "../project-stories.js";
 import { escape, enquiryURL, renderFeaturedProjects, renderArchiveProjects } from "../render-projects.js";
@@ -117,9 +118,6 @@ export function pageHead(page, homepage = false) {
     <meta name="twitter:description" content="${escape(page.description)}" />
     <meta name="twitter:image" content="${escape(absolute(image))}" />
     <link rel="icon" type="image/png" sizes="64x64" href="${local(page.path, "assets/favicon-mono.png")}?v=${release}" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700;750&amp;family=Manrope:wght@400;500;600;650;700;750;800&amp;display=swap" />
     <link rel="stylesheet" href="${local(page.path, "styles.css")}?v=${release}" />
     <link rel="stylesheet" href="${local(page.path, "seo.css")}?v=${release}" />
     <script type="application/ld+json">${json(graph(page))}</script>
@@ -147,7 +145,7 @@ function brandSignature(route) {
 }
 
 function footer(route) {
-  return `<footer class="page-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p><p>Start on Zoom. NYC in-person consultations can help clarify your needs or plan technology around your space and workflow.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><div class="footer-link-group"><p class="eyebrow">EXPLORE</p><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a></div><div class="footer-link-group"><p class="eyebrow">START A PROJECT</p>${bookingLink("text-link")}<a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "contact/")}">Contact 4u Digital</a><a href="${local(route, "project-kickoff/")}">Project kickoff form</a></div><div class="footer-link-group"><p class="eyebrow">4u Digital</p><a href="${local(route, "about/")}">About 4u Digital</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="${local(route, "privacy/")}">Privacy &amp; site analytics</a></div></nav><p class="page-copyright">© 2026 4u Digital<span>Apps, websites, and software for your business.</span></p></footer>`;
+  return `<footer class="page-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p><p>Start on Zoom. NYC in-person consultations can help clarify your needs or plan technology around your space and workflow.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><div class="footer-link-group"><p class="eyebrow">EXPLORE</p><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a></div><div class="footer-link-group"><p class="eyebrow">START A PROJECT</p>${bookingLink("text-link")}<a href="${local(route, "offer/")}">Website offer</a><a href="${local(route)}#client-care">Guarantee &amp; support</a><a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "contact/")}">Contact 4u Digital</a><a href="${local(route, "project-kickoff/")}">Project kickoff form</a></div><div class="footer-link-group"><p class="eyebrow">4u Digital</p><a href="${local(route, "about/")}">About 4u Digital</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="${local(route, "privacy/")}">Privacy &amp; site analytics</a></div></nav><p class="page-copyright">© 2026 4u Digital<span>Apps, websites, and software for your business.</span></p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -219,7 +217,9 @@ function articleCards(route, collection = articles) {
 }
 
 function testimonialCard(testimonial) {
-  return `<figure class="testimonial-card" id="testimonial-${escape(testimonial.id)}"><span class="testimonial-mark" aria-hidden="true">“</span><blockquote><p>${escape(testimonial.quote)}</p></blockquote><figcaption><strong>${escape(testimonial.name)}</strong><span>${escape(testimonial.role || testimonial.business)}</span><span class="testimonial-location">${escape(testimonial.location)}</span></figcaption></figure>`;
+  const story = testimonial.id === "alistair-f" ? testimonial.projectStory : null;
+  const projectStory = story ? `<div class="testimonial-project-story"><p class="testimonial-story-label">Client account</p><dl><div><dt>Problem</dt><dd>${escape(story.problem)}</dd></div><div><dt>Build</dt><dd>${escape(story.build)}</dd></div><div><dt>Client-reported result</dt><dd>${escape(story.result)}</dd></div></dl></div>` : "";
+  return `<figure class="testimonial-card" id="testimonial-${escape(testimonial.id)}"><span class="testimonial-mark" aria-hidden="true">“</span><blockquote><p>${escape(testimonial.quote)}</p></blockquote><figcaption><strong>${escape(testimonial.name)}</strong><span>${escape(testimonial.role || testimonial.business)}</span><span class="testimonial-location">${escape(testimonial.location)}</span>${projectStory}</figcaption></figure>`;
 }
 
 function testimonialsSection() {
@@ -298,15 +298,24 @@ function localPage() {
   return { ...page, html: frame(page, content) };
 }
 
+function clientCareSection(homepage = false) {
+  return `<section id="client-care" class="${homepage ? "client-care-section wrap" : "page-section client-care"}" aria-labelledby="client-care-title"><div class="section-heading"><div><p class="eyebrow">${escape(clientCare.eyebrow)}</p><h2 id="client-care-title">${escape(clientCare.heading)}</h2><p class="client-care-intro">${escape(clientCare.intro)}</p></div></div><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div><a class="text-link" href="mailto:${site.email}">Email about your project or guarantee <span aria-hidden="true">↗</span></a></section>`;
+}
+
 function offerPage() {
   const route = "/offer/";
   const page = { path: route, title: launchOffer.metaTitle, description: launchOffer.description,
     offer: launchOffer, modified: launchOffer.modified, faq: launchOffer.faq,
     breadcrumbs: [{ name: "Website offer", path: route }],
   };
+  const websiteExample = projects.find((project) => project.id === "micro-short-website");
+  const clientFeedback = clientTestimonials.find((testimonial) => testimonial.id === "sarah-t");
+  const proof = `<section id="offer-proof" class="page-section offer-proof" aria-labelledby="offer-proof-title"><p class="eyebrow">THE WORK AND THE EXPERIENCE</p><h2 id="offer-proof-title">See the work. Read the feedback.</h2><p>A selected personal website project, alongside feedback from a separate client engagement.</p><div class="offer-proof-grid"><div class="offer-project-example">${projectCard(websiteExample, route)}<p class="offer-image-context">Repository website capture · Original film artwork and festival laurels are part of this project’s content.</p></div><div class="offer-client-feedback"><p class="eyebrow">A CLIENT’S EXPERIENCE</p>${testimonialCard(clientFeedback)}<a class="text-link" href="${local(route)}#testimonials">Read all nine client reviews <span aria-hidden="true">↗</span></a></div></div></section>`;
   const content = intro(launchOffer.eyebrow, launchOffer.heading, launchOffer.intro,
     `<div class="page-actions">${bookingLink()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>`) +
     launchOffer.sections.map(({ heading, text }) => `<section class="page-section"><h2>${escape(heading)}</h2><p>${escape(text)}</p></section>`).join("") +
+    clientCareSection() +
+    proof +
     `<section class="page-section"><h2>What could the site include?</h2><nav class="related-links" aria-label="Related development services">${launchOffer.serviceSlugs.map((slug) => services.find((service) => service.slug === slug)).filter(Boolean).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a>`).join("")}<a href="${local(route, "project-kickoff/")}">Project kickoff checklist</a><a href="${local(route, "work/")}">The 4u Digital project portfolio</a></nav></section>` +
     faqBlock("Questions about the offer", launchOffer.faq) +
     `<aside class="page-callout"><h2>Bring the problem, not a finished plan.</h2><p>${escape(launchOffer.bookingIntro)}</p>${bookingLink()}</aside>`;
@@ -320,11 +329,14 @@ function servicePage(service) {
     breadcrumbs: [{ name: "Services", path: "/services/" }, { name: service.title, path: route }],
   };
   const examples = service.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
+  const websiteOffer = launchOffer.serviceSlugs.includes(service.slug) ? `<aside class="service-website-offer"><p class="eyebrow">FOR NEW YORK CITY BUSINESSES</p><p>A custom website for $1,200, or $1,900 with booking or ordering. First ten eligible projects agreed by November 30, 2026, subject to scope and capacity.</p><a class="text-link" href="${local(route, "offer/")}">Explore the website offer <span aria-hidden="true">↗</span></a></aside>` : "";
   const content = intro(service.eyebrow, service.heading, service.intro, `<div class="page-actions">${bookingLink()}${inquiry(service.topic, "Email about your project", "", "button button-outline")}<a class="text-link" href="#examples">See examples ↓</a></div>`) +
+    websiteOffer +
     `<nav class="page-section-nav" aria-label="On this service page"><span class="mono">ON THIS PAGE</span><a href="#service-fit">What it can do <span aria-hidden="true">↓</span></a><a href="#examples">Project examples <span aria-hidden="true">↓</span></a><a href="#service-scope">Planning your build <span aria-hidden="true">↓</span></a><a href="#service-questions">Questions <span aria-hidden="true">↓</span></a></nav>` +
     `<section id="service-fit" class="page-section"><h2>What could ${escape(service.title.toLowerCase())} help you do?</h2><div class="page-columns">${service.when.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
     `<section id="examples" class="page-section"><h2>See the work behind the offer.</h2><p class="section-lead">${escape(service.proofIntro)}</p><div class="seo-project-grid">${examples.map((project) => projectCard(project, route)).join("")}</div></section>` +
     `<section id="service-scope" class="page-section"><h2>What do we decide before building?</h2><div class="page-columns">${service.scope.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></section>` +
+    clientCareSection() +
     faqBlock(`Questions about ${service.title.toLowerCase()}`, service.faq, "service-questions") +
     `<aside class="page-callout"><h2>Start with the problem.</h2><p>Describe your business, who will use the technology, and what needs to work better. A finished plan isn’t required.</p><div class="page-actions">${bookingLink()}${inquiry(service.topic, "Email about your project", "", "button button-outline")}</div><p class="client-ownership-note">Your custom code is 100% yours. Client work and code stay out of this public portfolio unless you give permission.</p></aside>` +
     `<section class="page-section"><h2>Still choosing what to build?</h2><p>A website, browser app, and native app solve different problems. Compare the options before choosing a platform.</p>${service.guideSlug ? `<p><a class="text-link" href="${local(route, `insights/${service.guideSlug}/`)}">Read the ${service.topic === "salon" ? "salon booking" : "restaurant ordering"} planning guide ↗</a></p>` : ""}<a class="text-link" href="${local(route, "guides/website-or-app/")}">Should you build a website or an app? ↗</a><nav class="related-links" aria-label="Other development services">${services.filter((other) => other.slug !== service.slug).map((other) => `<a href="${local(route, `services/${other.slug}/`)}">${escape(other.title)}</a>`).join("")}</nav></section>`;
@@ -382,12 +394,13 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-22",
+    modified: "2026-10-23",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
   html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
   html = html.replace('<section id="range-proof" class="range-proof" aria-label="Development range and published app proof"></section>', `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${renderRangeProof()}</section>`);
+  html = html.replace('<section id="client-care" class="client-care-section wrap" aria-labelledby="client-care-title"></section>', clientCareSection(true));
   html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
   html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
   html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);

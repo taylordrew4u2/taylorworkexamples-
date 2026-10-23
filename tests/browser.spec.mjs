@@ -995,7 +995,7 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   await expect(process.locator("li")).toHaveCount(3);
   await expect(process.locator("li h3")).toHaveText([
     "Tell me the problem",
-    "Agree scope and price",
+    "Agree scope, price, and timing",
     "Build, review, launch",
   ]);
   for (const step of await process.locator("li").all()) {
@@ -1007,7 +1007,7 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   )), "The process follows the selected work").toBe(true);
 
   const faqSection = page.locator("#project-faq");
-  await expect(faqSection.locator("details.faq-item")).toHaveCount(5);
+  await expect(faqSection.locator("details.faq-item")).toHaveCount(6);
   await expect(faqSection.locator(".faq-item:not(details)")).toHaveCount(0);
   expect(await faqSection.evaluate((element) => Boolean(
     element.compareDocumentPosition(document.querySelector("#contact")) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -1015,6 +1015,7 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   const answers = [
     ["What if my idea isn’t finished?", "That’s fine. Start with the problem you want to solve. We can work out the details together."],
     ["How is pricing worked out?", "Pricing depends on scope, features, and complexity. We’ll agree what’s included and the price before building."],
+    ["Does a consultation commit me to a project?", /No\..*scope, price, start date, and target launch in writing/],
     ["What happens after launch?", "We’ll discuss who maintains it and any hosting/service costs when defining the project."],
     ["What if I only need a website?", "That’s a complete project too. I can build a straightforward site for your services, location, work, and contact details. We’ll choose the pages and features your business needs. Explore website services ↗"],
     ["Who owns the code, and will my project be public?", "All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission. The projects shown here are selected personal projects."],
@@ -1047,10 +1048,11 @@ test("service choices, open FAQs, and the supporting gallery fit narrow and tabl
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/");
     await page.evaluate(() => document.fonts.ready);
-    for (const summary of await page.locator("#project-faq .faq-item summary").all()) {
+    const faqSummaries = page.locator("#project-faq .faq-item summary");
+    for (const summary of await faqSummaries.all()) {
       await summary.click();
     }
-    await expect(page.locator("#project-faq details[open]")).toHaveCount(5);
+    await expect(page.locator("#project-faq details[open]")).toHaveCount(await faqSummaries.count());
     for (const selected of await page.locator("#featured-projects .project-card").all()) {
       await openSelectedGallery(selected);
     }

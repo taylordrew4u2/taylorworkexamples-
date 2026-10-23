@@ -40,6 +40,12 @@ export const clientTestimonials = [
     name: "Alistair F.",
     business: "Oxpecker Coffee",
     location: "Brooklyn",
+    // Derived only from the owner's approved quote; this is a client account, not measured results.
+    projectStory: {
+      problem: "A coffee subscription service started with a vague business problem.",
+      build: "A custom portal shaped around that problem.",
+      result: "Alistair reports that the portal automated the service’s workflow.",
+    },
   },
   {
     id: "lena-p",

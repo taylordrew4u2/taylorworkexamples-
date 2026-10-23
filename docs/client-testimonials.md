@@ -7,3 +7,5 @@ The homepage presents all nine client reviews directly after the complete person
 These are attributed client statements, not independent verification or guarantees about future work. No ratings, stars, verification badges, client logos, business URLs, or Review/AggregateRating structured data are added. The public personal-project catalog remains separate. No client code or screenshots are published through this change.
 
 The section’s consultation link uses the existing BriefBooth destination. The feature adds no external service, paid tool, tracking, or client-side script.
+
+Alistair F.’s existing Oxpecker Coffee card also includes a compact “Client account” detail: the starting problem, the custom portal, and the result reported by the client. Its three summaries derive solely from the owner-approved testimonial and add no separate quote. This is not an independently measured case study; no additional project capabilities, performance figures, security claims, client images, private code, or screenshots are inferred or published.
