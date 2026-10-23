@@ -82,10 +82,9 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto(route);
         const dock = mobileConsultation(page);
         await expect(dock).toHaveClass(/\bmobile-consultation\b/);
-        await expect(dock).toContainText("Meet online");
-        await expect(dock).toContainText(/BriefBooth\s*·\s*new tab/);
         const booking = dock.getByRole("link", { name: /^Book a consultation \(opens in a new tab\)$/ });
         await expectDirectBooking(booking);
+        await expect(booking).toHaveAccessibleName("Book a consultation (opens in a new tab)");
         await expectExternalOnlyBooking(page);
 
         await page.evaluate(async () => {

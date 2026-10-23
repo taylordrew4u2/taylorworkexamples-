@@ -343,13 +343,7 @@ button, a, input, select, textarea, summary {
   margin-top: 1.5rem;
 }
 
-.hero-planner-note { max-width: 36rem; margin-top: .8rem; color: inherit; font-size: .8125rem; line-height: 1.65; }
 .hero-booking-note { margin-top: .8rem; font-size: .75rem; line-height: 1.65; }
-.consultation-planner { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
-.consultation-planner h4 { font-size: 1rem; margin-bottom: .65rem; }
-.consultation-planner > p { font-size: .875rem; line-height: 1.7; }
-.consultation-planner .text-link { display: inline-flex; min-height: 2.75rem; align-items: center; }
-.consultation-planner .planner-destination { color: #ccc; font-size: .8125rem; }
 
 .intro-actions .button-dark {
   color: #111;
@@ -3144,6 +3138,32 @@ a, button, summary { touch-action: manipulation; }
   .hero-platform-project, .hero-project, .industry-services > a, .menu-toggle span { transition: none; }
 }
 
+/* A quiet, persistent route into the optional planner. */
+.planner-shortcut {
+  position: fixed;
+  right: max(1.5rem, env(safe-area-inset-right, 0px));
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 17;
+  display: grid;
+  gap: .15rem;
+  min-height: 54px;
+  max-width: calc(100vw - 2rem);
+  padding: .65rem .9rem;
+  border: 1px solid #b8b8b8;
+  border-radius: .75rem;
+  background: #fff;
+  color: #111;
+  box-shadow: 0 .25rem 1.25rem #00000014;
+  text-decoration: none;
+}
+.planner-shortcut > span { font-size: .8125rem; font-weight: 600; line-height: 1.35; }
+.planner-shortcut small { color: #555; font-size: .6875rem; line-height: 1.35; }
+.planner-shortcut:hover { border-color: #111; background: #f5f5f5; }
+body:has(.planner-shortcut) { padding-bottom: 6rem; }
+body:has(dialog[open]) .planner-shortcut,
+body:has(.menu-toggle[aria-expanded="true"]) .planner-shortcut,
+body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select):focus) .planner-shortcut { display: none; }
+
 /* Keep the external consultation link within reach on smaller screens. */
 .mobile-consultation { display: none; }
 
@@ -3173,6 +3193,19 @@ a, button, summary { touch-action: manipulation; }
     background: var(--paper);
     box-shadow: 0 -.25rem 1.5rem #0000000d;
   }
+
+  .planner-shortcut {
+    right: auto;
+    left: max(.75rem, env(safe-area-inset-left, 0px));
+    bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+    width: min(10.5rem, calc(100vw - 12.5rem));
+    padding: .5rem .65rem;
+    box-shadow: none;
+  }
+  .planner-shortcut > span { font-size: .75rem; line-height: 1.25; }
+  .planner-shortcut small { font-size: .625rem; line-height: 1.25; }
+  body:has(.planner-shortcut) .mobile-consultation { justify-content: flex-end; }
+  body:has(.planner-shortcut) .mobile-consultation > p { display: none; }
 
   .mobile-consultation > p {
     flex: 1 1 auto;
@@ -3210,7 +3243,7 @@ a, button, summary { touch-action: manipulation; }
     --mobile-consultation-space: 0px;
     scroll-padding-bottom: 1rem;
   }
-  .mobile-consultation { display: none; }
+  .mobile-consultation, .planner-shortcut { display: none; }
 }
 
 /* A visitor-controlled opening: authentic artwork, with all explanations below it. */

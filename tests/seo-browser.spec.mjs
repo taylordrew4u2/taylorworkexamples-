@@ -575,21 +575,22 @@ test("the comparison guide, business information, and contact remain usable with
 
 test("homepage visitors can open the optional planner without booking or finding the later kickoff form", async ({ page }) => {
   await page.goto("/");
-  for (const entry of ["#main-nav", ".intro-actions", "#process", "#consultation"]) {
-    const planner = page.locator(entry).getByRole("link", { name: /project planner/i });
+  for (const entry of ["#main-nav", ".planner-shortcut"]) {
+    const planner = entry === ".planner-shortcut" ? page.locator(entry)
+      : page.locator(entry).getByRole("link", { name: /project planner/i });
     await expect(planner).toHaveCount(1);
     expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
   }
-  await expect(page.locator(".hero-planner-note")).toContainText(/optional.*planner/i);
-  await expect(page.locator(".hero-planner-note")).toContainText(/before or after/i);
-  await expect(page.locator(".hero-planner-note")).toContainText(/doesn.t book/i);
-  await expect(page.locator("#process")).toContainText("before or after a consultation");
+  await expect(page.locator(".hero-planner-note, .consultation-planner")).toHaveCount(0);
+  await expect(page.locator(".intro-actions a[href*='project-brief'], #process a[href*='project-brief'], #consultation a[href*='project-brief']")).toHaveCount(0);
   await expect(page.locator("#process a[href*='project-kickoff'], .footer-pages a[href*='project-kickoff']")).toHaveCount(0);
-  const planner = page.locator("#process").getByRole("link", { name: /project planner/i });
+  const planner = page.getByRole("link", { name: "Know what you want? Open the optional project planner", exact: true });
+  await expect(planner).toBeInViewport({ ratio: 1 });
   // Native keyboard activation does not wait on pointer stability during smooth scrolling.
   await planner.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
+  await expect(page.locator(".page-intro")).toContainText(/optional planner before or after a consultation/i);
   await expect(page.locator(".page-intro")).toContainText("Skip anything undecided.");
   await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
   await expectBookingLink(page.locator(".page-nav .nav-contact"));

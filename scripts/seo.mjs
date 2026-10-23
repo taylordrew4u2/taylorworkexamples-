@@ -160,7 +160,7 @@ function frame(page, content) {
     "/project-kickoff/": "kickoff-page", "/project-brief/": "project-brief-page", "/contact/": "contact-page", "/about/": "about-page",
     "/privacy/": "privacy-page", "/guides/website-or-app/": "comparison-page",
   }[page.path] || "");
-  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
+  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${plannerShortcut(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
 }
 
 function sourceEmailLinks(html, route) {
@@ -179,6 +179,11 @@ function inquiry(topic = "general", text = "Tell me what you need", reference = 
 
 function bookingLink(className = "button button-dark") {
   return `<a class="${className}" data-booking-link href="${bookingURL}" target="_blank" rel="noopener noreferrer">Book a consultation <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>`;
+}
+
+function plannerShortcut(route) {
+  if (["/project-brief/", "/project-kickoff/", "/privacy/", "/404.html"].includes(route)) return "";
+  return `<a class="planner-shortcut" href="${local(route, "project-brief/")}" aria-label="Know what you want? Open the optional project planner" title="Optional planner — share your ideas before or after a consultation."><span>Know what you want?</span><small>Project planner <span aria-hidden="true">→</span></small></a>`;
 }
 
 function mobileConsultation() {
