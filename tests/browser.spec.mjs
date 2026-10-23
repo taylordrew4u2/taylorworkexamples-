@@ -145,8 +145,8 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
   await expect(card.page().getByRole("dialog")).toBeHidden();
 }
 
-async function expectProjectIcon(scope, project) {
-  const frame = scope.locator(".project-identity .project-icon-frame");
+async function expectProjectIcon(scope, project, frameSelector = ".project-identity .project-icon-frame") {
+  const frame = scope.locator(frameSelector);
   await expect(frame).toHaveCount(1);
   await expect(frame).toBeVisible();
   await expect(frame).toHaveAttribute("aria-hidden", "true");
@@ -339,7 +339,7 @@ async function expectHeroPreview(page) {
       await expect(caption).toContainText(/repository product artwork/i);
       await expect(caption).toContainText(/physical.*microphone.*(?:pending|progress)/i);
     }
-    await expectProjectIcon(caption, project);
+    await expectProjectIcon(caption, project, ".project-icon-frame");
     const geometry = await link.evaluate((element) => {
       const box = element.getBoundingClientRect();
       const screen = element.querySelector(".hero-platform-screen");
