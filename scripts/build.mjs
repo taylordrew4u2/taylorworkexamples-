@@ -22,6 +22,7 @@ for (const name of [
   "project-brief.js",
   "project-brief-schema.js",
   "project-brief-palettes.js",
+  "project-brief-designs.js",
   "project-brief-config.js",
   "project-brief.css",
   "analytics.js",
@@ -70,7 +71,7 @@ for (const route of routes) {
   await writeFile(file, responsiveHTML(await readFile(file, "utf8"), route, imageVariants));
 }
 const version = await fingerprintAssets({ output, routes, names: [
-  "styles.css", "seo.css", "app.js", "homepage-explore.js", "booking.js", "kickoff-form.js", "project-brief.js", "project-brief-schema.js", "project-brief-palettes.js", "project-brief-config.js", "project-brief.css", "analytics.js",
+  "styles.css", "seo.css", "app.js", "homepage-explore.js", "booking.js", "kickoff-form.js", "project-brief.js", "project-brief-schema.js", "project-brief-palettes.js", "project-brief-designs.js", "project-brief-config.js", "project-brief.css", "analytics.js",
   "contact-context.js", "contact-pages.js", "render-projects.js", "range-proof.js",
   "public-projects.js", "responsive-images.js", "image-variants.js",
 ] });

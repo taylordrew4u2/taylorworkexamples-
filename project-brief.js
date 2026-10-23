@@ -52,6 +52,7 @@ export function initProjectBrief(doc = document) {
   let draftTimer;
   let downloadText = "";
   let selectedPalette = null;
+  let receiptReference = "";
 
   const controlsFor = (id) => [...form.querySelectorAll(`[data-brief-field="${id}"]`)];
   const applicable = (field, type) => !field.projectTypes || field.projectTypes.includes(type);
@@ -84,8 +85,8 @@ export function initProjectBrief(doc = document) {
       editingReview = false;
       navigate(index, { validate: false });
       const container = form.querySelector(`[data-field-container="${id}"]`);
-      const disclosure = container?.closest("details");
-      if (disclosure) disclosure.open = true;
+      let disclosure = container?.closest("details");
+      while (disclosure) { disclosure.open = true; disclosure = disclosure.parentElement?.closest("details"); }
       const error = get(`brief-${id}-error`);
       if (error) { error.textContent = message; error.hidden = false; }
       const controls = controlsFor(id);
@@ -107,6 +108,10 @@ export function initProjectBrief(doc = document) {
     form.querySelectorAll(".brief-advanced").forEach((details) => {
       details.hidden = ![...details.querySelectorAll("[data-field-container]")].some((container) => !container.hidden);
     });
+    form.querySelectorAll("[data-brief-field-group]").forEach((group) => {
+      group.hidden = ![...group.querySelectorAll("[data-field-container]")].some((container) => !container.hidden);
+    });
+    updateMediaEmailLinks();
     const answeredCount = briefFields.filter((field) => applicable(field, answers.projectType) && meaningful(answers[field.id])).length;
     get("brief-answered-count").textContent = answeredCount ? `${answeredCount} ${answeredCount === 1 ? "answer" : "answers"} shared. The rest can wait.` : "Make it yours, one step at a time.";
     briefSteps.forEach((step, index) => {
@@ -242,6 +247,21 @@ export function initProjectBrief(doc = document) {
     }
   }
 
+  function updateMediaEmailLinks() {
+    const answers = rawAnswers();
+    const wellFormed = (value) => String(value).replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/gu, "\uFFFD");
+    const oneLine = (value) => wellFormed(value || "").replace(/[\u0000-\u001f\u007f-\u009f]/gu, " ").trim();
+    const project = oneLine(answers.projectName || answers.businessName || "My project");
+    const reference = oneLine(receiptReference);
+    const subject = wellFormed(`4u Digital project photos and videos — ${project}${reference ? ` — ${reference}` : ""}`.slice(0, 240));
+    const body = `Hi 4u Digital,\n\nHere are the photos or videos for my project.\n\nBusiness / project: ${project}${reference ? `\nBrief reference: ${reference}` : ""}\n\nWhat I am sharing and how I would like it used:\n\n`;
+    const href = `mailto:admin@customtechbuilt4u.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    for (const id of ["brief-media-email", "brief-success-media-email"]) {
+      const link = get(id);
+      if (link) link.href = href;
+    }
+  }
+
   function renderPaletteSelection() {
     const selection = get("brief-selected-palette");
     if (!selection) return;
@@ -249,7 +269,7 @@ export function initProjectBrief(doc = document) {
       const active = selectedPalette?.id === button.dataset.briefPalette;
       button.setAttribute("aria-pressed", String(active));
       button.querySelector(".brief-palette-check").textContent = active ? "✓" : "↗";
-      button.querySelector(".brief-palette-action").textContent = active ? "Selected palette" : "Use this palette";
+      button.querySelector(".brief-palette-action").textContent = active ? "Selected starting point" : "Use as a starting point";
     });
     selection.hidden = !selectedPalette;
     get("brief-selected-palette-name").textContent = selectedPalette ? `Your starting palette: ${selectedPalette.name}` : "";
@@ -370,6 +390,19 @@ export function initProjectBrief(doc = document) {
       const addition = `${control.value.trim() ? ", " : ""}${color}`;
       if (control.value.length + addition.length <= control.maxLength) { control.value += addition; changed(); control.focus(); }
       else announce("Your color answer is full. Remove a little text before adding another code.", { error: true });
+    } else if (target.id === "brief-media-copy") {
+      const address = "admin@customtechbuilt4u.com";
+      const copyStatus = get("brief-media-copy-status");
+      Promise.resolve().then(() => win.navigator.clipboard.writeText(address)).then(() => {
+        copyStatus.textContent = "Email address copied. You can paste it into your email app or webmail.";
+      }).catch(() => {
+        const range = doc.createRange();
+        range.selectNodeContents(get("brief-media-email-address"));
+        const selection = win.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        copyStatus.textContent = "Automatic copying is unavailable. The email address is selected so you can copy it, or type it into webmail.";
+      });
     }
   });
 
@@ -415,6 +448,8 @@ export function initProjectBrief(doc = document) {
         throw new Error(response.status === 429 ? "Too many attempts in a short time. Your answers and files are still here. Please wait a little and try again." : result?.error || result?.message || "Your brief could not be confirmed. Your answers and files are still here. Please try again.");
       }
       submitted = true;
+      receiptReference = result.reference;
+      updateMediaEmailLinks();
       downloadText = `${formatBriefText(answers)}\n\nFiles shared:\n${files.length ? files.map((entry) => `${entry.file.name}${entry.caption ? ` — ${entry.caption}` : ""}`).join("\n") : "No files attached."}\n\nReference: ${result.reference}`;
       removeDraft();
       form.hidden = true;
@@ -462,6 +497,9 @@ export function initProjectBrief(doc = document) {
   } catch { /* A corrupt or unavailable local draft must not block a new brief. */ }
   get("brief-fallback").hidden = true;
   get("brief-draft-settings").open = win.matchMedia("(min-width: 701px)").matches;
+  form.querySelectorAll(".brief-advanced, [data-brief-reveal-selection]").forEach((details) => {
+    if ([...details.querySelectorAll("input, textarea")].some((control) => ["radio", "checkbox"].includes(control.type) ? control.checked : Boolean(control.value.trim()))) details.open = true;
+  });
   form.hidden = false;
   updateVisibility();
   renderFiles();

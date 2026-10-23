@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { normalizeBrief, formatBriefText } from '../project-brief-schema.js';
-import { createBriefHandler, parseSubmission, buildMail, sha256, hashIp, identifyFile, extractClientIp, canonicalIp, MAX_BODY_BYTES } from '../supabase/functions/project-brief/core.js';
+import { normalizeBrief, formatBriefText, briefFields, maxBriefLength } from '../project-brief-schema.js';
+import { createBriefHandler, parseSubmission, buildMail, escapeHtml, sha256, hashIp, identifyFile, extractClientIp, canonicalIp, MAX_BODY_BYTES } from '../supabase/functions/project-brief/core.js';
 const now = Date.parse('2026-10-23T18:00:00Z');
 const id = '22222222-2222-4222-8222-222222222222';
 const origin = 'https://customtechbuilt4u.com';
@@ -134,4 +134,79 @@ test('unknown persistence acknowledgments never report durable success', async (
   for (const result of [{}, { action: 'created' }, { action: 'created', status: 'invented' }]) {
     const { handler } = setup(result); const response = await handler(request()); assert.equal(response.status, 503); assert.equal((await response.json()).ok, false);
   }
+});
+
+test('expanded design choices, three reference pairs, and every website social are included in the owner email', async () => {
+  const brief = valid();
+  Object.assign(brief.answers, {
+    brandMood: ['clean', 'premium'], fontStyle: 'editorial',
+    referenceUrl1: 'first-reference.example/design', referenceNotes1: 'Keep the calm layout, not their pricing.',
+    referenceUrl2: 'https://second-reference.example/menus?view=seasonal', referenceNotes2: 'Readable menus & welcoming photos.',
+    referenceUrl3: 'https://third-reference.example/gallery#rooms', referenceNotes3: 'The <b>room photos</b> inspire the presentation.',
+    socialInstagram: '@my_business', socialFacebook: 'https://facebook.example/my-business',
+    socialTikTok: '@my_business_tiktok', socialYouTube: '@my_business_video',
+    socialLinkedIn: 'https://linkedin.example/company/my-business', socialX: '@my_business_x',
+    socialPinterest: '@my_business_pins', socialOther: 'Mastodon: @studio@social.example\nA second public profile can wait.',
+  });
+  const submission = await parseSubmission(request(brief), normalizeBrief, now);
+  const mail = buildMail(submission, formatBriefText);
+  for (const id of ['brandMood', 'fontStyle', 'referenceUrl1', 'referenceNotes1', 'referenceUrl2', 'referenceNotes2', 'referenceUrl3', 'referenceNotes3', 'socialInstagram', 'socialFacebook', 'socialTikTok', 'socialYouTube', 'socialLinkedIn', 'socialX', 'socialPinterest', 'socialOther']) {
+    const field = briefFields.find((entry) => entry.id === id);
+    assert.ok(field, `${id} exists in the shared deployed schema`);
+    assert.ok(mail.textContent.includes(field.label), `${id} has its question label in plain text`);
+    assert.ok(mail.htmlContent.includes(escapeHtml(field.label)), `${id} has its escaped question label in HTML`);
+    const answer = submission.answers[id];
+    const values = Array.isArray(answer) ? answer : [answer];
+    for (const value of values) {
+      const display = field.options?.find((option) => option.value === value)?.label || value;
+      assert.ok(mail.textContent.includes(display), `${id} retains the client's complete answer in plain text`);
+      assert.ok(mail.htmlContent.includes(escapeHtml(display)), `${id} retains the client's escaped complete answer in HTML`);
+    }
+  }
+  assert.equal(submission.answers.referenceUrl1, 'https://first-reference.example/design');
+  assert.match(mail.textContent, /room photos/); assert.match(mail.htmlContent, /&lt;b&gt;room photos&lt;\/b&gt;/);
+  assert.doesNotMatch(mail.htmlContent, /<b>room photos<\/b>/);
+  assert.deepEqual(mail.to, [{ email: 'admin@customtechbuilt4u.com', name: '4u Digital' }]);
+});
+
+test('website-only social answers are omitted for an app while shared font and reference choices remain', async () => {
+  const brief = valid(); Object.assign(brief.answers, { projectType: 'app', socialInstagram: '@not-for-this-project', socialOther: 'Do not include this website-only answer.', fontStyle: 'technical', referenceUrl1: 'app-reference.example', referenceNotes1: 'The timer should be easy to read.' });
+  const submission = await parseSubmission(request(brief), normalizeBrief, now);
+  const mail = buildMail(submission, formatBriefText);
+  assert.equal(submission.answers.socialInstagram, undefined); assert.equal(submission.answers.socialOther, undefined);
+  assert.equal(submission.answers.fontStyle, 'technical'); assert.equal(submission.answers.referenceUrl1, 'https://app-reference.example/');
+  assert.doesNotMatch(mail.textContent, /not-for-this-project|Do not include this website-only answer/);
+  assert.match(mail.textContent, /The timer should be easy to read/);
+});
+
+test('reference URL fields reject executable schemes, embedded credentials and control characters before storage', async () => {
+  for (const field of ['referenceUrl1', 'referenceUrl2', 'referenceUrl3']) {
+    for (const bad of ['javascript:alert(1)', 'data:text/html,<script>bad</script>', 'file:///etc/passwd', 'https://user:password@example.test/', 'https://example.test/\r\nBcc:outside@example.test']) {
+      const brief = valid(); brief.answers[field] = bad;
+      const { handler, calls } = setup(); const response = await handler(request(brief));
+      assert.equal(response.status, 400); assert.equal((await response.json()).field, field); assert.equal(calls.length, 0);
+    }
+  }
+  for (const field of ['contactName', 'contactEmail', 'socialInstagram']) {
+    const brief = valid(); brief.answers[field] = 'name\r\nBcc: outside@example.test';
+    await assert.rejects(parseSubmission(request(brief), normalizeBrief, now), (error) => error.field === field);
+  }
+});
+
+test('maximum 60000-character mixed brief fits backend UTF-8 and email payload limits', async () => {
+  const brief = valid(); brief.answers.projectType = 'mixed';
+  let total = Object.values(brief.answers).reduce((sum, value) => sum + value.length, 0);
+  for (const field of briefFields.filter((entry) => !entry.required && ['text', 'textarea', 'colors'].includes(entry.type))) {
+    const length = Math.min(field.maxLength || 3000, maxBriefLength - total);
+    if (length <= 0) break;
+    brief.answers[field.id] = '界'.repeat(length); total += length;
+  }
+  assert.equal(total, maxBriefLength, 'schema contains enough optional room for the total boundary');
+  const submission = await parseSubmission(request(brief), normalizeBrief, now);
+  assert.ok(new TextEncoder().encode(JSON.stringify(submission.answers)).length < 200 * 1024);
+  const mail = buildMail(submission, formatBriefText);
+  // Include the maximum combined attachment base64 length without using an invalid
+  // upload or sending anything: SQL receives this same serialized API payload shape.
+  mail.attachment = [{ name: 'maximum-size-reference.jpg', content: 'A'.repeat(Math.ceil((8 * 1024 * 1024) / 3) * 4) }];
+  assert.ok(new TextEncoder().encode(JSON.stringify(mail)).length < 13 * 1024 * 1024);
 });

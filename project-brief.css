@@ -90,6 +90,130 @@
 .brief-selected-palette .brief-hint { margin: .85rem 0 0; }
 .brief-color-note-label { font-size: .8125rem; font-weight: 600; line-height: 1.6; margin: .85rem 0 .5rem; }
 .brief-visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.brief-style-grid, .brief-font-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+.brief-style-card, .brief-font-card { display: flex; flex-direction: column; min-width: 0; gap: .85rem; border: 1px solid #aaa; padding: 1rem; border-radius: .7rem; background: #fff; cursor: pointer; }
+.brief-style-card:hover, .brief-font-card:hover { border-color: #151515; }
+.brief-style-card:has(input:checked), .brief-font-card:has(input:checked) { border-color: #151515; box-shadow: inset 0 0 0 1px #151515; background: #f8f8f8; }
+.brief-style-card:has(input:focus-visible), .brief-font-card:has(input:focus-visible) { outline: 2px solid #151515; outline-offset: 4px; }
+.brief-style-card-top, .brief-font-card-top { display: flex; align-items: flex-start; gap: .55rem; font-size: .8125rem; font-weight: 650; line-height: 1.6; }
+.brief-style-card input, .brief-font-card input { flex: 0 0 1.1rem; width: 1.1rem; height: 1.1rem; margin: .1rem 0 0; accent-color: #151515; }
+.brief-style-selected { margin-left: auto; visibility: hidden; }
+.brief-style-card:has(input:checked) .brief-style-selected { visibility: visible; }
+.brief-style-description, .brief-font-description { display: block; font-size: .75rem; font-weight: 400; line-height: 1.65; color: #595959; }
+.brief-style-caption { font-family: var(--mono, monospace); font-size: .5625rem; line-height: 1.5; color: #666; text-transform: uppercase; letter-spacing: .04em; }
+.brief-style-samples { display: flex; align-items: flex-end; gap: .65rem; width: 100%; min-width: 0; height: 9.25rem; padding: .65rem; border: 1px solid #dedede; border-radius: .5rem; background: #eee; overflow: hidden; }
+.brief-mini-site { display: flex; flex: 1; flex-direction: column; min-width: 0; height: 100%; border: 1px solid #aaa; border-radius: .25rem; overflow: hidden; background: #fff; }
+.brief-mini-chrome { display: flex; align-items: center; gap: .15rem; height: .65rem; padding: 0 .3rem; background: #e6e6e6; border-bottom: 1px solid #ccc; flex: 0 0 .65rem; }
+.brief-mini-chrome i { display: block; width: .15rem; height: .15rem; background: #999; border-radius: 50%; }
+.brief-mini-page { display: flex; flex-direction: column; gap: .7rem; min-height: 0; padding: .5rem; flex: 1; overflow: hidden; color: #222; background: #fff; }
+.brief-mini-nav { display: flex; align-items: center; gap: .25rem; min-height: .4rem; }
+.brief-mini-nav b { font-size: .25rem; font-family: var(--sans, sans-serif); letter-spacing: .06em; line-height: 1.2; margin-right: auto; }
+.brief-mini-nav > i { display: block; width: .6rem; height: .1rem; background: currentColor; opacity: .5; }
+.brief-mini-layout { display: flex; flex-direction: column; align-items: flex-start; gap: .4rem; flex: 1; min-height: 0; position: relative; }
+.brief-mini-heading { display: block; font-family: var(--display, sans-serif); font-size: .9rem; font-weight: 650; line-height: 1.1; letter-spacing: -.04em; max-width: 12ch; }
+.brief-mini-copy { display: grid; gap: .15rem; width: 75%; }
+.brief-mini-copy i { display: block; height: .1rem; background: currentColor; opacity: .25; }
+.brief-mini-copy i:last-child { width: 70%; }
+.brief-mini-action { display: inline-flex; padding: .22rem .4rem; background: #222; color: #fff; font-family: var(--sans, sans-serif); font-size: .25rem; line-height: 1.2; border: 1px solid transparent; }
+.brief-mini-blocks { display: flex; gap: .25rem; width: 100%; min-height: 1.3rem; margin-top: auto; }
+.brief-mini-blocks i { display: block; flex: 1; background: #e8e8e8; border: 1px solid #d8d8d8; }
+.brief-mini-table { display: none; }
+.brief-mini-phone { display: flex; flex-direction: column; flex: 0 0 3.2rem; width: 3.2rem; height: 7rem; border: 2px solid #333; border-radius: .65rem; background: #fff; color: #222; padding: .3rem .15rem .15rem; overflow: hidden; }
+.brief-mini-speaker { display: block; width: .75rem; height: .12rem; background: #333; border-radius: 1rem; margin: 0 auto .3rem; flex: 0 0 .12rem; }
+.brief-mini-app { display: flex; flex: 1; flex-direction: column; gap: .3rem; padding: .2rem; overflow: hidden; min-height: 0; }
+.brief-mini-app-title { font-family: var(--sans, sans-serif); font-size: .42rem; font-weight: 650; line-height: 1.3; }
+.brief-mini-app-feature { display: block; background: #e5e5e5; height: 1.55rem; border: 1px solid #d7d7d7; }
+.brief-mini-app-rows { display: grid; gap: .25rem; }
+.brief-mini-app-rows i { display: block; height: .45rem; background: #efefef; border: 1px solid #ddd; }
+.brief-mini-app-tabbar { display: flex; justify-content: space-between; margin-top: auto; padding: .2rem; border-top: 1px solid #ddd; }
+.brief-mini-app-tabbar i { width: .2rem; height: .2rem; background: #aaa; border-radius: 50%; }
+.brief-style-clean .brief-mini-layout { gap: .55rem; }
+.brief-style-clean .brief-mini-heading { font-weight: 500; font-size: 1rem; }
+.brief-style-clean .brief-mini-blocks { min-height: .65rem; }
+.brief-style-clean .brief-mini-blocks i { background: #fafafa; }
+.brief-style-warm .brief-mini-page, .brief-style-warm .brief-mini-app { background: #f0f0f0; }
+.brief-style-warm .brief-mini-heading { font-family: Georgia, serif; font-size: 1.05rem; font-weight: 400; letter-spacing: -.04em; }
+.brief-style-warm .brief-mini-action, .brief-style-warm .brief-mini-blocks i, .brief-style-warm .brief-mini-app-feature, .brief-style-warm .brief-mini-app-rows i { border-radius: 1rem; }
+.brief-style-warm .brief-mini-blocks i { background: #ddd; aspect-ratio: 1; max-height: 1.6rem; }
+.brief-style-warm .brief-mini-app-feature { height: 2rem; border-radius: 1rem 1rem .3rem .3rem; background: #d5d5d5; }
+.brief-style-bold .brief-mini-page, .brief-style-bold .brief-mini-app { background: #161616; color: #fff; }
+.brief-style-bold .brief-mini-heading { font-size: 1.15rem; font-weight: 800; line-height: .95; letter-spacing: -.06em; }
+.brief-style-bold .brief-mini-action { background: #fff; color: #111; font-weight: 750; }
+.brief-style-bold .brief-mini-blocks i { background: #444; border: 1px solid #fff; }
+.brief-style-bold .brief-mini-blocks i:nth-child(2) { background: #fff; }
+.brief-style-bold .brief-mini-app-title { font-size: .75rem; font-weight: 800; line-height: 1; }
+.brief-style-bold .brief-mini-app-feature { background: repeating-linear-gradient(135deg, #fff 0, #fff 3px, #171717 3px, #171717 6px); border: 0; }
+.brief-style-bold .brief-mini-app-rows i { background: #333; border-color: #aaa; }
+.brief-style-premium .brief-mini-layout { align-items: center; gap: .5rem; }
+.brief-style-premium .brief-mini-heading { font-family: Georgia, serif; font-weight: 400; font-size: .95rem; text-align: center; line-height: 1.2; letter-spacing: -.03em; }
+.brief-style-premium .brief-mini-copy { width: 60%; }
+.brief-style-premium .brief-mini-action { background: transparent; color: #222; border-color: #999; font-size: .22rem; letter-spacing: .06em; }
+.brief-style-premium .brief-mini-blocks { justify-content: center; min-height: 1.7rem; }
+.brief-style-premium .brief-mini-blocks i { flex: 0 0 34%; border-radius: 50% 50% 0 0; background: #ddd; }
+.brief-style-premium .brief-mini-blocks i:not(:first-child) { display: none; }
+.brief-style-premium .brief-mini-app-title { font-family: Georgia, serif; font-weight: 400; text-align: center; font-size: .5rem; }
+.brief-style-premium .brief-mini-app-feature { border-radius: 50% 50% 0 0; height: 2rem; background: #d4d4d4; }
+.brief-style-playful .brief-mini-heading { font-size: 1rem; font-weight: 750; }
+.brief-style-playful .brief-mini-action { border-radius: 1rem; transform: rotate(-4deg); }
+.brief-style-playful .brief-mini-blocks i { border-radius: .6rem; background: #d8d8d8; transform: rotate(7deg); }
+.brief-style-playful .brief-mini-blocks i:nth-child(2) { background: #999; transform: rotate(-8deg); }
+.brief-style-playful .brief-mini-app-feature { border-radius: 50% 35% 45% 25%; background: #b5b5b5; transform: rotate(-5deg); }
+.brief-style-playful .brief-mini-app-rows i { border-radius: 1rem; }
+.brief-style-professional .brief-mini-nav { padding-bottom: .3rem; border-bottom: 1px solid #ccc; }
+.brief-style-professional .brief-mini-heading { font-size: .85rem; line-height: 1.15; }
+.brief-style-professional .brief-mini-blocks { min-height: 1.6rem; }
+.brief-style-professional .brief-mini-blocks i { background: linear-gradient(to top, #bcbcbc 55%, #e9e9e9 55%); }
+.brief-style-professional .brief-mini-blocks i:nth-child(2) { background: linear-gradient(to top, #bcbcbc 80%, #e9e9e9 80%); }
+.brief-style-professional .brief-mini-app-feature { height: 1.25rem; background: #333; }
+.brief-style-professional .brief-mini-app-rows i { height: .7rem; border-left: .3rem solid #888; }
+.brief-style-practical .brief-mini-layout { padding-left: 1.2rem; }
+.brief-style-practical .brief-mini-layout::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: .8rem; background: repeating-linear-gradient(to bottom, #ddd 0, #ddd 5px, transparent 5px, transparent 12px); border-right: 1px solid #ddd; }
+.brief-style-practical .brief-mini-heading { font-size: .7rem; line-height: 1.15; font-weight: 650; max-width: none; }
+.brief-style-practical .brief-mini-copy, .brief-style-practical .brief-mini-blocks { display: none; }
+.brief-style-practical .brief-mini-action { padding: .18rem .3rem; }
+.brief-style-practical .brief-mini-table { display: grid; width: 100%; flex: 1; gap: .25rem; }
+.brief-style-practical .brief-mini-table i { display: block; background: repeating-linear-gradient(to right, #e8e8e8 0, #e8e8e8 18%, #fff 18%, #fff 21%); border-bottom: 1px solid #ccc; min-height: .8rem; }
+.brief-style-practical .brief-mini-app-feature { display: none; }
+.brief-style-practical .brief-mini-app-rows i { height: .95rem; border-left: .3rem solid #777; background: #f1f1f1; }
+.brief-visual-more { border-block: 1px solid #d8d8d8; padding-bottom: 0; margin: .85rem 0; }
+.brief-visual-more > summary { display: flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 3.5rem; padding-block: .65rem; cursor: pointer; font-size: .8125rem; font-weight: 650; line-height: 1.6; list-style: none; }
+.brief-visual-more > summary::-webkit-details-marker { display: none; }
+.brief-visual-more[open] > summary { margin-bottom: .75rem; }
+.brief-visual-more[open] { padding-bottom: 1rem; }
+.brief-style-open { margin-top: .5rem; }
+.brief-font-teaser { display: inline-flex; align-items: baseline; gap: .6rem; font-size: 1.25rem; white-space: nowrap; }
+.brief-font-teaser i { font-family: Georgia, serif; font-weight: 400; }
+.brief-font-teaser code { font-family: var(--mono, monospace); font-size: 1rem; font-weight: 400; }
+.brief-font-card { min-height: 10rem; gap: .9rem; }
+.brief-font-card-top { font-size: .75rem; }
+.brief-font-sample { display: block; font-size: 1.45rem; font-weight: 500; line-height: 1.25; letter-spacing: -.035em; margin-top: auto; }
+.brief-font-modern .brief-font-sample { font-family: Manrope, Arial, sans-serif; font-weight: 650; }
+.brief-font-friendly .brief-font-sample { font-family: "DM Sans", Arial, sans-serif; font-weight: 500; }
+.brief-font-editorial .brief-font-sample { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-style: italic; }
+.brief-font-classic .brief-font-sample { font-family: ui-serif, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-weight: 400; }
+.brief-font-technical .brief-font-sample { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; font-size: 1.15rem; letter-spacing: -.04em; }
+.brief-font-unsure .brief-font-sample { font-family: var(--sans, sans-serif); font-size: 1.2rem; }
+.brief-reference-group { padding: 1.25rem; background: #f7f7f7; border: 1px solid #d8d8d8; border-radius: .65rem; }
+.brief-reference-group h3 { font-size: .9375rem; line-height: 1.6; margin: 0; }
+.brief-reference-group > .brief-hint { margin-bottom: 1.25rem; }
+.brief-reference-group .brief-fields { gap: 1.25rem; }
+.brief-social-rows { display: grid; gap: 1rem; }
+.brief-social-row { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); align-items: start; gap: .65rem; }
+.brief-social-mark { display: grid; place-items: center; width: 2.25rem; height: 2.25rem; margin-top: .15rem; color: #333; background: #f2f2f2; border: 1px solid #ccc; border-radius: .45rem; font-size: .875rem; font-weight: 650; font-family: var(--sans, sans-serif); }
+.brief-social-row .brief-field > label { font-size: .8125rem; }
+.brief-media-email { display: flex; align-items: flex-start; gap: .85rem; padding: 1.25rem; margin: 1.75rem 0; background: #f3f3f3; border: 1px solid #aaa; border-radius: .75rem; }
+.brief-media-email > div { min-width: 0; flex: 1; }
+.brief-media-email-icon { display: grid; place-items: center; flex: 0 0 2rem; width: 2rem; height: 2rem; background: #fff; border: 1px solid #aaa; border-radius: .4rem; font-size: 1.15rem; }
+.brief-media-email h3 { font-size: 1rem; line-height: 1.6; margin: 0 0 .6rem; }
+.brief-media-email p { font-size: .8125rem; line-height: 1.75; color: #595959; margin: .6rem 0; }
+.brief-media-email a:not(.brief-button) { color: #151515; text-decoration: underline; text-underline-offset: .2rem; overflow-wrap: anywhere; }
+.brief-media-email-actions { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; margin-top: .85rem; }
+.brief-media-email-actions .brief-button { font-size: .8125rem; }
+.brief-custom-palette { margin: 1rem 0 0; padding-top: 1rem; border-top: 1px solid #d8d8d8; }
+.brief-custom-palette h3 { font-size: .9375rem; line-height: 1.6; margin: 0 0 .4rem; }
+.brief-success-media { padding-top: 1.5rem; margin-top: 1.5rem; border-top: 1px solid #ccc; }
+.brief-success-media h3 { font-size: 1rem; line-height: 1.6; }
+.brief-success-media a { text-decoration: underline; text-underline-offset: .2rem; overflow-wrap: anywhere; }
 .brief-option:has(input:checked) { border-color: #151515; background: #f3f3f3; box-shadow: inset 0 0 0 1px #151515; }
 .brief-option:has(input:checked) .brief-choice-mark { color: #151515; }
 .brief-option:hover { border-color: #777; }
@@ -166,6 +290,7 @@
 .brief-success .brief-reference { font-family: var(--mono, monospace); font-size: .75rem !important; }
 .brief-success-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
 @media (max-width: 900px) { .brief-layout { grid-template-columns: 14rem minmax(0, 1fr); } .brief-sidebar { padding: 1.5rem 1rem; } .brief-main { padding: 1.5rem; } .brief-options { grid-template-columns: minmax(0, 1fr); } }
+@media (min-width: 701px) and (max-width: 1050px) { .brief-style-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 1050px) { .brief-palette-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 700px) {
   .project-brief-page.content-page .page-header { min-height: 4.5rem; padding-block: .75rem; flex-wrap: nowrap; gap: .5rem; }
@@ -193,6 +318,20 @@
   .brief-draft > p { font-size: .6875rem; margin: 0; }
   .brief-draft .brief-text-button { display: inline-flex; margin-right: 1rem; }
   .brief-main { padding: 1.25rem; }
+  .brief-style-grid { grid-template-columns: minmax(0, 1fr); }
+  .brief-style-card, .brief-font-card { padding: .85rem; }
+  .brief-style-samples { height: 9.5rem; }
+  .brief-style-caption { font-size: .5625rem; }
+  .brief-font-grid { grid-template-columns: minmax(0, 1fr); }
+  .brief-font-card { min-height: 8.5rem; }
+  .brief-font-card-top { font-size: .8125rem; }
+  .brief-font-sample { font-size: 1.5rem; }
+  .brief-reference-group { padding: 1rem; }
+  .brief-social-row { grid-template-columns: 1.8rem minmax(0, 1fr); gap: .5rem; }
+  .brief-social-mark { width: 1.8rem; height: 1.8rem; font-size: .75rem; }
+  .brief-media-email { padding: 1rem; flex-direction: column; gap: .65rem; }
+  .brief-media-email-actions { gap: .4rem; }
+  .brief-media-email-actions .brief-button { width: 100%; font-size: .8125rem; padding-inline: .75rem; }
   .brief-project-options .brief-option > .brief-project-icon { flex-basis: 2rem; width: 2rem; height: 2rem; }
   .brief-project-icon svg { width: 1.4rem; height: 1.4rem; }
   .brief-project-options .brief-option { gap: .55rem; }

@@ -19,7 +19,7 @@ test("a selected visual palette and multiline client notes survive validation an
 
 test("the brief is an optional discovery conversation with only project type and reply identity required", () => {
   assert.equal(briefSteps.length, 9);
-  assert.ok(briefFields.length >= 45 && briefFields.length <= 65);
+  assert.ok(briefFields.length >= 70 && briefFields.length <= 85);
   assert.deepEqual(briefFields.filter((field) => field.required).map((field) => field.id).sort(), ["contactEmail", "contactName", "projectType"]);
   assert.deepEqual(normalizeBrief(minimum), minimum);
   assert.ok(briefSteps.some((step) => step.id === "assets"));
@@ -27,7 +27,7 @@ test("the brief is an optional discovery conversation with only project type and
   assert.equal(new Set(ids).size, briefFields.length);
   assert.deepEqual(new Set(ids), new Set(briefFields.map((field) => field.id)));
   assert.ok(briefFields.every((field) => briefSteps.find((step) => step.id === field.stepId)?.fields.includes(field.id)));
-  assert.ok(briefFields.filter((field) => !field.required && field.type === "radio").every((field) => field.options.some((option) => option.value === "not_sure")));
+  assert.ok(briefFields.filter((field) => !field.required && field.type === "radio").every((field) => field.options.some((option) => ["not_sure", "unsure"].includes(option.value))));
   assert.ok(briefFields.some((field) => field.id === "colors" && field.type === "colors"));
   assert.ok(briefFields.some((field) => field.id === "avoidColors"));
   assert.ok(briefFields.some((field) => field.id === "sensitiveData" && field.hint.includes("Do not include")));
@@ -127,4 +127,84 @@ test("summaries keep human labels, deterministic choices, and unmodified text fo
   assert.ok(text.indexOf("Start with your idea") < text.indexOf("Where can I reply?"));
   assert.equal(text, formatBriefText(raw));
   assert.deepEqual(raw.devices, ["tablet", "phone"]);
+});
+
+test("visual styles retain saved choice values and font selections reach the summary by their human names", () => {
+  const mood = briefFields.find((field) => field.id === "brandMood");
+  assert.deepEqual(mood.options.map((option) => option.value), ["clean", "warm", "bold", "premium", "playful", "professional", "practical", "not_sure"]);
+  const fonts = briefFields.find((field) => field.id === "fontStyle");
+  assert.equal(fonts.stepId, "design");
+  assert.equal(fonts.required, undefined);
+  assert.deepEqual(fonts.options.map((option) => option.value), ["modern", "friendly", "editorial", "classic", "technical", "unsure"]);
+  for (const font of fonts.options) {
+    const answers = normalizeBrief({ ...minimum, brandMood: ["professional", "warm"], fontStyle: font.value });
+    assert.equal(answers.fontStyle, font.value);
+    assert.deepEqual(answers.brandMood, ["warm", "professional"]);
+    const summary = formatBriefText(answers);
+    assert.ok(summary.includes(`${fonts.label}\n${font.label}`));
+  }
+  for (const fontStyle of ["not_a_font", "<style>body{display:none}</style>", ["modern"], null]) {
+    assert.throws(() => normalizeBrief({ ...minimum, fontStyle }), (error) => error.field === "fontStyle");
+  }
+});
+
+test("three optional reference pairs keep each URL connected with what the client likes", () => {
+  const raw = { ...minimum, projectType: "app", designReferences: "Also like the clear train station signs." };
+  for (let number = 1; number <= 3; number++) {
+    const urlId = `referenceUrl${number}`;
+    const notesId = `referenceNotes${number}`;
+    const urlField = briefFields.find((field) => field.id === urlId);
+    const notesField = briefFields.find((field) => field.id === notesId);
+    assert.equal(urlField.group, `reference${number}`);
+    assert.equal(notesField.group, `reference${number}`);
+    assert.equal(urlField.stepId, "design");
+    assert.equal(notesField.stepId, "design");
+    assert.equal(Boolean(urlField.advanced), number > 1);
+    assert.equal(Boolean(notesField.advanced), number > 1);
+    raw[urlId] = `example${number}.test/app`;
+    raw[notesId] = `Reference ${number} has a clear menu and useful preview.`;
+  }
+  const answers = normalizeBrief(raw);
+  const summary = formatBriefText(answers);
+  for (let number = 1; number <= 3; number++) {
+    assert.equal(answers[`referenceUrl${number}`], `https://example${number}.test/app`);
+    assert.ok(summary.includes(`Reference ${number} — website or app link\nhttps://example${number}.test/app\n\nReference ${number} — what do you like about it?\n${raw[`referenceNotes${number}`]}`));
+    for (const unsafe of ["javascript:alert(1)", "file:///private/photo.jpg", "https://user:secret@example.test/"]) {
+      assert.throws(() => normalizeBrief({ ...minimum, [`referenceUrl${number}`]: unsafe }), (error) => error.field === `referenceUrl${number}`);
+    }
+  }
+  assert.equal(normalizeBrief({ ...minimum, referenceNotes1: "I like a competitor's colors but do not have their link." }).referenceNotes1, "I like a competitor's colors but do not have their link.");
+  assert.ok(summary.includes(raw.designReferences));
+  assert.ok(!Object.hasOwn(normalizeBrief({ ...minimum, referenceUrl1: "", referenceNotes1: "" }), "referenceUrl1"));
+});
+
+test("website social profiles accept handles or URLs, remain optional, and disappear for app or software-only briefs", () => {
+  const socials = {
+    socialInstagram: "@ourshop",
+    socialFacebook: "facebook.com/ourshop",
+    socialTikTok: "@ourshopvideos",
+    socialYouTube: "https://youtube.com/@ourshop",
+    socialLinkedIn: "Our Shop Company",
+    socialX: "@ourshopnews",
+    socialPinterest: "pinterest.com/ourshop",
+    socialOther: "Add our public Mastodon profile too.\nInstagram should appear first.",
+  };
+  for (const [id, value] of Object.entries(socials)) {
+    const field = briefFields.find((entry) => entry.id === id);
+    assert.equal(field.stepId, "assets");
+    assert.equal(field.group, "social");
+    assert.deepEqual(field.projectTypes, ["website", "mixed", "unsure"]);
+    assert.equal(field.required, undefined);
+    for (const projectType of ["website", "mixed", "unsure"]) assert.equal(normalizeBrief({ ...minimum, projectType, [id]: ` ${value} ` })[id], value);
+    for (const projectType of ["app", "software"]) assert.ok(!Object.hasOwn(normalizeBrief({ ...minimum, projectType, [id]: value }), id));
+    assert.ok(formatBriefText({ ...minimum, [id]: value }).includes(`${field.label}\n${value}`));
+  }
+  const summary = formatBriefText({ ...minimum, ...socials });
+  for (const value of Object.values(socials)) assert.ok(summary.includes(value));
+  const appSummary = formatBriefText({ ...minimum, ...socials, projectType: "app" });
+  assert.doesNotMatch(appSummary, /@ourshop|facebook.com|Mastodon/);
+  for (const socialInstagram of [[], {}, null, "@ourshop\nBcc: outside@example.test"]) {
+    assert.throws(() => normalizeBrief({ ...minimum, socialInstagram }), (error) => error.field === "socialInstagram");
+  }
+  assert.equal(maxBriefLength, 60000);
 });
