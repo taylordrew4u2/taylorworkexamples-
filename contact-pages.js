@@ -6,6 +6,6 @@ import { portfolioProjectIds } from "./portfolio-selection.js";
 export const contactPages = [
   "/", "/services/", ...services.map(({ slug }) => `/services/${slug}/`),
   "/work/", ...portfolioProjectIds.map((id) => `/work/${projectSlugs[id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/privacy/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/project-brief/", "/privacy/", "/insights/",
   ...articles.map(({ slug }) => `/insights/${slug}/`), "/new-york-city/", "/offer/",
 ];

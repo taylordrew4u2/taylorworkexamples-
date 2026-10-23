@@ -21,7 +21,7 @@ const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
 const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/privacy/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/project-brief/", "/privacy/", "/insights/",
   ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/", "/offer/"];
 const documents = new Map();
 
@@ -80,7 +80,7 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   assert.equal(projects.length, 10);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 46);
+  assert.equal(routes.length, 47);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -439,7 +439,7 @@ test("salon and restaurant services explain the business workflow and connect to
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
     const service = services.find((entry) => route === `/services/${entry.slug}/`);
     const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const offerUpdate = ["/", "/offer/"].includes(route);
+    const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
     const modified = offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
       route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
