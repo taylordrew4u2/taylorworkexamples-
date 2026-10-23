@@ -1,6 +1,22 @@
 import { briefSteps, briefFields } from "./project-brief-schema.js";
+import { briefPalettes } from "./project-brief-palettes.js";
 
 const escape = (value = "") => String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+
+function projectIcon(type) {
+  const shapes = {
+    website: '<rect x="3" y="5" width="26" height="22" rx="3"/><path d="M3 12h26M8 8.5h1m3 0h1M8 17h10m-10 5h16"/>',
+    app: '<rect x="8" y="2" width="16" height="28" rx="4"/><path d="M13 6h6m-7 6h8m-8 5h8m-5 9h2"/>',
+    software: '<rect x="3" y="5" width="26" height="22" rx="3"/><path d="M11 5v22M16 11h8m-8 5h5m-5 5h8M6 11h2m-2 5h2m-2 5h2"/>',
+    mixed: '<rect x="2" y="5" width="22" height="18" rx="3"/><rect x="19" y="12" width="11" height="18" rx="2" fill="white"/><path d="M2 11h17m4 15h3"/>',
+    unsure: '<path d="M28 14c0 6-5 11-12 11h-5l-7 4 2-8a10 10 0 0 1-3-7C3 8 9 3 16 3s12 5 12 11Z"/><path d="M12 11a4 4 0 0 1 8 0c0 3-4 3-4 6m0 3v.5"/>',
+  };
+  return `<span class="brief-project-icon" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">${shapes[type] || shapes.unsure}</svg></span>`;
+}
+
+function renderPalettes() {
+  return `<div class="brief-palette-picker"><p class="brief-hint">Tap a palette to see a starting point for <strong>your project</strong>. Add your own colors or notes below, or leave this open for discussion.</p><div class="brief-palette-grid" role="group" aria-label="Color palette starting points">${briefPalettes.map((selection) => `<button type="button" class="brief-palette" data-brief-palette="${selection.id}" aria-pressed="false" aria-describedby="brief-palette-colors-${selection.id}"><span class="brief-palette-title">${escape(selection.name)}<span class="brief-palette-check" aria-hidden="true">↗</span></span><span class="brief-palette-swatches" aria-hidden="true">${selection.colors.map((color) => `<i style="background-color:${color.hex}"></i>`).join("")}</span><span class="brief-palette-action">Use this palette</span><span id="brief-palette-colors-${selection.id}" class="brief-visually-hidden">${selection.colors.map((color) => `${color.name}, ${color.hex}`).join("; ")}</span></button>`).join("")}</div><div id="brief-selected-palette" class="brief-selected-palette" hidden><div><p id="brief-selected-palette-name"></p><button id="brief-clear-palette" type="button" class="brief-text-button">Clear palette</button></div><ul id="brief-selected-palette-colors"></ul><p class="brief-hint">This palette and its color codes will be included with your brief. You can choose another palette without losing your notes.</p></div></div>`;
+}
 
 function renderField(field) {
   const id = `brief-${field.id}`;
@@ -11,7 +27,7 @@ function renderField(field) {
   const limit = field.maxLength ? ` maxlength="${field.maxLength}"` : "";
   let control;
   if (["radio", "checkboxes"].includes(field.type)) {
-    control = `<fieldset class="brief-field brief-choice-field" data-field-container="${escape(field.id)}"><legend>${escape(field.label)} ${marker}</legend>${hint}<div class="brief-options ${field.id === "projectType" ? "brief-project-options" : ""}">${field.options.map((option, index) => `<label class="brief-option" for="${id}-${index}"><input id="${id}-${index}" type="${field.type === "radio" ? "radio" : "checkbox"}" ${common} value="${escape(option.value)}"${field.required ? " required" : ""}><span>${escape(option.label)}</span><span class="brief-choice-mark" aria-hidden="true">${field.type === "radio" ? "↗" : "+"}</span></label>`).join("")}</div><p id="${id}-error" class="brief-field-error" hidden></p></fieldset>`;
+    control = `<fieldset class="brief-field brief-choice-field" data-field-container="${escape(field.id)}"><legend>${escape(field.label)} ${marker}</legend>${hint}<div class="brief-options ${field.id === "projectType" ? "brief-project-options" : ""}">${field.options.map((option, index) => `<label class="brief-option" for="${id}-${index}"><input id="${id}-${index}" type="${field.type === "radio" ? "radio" : "checkbox"}" ${common} value="${escape(option.value)}"${field.required ? " required" : ""}>${field.id === "projectType" ? projectIcon(option.value) : ""}<span>${escape(option.label)}</span><span class="brief-choice-mark" aria-hidden="true">${field.type === "radio" ? "↗" : "+"}</span></label>`).join("")}</div><p id="${id}-error" class="brief-field-error" hidden></p></fieldset>`;
   } else {
     const attributes = `id="${id}" ${common}${limit}${field.required ? " required" : ""}${field.placeholder ? ` placeholder="${escape(field.placeholder)}"` : ""}`;
     const autocomplete = { contactName: "name", contactEmail: "email", company: "organization", businessName: "organization" }[field.id] || "off";
@@ -19,7 +35,7 @@ function renderField(field) {
       ? `<textarea ${attributes} rows="${field.type === "colors" ? 2 : 3}"></textarea>`
       : `<input ${attributes} type="${field.type === "email" ? "email" : "text"}" autocomplete="${autocomplete}"${field.type === "url" ? ' inputmode="url"' : ""}>`;
     const colorPicker = field.type === "colors" ? `<div class="brief-color-tools"><label for="brief-color-picker">Try a color<input id="brief-color-picker" type="color" value="#ffffff" aria-label="Choose a project color"></label><button id="brief-add-color" class="brief-text-button" type="button">Add color code to my answer</button></div><div id="brief-color-swatches" class="brief-color-swatches" aria-label="Your selected project colors"></div>` : "";
-    control = `<div class="brief-field" data-field-container="${escape(field.id)}"><label for="${id}">${escape(field.label)} ${marker}</label>${hint}${input}${colorPicker}<p id="${id}-error" class="brief-field-error" hidden></p></div>`;
+    control = `<div class="brief-field" data-field-container="${escape(field.id)}"><label for="${id}">${escape(field.label)} ${marker}</label>${hint}${field.type === "colors" ? `${renderPalettes()}<p class="brief-color-note-label">Your own colors, changes, or notes</p>` : ""}${input}${colorPicker}<p id="${id}-error" class="brief-field-error" hidden></p></div>`;
   }
   return control;
 }

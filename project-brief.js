@@ -1,5 +1,6 @@
 import { briefSteps, briefFields, normalizeBrief, formatBriefText } from "./project-brief-schema.js";
 import { briefEndpoint, briefPublishableKey } from "./project-brief-config.js";
+import { briefPalettes, paletteAnswerPrefix, formatPaletteAnswer, parsePaletteAnswer } from "./project-brief-palettes.js";
 
 const draftKey = "4u-digital-project-brief-v1";
 const maxFiles = 6;
@@ -50,6 +51,7 @@ export function initProjectBrief(doc = document) {
   let files = [];
   let draftTimer;
   let downloadText = "";
+  let selectedPalette = null;
 
   const controlsFor = (id) => [...form.querySelectorAll(`[data-brief-field="${id}"]`)];
   const applicable = (field, type) => !field.projectTypes || field.projectTypes.includes(type);
@@ -57,6 +59,7 @@ export function initProjectBrief(doc = document) {
     const controls = controlsFor(field.id);
     const value = field.type === "checkboxes" ? controls.filter((control) => control.checked).map((control) => control.value)
       : field.type === "radio" ? controls.find((control) => control.checked)?.value || ""
+      : field.type === "colors" ? formatPaletteAnswer(selectedPalette, controls[0]?.value || "")
       : controls[0]?.value || "";
     return [field.id, value];
   }));
@@ -142,6 +145,7 @@ export function initProjectBrief(doc = document) {
     announce("");
     updateVisibility();
     renderColorSwatches();
+    renderPaletteSelection();
     win.clearTimeout(draftTimer);
     if (saveDraft.checked) draftTimer = win.setTimeout(persistDraft, 350);
   }
@@ -238,6 +242,38 @@ export function initProjectBrief(doc = document) {
     }
   }
 
+  function renderPaletteSelection() {
+    const selection = get("brief-selected-palette");
+    if (!selection) return;
+    form.querySelectorAll("[data-brief-palette]").forEach((button) => {
+      const active = selectedPalette?.id === button.dataset.briefPalette;
+      button.setAttribute("aria-pressed", String(active));
+      button.querySelector(".brief-palette-check").textContent = active ? "✓" : "↗";
+      button.querySelector(".brief-palette-action").textContent = active ? "Selected palette" : "Use this palette";
+    });
+    selection.hidden = !selectedPalette;
+    get("brief-selected-palette-name").textContent = selectedPalette ? `Your starting palette: ${selectedPalette.name}` : "";
+    get("brief-selected-palette-colors").innerHTML = selectedPalette ? selectedPalette.colors.map((color) => `<li><i style="background-color:${color.hex}" aria-hidden="true"></i><span>${text(color.name)}<code>${color.hex}</code></span></li>`).join("") : "";
+    const limit = fieldsById.get("colors").maxLength || 500;
+    const reserved = selectedPalette ? paletteAnswerPrefix(selectedPalette).length + 2 : 0;
+    controlsFor("colors")[0].maxLength = Math.max(0, limit - reserved);
+  }
+
+  function choosePalette(id) {
+    const selection = briefPalettes.find((entry) => entry.id === id) || null;
+    const notes = controlsFor("colors")[0]?.value || "";
+    const limit = fieldsById.get("colors").maxLength || 500;
+    if (formatPaletteAnswer(selection, notes).length > limit) {
+      const error = get("brief-colors-error");
+      error.hidden = false;
+      error.textContent = `Your color notes are near the ${limit}-character limit. Shorten them a little before adding this palette; your current notes have been kept.`;
+      controlsFor("colors")[0].setAttribute("aria-invalid", "true");
+      return;
+    }
+    selectedPalette = selection;
+    changed();
+  }
+
   function releaseFiles() {
     files.forEach((entry) => { if (entry.url) win.URL.revokeObjectURL(entry.url); });
     files = [];
@@ -305,7 +341,9 @@ export function initProjectBrief(doc = document) {
   form.addEventListener("click", (event) => {
     const target = event.target.closest("button");
     if (!target || busy) return;
-    if (target.hasAttribute("data-brief-go")) { editingReview = false; navigate(Number(target.dataset.briefGo)); }
+    if (target.hasAttribute("data-brief-palette")) choosePalette(target.dataset.briefPalette);
+    else if (target.id === "brief-clear-palette") choosePalette(null);
+    else if (target.hasAttribute("data-brief-go")) { editingReview = false; navigate(Number(target.dataset.briefGo)); }
     else if (target.hasAttribute("data-brief-review-link")) renderReview();
     else if (target.hasAttribute("data-brief-edit")) { editingReview = true; navigate(Number(target.dataset.briefEdit), { validate: false }); }
     else if (target.hasAttribute("data-remove-file")) {
@@ -323,14 +361,14 @@ export function initProjectBrief(doc = document) {
     else if (target.id === "brief-clear") { get("brief-clear-confirm").hidden = false; get("brief-clear-yes").focus(); }
     else if (target.id === "brief-clear-no") { get("brief-clear-confirm").hidden = true; get("brief-clear").focus(); }
     else if (target.id === "brief-clear-yes") {
-      releaseFiles(); form.reset(); removeDraft(); clearErrors(); get("brief-clear-confirm").hidden = true; get("brief-draft-restored").hidden = true;
+      releaseFiles(); form.reset(); selectedPalette = null; removeDraft(); clearErrors(); get("brief-clear-confirm").hidden = true; get("brief-draft-restored").hidden = true;
       get("brief-file-error").hidden = true; requestId = win.crypto.randomUUID(); attemptedFingerprint = null; startedAt = new Date().toISOString(); editingReview = false;
-      renderFiles(); renderColorSwatches(); navigate(0, { validate: false });
+      renderFiles(); renderColorSwatches(); renderPaletteSelection(); navigate(0, { validate: false });
     } else if (target.id === "brief-add-color") {
       const control = controlsFor("colors")[0];
       const color = get("brief-color-picker").value;
       const addition = `${control.value.trim() ? ", " : ""}${color}`;
-      if (control.value.length + addition.length <= (fieldsById.get("colors").maxLength || 500)) { control.value += addition; changed(); control.focus(); }
+      if (control.value.length + addition.length <= control.maxLength) { control.value += addition; changed(); control.focus(); }
       else announce("Your color answer is full. Remove a little text before adding another code.", { error: true });
     }
   });
@@ -408,7 +446,11 @@ export function initProjectBrief(doc = document) {
         for (const control of controlsFor(field.id)) {
           if (field.type === "checkboxes") control.checked = Array.isArray(value) && value.includes(control.value);
           else if (field.type === "radio") control.checked = value === control.value;
-          else control.value = typeof value === "string" ? value.slice(0, field.maxLength || 3000) : "";
+          else if (field.type === "colors" && typeof value === "string") {
+            const restored = parsePaletteAnswer(value.slice(0, field.maxLength || 500));
+            selectedPalette = restored.selection;
+            control.value = restored.notes;
+          } else control.value = typeof value === "string" ? value.slice(0, field.maxLength || 3000) : "";
         }
       }
       saveDraft.checked = true;
@@ -424,6 +466,7 @@ export function initProjectBrief(doc = document) {
   updateVisibility();
   renderFiles();
   renderColorSwatches();
+  renderPaletteSelection();
   updateNavigation({ focus: false });
   return true;
 }

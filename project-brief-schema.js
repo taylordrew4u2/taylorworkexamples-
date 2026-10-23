@@ -61,7 +61,7 @@ const definitions = [
     fields: [
       { id: "brandReady", label: "Do you already have a visual brand or a design to work from?", type: "radio", options: [choice("brand", "I have a logo, colors, or brand guidelines"), choice("design", "I have designs, sketches, or Figma files"), choice("refresh", "I have something, but want to refresh it"), choice("start", "I'm starting from scratch"), unsure] },
       { id: "brandMood", label: "How should it look and feel?", type: "checkboxes", options: [choice("clean", "Clean and minimal"), choice("warm", "Warm and welcoming"), choice("bold", "Bold and expressive"), choice("premium", "Refined and premium"), choice("playful", "Playful and friendly"), choice("professional", "Calm and professional"), choice("practical", "Practical and information-focused"), unsure] },
-      { id: "colors", label: "Which colors would you like to use?", type: "colors", maxLength: 500, placeholder: "Color names, hex codes, or “help me choose”…", hint: "For example: forest green and cream, #163D2A, or colors from a reference image." },
+      { id: "colors", label: "Which colors would you like to use?", type: "colors", maxLength: 1000, placeholder: "Color names, hex codes, or “help me choose”…", hint: "For example: forest green and cream, #163D2A, or colors from a reference image." },
       { id: "avoidColors", label: "Are there colors or visual styles you do not want?", type: "text", maxLength: 500 },
       { id: "designReferences", label: "Are there websites, apps, or brands you like? What do you like about them?", type: "textarea", maxLength: 2500, placeholder: "Paste links and tell me about the layout, colors, photos, motion, or feeling you like." },
       { id: "logoTypography", label: "Any preferences for your logo, fonts, icons, or photography?", type: "textarea", maxLength: 1800, advanced: true },
@@ -137,7 +137,7 @@ function normalizeText(field, value) {
   if (typeof value !== "string") throw invalid(field, `${field.label} must be text.`);
   const limit = field.maxLength ?? 3000;
   if (value.length > limit) throw invalid(field, `${field.label} must be ${limit} characters or fewer.`, RangeError);
-  const controls = field.type === "textarea" ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/u : /[\u0000-\u001F\u007F-\u009F]/u;
+  const controls = ["textarea", "colors"].includes(field.type) ? /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/u : /[\u0000-\u001F\u007F-\u009F]/u;
   if (controls.test(value)) throw invalid(field, `${field.label} contains an unsupported control character.`);
   if (/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/u.test(value)) {
     throw invalid(field, `${field.label} contains malformed text. Please remove or retype the affected character.`);

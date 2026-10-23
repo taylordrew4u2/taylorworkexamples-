@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { projects, featuredProjects } from "../public-projects.js";
+import { launchOffer } from "../seo-offer.js";
 
 const removedProjectIds = [
   "HealYourHeart",
@@ -822,17 +823,26 @@ test("the homepage gives clients clear next steps while keeping optional project
   await page.goto("/");
   const menu = page.locator(".menu-toggle");
   if (testInfo.project.name === "phone") await menu.click();
-  const processLink = page.locator("#main-nav").getByRole("link", { name: "How it works", exact: true });
-  await expect(processLink).toBeVisible();
-  await expect(processLink).toHaveAttribute("href", "#process");
+  const offerLink = page.locator("#main-nav").getByRole("link", { name: "Website offer", exact: true });
+  await expect(offerLink).toBeVisible();
+  await expect(offerLink).toHaveAttribute("href", "./offer/");
   await expect(page.locator("#main-nav a[href*='github.com']")).toHaveCount(0);
   await expect(page.locator("footer a[href='https://github.com/taylordrew4u2']")).toBeVisible();
   await expect(page.locator(".intro-actions").getByRole("link", { name: "Book a consultation", exact: false }))
     .toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
   await expect(page.locator("#main-nav .nav-contact")).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
-  await processLink.click();
+  await offerLink.click();
+  await expect(page).toHaveURL(/\/offer\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(launchOffer.heading);
+  await page.goto("/#process");
+  if (testInfo.project.name === "phone") {
+    await menu.click();
+    await page.locator("#main-nav a[href='#services']").click();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+    await page.goto("/#process");
+  }
   await expect(page).toHaveURL(/#process$/);
-  if (testInfo.project.name === "phone") await expect(menu).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator("#process").getByRole("heading", { level: 2 })).toHaveText("Your idea. A clear way forward.");
   expect(await page.locator("#project-faq").evaluate((faq) => Boolean(
     document.querySelector("#process").compareDocumentPosition(faq) & Node.DOCUMENT_POSITION_FOLLOWING,
   ) && Boolean(faq.compareDocumentPosition(document.querySelector("#consultation")) & Node.DOCUMENT_POSITION_FOLLOWING)),
@@ -974,7 +984,7 @@ test("services lead to relevant project proof and restore keyboard focus", async
     await expect(trigger).toHaveClass(/service-proof/);
     await expect(trigger).toHaveAttribute("data-project", project.id);
     const serviceSlugs = { website: "website-development", "web-app": "web-app-development", software: "app-development" };
-    expect(new URL(await item.locator(".service-inquiry").getAttribute("href"), page.url()).pathname)
+    expect(new URL(await item.locator(`.service-inquiry[href="./services/${serviceSlugs[service]}/"]`).getAttribute("href"), page.url()).pathname)
       .toBe(`/services/${serviceSlugs[service]}/`);
     await trigger.scrollIntoViewIfNeeded();
     await trigger.focus();
@@ -1504,7 +1514,7 @@ test("services open useful details before booking and general inquiries retain e
   ];
   await expect(page.locator(".service-item")).toHaveCount(3);
   for (const [topic, slug, subject, description] of services) {
-    const service = page.locator(`.service-item[data-service="${topic}"] .service-inquiry`);
+    const service = page.locator(`.service-item[data-service="${topic}"] .service-inquiry[href="./services/${slug}/"]`);
     await service.scrollIntoViewIfNeeded();
     await expect(service).toBeVisible();
     await service.click();

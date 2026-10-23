@@ -1,8 +1,21 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { briefSteps, briefFields, maxBriefLength, normalizeBrief, formatBriefText } from "../project-brief-schema.js";
+import { briefPalettes, formatPaletteAnswer, parsePaletteAnswer } from "../project-brief-palettes.js";
 
 const minimum = Object.freeze({ projectType: "website", contactName: "Alex", contactEmail: "alex@example.test" });
+
+test("a selected visual palette and multiline client notes survive validation and the emailed summary", () => {
+  const notes = "Keep the background light.\n\tUse the dark color for buttons, not every heading.";
+  for (const palette of briefPalettes) {
+    const colors = formatPaletteAnswer(palette, notes);
+    assert.equal(normalizeBrief({ ...minimum, colors }).colors, colors);
+    assert.deepEqual(parsePaletteAnswer(colors), { selection: palette, notes });
+    const summary = formatBriefText({ ...minimum, colors });
+    assert.ok(summary.includes(palette.name) && palette.colors.every(({ hex }) => summary.includes(hex)));
+    assert.ok(summary.includes(notes));
+  }
+});
 
 test("the brief is an optional discovery conversation with only project type and reply identity required", () => {
   assert.equal(briefSteps.length, 9);

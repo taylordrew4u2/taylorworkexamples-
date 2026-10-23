@@ -9,11 +9,11 @@ for (const javaScriptEnabled of [true, false]) {
       const cards = page.locator("#services .service-item");
       await expect(cards).toHaveCount(3);
       const examples = [
-        ["website", "./assets/micro-short/home.jpg", "./work/micro-short-film-website/", "Micro-short Film Website · Repository website capture"],
-        ["web-app", "./assets/briefbooth/home-desktop.png", "./work/briefbooth/", "Live website capture"],
-        ["software", "./assets/my-gig-calendar/banner-1920x1080.png", "./work/my-gig-calendar/", "Supplied product artwork"],
+        ["website", "./assets/micro-short/home.jpg", "./work/micro-short-film-website/", "Micro-short Film Website · Repository website capture", "website-development"],
+        ["web-app", "./assets/briefbooth/home-desktop.png", "./work/briefbooth/", "Live website capture", "web-app-development"],
+        ["software", "./assets/my-gig-calendar/banner-1920x1080.png", "./work/my-gig-calendar/", "Supplied product artwork", "app-development"],
       ];
-      for (const [type, source, destination, caption] of examples) {
+      for (const [type, source, destination, caption, serviceSlug] of examples) {
         const card = page.locator(`.service-item[data-service="${type}"]`);
         const example = card.locator("details.service-example");
         const summary = example.locator("summary");
@@ -35,7 +35,14 @@ for (const javaScriptEnabled of [true, false]) {
           const box = el.getBoundingClientRect();
           return box.left >= 0 && box.right <= innerWidth && Math.abs(box.width / box.height - Number(el.getAttribute("width")) / Number(el.getAttribute("height"))) < .02;
         })).toBe(true);
-        await expect(card.locator(".service-inquiry")).toBeVisible();
+        const serviceLink = card.locator(`.service-inquiry[href="./services/${serviceSlug}/"]`);
+        await expect(serviceLink).toHaveCount(1);
+        await expect(serviceLink).toBeVisible();
+        if (type === "website") {
+          const offer = card.getByRole("link", { name: /^Website offer for NYC businesses/ });
+          await expect(offer).toBeVisible();
+          await expect(offer).toHaveAttribute("href", "./offer/");
+        }
         await expect(page.locator(".mobile-consultation [data-booking-link]")).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
         await summary.focus();
         await page.keyboard.press("Enter");
