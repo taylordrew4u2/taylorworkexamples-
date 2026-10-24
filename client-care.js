@@ -30,10 +30,13 @@ const contract = {
   text: "Every contract is tailored to your specific needs and the terms you are comfortable with. We agree the scope, price, dates, changes, support, and handover in writing before the build.",
 };
 
+export const afterLaunchSummary = "Every project includes a 30-day money-back guarantee, with reasonable changes included during those 30 days after the completed product launches. If you’re not satisfied, request a full refund of 4u Digital development fees within those 30 days. You receive your custom code and deployment handover. Optional six-month debugging and support includes changes at 50% off the agreed standard rate. Scope, coverage, and terms are tailored in your contract.";
+
 export const clientCare = {
   eyebrow: "CONFIDENCE BEFORE AND AFTER LAUNCH",
   heading: "Your product. Your code. Support after launch.",
   intro: "These commitments apply to every project, with the details agreed in writing before the build.",
+  summary: afterLaunchSummary,
   guarantee,
   changes,
   support,

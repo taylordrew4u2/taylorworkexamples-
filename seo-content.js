@@ -1,3 +1,5 @@
+import { afterLaunchSummary } from "./client-care.js";
+
 export const site = {
   origin: "https://customtechbuilt4u.com",
   brand: "4u Digital",
@@ -13,7 +15,7 @@ export const services = [
     slug: "website-development",
     title: "Custom website development",
     serviceLabel: "Websites",
-    modified: "2026-10-23",
+    modified: "2026-10-24",
     metaTitle: "Custom Website Development for Your Business | 4u Digital",
     description: "Custom business websites with clear content, mobile layouts, and useful inquiry or booking flows. See 4u Digital projects and discuss your website.",
     heading: "Give your business a website people can use.",
@@ -65,7 +67,7 @@ export const services = [
       },
       {
         question: "Can I change the website after launch?",
-        answer: "We can include content editing where it is useful. The scope should identify what you can update yourself, what needs development work, and how maintenance and hosting costs will be handled after launch.",
+        answer: `Yes. We agree which content you can update yourself. ${afterLaunchSummary}`,
       },
     ],
   },

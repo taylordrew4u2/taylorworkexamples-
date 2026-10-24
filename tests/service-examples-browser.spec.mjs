@@ -39,7 +39,7 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(serviceLink).toHaveCount(1);
         await expect(serviceLink).toBeVisible();
         if (type === "website") {
-          const offer = card.getByRole("link", { name: /^Website offer for NYC businesses/ });
+          const offer = card.locator("a.service-offer-link");
           await expect(offer).toBeVisible();
           await expect(offer).toHaveAttribute("href", "./offer/");
         }

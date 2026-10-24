@@ -1457,6 +1457,27 @@ button, a, input, select, textarea, summary {
   max-width: 40rem;
 }
 
+.services-intro {
+  max-width: 38rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: .9375rem;
+  line-height: 1.75;
+}
+
+.service-guidance {
+  display: grid;
+  gap: .625rem;
+  margin-top: 1.5rem;
+  color: var(--muted);
+  font-size: .875rem;
+  line-height: 1.75;
+}
+
+.service-guidance p { margin: 0; }
+.service-guidance a { color: var(--ink); font-weight: 600; text-underline-offset: .2em; }
+.service-guidance a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+
 .services-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

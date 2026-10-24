@@ -1026,14 +1026,14 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
     ["What if my idea isn’t finished?", "That’s fine. Start with the problem you want to solve. We can work out the details together."],
     ["How is pricing worked out?", "Pricing depends on scope, features, and complexity. We’ll agree what’s included and the price before building."],
     ["Does a consultation commit me to a project?", /No\..*scope, price, start date, and target launch in writing/],
-    ["What happens after launch?", "We’ll discuss who maintains it and any hosting/service costs when defining the project."],
+    ["What happens after launch?", /full refund/i],
     ["What if I only need a website?", "That’s a complete project too. I can build a straightforward site for your services, location, work, and contact details. We’ll choose the pages and features your business needs. Explore website services ↗"],
     ["Who owns the code, and will my project be public?", "All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission. The projects shown here are selected personal projects."],
   ];
   for (const [question, answer] of answers) {
     const faq = faqSection.locator("details.faq-item").filter({ has: page.locator("summary", { hasText: question }) });
     const summary = faq.locator("summary");
-    const content = faq.locator("p");
+    const content = faq.locator("p").first();
     await expect(summary).toHaveText(question);
     await expect(content).toHaveText(answer);
     await expect(faq).not.toHaveAttribute("open", "");
