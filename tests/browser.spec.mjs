@@ -12,7 +12,7 @@ const removedProjectIds = [
   "comedysub",
   "staybusy",
   "taylordrewwebsite",
-  "Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness",
+  "Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness",
 ];
 
 async function expectResponsiveImageSource(image, expected) {
@@ -127,9 +127,9 @@ async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
     );
     const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
     await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel);
-    await expect(card.locator(".preview-context")).toHaveText(suppliedArtwork
+    await expect(card.locator(".preview-context")).toHaveText(frame.previewContext || (suppliedArtwork
       ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : frame.previewContext || project.previewContext);
+      : project.previewContext));
   }
   const original = card.locator(".showcase-original");
   await expect(original).toHaveAttribute("href", frame.image);
@@ -446,7 +446,7 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   });
   await expect(calendarCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/my-gig-calendar/banner-1920x1080.png");
   await expect(calendarCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  const binderCard = page.locator('.case-study[data-case-id="The-Bit-Binder"]');
+  const binderCard = page.locator('.project-card:is([data-case-id="The-Bit-Binder"], [data-supporting-id="The-Bit-Binder"])');
   await expect(binderCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/bitbinder/banner-1920x1080.png");
   await expect(binderCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
   for (const [id] of heroPreviews) {
@@ -612,10 +612,8 @@ for (const [id, banner] of [
   const project = projects.find((entry) => entry.id === id);
   test(`${project.title} opens with its supplied banner across selected work, archive, and project details`, async ({ page }) => {
     await page.goto("/#project-archive");
-    const card = id === "The-Bit-Binder"
-      ? page.locator(`.case-study[data-case-id="${id}"]`)
-      : page.locator(`.supporting-card[data-supporting-id="${id}"]`);
-    const screenSelector = id === "The-Bit-Binder" ? ".case-screen" : ".supporting-screen";
+    const card = page.locator(`.project-card:is([data-case-id="${id}"], [data-supporting-id="${id}"])`);
+    const screenSelector = ".project-visual";
     const archiveCard = page.locator(`.archive-card[data-showcase-id="${id}"]`);
     const frame = project.gallery[0];
     expect(frame.image).toBe(banner);
@@ -1214,8 +1212,8 @@ test("removed repositories stay out of archive, search and hero while public sou
   expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
 
   await page.goto("/#project-archive");
-  expect(projects.length).toBe(10);
-  await expect(page.locator("#archive-title")).toHaveText("Explore 10 selected projects");
+  expect(projects.length).toBe(11);
+  await expect(page.locator("#archive-title")).toHaveText("Explore 11 selected projects");
   await expect(page.locator(".archive-card")).toHaveCount(projects.length);
   await expect(page.locator(".source-note")).toHaveCount(0);
   await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
@@ -1651,7 +1649,7 @@ for (const project of featuredProjects.slice(0, 3)) {
     await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
     await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
     await expectInlineGalleryFrame(story, project, project.gallery[0], ".case-screen");
-    await expect(page.locator('[data-case-id="The-Bit-Binder"] .screen-caption')).toHaveText(
+    await expect(page.locator('.project-card:is([data-case-id="The-Bit-Binder"], [data-supporting-id="The-Bit-Binder"]) .screen-caption')).toHaveText(
       projects.find((entry) => entry.id === "The-Bit-Binder").gallery[0].caption,
     );
     expect(errors).toEqual([]);

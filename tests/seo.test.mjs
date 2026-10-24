@@ -77,10 +77,10 @@ before(async () => {
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 10);
+  assert.equal(projects.length, 11);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 47);
+  assert.equal(routes.length, 48);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -440,7 +440,7 @@ test("salon and restaurant services explain the business workflow and connect to
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
     const service = services.find((entry) => route === `/services/${entry.slug}/`);
     const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const clientJourneyUpdate = ["/", "/services/", "/guides/website-or-app/", "/work/", "/about/"].includes(route);
+    const clientJourneyUpdate = ["/", "/services/", "/guides/website-or-app/", "/work/", "/about/", "/work/nyc-open-mic-master-list/"].includes(route);
     const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
       "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
@@ -784,10 +784,10 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the ten selected projects", async () => {
-  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness", "taylordrewwebsite"];
+test("published pages, data, routes, and assets contain only the eleven selected projects", async () => {
+  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
-  assert.equal(excludedProjects.length, 7, "Unselected projects still exist in the internal audited inventory");
+  assert.equal(excludedProjects.length, 6, "Unselected projects still exist in the internal audited inventory");
   const excluded = ["https://www.taylordrew4u.com", ...excludedIds,
     ...excludedProjects.map((project) => project.title), ...excludedProjects.map((project) => `/work/${projectSlugs[project.id]}/`)];
   const outputFiles = await filesUnder(output);

@@ -10,10 +10,12 @@ export const portfolioProjectIds = [
   "usbmic",
   "BriefBooth.com",
   "micro-short-website",
+  "nycstandupopenmicmaster",
 ];
 
 export const featuredProjectIds = [
   "BriefBooth.com",
+  "nycstandupopenmicmaster",
   "Showrunner-ICanRunAShow",
   "The-Bit-Binder",
   "micro-short-website",

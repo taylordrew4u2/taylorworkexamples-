@@ -11,7 +11,7 @@ export function publishedApps() {
 const capabilityCards = [
   { label: "CUSTOMER & TEAM WEB APPS", title: "A tool for customers and your team.",
     description: "Accounts, shared records, approvals, and connected payments. See how these projects bring everyday tasks into one place.",
-    projects: ["the-trip-handler", "Bill-Spilt", "Showrunner-ICanRunAShow"] },
+    projects: ["nycstandupopenmicmaster", "the-trip-handler", "Bill-Spilt", "Showrunner-ICanRunAShow"] },
   { label: "BUSINESS WEBSITES", title: "A clear home for your business.",
     description: "Show what you offer, update your content, and give customers a way to get in touch. Explore websites with tools for the people running them.",
     projects: ["micro-short-website", "PinsAndNeedlesComedyWebsite"] },

@@ -131,22 +131,22 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("the public portfolio selects ten complete projects while the audited inventory stays internal", () => {
+test("the public portfolio selects eleven complete projects while the audited inventory stays internal", () => {
   const expectedPublic = [
     "Showrunner-ICanRunAShow", "The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "Bill-Spilt",
-    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website",
+    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website", "nycstandupopenmicmaster",
   ];
   const expectedFeatured = [
-    "BriefBooth.com", "Showrunner-ICanRunAShow", "The-Bit-Binder", "micro-short-website", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
+    "BriefBooth.com", "nycstandupopenmicmaster", "Showrunner-ICanRunAShow", "The-Bit-Binder", "micro-short-website", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
   ];
   assert.deepEqual(portfolioProjectIds, expectedPublic);
   assert.deepEqual(featuredProjectIds, expectedFeatured);
-  assert.equal(publicProjects.length, 10);
+  assert.equal(publicProjects.length, 11);
   assert.deepEqual(publicProjects.map((project) => project.id).sort(), [...expectedPublic].sort());
   assert.deepEqual(publicFeaturedProjects.map((project) => project.id), expectedFeatured);
   assert.deepEqual(publicFeaturedProjects.filter((project) => project.projectType === "Website").map((project) => project.id),
     ["micro-short-website", "PinsAndNeedlesComedyWebsite"], "The featured range includes two distinct websites");
-  assert.equal(publicFeaturedProjects.filter((project) => /web application$/i.test(project.projectType)).length, 4);
+  assert.equal(publicFeaturedProjects.filter((project) => project.category === "web" && project.projectType !== "Website").length, 5);
   assert.equal(publicFeaturedProjects.filter((project) => project.category === "ios").length, 2);
   assert.equal(projects.length, 17, "Unselected evidence remains in the internal audited inventory");
   for (const project of publicProjects) {
@@ -154,7 +154,7 @@ test("the public portfolio selects ten complete projects while the audited inven
     assert.match(project.caseUrl, /^\.\/work\/[a-z0-9-]+\/$/);
   }
   for (const project of publicFeaturedProjects) assert.equal(project, publicProjects.find((entry) => entry.id === project.id));
-  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "nycstandupopenmicmaster", "tlcmassagewellness", "taylordrewwebsite"]) {
+  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness", "taylordrewwebsite"]) {
     assert.ok(projects.some((project) => project.id === id), `${id}: internal evidence is retained`);
     assert.equal(publicProjects.some((project) => project.id === id), false, `${id}: excluded from public pages and search data`);
   }
@@ -187,6 +187,38 @@ test("BriefBooth is a leading live product with honest public repository and cap
   assert.ok(project.gallery.some((frame) => frame.portrait && frame.width === 390 && frame.height === 1195),
     "The showcase includes a real mobile view");
   assert.equal(project.iconSource, "https://briefbooth.com/icon.svg");
+});
+
+test("NYC Open Mic Master List is featured with the unchanged supplied artwork and separate pinned README app captures", () => {
+  const project = publicProjects.find((entry) => entry.id === "nycstandupopenmicmaster");
+  assert.ok(project, "The owner-selected project is published");
+  assert.equal(publicFeaturedProjects[1], project, "The directory is featured immediately after BriefBooth");
+  assert.equal(project.caseUrl, "./work/nyc-open-mic-master-list/");
+  assert.equal(project.demoUrl, "https://nycopenmicmasterlist.com");
+  assert.equal(project.image, "./assets/nyc-open-mic-master-list/product-banner.jpg");
+  assert.equal(project.imageKind, "product-artwork");
+  assert.equal(project.imageLabel, "Supplied product artwork");
+  assert.equal(project.gallery.length, 6);
+  const banner = project.gallery[0];
+  assert.equal(banner.sourceKind, "owner-supplied-product-artwork");
+  assert.equal(banner.label, "Product overview");
+  assert.deepEqual(assetDimensions(project.image), { width: 2752, height: 1536 });
+  const bytes = readFileSync(new URL(`../${project.image}`, import.meta.url));
+  assert.equal(createHash("sha256").update(bytes).digest("hex"),
+    "b12b2fb69dbb98d64086d38bb9b6a22a631331cfa0689ceac95ddbaa8b68248c",
+    "The owner's original full-color artwork is copied without pixel edits");
+  assert.match(banner.caption, /^Supplied product artwork/);
+  assert.match(`${banner.caption} ${banner.previewContext}`, /promotional|illustrative/i);
+  const commit = "78e9f485613eff9eb1a76f1a93e1e1264284f4a6";
+  for (const frame of project.gallery.slice(1)) {
+    assert.equal(frame.sourceKind, "repository-app-capture");
+    assert.equal(frame.imageLabel, "Repository app capture");
+    assert.match(frame.caption, /fictional|sample/i);
+    assert.match(frame.sourceUrl, new RegExp(`/nycstandupopenmicmaster/(?:blob/)?${commit}/docs/media/`));
+    assert.deepEqual(assetDimensions(frame.image), { width: frame.width, height: frame.height });
+    assert.ok(project.sources.includes(frame.sourceUrl));
+  }
+  assert.equal(project.gallery.at(-1).portrait, true, "The gallery includes the authentic phone capture");
 });
 
 test("the audited catalog preserves inventory dates and canonical source links", () => {
@@ -513,7 +545,7 @@ test("App Store listings, RoleCall development captures, and known unavailable d
     assert.match(frame.caption, /development capture.*actual.*sample/i);
     assert.match(frame.sourceUrl, /\/components\/(ShotListBoard|ScriptWorkspace)\.tsx$/);
   }
-  assert.equal(find("nycstandupopenmicmaster").demoUrl, null);
+  assert.equal(find("nycstandupopenmicmaster").demoUrl, "https://nycopenmicmasterlist.com");
   assert.match(find("usbmic").notes, /physical[- ]microphone validation/i);
 });
 
@@ -566,12 +598,12 @@ test("all 17 public projects have traceable covers and galleries with accurate a
       assert.equal(project.imageCaption, project.gallery[0].caption);
       assert.equal(project.portrait, false);
       if (project.gallery[0].sourceKind === "owner-supplied-product-artwork") {
-        assert.ok(["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer"].includes(project.id));
+        assert.ok(["The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "nycstandupopenmicmaster"].includes(project.id));
         assert.equal(project.imageLabel, "Supplied product artwork");
         assert.match(project.imageCaption, /^Supplied product artwork/);
         assert.match(project.previewContext, /owner-supplied.*promotional artwork/i);
-        assert.equal(project.imageWidth, 1920);
-        assert.equal(project.imageHeight, 1080);
+        assert.equal(project.imageWidth, project.id === "nycstandupopenmicmaster" ? 2752 : 1920);
+        assert.equal(project.imageHeight, project.id === "nycstandupopenmicmaster" ? 1536 : 1080);
       } else {
         assert.ok(["Bill-Spilt", "Showrunner-ICanRunAShow", "bleepkit", "dictype", "usbmic",
           "Role-Call", "the-trip-handler", "PinsAndNeedlesComedyWebsite"].includes(project.id));

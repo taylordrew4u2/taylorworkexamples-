@@ -48,9 +48,9 @@ function changeShowcaseImage(event) {
   if (story.classList.contains("archive-card")) {
     const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
     story.querySelector(".image-kind").textContent = suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel;
-    story.querySelector(".preview-context").textContent = suppliedArtwork
+    story.querySelector(".preview-context").textContent = frame.previewContext || (suppliedArtwork
       ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : frame.previewContext || project.previewContext;
+      : project.previewContext);
   }
 }
 $("#featured-projects").addEventListener("click", changeShowcaseImage);

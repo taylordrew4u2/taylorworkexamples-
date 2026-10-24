@@ -401,7 +401,7 @@ function projectPage(project) {
   const route = `/work/${projectSlugs[project.id]}/`;
   const page = { path: route, title: `${project.title} — ${projectType(project)} | 4u Digital`,
     description: `${project.purpose} See the screens, workflows, and development details in the 4u Digital portfolio.`,
-    project, modified: project.id === "micro-short-website" ? "2026-10-22" : "2026-10-20", image: project.image, imageAlt: project.imageAlt,
+    project, modified: project.id === "nycstandupopenmicmaster" ? "2026-10-24" : project.id === "micro-short-website" ? "2026-10-22" : "2026-10-20", image: project.image, imageAlt: project.imageAlt,
     imageWidth: project.imageWidth, imageHeight: project.imageHeight,
     breadcrumbs: [{ name: "Projects", path: "/work/" }, { name: project.title, path: route }],
   };
@@ -438,6 +438,8 @@ export async function generateSEO(output) {
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
   html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
+  html = html.replace(/(<span class="section-count mono">)\d+ FEATURED PROJECTS(<\/span>)/, `$1${featuredProjects.length} FEATURED PROJECTS$2`);
+  html = html.replace(/(<h2 id="archive-title">)Explore \d+ selected projects(<\/h2>)/, `$1Explore ${projects.length} selected projects$2`);
   html = html.replace('<section id="range-proof" class="range-proof" aria-label="Development range and published app proof"></section>', `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${renderRangeProof()}</section>`);
   html = html.replace('<section id="client-care" class="client-care-section wrap" aria-labelledby="client-care-title"></section>', clientCareSection(true));
   html = html.replace(/(<p data-after-launch-summary>)[\s\S]*?(<\/p>)/, `$1${escape(clientCare.summary)}$2`);

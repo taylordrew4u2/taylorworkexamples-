@@ -1,4 +1,4 @@
-# Curated portfolio — October 22, 2026
+# Curated portfolio — October 24, 2026
 
 The owner requested that the public portfolio show only the strongest repositories. Public repository availability is an eligibility condition, not an instruction to publish every repository.
 
@@ -15,12 +15,15 @@ The selection in `portfolio-selection.js` is the single publishing boundary for 
 | Pins & Needles Comedy | A public website alongside producer controls and audience screens |
 | SobStage | Substantial desktop audio engineering, routing, recording, and recovery; explicitly a release candidate |
 | BriefBooth | A published consultation platform used by 4u Digital, with real booking and management workflows |
+| NYC Open Mic Master List | A searchable five-borough directory with a custom map, scheduled data ingestion, moderation, and host accounts; added by the owner on October 24 |
 | Micro-short Film Website | A focused promotional website with five linked views, film artwork, cast, crew, and festival recognition; explicitly added by the owner on October 22 |
 
-Eight homepage projects are featured: BriefBooth, I Can Run A Show, The BitBinder, Micro-short Film Website, The Trip Handler, BillSpilt, Pins & Needles Comedy, and My Gig Calendar. The complete curated collection contains ten projects. Three App Store listings remain available. Micro-short leads the homepage's website preview and website service example; Pins & Needles remains another website example. The Micro-short page uses five untouched repository screenshots with pinned source links. Its film laurels are part of the film presentation, not software-development outcomes.
+Nine homepage projects are featured: BriefBooth, NYC Open Mic Master List, I Can Run A Show, The BitBinder, Micro-short Film Website, The Trip Handler, BillSpilt, Pins & Needles Comedy, and My Gig Calendar. The complete curated collection contains eleven projects. Three App Store listings remain available. Micro-short leads the homepage's website preview and website service example; Pins & Needles remains another website example. The Micro-short page uses five untouched repository screenshots with pinned source links. Its film laurels are part of the film presentation, not software-development outcomes.
 
-RoleCall, BleepKit, DicType, VlogNudge, NYC Stand-up Open Mic Master, and TLC Massage Wellness are omitted from the public site. Their audit data and source files are retained internally; omission is a presentation decision, not a claim that their code is defective. The personal stand-up website also remains excluded.
+RoleCall, BleepKit, DicType, VlogNudge, and TLC Massage Wellness are omitted from the public site. Their audit data and source files are retained internally; omission is a presentation decision, not a claim that their code is defective. The personal stand-up website also remains excluded.
 
 SobStage's current repository status is v1.13.29 release candidate with physical-microphone validation pending. Earlier interface captures used virtual microphones. Its repository product overview is presentation artwork and does not establish new hardware validation. The same distinction between product artwork and runtime evidence applies to every retained project.
+
+NYC Open Mic Master List uses the owner-supplied banner as promotional artwork, with original README screenshots as implementation evidence. The illustration does not establish live listing counts or a Mapbox integration; the repository implements its own renderer over OpenStreetMap tiles.
 
 The complete source inventory stays internal. Tests enforce the separate public selection, including the absence of omitted routes, names, IDs, and exclusive assets from `dist/`.

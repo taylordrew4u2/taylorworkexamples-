@@ -1,0 +1,74 @@
+{
+  "project": "nycstandupopenmicmaster",
+  "verifiedAt": "2026-10-24",
+  "repository": "https://github.com/taylordrew4u2/nycstandupopenmicmaster",
+  "revision": "78e9f485613eff9eb1a76f1a93e1e1264284f4a6",
+  "readme": "https://github.com/taylordrew4u2/nycstandupopenmicmaster/blob/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/README.md",
+  "liveUrl": "https://nycopenmicmasterlist.com",
+  "assets": [
+    {
+      "destination": "assets/nyc-open-mic-master-list/product-banner.jpg",
+      "width": 2752,
+      "height": 1536,
+      "bytes": 1982166,
+      "sha256": "b12b2fb69dbb98d64086d38bb9b6a22a631331cfa0689ceac95ddbaa8b68248c",
+      "sourceKind": "owner-supplied-product-artwork",
+      "suppliedFilename": "Gemini_Generated_Image_tcl7getcl7getcl7.jpg",
+      "publicSource": "https://customtechbuilt4u.com/assets/nyc-open-mic-master-list/product-banner.jpg"
+    },
+    {
+      "destination": "assets/nyc-open-mic-master-list/directory-desktop.png",
+      "width": 2560,
+      "height": 1600,
+      "bytes": 1497525,
+      "sha256": "8615fb73103b4069ab5737e9fc813b7b1b643337e702477302310b97f43aa554",
+      "sourceKind": "repository-app-capture",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/docs/media/directory-desktop.png"
+    },
+    {
+      "destination": "assets/nyc-open-mic-master-list/filters-desktop.png",
+      "width": 2560,
+      "height": 1600,
+      "bytes": 1438732,
+      "sha256": "ea9cd04957140a1eebf3b528aece2e013e5a7960e01704db679be2fd87ce28f3",
+      "sourceKind": "repository-app-capture",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/docs/media/filters-desktop.png"
+    },
+    {
+      "destination": "assets/nyc-open-mic-master-list/mic-detail-desktop.png",
+      "width": 2560,
+      "height": 1600,
+      "bytes": 1015048,
+      "sha256": "43c8135f5e2902e9743011f83bb9062330584ede190c8e2199ae0fb6a036a4b7",
+      "sourceKind": "repository-app-capture",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/docs/media/mic-detail-desktop.png"
+    },
+    {
+      "destination": "assets/nyc-open-mic-master-list/admin-import-preview.png",
+      "width": 2560,
+      "height": 1600,
+      "bytes": 367223,
+      "sha256": "1954ca14e504c425363f4254ba91bd8f9253c3cc9ff1a2850f9cb7e00217c2be",
+      "sourceKind": "repository-app-capture",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/docs/media/admin-import-preview.png"
+    },
+    {
+      "destination": "assets/nyc-open-mic-master-list/directory-phone.png",
+      "width": 780,
+      "height": 1688,
+      "bytes": 447947,
+      "sha256": "2bacb704b6ea4154b38f026f7bd520d6ee937e412ee42d35e5a0258ae731320f",
+      "sourceKind": "repository-app-capture",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/docs/media/directory-phone.png"
+    },
+    {
+      "destination": "assets/project-icons/nyc-standup-open-mic-master.svg",
+      "width": 128,
+      "height": 128,
+      "bytes": 394,
+      "sha256": "a70cf0cbb97650c11994287b2a0b390430f70fdfd6c87367b3e9f718dc7c13f0",
+      "sourceKind": "repository-favicon",
+      "source": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/assets/favicon.svg"
+    }
+  ]
+}

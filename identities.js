@@ -149,19 +149,19 @@ export const projectIdentities = {
     "iconNotes": "No logo or favicon is present in the public film website source. Neutral text initials identify this card; they are not an official project logo."
   },
   "nycstandupopenmicmaster": {
-    "purpose": "Find New York open mics through a map and listings that hosts can keep updated.",
+    "purpose": "Find New York City open mics through a searchable map and directory, with reviewed source imports and host updates.",
     "workflows": [
-      "Browse the map",
-      "Filter mic listings",
-      "Manage host listings"
+      "Search the directory",
+      "Check locations and details",
+      "Keep listings current"
     ],
-    "previewContext": "Working app · Fictional mic listings",
+    "previewContext": "Owner-supplied promotional artwork · Illustrative directory presentation",
     "icon": "./assets/project-icons/nyc-standup-open-mic-master.svg",
     "iconWidth": 128,
     "iconHeight": 128,
-    "iconSource": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/dad64c15b66dc7a46ccbd6d9ffed5dfa065f5660/assets/favicon.svg",
+    "iconSource": "https://raw.githubusercontent.com/taylordrew4u2/nycstandupopenmicmaster/78e9f485613eff9eb1a76f1a93e1e1264284f4a6/assets/favicon.svg",
     "iconKind": "favicon",
-    "iconNotes": "Original scalable map-pin and microphone favicon. Blue, navy, and white preserved."
+    "iconNotes": "Original 128×128 scalable map-pin and microphone favicon downloaded byte-for-byte from the pinned public repository on October 24, 2026. Blue, navy, white, and transparent canvas preserved."
   },
   "Open-Micer-Timer": {
     "purpose": "Keep an open-mic set on time with a countdown and visual cue.",

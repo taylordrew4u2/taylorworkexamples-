@@ -68,7 +68,7 @@ test("featured work switches by pointer and native keyboard without affecting th
 test("changing work filters retains gallery selections and full-color original previews", async ({ page }) => {
   await page.goto("/#work");
   const project = featuredProjects.find((entry) => entry.id === "The-Bit-Binder");
-  const card = page.locator(`#featured-projects [data-case-id="${project.id}"]`);
+  const card = page.locator(`#featured-projects .project-card:is([data-case-id="${project.id}"], [data-supporting-id="${project.id}"])`);
   const disclosure = card.locator("details.gallery-disclosure");
   await disclosure.locator("summary").click();
   const choice = card.locator("button[data-gallery]").last();

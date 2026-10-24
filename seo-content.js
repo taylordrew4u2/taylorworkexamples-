@@ -75,7 +75,7 @@ export const services = [
     slug: "web-app-development",
     title: "Web app development",
     serviceLabel: "Web apps",
-    modified: "2026-10-23",
+    modified: "2026-10-24",
     metaTitle: "Web App Development for Business Workflows | 4u Digital",
     description: "Custom web applications for accounts, approvals, shared records, and payments. See 4u Digital workflow projects and discuss the app your business needs.",
     heading: "Bring the work into one place.",
@@ -110,8 +110,8 @@ export const services = [
         text: "A web app may connect to sign-in services, email notifications, payment providers, or an existing database. We check available access before scoping a connection. Hosting, service costs, and failure handling need a plan too, so each integration serves a defined task.",
       },
     ],
-    projectIds: ["BriefBooth.com", "the-trip-handler", "Showrunner-ICanRunAShow", "Bill-Spilt"],
-    proofIntro: "BriefBooth brings client intake, availability, and consultation requests into a booking platform used by 4u Digital. The Trip Handler demonstrates invitations, approvals, shared planning, and Stripe payment integration. I Can Run A Show combines booking, contract signing, and live-show controls. BillSpilt demonstrates shared expenses and settlement planning. Their galleries distinguish sample app captures from product artwork.",
+    projectIds: ["BriefBooth.com", "nycstandupopenmicmaster", "the-trip-handler", "Showrunner-ICanRunAShow", "Bill-Spilt"],
+    proofIntro: "BriefBooth brings client intake and consultation requests into the platform used by 4u Digital. NYC Open Mic Master List combines a searchable map with data updates, review tools, and host accounts. The Trip Handler demonstrates shared planning and payments. I Can Run A Show brings booking, contracts, and live-show controls together; BillSpilt organizes shared expenses. Their galleries distinguish demonstration captures from product artwork.",
     faq: [
       {
         question: "How is a web app different from a website?",
@@ -195,7 +195,7 @@ export const services = [
     slug: "custom-software-development",
     title: "Custom software development",
     serviceLabel: "Custom software",
-    modified: "2026-10-23",
+    modified: "2026-10-24",
     metaTitle: "Custom Software Development for Your Business | 4u Digital",
     description: "Custom software for document workflows, internal tools, data services, and desktop utilities. See 4u Digital examples and discuss the task you need to solve.",
     heading: "Build software around the way you work.",
@@ -230,8 +230,8 @@ export const services = [
         text: "We agree review criteria tied to the task, suitable sample records, and how issues are reported. Existing data needs a migration or import plan when relevant. Maintenance, access to external services, and later changes also belong in the discussion about scope and price.",
       },
     ],
-    projectIds: ["usbmic", "the-trip-handler", "Showrunner-ICanRunAShow"],
-    proofIntro: "SobStage demonstrates desktop recording tools and saved-take interfaces; its gallery identifies virtual-microphone captures and pending physical microphone validation. The Trip Handler shows shared records and organizer approvals. I Can Run A Show connects agreements, scheduling, and live controls in a working production workflow.",
+    projectIds: ["usbmic", "nycstandupopenmicmaster", "the-trip-handler", "Showrunner-ICanRunAShow"],
+    proofIntro: "SobStage demonstrates desktop recording tools; its gallery identifies virtual-microphone captures and pending physical microphone validation. NYC Open Mic Master List shows scheduled data collection, review before publishing, and scoped host access. The Trip Handler demonstrates shared records and approvals, while I Can Run A Show connects agreements, scheduling, and live controls.",
     faq: [
       {
         question: "How is custom software different from a web app?",

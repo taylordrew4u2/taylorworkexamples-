@@ -70,8 +70,9 @@ export const publicRepositories = {
     "description": null,
     "homepage": "https://nycstandupopenmicmaster.vercel.app",
     "defaultBranch": "main",
-    "headSha": "dad64c15b66dc7a46ccbd6d9ffed5dfa065f5660",
-    "pushedAt": "2026-10-06T12:48:37Z",
+    "headSha": "78e9f485613eff9eb1a76f1a93e1e1264284f4a6",
+    "pushedAt": "2026-10-20T10:13:04Z",
+    "verifiedAt": "2026-10-24",
     "archived": false,
     "readmeAvailable": true
   },

@@ -82,11 +82,11 @@ export const projectStories = {
     ],
   },
   nycstandupopenmicmaster: {
-    audience: "New York City performers and open-mic hosts",
+    audience: "New York City performers, venue hosts, and directory administrators",
     workflowDescriptions: [
-      "Explore open-mic locations on a map covering New York City.",
-      "Use listing filters to narrow down the directory.",
-      "Give verified hosts a way to manage their own mic listings.",
+      "Narrow the directory by day, date, borough, fee, and signup method to find a useful match.",
+      "Browse grouped map pins and open a listing’s schedule, signup details, fee, and source information on a phone or computer.",
+      "Review new imports and community corrections before publishing. Approved hosts can update their own listings, while failed fetches keep the last good data.",
     ],
   },
   "Open-Micer-Timer": {
