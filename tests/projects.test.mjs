@@ -255,12 +255,15 @@ test("removed repositories cannot appear in the catalog or search results", () =
 test("the homepage opening shows real website and desktop work while preserving the supplied app banners", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const attribute = (tag, name) => tag.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`))?.[1];
-  const capabilities = html.match(/<nav\b[^>]*class="hero-capabilities"[^>]*>[\s\S]*?<\/nav>/)?.[0];
-  assert.ok(capabilities, "The opening includes native navigation for the development range");
-  assert.equal([...capabilities.matchAll(/<a\b[^>]*class="hero-capability"/g)].length, 4);
-  for (const label of ["iPhone & iPad apps", "Business websites", "Web apps & platforms", "Desktop software"]) {
-    assert.ok(capabilities.replaceAll("&amp;", "&").includes(label), `${label}: visible in the opening`);
-  }
+  assert.doesNotMatch(html, /<nav\b[^>]*class="hero-capabilities"/,
+    "The opening avoids repeating a second set of project navigation cards");
+  const actions = html.match(/<div\b[^>]*class="intro-actions"[^>]*>[\s\S]*?<\/div>/)?.[0];
+  assert.ok(actions, "The opening has a clear group of primary and secondary actions");
+  const actionLinks = [...actions.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
+  assert.equal(attribute(actionLinks[0][1], "href"), "https://briefbooth.com/book/4u-digital",
+    "Booking is the primary action");
+  assert.ok(actionLinks.some(([, attributes, text]) => attribute(attributes, "href") === "./work/" && /View all projects/.test(text)),
+    "A real secondary link opens the complete portfolio");
   const hero = html.match(/<section class="intro wrap"[\s\S]*?<\/section>/)?.[0];
   assert.ok(hero, "Hero banners must be present");
   assert.match(hero, /aria-label="Featured websites, desktop software, and iPhone apps"/);

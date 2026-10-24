@@ -312,10 +312,19 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await expect(page.locator(".hero-tagline")).toBeVisible();
   await expect(page.locator(".intro-descriptor")).toHaveText("Apps, websites, and software for your business.");
   await expect(page.locator(".intro-descriptor")).toBeVisible();
-  await expect(page.locator(".intro-description")).toHaveText(
+  const openingSummary = page.locator(".intro-summary");
+  await expect(openingSummary.locator(".intro-description")).toHaveText(
     "Work directly with the developer designing, coding, and launching your website, app, or software.",
   );
-  await expect(page.locator(".intro-description")).toBeVisible();
+  await expect(openingSummary.locator(".intro-description")).toBeVisible();
+  expect(await openingSummary.evaluate((element) => Boolean(
+    element.querySelector(".intro-description").compareDocumentPosition(element.querySelector(".intro-actions")) &
+      Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "The direct-developer explanation appears before the opening actions").toBe(true);
+  await expect(page.locator(".hero-opening-notes, .hero-capabilities")).toHaveCount(0);
+  await expect(page.locator(".intro-actions > a")).toHaveCount(2);
+  await expect(page.locator(".intro-actions").getByRole("link", { name: "View all projects", exact: false }))
+    .toHaveAttribute("href", "./work/");
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   expect(await headline.evaluate((element) => {
@@ -486,7 +495,7 @@ test("the homepage gives clients clear next steps and sends the full portfolio t
     await page.goto("/#process");
   }
   await expect(page).toHaveURL(/#process$/);
-  await expect(page.locator("#process").getByRole("heading", { level: 2 })).toHaveText("Your idea. A clear way forward.");
+  await expect(page.locator("#process").getByRole("heading", { level: 2 })).toHaveText("One developer. From idea to launch.");
   expect(await page.locator("#project-faq").evaluate((faq) => Boolean(
     document.querySelector("#process").compareDocumentPosition(faq) & Node.DOCUMENT_POSITION_FOLLOWING,
   ) && Boolean(faq.compareDocumentPosition(document.querySelector("#consultation")) & Node.DOCUMENT_POSITION_FOLLOWING)),
@@ -544,7 +553,12 @@ test("services lead to relevant project proof and restore keyboard focus", async
   expect(await services.evaluate((element) => Boolean(
     element.compareDocumentPosition(document.querySelector("#work")) & Node.DOCUMENT_POSITION_FOLLOWING,
   )), "Services precede the selected work").toBe(true);
-  await expect(services.locator("article.service-item")).toHaveCount(3);
+  await expect(services.locator("article.service-item")).toHaveCount(4);
+  const customSoftware = services.locator('article.service-item[data-service="custom-software"]');
+  await expect(customSoftware.getByRole("heading", { level: 3 })).toHaveText("I need custom software.");
+  await expect(customSoftware.locator("button[data-project], details.service-example")).toHaveCount(0);
+  await expect(customSoftware.locator('a[href="./services/custom-software-development/"]')).toHaveCount(1);
+  await expect(customSoftware.locator('a[href="./work/sobstage/"]')).toHaveCount(1);
 
   const examples = [
     ["website", "micro-short-website", "See Micro-short film website project"],
@@ -579,9 +593,9 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   await expect(process).toBeVisible();
   await expect(process.locator("li")).toHaveCount(3);
   await expect(process.locator("li h3")).toHaveText([
-    "Tell me the problem",
-    "Agree scope, price, and timing",
-    "Build, review, launch",
+    "Make a clear plan.",
+    "Build it together.",
+    "Launch with ownership.",
   ]);
   for (const step of await process.locator("li").all()) {
     await expect(step).toBeVisible();
@@ -589,7 +603,11 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   }
   expect(await process.evaluate((element) => Boolean(
     document.querySelector("#work").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
-  )), "The process follows the selected work").toBe(true);
+  )), "The process follows the compact portfolio introduction").toBe(true);
+  expect(await page.locator("#process").evaluate((element) => Boolean(
+    element.compareDocumentPosition(document.querySelector("#testimonials")) & Node.DOCUMENT_POSITION_FOLLOWING,
+  )), "Clients learn how the work happens before reading all nine reviews").toBe(true);
+  await expect(page.locator("#testimonials .testimonial-card:visible")).toHaveCount(9);
 
   const faqSection = page.locator("#project-faq");
   await expect(faqSection.locator("details.faq-item")).toHaveCount(6);
@@ -632,6 +650,19 @@ test("service choices, open FAQs, and the portfolio link fit narrow and tablet v
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/");
     await page.evaluate(() => document.fonts.ready);
+    const serviceBounds = await page.locator("#services .service-item").evaluateAll((cards) => cards.map((card) => {
+      const box = card.getBoundingClientRect();
+      return { top: box.top, bottom: box.bottom, left: box.left, right: box.right };
+    }));
+    if (width === 320) {
+      expect(serviceBounds.every((card, index) => index === 0 || card.top >= serviceBounds[index - 1].bottom - 1),
+        "Phone visitors read one complete service choice at a time").toBe(true);
+    } else if (width === 1024) {
+      expect(Math.abs(serviceBounds[0].top - serviceBounds[1].top), "Desktop service choices form a readable pair")
+        .toBeLessThanOrEqual(1);
+      expect(serviceBounds[2].top, "The second service pair sits below the first")
+        .toBeGreaterThanOrEqual(serviceBounds[0].bottom - 1);
+    }
     const faqSummaries = page.locator("#project-faq .faq-item summary");
     for (const summary of await faqSummaries.all()) {
       await summary.click();
@@ -919,8 +950,9 @@ test("services open useful details before booking and general inquiries retain e
     ["website", "website-development", "Website project", "a website"],
     ["web-app", "web-app-development", "Web application project", "a web application"],
     ["software", "app-development", "Custom app or software project", "a custom app or business software"],
+    ["custom-software", "custom-software-development", "Custom app or software project", "a custom app or business software"],
   ];
-  await expect(page.locator(".service-item")).toHaveCount(3);
+  await expect(page.locator(".service-item")).toHaveCount(4);
   for (const [topic, slug, subject, description] of services) {
     const service = page.locator(`.service-item[data-service="${topic}"] .service-inquiry[href="./services/${slug}/"]`);
     await service.scrollIntoViewIfNeeded();

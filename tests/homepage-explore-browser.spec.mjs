@@ -55,8 +55,8 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(page.locator(".planner-shortcut")).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         expect(await discovery.evaluate((element) => Boolean(
-          element.compareDocumentPosition(document.querySelector("#testimonials")) & Node.DOCUMENT_POSITION_FOLLOWING,
-        )), "Client feedback follows the compact portfolio introduction").toBe(true);
+          element.compareDocumentPosition(document.querySelector("#process")) & Node.DOCUMENT_POSITION_FOLLOWING,
+        )), "The working process follows the compact portfolio introduction").toBe(true);
       }
     });
   });

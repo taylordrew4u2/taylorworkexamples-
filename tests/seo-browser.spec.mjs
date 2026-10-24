@@ -246,12 +246,12 @@ test("the homepage leads to a complete dedicated portfolio and individual projec
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   expect(await page.evaluate(() => {
     const work = document.querySelector("#work");
-    const sections = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"]
+    const sections = ["work", "process", "testimonials", "client-care", "project-faq", "consultation", "business-guides"]
       .map((id) => document.getElementById(id));
     return Boolean(work) && sections.every((section, index) => section && (index === 0 || Boolean(
         sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
-  }), "Compact portfolio discovery precedes client feedback, process, questions, consultation, and guides").toBe(true);
+  }), "Compact portfolio discovery precedes the working process, client feedback, launch care, questions, consultation, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
   const portfolio = page.locator("#work").getByRole("link", { name: /^View all projects/ });

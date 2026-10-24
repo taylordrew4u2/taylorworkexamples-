@@ -76,6 +76,26 @@ for (const javaScriptEnabled of [true, false]) {
   test.describe(`mobile consultation dock with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
     test.use({ javaScriptEnabled });
 
+    test("the homepage footer prioritizes direct booking and keeps email as a secondary action", async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto("/");
+      const footer = page.locator(".footer-contact");
+      const booking = footer.locator("a.button[data-booking-link]");
+      await expect(booking).toHaveCount(1);
+      await expectDirectBooking(booking);
+      await expect(booking).toHaveClass(/button-dark/);
+      const email = footer.locator('.enquiry-link[data-enquiry="general"]');
+      await expect(email).toHaveCount(1);
+      await expect(email).not.toHaveClass(/\bbutton\b/);
+      expectBusinessEmail(await email.getAttribute("href"));
+      expect(await booking.evaluate((element) => Boolean(
+        element.compareDocumentPosition(element.closest(".footer-contact").querySelector('.enquiry-link[data-enquiry="general"]')) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      )), "The primary booking action appears before the email alternative").toBe(true);
+      await expectExternalOnlyBooking(page);
+      await openStubbedBooking(page, booking);
+    });
+
     for (const route of mobileBookingRoutes) {
       test(`booking remains available at the end of ${route} without covering page controls`, async ({ page }) => {
         await page.setViewportSize({ width: 390, height: 844 });

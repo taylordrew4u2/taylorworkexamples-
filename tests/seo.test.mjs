@@ -513,11 +513,11 @@ test("the homepage keeps portfolio discovery compact before client feedback and 
   assert.doesNotMatch(home, /\bid="(?:featured-projects|project-archive|archive-projects|range-proof|app-store-proof)"/,
     "The catalog, image galleries, and detailed App Store evidence live on their dedicated pages");
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"].map(sectionPosition);
+  const destinations = ["work", "process", "testimonials", "client-care", "project-faq", "consultation", "business-guides"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
-    "work is followed by client feedback, process, questions, consultation, and useful reads");
-  assert.ok(workEnd <= sectionPosition("testimonials"), "portfolio discovery finishes before client feedback");
+    "portfolio discovery is followed by the working process, client feedback, launch care, questions, consultation, and useful reads");
+  assert.ok(workEnd <= sectionPosition("process"), "portfolio discovery finishes before the working process");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation panel or questions");
 });

@@ -51,7 +51,7 @@ test("homepage consultation actions open the supplied booking page and explain t
   if (testInfo.project.name === "phone") await menu.click();
   const panel = page.locator("#consultation .consultation-panel");
   await expect(panel).toBeVisible();
-  await expect(page.locator(".hero-consultation-note")).toContainText(/video consultation/i);
+  await expect(page.locator(".intro-summary .hero-booking-note")).toContainText(/video consultation/i);
   await expect(page.locator("#consultation")).toContainText(/in-person/i);
   await expect(page.locator("#consultation")).toContainText(/space|workflow/i);
   await expect(page.locator(".consultation-how")).toContainText(/unsure what you need/i);

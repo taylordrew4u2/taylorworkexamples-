@@ -7,7 +7,7 @@ for (const javaScriptEnabled of [true, false]) {
       const page = await context.newPage();
       await page.goto("http://127.0.0.1:4173/#services");
       const cards = page.locator("#services .service-item");
-      await expect(cards).toHaveCount(3);
+      await expect(cards).toHaveCount(4);
       const examples = [
         ["website", "./assets/micro-short/home.jpg", "./work/micro-short-film-website/", "Micro-short Film Website · Repository website capture", "website-development"],
         ["web-app", "./assets/briefbooth/home-desktop.png", "./work/briefbooth/", "Live website capture", "web-app-development"],
@@ -49,6 +49,18 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(example).not.toHaveAttribute("open", "");
         await expect(summary).toBeFocused();
       }
+      const customSoftware = cards.filter({ has: page.getByRole("heading", { name: "I need custom software.", exact: true }) });
+      await expect(customSoftware).toHaveAttribute("data-service", "custom-software");
+      await expect(customSoftware.locator("details.service-example, button[data-project], img")).toHaveCount(0);
+      const customService = customSoftware.locator('a[href="./services/custom-software-development/"]');
+      await expect(customService).toBeVisible();
+      await expect(customService).toHaveClass(/service-inquiry/);
+      const softwareExample = customSoftware.locator('a[href="./work/sobstage/"]');
+      await expect(softwareExample).toBeVisible();
+      await softwareExample.focus();
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(/\/work\/sobstage\/$/);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("SobStage");
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     } finally { await context.close(); }
   });
