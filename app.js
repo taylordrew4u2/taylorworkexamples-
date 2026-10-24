@@ -1,104 +1,27 @@
-import { email, projects, featuredProjects, filterProjects } from "./public-projects.js?v=50";
-import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, isProductCover, dialogVisual, renderFeaturedProjects, renderArchiveProjects } from "./render-projects.js?v=50";
+import { email, projects } from "./public-projects.js?v=50";
+import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, projectWorkflows, previewImages, dialogVisual } from "./render-projects.js?v=50";
 import { dialogSizes } from "./responsive-images.js?v=50";
 import { trackContact } from "./analytics.js?v=50";
-import { renderRangeProof } from "./range-proof.js?v=50";
 import { bookingURL } from "./booking.js?v=50";
-import { initWorkExplorer } from "./homepage-explore.js?v=50";
 
 const $ = (selector) => document.querySelector(selector);
 document.documentElement.classList.add("js-enabled");
 document.querySelectorAll(".enquiry-link").forEach((link) => {
   link.href = enquiryURL(link.dataset.enquiry);
 });
-if (!$("#range-proof").children.length) $("#range-proof").innerHTML = renderRangeProof();
-
-// The build supplies this markup before JavaScript. Only source previews need a fallback render.
-if (!$("#featured-projects").children.length) {
-  $("#featured-projects").innerHTML = renderFeaturedProjects(featuredProjects);
-}
-initWorkExplorer();
-
-function changeShowcaseImage(event) {
-  const choice = event.target.closest("[data-gallery]");
-  if (!choice) return;
-  const project = projects.find((item) => item.id === choice.dataset.gallery);
-  const frame = project?.gallery?.[Number(choice.dataset.screen)];
-  if (!frame) return;
-  const story = choice.closest(".case-study, .supporting-card.has-gallery, .archive-card");
-  story.querySelectorAll("[data-gallery]").forEach((button) => {
-    button.setAttribute("aria-pressed", String(button === choice));
-  });
-  const screen = story.querySelector(".case-screen, .supporting-screen, .archive-preview");
-  const productCover = isProductCover(frame);
-  screen.classList.toggle("portrait", frame.portrait === true);
-  screen.classList.toggle("product-cover", productCover);
-  if (productCover) {
-    screen.style.setProperty("--product-cover-ratio", `${frame.width} / ${frame.height}`);
-  } else {
-    screen.style.removeProperty("--product-cover-ratio");
-  }
-  screen.classList.toggle("paired", Boolean(frame.companion || frame.workflow));
-  if (story.classList.contains("archive-card")) {
-    screen.classList.toggle("source-overview", (frame.imageKind || project.imageKind) === "project-overview");
-  }
-  screen.innerHTML = `<span class="visual-badge mono">${escape(project.badge)}</span>${previewImages(frame)}<span class="preview-arrow" aria-hidden="true">↗</span>`;
-  story.querySelector(".screen-caption").textContent = frame.caption;
-  story.querySelector(".showcase-original").href = frame.image;
-  if (story.classList.contains("archive-card")) {
-    const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
-    story.querySelector(".image-kind").textContent = suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel;
-    story.querySelector(".preview-context").textContent = frame.previewContext || (suppliedArtwork
-      ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : project.previewContext);
-  }
-}
-$("#featured-projects").addEventListener("click", changeShowcaseImage);
-$("#archive-projects").addEventListener("click", changeShowcaseImage);
-
 $("#year").textContent = new Date().getFullYear();
 
-let activeFilter = "all";
-function renderArchive() {
-  const visible = filterProjects(
-    projects,
-    activeFilter,
-    $("#project-search").value,
-  );
-  $("#archive-projects").innerHTML = renderArchiveProjects(visible);
-  $("#result-count").textContent =
-    `${visible.length} OF ${projects.length} PROJECTS`;
-  $("#empty-state").hidden = visible.length > 0;
+// Older portfolio links still lead visitors to the complete collection.
+function followLegacyProjectLink() {
+  const target = {
+    "#work": "./work/",
+    "#project-archive": "./work/",
+    "#app-store-proof": "./work/#app-store-proof",
+  }[window.location.hash];
+  if (target) window.location.replace(target);
 }
-renderArchive();
-
-function openLinkedArchive() {
-  if (window.location.hash === "#project-archive") {
-    $(".archive-disclosure").open = true;
-  }
-}
-openLinkedArchive();
-window.addEventListener("hashchange", openLinkedArchive);
-
-function setFilter(category) {
-  activeFilter = category;
-  document.querySelectorAll("[data-filter]").forEach((button) => {
-    const selected = button.dataset.filter === category;
-    button.classList.toggle("active", selected);
-    button.setAttribute("aria-pressed", String(selected));
-  });
-  renderArchive();
-}
-$(".filter-group").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-filter]");
-  if (button) setFilter(button.dataset.filter);
-});
-$("#project-search").addEventListener("input", renderArchive);
-$("#clear-filters").addEventListener("click", () => {
-  $("#project-search").value = "";
-  setFilter("all");
-  $("#project-search").focus();
-});
+followLegacyProjectLink();
+window.addEventListener("hashchange", followLegacyProjectLink);
 
 const dialog = $("#project-dialog");
 document.addEventListener("click", (event) => {

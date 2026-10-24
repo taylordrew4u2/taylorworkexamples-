@@ -58,11 +58,12 @@ test("published apps and the development range are visible and usable without Ja
       }
     }
     const opening = page.locator(".hero-range-proof");
-    await expect(opening).toHaveAttribute("href", "#app-store-proof");
+    await expect(opening).toHaveAttribute("href", "./work/#app-store-proof");
     await expect(opening).toHaveText("3 apps published on the App Store ↗");
     // Native keyboard activation also works when returning from the lower capability links.
     await opening.focus();
     await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/work\/#app-store-proof$/);
     const proof = page.locator("#range-proof");
     await expect(proof.getByRole("heading", { name: "On the App Store.", exact: true })).toBeVisible();
     const store = page.locator("#app-store-proof");
@@ -80,12 +81,13 @@ test("published apps and the development range are visible and usable without Ja
       expect(await image.evaluate(el => getComputedStyle(el).filter)).toBe("none");
     }
     await expect(proof.locator(".range-card")).toHaveCount(4);
-    expect(await proof.evaluate(el => el.closest("#work") !== null)).toBe(true);
+    expect(await proof.evaluate(el => el.closest("main") !== null)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     for (const link of await proof.locator("a").all()) {
       const fits = await link.evaluate(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.left >= 0 && r.right <= document.documentElement.clientWidth; });
       expect(fits).toBe(true);
     }
+    await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
     const projectLink = capabilities.locator("a.hero-capability").first();
     const expectedProject = projects.find((entry) => entry.id === openingProjects[0][1]);
     const projectURL = new URL(expectedProject.caseUrl, page.url()).href;

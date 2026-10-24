@@ -797,6 +797,39 @@ button, a, input, select, textarea, summary {
   padding-block: 5.5rem;
 }
 
+.portfolio-link-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2rem;
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  background: var(--surface-soft);
+}
+
+.portfolio-link-card h2 {
+  margin-top: .75rem;
+  font-family: var(--display);
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 650;
+  letter-spacing: -.05em;
+  line-height: 1.2;
+}
+
+.portfolio-ownership {
+  max-width: 42rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: .8125rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 600px) {
+  .portfolio-link-card { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .portfolio-link-card > .button { justify-self: start; }
+}
+
 .section-heading {
   display: flex;
   align-items: flex-end;

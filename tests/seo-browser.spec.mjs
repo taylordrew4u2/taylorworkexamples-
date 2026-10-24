@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { projects, featuredProjects } from "../public-projects.js";
+import { projects } from "../public-projects.js";
 import { services, guide, projectSlugs, site } from "../seo-content.js";
 import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
@@ -240,40 +240,35 @@ test("the hero lets visitors choose a real build with native controls without Ja
   await expectSelection("website");
 });
 
-test("the homepage exposes the portfolio and project navigation without JavaScript", async ({ page }) => {
+test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
-  await expect(page.locator("#featured-projects .project-card")).toHaveCount(featuredProjects.length);
-  await expect(page.locator("#archive-projects .archive-card")).toHaveCount(projects.length);
+  await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   expect(await page.evaluate(() => {
     const work = document.querySelector("#work");
-    const archive = document.querySelector("#project-archive");
-    const featured = document.querySelector("#featured-projects");
-    const rangeProof = document.querySelector("#range-proof");
-    const groups = [...document.querySelectorAll("#featured-projects, #archive-projects, .project-card, .archive-card")];
     const sections = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"]
       .map((id) => document.getElementById(id));
-    return work.contains(archive) && work.contains(rangeProof) && groups.every((group) => work.contains(group)) &&
-      Boolean(featured.compareDocumentPosition(rangeProof) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-      Boolean(rangeProof.compareDocumentPosition(archive) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-      sections.every((section, index) => section && (index === 0 || Boolean(
+    return Boolean(work) && sections.every((section, index) => section && (index === 0 || Boolean(
         sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
       ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
-  }), "All projects stay together before client feedback, process, questions, consultation, and guides").toBe(true);
+  }), "Compact portfolio discovery precedes client feedback, process, questions, consultation, and guides").toBe(true);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
-  await page.locator(".archive-disclosure summary").evaluate((element) =>
-    element.scrollIntoView({ block: "center", behavior: "instant" }));
-  await page.locator(".archive-disclosure summary").click();
-  await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
+  const portfolio = page.locator("#work").getByRole("link", { name: /^View all projects/ });
+  await expect(portfolio).toHaveAttribute("href", "./work/");
+  await portfolio.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/work\/$/);
+  await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
+  await expectHeaderSection(page, "/work/", "page");
   const project = projects.find((entry) => entry.id === "Bill-Spilt");
-  const story = page.locator(`.archive-card[data-showcase-id="${project.id}"] .case-page-link`);
+  const story = await linkTo(page, `/work/${projectSlugs[project.id]}/`);
   await expect(story).toBeVisible();
   await story.click();
   await expect(page).toHaveURL(new RegExp(`/work/${projectSlugs[project.id]}/$`));
   await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
-  const portfolio = await linkTo(page, "/work/");
-  await portfolio.click();
+  const returnToPortfolio = await linkTo(page, "/work/");
+  await returnToPortfolio.click();
   await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
   await expectHeaderSection(page, "/work/", "page");
   await expectPageFit(page);
@@ -283,7 +278,7 @@ test("homepage shortcuts let visitors skip to the service, work, or client feedb
   await page.goto("/");
   const shortcuts = page.getByRole("navigation", { name: "Explore 4u Digital", exact: true });
   await expect(shortcuts.locator("a")).toHaveCount(3);
-  for (const id of ["services", "work", "testimonials"]) {
+  for (const id of ["services", "testimonials"]) {
     const link = shortcuts.locator(`a[href="#${id}"]`);
     await expect(link).toBeVisible();
     expect(await link.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
@@ -292,6 +287,14 @@ test("homepage shortcuts let visitors skip to the service, work, or client feedb
     await expect(page).toHaveURL(new RegExp(`#${id}$`));
     await expect(page.locator(`#${id} > .section-heading, #${id} > .services-heading`).getByRole("heading", { level: 2 })).toBeVisible();
   }
+  const projectsLink = await linkTo(shortcuts, "/work/");
+  await expect(projectsLink).toBeVisible();
+  expect(await projectsLink.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  await projectsLink.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/work\/$/);
+  await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
+  await page.goto("/");
   const originalViewport = page.viewportSize();
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 900 });

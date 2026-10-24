@@ -1,19 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { projects, featuredProjects } from "../public-projects.js";
+import { projects } from "../public-projects.js";
 import { launchOffer } from "../seo-offer.js";
-
-const removedProjectIds = [
-  "HealYourHeart",
-  "laugh-extractor",
-  "Laugh-Map",
-  "markvegas",
-  "mystorydailjournal",
-  "CONTROLLEREVENT",
-  "comedysub",
-  "staybusy",
-  "taylordrewwebsite",
-  "Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness",
-];
 
 async function expectResponsiveImageSource(image, expected) {
   const source = await image.evaluate((element) => ({
@@ -56,7 +43,7 @@ async function expectLoadedImageToFit(image, expected) {
   await expect(image).toHaveCSS("mix-blend-mode", "normal");
   await expect(image).toHaveCSS("opacity", "1");
   const geometry = await image.evaluate((element) => {
-    const frame = element.closest(".archive-preview, .dialog-preview, .case-screen, .project-visual");
+    const frame = element.closest(".dialog-preview");
     const imageBox = element.getBoundingClientRect();
     const frameBox = frame.getBoundingClientRect();
     return {
@@ -81,69 +68,6 @@ async function expectLoadedImageToFit(image, expected) {
   expect(await image.page().evaluate(() =>
     document.documentElement.scrollWidth <= window.innerWidth,
   )).toBe(true);
-}
-
-async function openSelectedGallery(card) {
-  const disclosure = card.locator("details.gallery-disclosure");
-  if (await disclosure.count() === 0) return; // Archive controls remain directly visible.
-  if (await disclosure.getAttribute("open") === null) {
-    await disclosure.locator("summary").click();
-  }
-  await expect(disclosure).toHaveAttribute("open", "");
-}
-
-async function expectInlineGalleryFrame(card, project, frame, screenSelector) {
-  await openSelectedGallery(card);
-  const screen = card.locator(screenSelector);
-  const productCover = frame.portrait !== true &&
-    !frame.companion && !frame.workflow && frame.width > frame.height &&
-    /product-artwork$/.test(frame.sourceKind || "");
-  expect(await screen.evaluate((element) => element.classList.contains("product-cover")),
-    `${project.title}: only unpaired landscape product banners use the full composition frame`).toBe(productCover);
-  if (productCover) {
-    await expect(screen.locator(".visual-badge")).toBeHidden();
-    await expect(screen.locator(".preview-arrow")).toBeHidden();
-    const ratio = `${frame.width} / ${frame.height}`;
-    expect(await screen.evaluate((element) => element.style.getPropertyValue("--product-cover-ratio").trim())).toBe(ratio);
-    const aspectError = await screen.evaluate((element, heightPerWidth) => {
-      const box = element.getBoundingClientRect();
-      return Math.abs(box.height - box.width * heightPerWidth);
-    }, frame.height / frame.width);
-    expect(aspectError, `${frame.label}: the full cover frame retains the original image proportions`).toBeLessThanOrEqual(1);
-  } else {
-    expect(await screen.evaluate((element) => element.style.getPropertyValue("--product-cover-ratio").trim()),
-      "Switching to an ordinary capture removes the artwork ratio").toBe("");
-  }
-  await expectLoadedImageToFit(screen.locator(".primary-screen"), frame);
-  await expect(screen.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
-  if (frame.companion) {
-    await expectLoadedImageToFit(screen.locator(".companion-screen"), frame.companion);
-  }
-  await expect(card.locator(".screen-caption")).toHaveText(frame.caption);
-  if (screenSelector === ".archive-preview") {
-    expect(await screen.evaluate((element) => element.classList.contains("source-overview")),
-      `${project.title}: source diagrams keep their own layout when selected`).toBe(
-      (frame.imageKind || project.imageKind) === "project-overview",
-    );
-    const suppliedArtwork = frame.sourceKind === "owner-supplied-product-artwork";
-    await expect(card.locator(".image-kind")).toHaveText(suppliedArtwork ? "Supplied product artwork" : frame.imageLabel || project.imageLabel);
-    await expect(card.locator(".preview-context")).toHaveText(frame.previewContext || (suppliedArtwork
-      ? "Owner-supplied promotional artwork; original colors and full-resolution pixels preserved."
-      : project.previewContext));
-  }
-  const original = card.locator(".showcase-original");
-  await expect(original).toHaveAttribute("href", frame.image);
-  await expect(original).toHaveAttribute("target", "_blank");
-  await expect(original).toHaveAttribute("rel", /noopener/);
-  await expect(screen).toHaveAttribute("data-project", project.id);
-  expect(await screen.evaluate((element) => element.classList.contains("portrait"))).toBe(frame.portrait === true);
-  expect(await screen.evaluate((element) => element.classList.contains("paired"))).toBe(Boolean(frame.companion || frame.workflow));
-  if (frame.workflow) {
-    await expect(screen.locator(".workflow-step")).toHaveText(frame.workflow);
-  } else {
-    await expect(screen.locator(".screen-workflow")).toHaveCount(0);
-  }
-  await expect(card.page().getByRole("dialog")).toBeHidden();
 }
 
 async function expectProjectIcon(scope, project, frameSelector = ".project-identity .project-icon-frame") {
@@ -407,23 +331,14 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       box.left >= headingBox.left - 1 && box.right <= headingBox.right + 1,
     );
   }), "The headline stays inside its heading column, with the descriptor beside it on desktop or below on phones").toBe(true);
-  await expect(page.locator(".project-card")).toHaveCount(featuredProjects.length);
-  await expect(page.locator(".case-study")).toHaveCount(3);
-  await expect(page.locator(".case-study .project-title")).toHaveText(featuredProjects.slice(0, 3).map((project) => project.title));
-  await expect(page.locator(".supporting-grid .project-title")).toHaveText(featuredProjects.slice(3).map((project) => project.title));
-  for (const story of await page.locator(".case-study").all()) {
-    await expect(story.locator(".case-highlights li")).toHaveCount(3);
-    for (const highlight of await story.locator(".case-highlights li").all()) {
-      await expect(highlight).toBeVisible();
-      await expect(highlight.locator("strong")).toHaveText(/\S/);
-      await expect(highlight.locator("p")).toHaveText(/\S/);
-    }
-  }
+  await expect(page.locator(".project-card, .archive-card, #featured-projects, #project-archive")).toHaveCount(0);
+  await expect(page.locator("#work").getByRole("link", { name: "View all projects", exact: false }))
+    .toHaveAttribute("href", "./work/");
   await expect(page.locator(".hero-stage .hero-project-screen")).toHaveCount(2);
   await expect(page.locator(".hero-stage .hero-project-icon")).toHaveCount(0);
   await expect(page.locator(".hero-app-previews img")).toHaveCount(2);
   await expect(page.locator(".hero-platform-previews .hero-platform-screen")).toHaveCount(3);
-  for (const image of await page.locator(".hero-stage img, #featured-projects img").all()) {
+  for (const image of await page.locator(".hero-stage img").all()) {
     const panel = await image.evaluate((element) => element.closest("[data-hero-panel]")?.dataset.heroPanel);
     if (panel) await selectHeroProject(page, panel);
     await image.scrollIntoViewIfNeeded();
@@ -441,25 +356,11 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
     ),
   ).toBe(true);
   expect(errors).toEqual([]);
-  const calendarCard = page.locator(".supporting-card").filter({
-    has: page.getByRole("button", { name: "My Gig Calendar", exact: true }),
-  });
-  await expect(calendarCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/my-gig-calendar/banner-1920x1080.png");
-  await expect(calendarCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  const binderCard = page.locator('.project-card:is([data-case-id="The-Bit-Binder"], [data-supporting-id="The-Bit-Binder"])');
-  await expect(binderCard.locator(".project-visual .primary-screen")).toHaveAttribute("src", "./assets/bitbinder/banner-1920x1080.png");
-  await expect(binderCard.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
   for (const [id] of heroPreviews) {
     await expect(page.locator(`.hero-project[data-project="${id}"] .hero-project-screen`)).toHaveAttribute(
       "src", projects.find((entry) => entry.id === id).image,
     );
   }
-  const website = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
-  const websiteCard = page.locator(`.supporting-card[data-supporting-id="${website.id}"]`);
-  await expect(websiteCard.locator(".visual-badge")).toHaveText(website.badge);
-  await expect(websiteCard.locator(".project-visual img")).toHaveAttribute("src", "./assets/readme-overviews/pins-and-needles.png");
-  await expect(websiteCard.locator(".project-visual img")).toHaveAttribute("alt", /Pins.*Needles.*repository product artwork/i);
-  await expect(websiteCard.locator(".project-visual")).toHaveClass(/product-cover/);
   await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}.png`),
@@ -468,51 +369,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
   await page.screenshot({
     path: testInfo.outputPath(`portfolio-${testInfo.project.name}-intro.png`),
   });
-  const controls = page.locator(".case-study .project-visual");
-  async function expectStaticControlOnHover(control) {
-    await control.scrollIntoViewIfNeeded();
-    await page.mouse.move(0, 0);
-    const before = await control.boundingBox();
-    await control.hover();
-    const after = await control.boundingBox();
-    expect(before).not.toBeNull();
-    expect(after).not.toBeNull();
-    for (const edge of ["x", "y", "width", "height"]) {
-      expect(
-        Math.abs(after[edge] - before[edge]),
-        `Hover keeps control ${edge} stable`,
-      ).toBeLessThanOrEqual(0.01);
-    }
-  }
-  for (const index of [0, 1]) {
-    await expectStaticControlOnHover(controls.nth(index));
-  }
   await page.emulateMedia({ reducedMotion: "reduce" });
-  expect(
-    await page.evaluate(() => ({
-      scroll: getComputedStyle(document.documentElement).scrollBehavior,
-      imageTransition: getComputedStyle(
-        document.querySelector(".project-visual img"),
-      ).transitionDuration,
-      cardTransition: getComputedStyle(
-        document.querySelector(".project-visual"),
-      ).transitionDuration,
-    })),
-  ).toEqual({ scroll: "auto", imageTransition: "0s", cardTransition: "0s" });
-  for (const index of [0, 1]) {
-    const control = controls.nth(index);
-    await control.scrollIntoViewIfNeeded();
-    await page.mouse.move(0, 0);
-    const restingTransform = await control
-      .locator(".primary-screen")
-      .evaluate((element) => getComputedStyle(element).transform);
-    await expectStaticControlOnHover(control);
-    expect(
-      await control
-        .locator(".primary-screen")
-        .evaluate((element) => getComputedStyle(element).transform),
-    ).toBe(restingTransform);
-  }
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
 });
 
 test("the hero explorer follows native radio controls and opens only the chosen project", async ({ page }) => {
@@ -605,219 +463,7 @@ test("the opening banners stay complete and separate, and each opens its matchin
   }
 });
 
-for (const [id, banner] of [
-  ["The-Bit-Binder", "./assets/bitbinder/banner-1920x1080.png"],
-  ["MyGigCalendar", "./assets/my-gig-calendar/banner-1920x1080.png"],
-]) {
-  const project = projects.find((entry) => entry.id === id);
-  test(`${project.title} opens with its supplied banner across selected work, archive, and project details`, async ({ page }) => {
-    await page.goto("/#project-archive");
-    const card = page.locator(`.project-card:is([data-case-id="${id}"], [data-supporting-id="${id}"])`);
-    const screenSelector = ".project-visual";
-    const archiveCard = page.locator(`.archive-card[data-showcase-id="${id}"]`);
-    const frame = project.gallery[0];
-    expect(frame.image).toBe(banner);
-    expect(frame.width).toBe(1920);
-    expect(frame.height).toBe(1080);
-    expect(frame.portrait).toBe(false);
-    expect(frame.sourceKind).toBe("owner-supplied-product-artwork");
-    for (const [showcase, screen] of [[card, screenSelector], [archiveCard, ".archive-preview"]]) {
-      await expect(showcase.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-      await expect(showcase.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-      await expectInlineGalleryFrame(showcase, project, frame, screen);
-    }
-    const trigger = card.getByRole("button", { name: `Explore ${project.title}`, exact: true });
-    await trigger.click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
-    await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-    await expectLoadedImageToFit(dialog.locator(".primary-screen"), frame);
-    await expect(dialog.locator(".companion-screen")).toHaveCount(0);
-    await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveCount(1);
-    await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
-    await expect(dialog.locator(".dialog-image-caption")).toHaveText(frame.caption);
-    await expect(dialog.locator(".image-original")).toHaveAttribute("href", banner);
-    await expect(dialog.locator(".image-original")).toHaveAttribute("target", "_blank");
-    await expect(dialog.locator(".image-original")).toHaveAttribute("rel", /noopener/);
-    await page.keyboard.press("Escape");
-    await expect(dialog).toBeHidden();
-    await expect(trigger).toBeFocused();
-  });
-}
-
-test("Open Micer Timer opens with its supplied banner and distinguishes its preserved native countdown views", async ({ page }) => {
-  const project = projects.find((entry) => entry.id === "Open-Micer-Timer");
-  await page.goto("/#project-archive");
-  const card = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
-  const choices = card.locator("button[data-gallery][data-screen]");
-  const banner = project.gallery[0];
-  expect(banner.image).toBe("./assets/open-micer-timer/banner-1920x1080.png");
-  expect(banner.width).toBe(1920);
-  expect(banner.height).toBe(1080);
-  expect(banner.sourceKind).toBe("owner-supplied-product-artwork");
-  await expect(choices).toHaveCount(10);
-  await expect(choices).toHaveText([
-    "Product overview", "Final-minute cue", "Running countdown", "Ready",
-    "On the clock", "Hands-free", "Final minute", "Time’s up", "Set lengths", "Any screen",
-  ]);
-  await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-  await expectInlineGalleryFrame(card, project, banner, ".archive-preview");
-  await expect(page.locator(`.hero-project[data-project="${project.id}"]`)).toHaveCount(0);
-  await expect(page.locator(`#featured-projects [data-case-id="${project.id}"], #featured-projects [data-supporting-id="${project.id}"]`)).toHaveCount(0);
-
-  const native = project.gallery.find((frame) => frame.label === "Running countdown");
-  const nativeChoice = choices.filter({ hasText: /^Running countdown$/ });
-  await nativeChoice.scrollIntoViewIfNeeded();
-  await nativeChoice.focus();
-  await page.keyboard.press("Enter");
-  await expect(nativeChoice).toBeFocused();
-  await expect(nativeChoice).toHaveAttribute("aria-pressed", "true");
-  await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-  await expectInlineGalleryFrame(card, project, native, ".archive-preview");
-  await expect(card.locator(".image-kind")).toHaveText("Native app screenshot");
-  await expect(card.locator(".preview-context")).toHaveText("Native countdown capture");
-  await choices.first().focus();
-  await page.keyboard.press("Space");
-  await expect(choices.first()).toBeFocused();
-  await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-  await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-  await expectInlineGalleryFrame(card, project, banner, ".archive-preview");
-
-  const trigger = card.locator(".archive-preview");
-  await trigger.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
-  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-  await expectLoadedImageToFit(dialog.locator(".primary-screen"), banner);
-  await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(dialog.locator(".dialog-image-caption")).toHaveText(banner.caption);
-  await expect(dialog.locator(".image-original")).toHaveAttribute("href", banner.image);
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-});
-
-test("BillSpilt uses its repository cover and switches artwork and app capture context accurately", async ({ page }) => {
-  const project = projects.find((entry) => entry.id === "Bill-Spilt");
-  await page.goto("/#project-archive");
-  const selected = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
-  const archive = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
-  const cover = project.gallery[0];
-  expect(cover.image).toBe("./assets/billspilt/hero.png");
-  expect(cover.width).toBe(2560);
-  expect(cover.height).toBe(1440);
-  expect(cover.sourceKind).toBe("repository-product-artwork");
-  for (const [card, screen] of [[selected, ".supporting-screen"], [archive, ".archive-preview"]]) {
-    const choices = card.locator("button[data-gallery][data-screen]");
-    await expect(choices).toHaveCount(8);
-    await expect(choices).toHaveText([
-      "Product overview", "Balances", "Settlement", "Expense split", "Expense history",
-      "Spending overview", "How it works", "Features",
-    ]);
-    await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-    await expectInlineGalleryFrame(card, project, cover, screen);
-  }
-  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
-  await expect(archive.locator(".preview-context")).toHaveText("Repository promotional artwork · Illustrative sample data");
-  const native = project.gallery.find((frame) => frame.label === "Balances");
-  const choices = archive.locator("button[data-gallery][data-screen]");
-  const balances = choices.filter({ hasText: /^Balances$/ });
-  await balances.scrollIntoViewIfNeeded();
-  await balances.focus();
-  await page.keyboard.press("Enter");
-  await expect(balances).toBeFocused();
-  await expect(balances).toHaveAttribute("aria-pressed", "true");
-  await expect(archive.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-  await expectInlineGalleryFrame(archive, project, native, ".archive-preview");
-  await expect(archive.locator(".image-kind")).toHaveText("App screenshot");
-  await expect(archive.locator(".preview-context")).toHaveText("Repository app capture · Sample household");
-  const artwork = project.gallery.find((frame) => frame.label === "How it works");
-  const howItWorks = choices.filter({ hasText: /^How it works$/ });
-  await howItWorks.focus();
-  await page.keyboard.press("Space");
-  await expect(howItWorks).toBeFocused();
-  await expect(howItWorks).toHaveAttribute("aria-pressed", "true");
-  await expectInlineGalleryFrame(archive, project, artwork, ".archive-preview");
-  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
-  await expect(archive.locator(".preview-context")).toHaveText("Repository promotional artwork · Illustrative sample data");
-  await expect(selected.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(selected.locator(".primary-screen")).toHaveAttribute("src", cover.image);
-  const trigger = selected.locator(".supporting-screen");
-  await trigger.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
-  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-  await expectLoadedImageToFit(dialog.locator(".primary-screen"), cover);
-  await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(dialog.locator(".dialog-image-caption")).toHaveText(cover.caption);
-  await expect(dialog.locator(".image-original")).toHaveAttribute("href", cover.image);
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-});
-
-test("I Can Run A Show opens with repository artwork and preserves paired native workspace context", async ({ page }) => {
-  const project = projects.find((entry) => entry.id === "Showrunner-ICanRunAShow");
-  await page.goto("/#project-archive");
-  const selected = page.locator(`.case-study[data-case-id="${project.id}"]`);
-  const archive = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
-  const cover = project.gallery[0];
-  expect(cover.sourceKind).toBe("repository-product-artwork");
-  for (const [card, screen] of [[selected, ".case-screen"], [archive, ".archive-preview"]]) {
-    const choices = card.locator("button[data-gallery][data-screen]");
-    await expect(choices).toHaveCount(13);
-    await expect(choices).toHaveText([
-      "Product overview", "Workspace & cues", "Show planning", "Contracts & cues", "Mobile workspace",
-      "Performer directory", "Stage remote", "Every show", "Run the show", "Run of show",
-      "Show page", "Rolodex overview", "Stage remote overview",
-    ]);
-    await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-    await expectInlineGalleryFrame(card, project, cover, screen);
-  }
-  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
-  await expect(archive.locator(".preview-context")).toHaveText("Repository promotional artwork · Illustrative sample data");
-  const native = project.gallery.find((frame) => frame.label === "Workspace & cues");
-  expect(native.sourceKind).toBe("repository-app-capture");
-  expect(native.companion).toBeDefined();
-  const nativeChoice = archive.locator(".archive-gallery").getByRole("button", { name: native.label, exact: true });
-  await nativeChoice.scrollIntoViewIfNeeded();
-  await nativeChoice.focus();
-  await page.keyboard.press("Enter");
-  await expect(nativeChoice).toBeFocused();
-  await expect(nativeChoice).toHaveAttribute("aria-pressed", "true");
-  await expectInlineGalleryFrame(archive, project, native, ".archive-preview");
-  await expect(archive.locator(".image-kind")).toHaveText("App screenshot");
-  await expect(archive.locator(".preview-context")).toHaveText("Repository app capture · Sample show");
-  const coverChoice = archive.locator(".archive-gallery").getByRole("button", { name: "Product overview", exact: true });
-  await coverChoice.focus();
-  await page.keyboard.press("Space");
-  await expect(coverChoice).toBeFocused();
-  await expect(coverChoice).toHaveAttribute("aria-pressed", "true");
-  await expect(archive.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-  await expectInlineGalleryFrame(archive, project, cover, ".archive-preview");
-  await expect(archive.locator(".image-kind")).toHaveText("Repository product artwork");
-  await expect(selected.locator('[data-gallery][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(selected.locator(".primary-screen")).toHaveAttribute("src", cover.image);
-  const trigger = selected.locator(".case-screen");
-  await trigger.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
-  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-  await expectLoadedImageToFit(dialog.locator(".primary-screen"), cover);
-  await expect(dialog.locator(".companion-screen")).toHaveCount(0);
-  await expect(dialog.locator('[data-dialog-screen][aria-pressed="true"]')).toHaveText("Product overview");
-  await expect(dialog.locator(".dialog-image-caption")).toHaveText(cover.caption);
-  await expect(dialog.locator(".image-original")).toHaveAttribute("href", cover.image);
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-});
-
-test("the homepage gives clients clear next steps while keeping optional project screens compact", async ({ page }, testInfo) => {
+test("the homepage gives clients clear next steps and sends the full portfolio to its own page", async ({ page }, testInfo) => {
   await page.goto("/");
   const menu = page.locator(".menu-toggle");
   if (testInfo.project.name === "phone") await menu.click();
@@ -858,88 +504,19 @@ test("the homepage gives clients clear next steps while keeping optional project
   await page.keyboard.press("Space");
   await expect(comparison).not.toHaveAttribute("open", "");
 
-  const cards = page.locator("#featured-projects .project-card");
-  await expect(cards).toHaveCount(featuredProjects.length);
-  await expect(cards.locator(".project-title")).toHaveText(featuredProjects.map((project) => project.title));
-  await expect(page.locator("#featured-projects details.gallery-disclosure:not([open])")).toHaveCount(featuredProjects.length);
-  for (const project of featuredProjects) {
-    const card = cards.filter({ has: page.locator(`.project-visual[data-project="${project.id}"]`) });
-    const disclosure = card.locator("details.gallery-disclosure");
-    const summary = disclosure.locator("summary");
-    const choices = disclosure.locator("button[data-gallery][data-screen]");
-    await expect(summary).toHaveText(`Browse ${project.gallery.length} screens +`);
-    await expect(choices.first()).toBeHidden();
-    const story = card.getByRole("link", { name: `View project: ${project.title}`, exact: true });
-    await expect(story).toBeVisible();
-    await expect(story).toHaveText("View project ↗");
-    await expect(story).toHaveAttribute("href", project.caseUrl);
-    await expect(card.locator(".project-links > :first-child")).toHaveClass(/case-page-link/);
-    const more = card.locator("details.project-more");
-    const moreLinks = more.locator(".project-more-links");
-    const capabilityTags = moreLinks.locator(".capability-tags .tag");
-    const tagTexts = (project.demonstrates || project.stack).slice(0, 3);
-    await expect(card.locator(".capability-tags .tag")).toHaveCount(3);
-    await expect(capabilityTags).toHaveText(tagTexts);
-    const isLeadStory = featuredProjects.indexOf(project) < 3;
-    const overview = card.locator(".project-description, .project-visual .primary-screen, .case-highlights li, .project-workflows li");
-    await expect(overview).toHaveCount(2 + (isLeadStory ? project.highlights.length : project.workflows.length));
-    await expect(card.locator(".project-description")).toHaveText(isLeadStory
-      ? project.clientSummary || project.summary
-      : project.purpose || project.clientSummary || project.summary);
-    if (isLeadStory) await expect(card.locator(".case-highlights strong")).toHaveText(project.highlights.map((item) => item.title));
-    else await expectProjectWorkflows(card, project);
-    await expect(more).not.toHaveAttribute("open", "");
-    await expect(moreLinks).toBeHidden();
-    for (const tag of await capabilityTags.all()) await expect(tag).toBeHidden();
-    for (const item of await overview.all()) await expect(item).toBeVisible();
-    await summary.focus();
-    await page.keyboard.press("Enter");
-    await expect(disclosure).toHaveAttribute("open", "");
-    await expect(summary).toBeFocused();
-    await expect(choices).toHaveCount(project.gallery.length);
-    await choices.last().focus();
-    await page.keyboard.press("Space");
-    await expect(choices.last()).toBeFocused();
-    await expect(choices.last()).toHaveAttribute("aria-pressed", "true");
-    const screen = project === featuredProjects[0] || project === featuredProjects[1] || project === featuredProjects[2]
-      ? ".case-screen" : ".supporting-screen";
-    await expectInlineGalleryFrame(card, project, project.gallery.at(-1), screen);
-    await summary.focus();
-    await page.keyboard.press("Space");
-    await expect(disclosure).not.toHaveAttribute("open", "");
-    await expect(choices.last()).toBeHidden();
-    await expect(card.locator(".project-visual .primary-screen")).toHaveAttribute("src", project.gallery.at(-1).image);
-    await more.locator("summary").focus();
-    await page.keyboard.press("Enter");
-    await expect(more).toHaveAttribute("open", "");
-    await expect(more.locator("summary")).toBeFocused();
-    await expect(more.getByRole("button", { name: `Quick preview for ${project.title}`, exact: true })).toBeVisible();
-    for (const tag of await capabilityTags.all()) await expect(tag).toBeVisible();
-    for (const item of await overview.all()) await expect(item).toBeVisible();
-    const source = more.getByRole("link", { name: project.codeAvailable === false ? "Project repository" : "Source code", exact: true });
-    await expect(source).toBeVisible();
-    await expect(source).toHaveAttribute("href", project.repoUrl);
-    await more.locator("summary").focus();
-    await page.keyboard.press("Space");
-    await expect(more).not.toHaveAttribute("open", "");
-    await expect(more.locator("summary")).toBeFocused();
-    await expect(moreLinks).toBeHidden();
-    for (const tag of await capabilityTags.all()) await expect(tag).toBeHidden();
-    for (const item of await overview.all()) await expect(item).toBeVisible();
-  }
-  await expect(page.locator("#featured-projects details.gallery-disclosure[open]")).toHaveCount(0);
-  await cards.first().getByRole("link", { name: `View project: ${featuredProjects[0].title}`, exact: true }).click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(featuredProjects[0].title);
+  const work = page.locator("#work");
+  await expect(work.locator(".project-card, .archive-card, .gallery-disclosure, input")).toHaveCount(0);
+  await expect(work).toContainText("selected personal projects");
+  const projectsLink = work.getByRole("link", { name: "View all projects", exact: false });
+  await expect(projectsLink).toHaveAttribute("href", "./work/");
+  await projectsLink.click();
+  await expect(page).toHaveURL(/\/work\/$/);
+  await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
 });
 
 test("BriefBooth is featured as a real product and opens its own story without starting a booking", async ({ page }) => {
   const project = projects.find((entry) => entry.id === "BriefBooth.com");
-  expect(featuredProjects[0]).toBe(project);
   await page.goto("/");
-  const firstStory = page.locator("#featured-projects .case-study").first();
-  await expect(firstStory).toHaveAttribute("data-case-id", project.id);
-  await expect(firstStory.locator(".project-title")).toHaveText("BriefBooth");
-  await expect(firstStory.locator(".case-highlights li strong")).toHaveText(project.highlights.map((item) => item.title));
   await selectHeroProject(page, "briefbooth");
   const opening = page.locator(`.hero-platform-project[href="${project.caseUrl}"]`);
   await expect(opening).toHaveCount(1);
@@ -1050,8 +627,7 @@ test("the process and native FAQs explain scope and work with the keyboard", asy
   await expect(page.getByRole("dialog")).toBeHidden();
 });
 
-test("service choices, open FAQs, and the supporting gallery fit narrow and tablet viewports", async ({ page }) => {
-  const calendar = projects.find((project) => project.id === "MyGigCalendar");
+test("service choices, open FAQs, and the portfolio link fit narrow and tablet viewports", async ({ page }) => {
   for (const width of [320, 768, 1024]) {
     await page.setViewportSize({ width, height: 1000 });
     await page.goto("/");
@@ -1061,17 +637,9 @@ test("service choices, open FAQs, and the supporting gallery fit narrow and tabl
       await summary.click();
     }
     await expect(page.locator("#project-faq details[open]")).toHaveCount(await faqSummaries.count());
-    for (const selected of await page.locator("#featured-projects .project-card").all()) {
-      await openSelectedGallery(selected);
-    }
-    const card = page.locator(`.supporting-card[data-supporting-id="${calendar.id}"]`);
-    const choices = card.locator(".supporting-gallery button[data-screen]");
-    await choices.last().click();
-    await expect(choices.last()).toHaveAttribute("aria-pressed", "true");
-    await expectLoadedImageToFit(card.locator(".supporting-screen .primary-screen"), calendar.gallery.at(-1));
     const fit = await page.evaluate(() => {
       const controls = document.querySelectorAll(
-        "#services .service-actions > *, .process-steps > li, #project-faq summary, .supporting-gallery button",
+        "#services .service-actions > *, .process-steps > li, #project-faq summary, .homepage-work-link .button",
       );
       return {
         page: document.documentElement.scrollWidth <= window.innerWidth,
@@ -1086,186 +654,29 @@ test("service choices, open FAQs, and the supporting gallery fit narrow and tabl
   }
 });
 
-test("archive opens and filters, searches, empty state, and reset work together", async ({
-  page,
-}) => {
-  await page.goto("/");
-  await expect(page.locator("#project-archive")).toBeVisible();
-  const archive = page.locator(".archive-disclosure");
-  await expect(archive).not.toHaveAttribute("open", "");
-  await expect(page.getByRole("searchbox")).toBeHidden();
-  await archive.locator("summary").click();
-  await expect(archive).toHaveAttribute("open", "");
-  const total = await page.locator(".archive-card").count();
-  expect(total).toBe(projects.length);
-  await page.locator('[data-filter="ios"]').click();
-  await expect(page.locator('[data-filter="ios"]')).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  expect(await page.locator(".archive-card").count()).toBeLessThan(total);
-  expect(
-    await page.locator(".archive-card .project-category").allTextContents(),
-  ).toEqual(expect.arrayContaining(["NATIVE iOS"]));
-  expect(
-    (
-      await page.locator(".archive-card .project-category").allTextContents()
-    ).every((value) => value === "NATIVE iOS"),
-  ).toBe(true);
-  const engineering = page.locator('[data-filter="tools"]');
-  await expect(engineering).toHaveText("Engineering");
-  await engineering.click();
-  await expect(engineering).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator(".archive-card")).toHaveCount(1);
-  await expect(page.locator(".archive-card h3")).toHaveText("SobStage");
-  await expect(page.locator(".archive-card .preview-context")).toContainText(/release candidate/i);
-  await page.locator('[data-filter="all"]').click();
-  const search = page.getByRole("searchbox");
-  await search.fill("showrunner");
-  await expect(page.locator(".archive-card")).toHaveCount(1);
-  await expect(page.locator(".archive-card h3")).toHaveText("I Can Run A Show");
-  await search.fill("repayments");
-  await expect(page.locator(".archive-card")).toHaveCount(1);
-  await expect(page.locator(".archive-card h3")).toHaveText("BillSpilt");
-  await expect(page.locator('.archive-preview[data-project="Bill-Spilt"]')).toBeVisible();
-  await expect(page.locator(".archive-card .project-workflows")).toContainText("Plan repayments");
-  await expect(page.locator("#result-count")).toHaveText(`1 OF ${projects.length} PROJECTS`);
-  await search.fill("a-project-that-does-not-exist-9238");
-  await expect(
-    page.getByRole("heading", { name: "No projects found." }),
-  ).toBeVisible();
-  await expect(page.locator("#result-count")).toHaveText(
-    `0 OF ${total} PROJECTS`,
-  );
-  await page.locator('[data-filter="ios"]').click();
-  await page.getByRole("button", { name: "Clear filters" }).click();
-  await expect(search).toHaveValue("");
-  await expect(search).toBeFocused();
-  await expect(page.locator('[data-filter="all"]')).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.locator(".archive-card")).toHaveCount(total);
-  await archive.locator("summary").click();
-  await expect(page.getByRole("searchbox")).toBeHidden();
+test("old homepage portfolio links send clients to the separate projects page", async ({ page }) => {
+  for (const fragment of ["work", "project-archive"]) {
+    await page.goto(`/#${fragment}`);
+    await expect(page).toHaveURL(/\/work\/$/);
+    await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
+  }
 });
 
-test("the archive deep link opens its images and filters on initial navigation", async ({ page }) => {
-  await page.goto("/#project-archive");
-  await expect(page.locator(".archive-disclosure")).toHaveAttribute("open", "");
-  await expect(page.getByRole("searchbox")).toBeVisible();
-  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
-  await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
-});
-
-test("all published archive projects explain their purpose and workflows with genuine icons and accurately labeled covers", async ({ page }) => {
-  const errors = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/#project-archive");
-  await page.evaluate(() => document.fonts.ready);
-  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
-  await expect(page.locator(".archive-placeholder")).toHaveCount(0);
-  for (const project of projects) {
-    const preview = page.locator(`.archive-preview[data-project="${project.id}"]`);
-    const card = preview.locator("..");
-    await expect(preview).toHaveAccessibleName(`View images and details for ${project.title}`);
-    await expect(card.locator("h3")).toHaveText(project.title);
-    await expectProjectIcon(card, project);
-    await expect(card.locator(".archive-purpose")).toBeVisible();
-    await expect(card.locator(".archive-purpose")).toHaveText(project.purpose);
-    await expectProjectWorkflows(card, project);
-    await expect(card.locator(".preview-context")).toBeVisible();
-    await expect(card.locator(".preview-context")).toHaveText(project.gallery[0].previewContext || project.previewContext);
-    await expect(card.locator(".image-kind")).toHaveText(project.gallery[0].imageLabel || project.imageLabel);
-    await expect(preview.locator(".primary-screen")).toHaveCount(1);
-    await expect(preview.locator("img")).toHaveCount(project.gallery[0].companion ? 2 : 1);
-    await expectLoadedImageToFit(preview.locator(".primary-screen"), {
-      image: project.image,
-      imageAlt: project.imageAlt,
-      width: project.imageWidth,
-      height: project.imageHeight,
-    });
-    await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
-    expect(project.sourceAvailable).toBe(true);
-    await expect(card.locator(".source-note")).toHaveCount(0);
-    await expect(card.getByRole("link", { name: project.codeAvailable === false ? "Project repository" : "Source", exact: true })).toHaveAttribute("href", project.repoUrl);
-    if (project.demoUrl) {
-      const liveLink = card.getByRole("link", { name: project.demoLabel, exact: true });
-      await expect(liveLink).toBeVisible();
-      await expect(liveLink).toHaveAttribute("href", project.demoUrl);
-      await expect(liveLink).toHaveAttribute("target", "_blank");
-      await expect(liveLink).toHaveAttribute("rel", /noopener/);
-    }
-    const story = card.getByRole("link", { name: `View project: ${project.title}`, exact: true });
-    await expect(story).toHaveAttribute("href", project.caseUrl);
-    await expect(story).toHaveText("View project ↗");
-    await expect(story).toBeVisible();
-    await expect(card.locator(".project-links > a")).toHaveCount(project.demoUrl ? 3 : 2);
-  }
-  expect(errors).toEqual([]);
-});
-
-test("removed repositories stay out of archive, search and hero while public source and live-site links remain available", async ({ page }) => {
-  const publicProject = projects.find((project) => project.id === "PinsAndNeedlesComedyWebsite");
-  expect(publicProject.sourceAvailable).toBe(true);
-  expect(publicProject.repoUrl).toBe("https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite");
-  expect(publicProject.demoUrl).toBe("https://pinsandneedlescomedy.com");
-
-  await page.goto("/#project-archive");
-  expect(projects.length).toBe(11);
-  await expect(page.locator("#archive-title")).toHaveText("Explore 11 selected projects");
-  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
-  await expect(page.locator(".source-note")).toHaveCount(0);
-  await expect(page.locator(".hero-stage .hero-project")).toHaveCount(2);
-  for (const [id] of heroPreviews) {
-    const heroProject = projects.find((entry) => entry.id === id);
-    await expect(page.locator(`.hero-project[data-project="${id}"] .hero-project-screen`)).toHaveAttribute("src", heroProject.image);
-  }
-  await expect(page.locator(".hero-stage")).not.toContainText(/Mark Vegas/i);
-  for (const id of removedProjectIds) {
-    await expect(page.locator(`[data-project="${id}"]`)).toHaveCount(0);
-  }
-  for (const asset of ["markvegas.webp", "controller-live-loaded.webp", "staybusy-overview-mono.svg", "readme-overviews/rolecall.png",
-    "readme-overviews/bleepkit.png", "readme-overviews/dictype.png", "tlc-homepage.webp"]) {
-    const response = await page.request.get(`/assets/${asset}`);
-    expect(response.status(), `${asset}: removed project media is not deployed`).toBe(404);
-  }
-  const search = page.getByRole("searchbox");
-  for (const id of removedProjectIds) {
-    await search.fill(id);
-    await expect(page.locator(".archive-card")).toHaveCount(0);
-    await expect(page.locator("#result-count")).toHaveText(`0 OF ${projects.length} PROJECTS`);
-  }
-  await search.fill("");
-  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
-
-  const publicPreview = page.locator(`.archive-preview[data-project="${publicProject.id}"]`);
-  const publicCard = publicPreview.locator("..");
-  await expect(publicCard.locator(".source-note")).toHaveCount(0);
-  await expect(publicCard.getByRole("link", { name: "Source", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
-  await expect(publicCard.getByRole("link", { name: publicProject.demoLabel, exact: true })).toHaveAttribute("href", publicProject.demoUrl);
-  await publicPreview.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(publicProject.title);
-  await expect(dialog.locator(".source-note")).toHaveCount(0);
-  await expect(dialog.getByRole("link", { name: "Project documentation", exact: true })).toHaveAttribute("href", publicProject.documentationUrl);
-  await dialog.locator(".technical-details summary").click();
-  await expect(dialog.getByRole("link", { name: "View source code", exact: true })).toHaveAttribute("href", publicProject.repoUrl);
-  const liveSite = dialog.getByRole("link", { name: publicProject.demoLabel, exact: true });
-  await expect(liveSite).toBeVisible();
-  await expect(liveSite).toHaveAttribute("href", publicProject.demoUrl);
-  await expect(liveSite).toHaveAttribute("target", "_blank");
-  await expect(liveSite).toHaveAttribute("rel", /noopener/);
-});
-
-// Each complete gallery is a separate user flow, with its own normal timeout.
-for (const project of projects) {
+// These four projects keep real homepage quick-preview entry points.
+const dialogEntryPoints = [
+  ["The-Bit-Binder", '.hero-project[data-project="The-Bit-Binder"]'],
+  ["MyGigCalendar", '.hero-project[data-project="MyGigCalendar"]'],
+  ["micro-short-website", '.service-proof[data-project="micro-short-website"]'],
+  ["BriefBooth.com", '.service-proof[data-project="BriefBooth.com"]'],
+];
+for (const [id, selector] of dialogEntryPoints) {
+  const project = projects.find((entry) => entry.id === id);
   test(`${project.title} dialog keeps images, caption, full-size link, and focus in sync`, async ({ page }) => {
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto("/#project-archive");
+    await page.goto("/");
     const dialog = page.getByRole("dialog");
-    const trigger = page.locator(`.archive-preview[data-project="${project.id}"]`);
+    const trigger = page.locator(selector);
     await trigger.click();
     await expect(dialog).toBeVisible();
     await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(project.title);
@@ -1309,8 +720,6 @@ for (const project of projects) {
       await expect(images.locator(".image-original")).toHaveAttribute("target", "_blank");
       await expect(images.locator(".image-original")).toHaveAttribute("rel", /noopener/);
       expect(await dialog.evaluate((element) => element.contains(document.activeElement))).toBe(true);
-      await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
-      await expect(page.locator("#project-search")).toHaveValue("");
     }
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
@@ -1330,14 +739,14 @@ test("project dialog keeps background controls inactive, closes with Escape, and
 }) => {
   await page.goto("/");
   const trigger = page.getByRole("button", {
-    name: "Explore I Can Run A Show",
+    name: "View the BitBinder project",
     exact: true,
   });
   await trigger.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
   await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(
-    "I Can Run A Show",
+    projects.find((project) => project.id === "The-Bit-Binder").title,
   );
   await expect(
     page.getByRole("button", { name: "Close project details" }),
@@ -1414,8 +823,8 @@ test("navigation opens, closes on selection, and handles Escape on phones", asyn
   await expect(menu).toHaveAttribute("aria-expanded", "true");
   await expect(navigation).toBeVisible();
   await navigation.getByRole("link", { name: "Projects", exact: true }).click();
-  await expect(menu).toHaveAttribute("aria-expanded", "false");
-  await expect(navigation).toBeHidden();
+  await expect(page).toHaveURL(/\/work\/$/);
+  await page.goto("/");
   await menu.click();
   await expect(navigation).toBeVisible();
   await page.keyboard.press("Escape");
@@ -1460,7 +869,8 @@ test("tablet navigation fits at 768px and closes on Escape, outside clicks, sele
 
   await menu.click();
   await navigation.getByRole("link", { name: "Projects", exact: true }).click();
-  await expect(page).toHaveURL(/#work$/);
+  await expect(page).toHaveURL(/\/work\/$/);
+  await page.goto("/");
   await expect(navigation).toBeHidden();
   await expect(menu).toHaveAttribute("aria-expanded", "false");
   await expectFits();
@@ -1533,391 +943,22 @@ test("services open useful details before booking and general inquiries retain e
   }
 });
 
-test("case studies show the need, build evidence, and a project-specific inquiry", async ({
-  page,
-}, testInfo) => {
-  await page.goto("/");
-  await page.locator(".archive-disclosure summary").click();
-  await page.locator('.archive-card[data-showcase-id="PinsAndNeedlesComedyWebsite"]')
-    .getByRole("button", { name: "Pins & Needles Comedy", exact: true }).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog.getByRole("heading", { level: 2 })).toHaveText(
-    "Pins & Needles Comedy",
-  );
-  await expect(
-    dialog.getByRole("heading", { name: "The need", exact: true }),
-  ).toBeVisible();
-  await expect(
-    dialog.getByRole("heading", { name: "What I built", exact: true }),
-  ).toBeVisible();
-  for (const paragraph of await dialog.locator(".dialog-case p").all()) {
-    await expect(paragraph).toHaveText(/\S/);
-  }
-
-  const technicalDetails = dialog.locator(".technical-details");
-  await expect(technicalDetails.locator(".technical-content")).toBeHidden();
-  await technicalDetails.locator("summary").click();
-  await expect(technicalDetails).toHaveAttribute("open", "");
-  await expect(technicalDetails.locator(".technical-content")).toBeVisible();
-  expect(await technicalDetails.locator(".tag").allTextContents()).toEqual(
-    expect.arrayContaining(["Next.js", "TypeScript"]),
-  );
-  expect(await technicalDetails.locator("li").count()).toBeGreaterThan(0);
-  await expect(
-    technicalDetails.getByRole("link", { name: "View source code" }),
-  ).toHaveAttribute(
-    "href",
-    "https://github.com/taylordrew4u2/PinsAndNeedlesComedyWebsite",
-  );
-
-  const inquiry = dialog.getByRole("link", {
-    name: "Email about a similar project",
-  });
+test("dedicated project pages show the need, build evidence, and a project-specific inquiry", async ({ page }) => {
+  const project = projects.find((entry) => entry.id === "PinsAndNeedlesComedyWebsite");
+  await page.goto("/work/");
+  const card = page.locator(`.work-page-grid .seo-project-card[data-project-id="${project.id}"]`);
+  await card.getByRole("link", { name: `See ${project.title}`, exact: false }).click();
+  await expect(page).toHaveURL(/\/work\/pins-and-needles-comedy\/$/);
+  await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary);
+  await expect(page.locator("#development .project-context")).toContainText(project.challenge);
+  await expect(page.locator("#development .project-context")).toContainText(project.build);
+  await expect(page.locator("#development .project-stack .tag")).toHaveText(project.stack);
+  await expect(page.locator("#development").getByRole("link", { name: /source code on GitHub/ }))
+    .toHaveAttribute("href", project.repoUrl);
+  const inquiry = page.locator('.project-story-hero .page-actions a[href^="mailto:"]');
   const draft = new URL(await inquiry.getAttribute("href"));
   expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(draft.searchParams.get("subject")).toBe(
-    "Project inspired by Pins & Needles Comedy",
-  );
-  expect(draft.searchParams.get("body")).toMatch(/^Hi 4u Digital,\n\n/);
-  expect(draft.searchParams.get("body")).toContain(
-    "I saw Pins & Needles Comedy in your portfolio and would like to discuss something similar.",
-  );
-  expect([...draft.searchParams.keys()]).toEqual(["subject", "body"]);
-  await inquiry.scrollIntoViewIfNeeded();
-  await expect(inquiry).toBeVisible();
-  await page.screenshot({
-    path: testInfo.outputPath(`case-study-${testInfo.project.name}.png`),
-  });
+  expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
+  expect(draft.searchParams.get("body")).toContain(`Source page: https://customtechbuilt4u.com/work/pins-and-needles-comedy/`);
+  await expect(page.locator(".project-page-frame")).toHaveCount(project.gallery.length);
 });
-
-for (const project of featuredProjects.slice(0, 3)) {
-  test(`${project.title} lead gallery changes real images, captions, and selection without opening a modal`, async ({ page }) => {
-    const errors = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    const isBitBinder = project.id === "The-Bit-Binder";
-    await page.goto(isBitBinder ? "/#the-bit-binder-showcase" : "/");
-    const story = page.locator(`.case-study[data-case-id="${project.id}"]`);
-    await openSelectedGallery(story);
-    if (isBitBinder) {
-      await expect(story).toHaveAttribute("id", "the-bit-binder-showcase");
-      expect(new URL(page.url()).hash).toBe("#the-bit-binder-showcase");
-      await expect(story).toBeInViewport();
-    }
-    const title = (await story.locator(".project-title").textContent()).trim();
-    const group = story.getByRole("group", { name: `Screens from ${title}`, exact: true });
-    const choices = group.locator("button[data-gallery][data-screen]");
-    const count = await choices.count();
-    expect(count).toBeGreaterThanOrEqual(2);
-    await expect(choices).toHaveCount(project.gallery.length);
-    await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
-    if (isBitBinder) {
-      expect(count).toBe(12);
-      await expect(choices.filter({ hasText: /Product overview|Every bit|Import material|Joke library|Record & transcribe|Set lists|Brainstorm|BitBuddy|Roast mode/ })).toHaveCount(9);
-      expect(project.gallery.filter((frame) => frame.sourceKind === "owner-supplied-product-artwork").map((frame) => frame.label)).toEqual([
-        "Product overview", "Every bit", "Import material", "Joke library",
-        "Record & transcribe", "Set lists", "Brainstorm", "BitBuddy", "Roast mode",
-      ]);
-    }
-    await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
-    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    const initialSource = await story.locator(".primary-screen").getAttribute("src");
-    const initialCaption = await story.locator(".screen-caption").textContent();
-    await expect(story.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
-    await expectInlineGalleryFrame(story, project, project.gallery[0], ".case-screen");
-    for (let index = 1; index < count; index += 1) {
-      const choice = choices.nth(index);
-      await choice.scrollIntoViewIfNeeded();
-      await choice.focus();
-      await page.keyboard.press(index % 2 === 0 ? "Enter" : "Space");
-      await expect(choices.nth(index)).toHaveAttribute("aria-pressed", "true");
-      await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "false");
-      await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-      await expect(choices.nth(index)).toBeFocused();
-      await expectInlineGalleryFrame(story, project, project.gallery[index], ".case-screen");
-      expect(await story.locator(".primary-screen").getAttribute("src")).not.toBe(initialSource);
-      expect(await story.locator(".screen-caption").textContent()).not.toBe(initialCaption);
-      for (const image of await story.locator(".case-screen img").all()) {
-        await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-      }
-      await expect(page.getByRole("dialog")).toBeHidden();
-      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    }
-    await choices.nth(0).click();
-    await expect(story.locator(".primary-screen")).toHaveAttribute("src", initialSource);
-    await expect(story.locator(".screen-caption")).toHaveText(initialCaption);
-    await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
-    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-    await expectInlineGalleryFrame(story, project, project.gallery[0], ".case-screen");
-    await expect(page.locator('.project-card:is([data-case-id="The-Bit-Binder"], [data-supporting-id="The-Bit-Binder"]) .screen-caption')).toHaveText(
-      projects.find((entry) => entry.id === "The-Bit-Binder").gallery[0].caption,
-    );
-    expect(errors).toEqual([]);
-  });
-}
-
-test("My Gig Calendar changes its on-page images, captions, and selection without opening a modal", async ({ page }) => {
-  const project = projects.find((entry) => entry.id === "MyGigCalendar");
-  expect(project.gallery.length).toBeGreaterThan(1);
-  const errors = [];
-  page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto("/");
-  const card = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
-  await openSelectedGallery(card);
-  const screen = card.locator(".supporting-screen");
-  const gallery = card.locator(".supporting-gallery");
-  const group = gallery.getByRole("group", { name: `Screens from ${project.title}`, exact: true });
-  const choices = group.locator("button[data-gallery][data-screen]");
-  const caption = gallery.locator(".screen-caption");
-  await expect(card).toBeVisible();
-  await expect(screen).toHaveAttribute("data-project", project.id);
-  await expect(choices).toHaveCount(project.gallery.length);
-  await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
-  await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
-  await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-  await expect(caption).toHaveAttribute("aria-live", "polite");
-  await expect(screen.locator(".primary-screen")).toHaveAttribute("src", project.gallery[0].image);
-  await expect(caption).toHaveText(project.gallery[0].caption);
-
-  for (let index = 0; index < project.gallery.length; index += 1) {
-    const frame = project.gallery[index];
-    const choice = choices.nth(index);
-    await choice.scrollIntoViewIfNeeded();
-    await choice.focus();
-    await page.keyboard.press(index % 2 === 0 ? "Enter" : "Space");
-    await expect(choice).toBeFocused();
-    await expect(choice).toHaveAttribute("aria-pressed", "true");
-    await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-    await expect(caption).toHaveText(frame.caption);
-    await expectLoadedImageToFit(screen.locator(".primary-screen"), frame);
-    await expect(screen.locator(".companion-screen")).toHaveCount(frame.companion ? 1 : 0);
-    if (frame.companion) {
-      await expectLoadedImageToFit(screen.locator(".companion-screen"), frame.companion);
-    }
-    await expectInlineGalleryFrame(card, project, frame, ".supporting-screen");
-    await expect(page.getByRole("dialog")).toBeHidden();
-  }
-  await choices.nth(0).click();
-  await expect(choices.nth(0)).toHaveAttribute("aria-pressed", "true");
-  await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-  await expect(screen.locator(".primary-screen")).toHaveAttribute("src", project.gallery[0].image);
-  await expect(caption).toHaveText(project.gallery[0].caption);
-  await expectInlineGalleryFrame(card, project, project.gallery[0], ".supporting-screen");
-  expect(errors).toEqual([]);
-});
-
-for (const id of ["Bill-Spilt", "PinsAndNeedlesComedyWebsite"]) {
-  const project = projects.find((entry) => entry.id === id);
-  test(`${project.title} has a complete on-page showcase with keyboard gallery controls`, async ({ page }) => {
-    const errors = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto("/");
-    const card = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
-    await openSelectedGallery(card);
-    const group = card.getByRole("group", { name: `Screens from ${project.title}`, exact: true });
-    const choices = group.locator("button[data-gallery][data-screen]");
-    await expect(card).toHaveClass(/has-gallery/);
-    await expectProjectIcon(card, project);
-    await expect(card.locator(".project-description")).toHaveText(project.purpose);
-    await expect(choices).toHaveCount(project.gallery.length);
-    await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
-    await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-    await expect(card.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
-    const unaffected = await page.locator("#featured-projects .project-card").evaluateAll((cards, currentId) =>
-      cards.filter((entry) => entry.dataset.supportingId !== currentId).map((entry) => ({
-        id: entry.dataset.caseId || entry.dataset.supportingId,
-        image: entry.querySelector(".primary-screen").getAttribute("src"),
-        pressed: [...entry.querySelectorAll('[data-gallery][aria-pressed="true"]')].map((button) => button.dataset.screen),
-      })), project.id);
-    for (let index = 0; index < project.gallery.length; index += 1) {
-      const choice = choices.nth(index);
-      await choice.scrollIntoViewIfNeeded();
-      await choice.focus();
-      await page.keyboard.press(index % 2 === 0 ? "Enter" : "Space");
-      await expect(choice).toBeFocused();
-      await expect(choice).toHaveAttribute("aria-pressed", "true");
-      await expect(group.locator('[aria-pressed="true"]')).toHaveCount(1);
-      await expectInlineGalleryFrame(card, project, project.gallery[index], ".supporting-screen");
-    }
-    const remaining = await page.locator("#featured-projects .project-card").evaluateAll((cards, currentId) =>
-      cards.filter((entry) => entry.dataset.supportingId !== currentId).map((entry) => ({
-        id: entry.dataset.caseId || entry.dataset.supportingId,
-        image: entry.querySelector(".primary-screen").getAttribute("src"),
-        pressed: [...entry.querySelectorAll('[data-gallery][aria-pressed="true"]')].map((button) => button.dataset.screen),
-      })), project.id);
-    expect(remaining, "Changing this gallery leaves the other selected showcases unchanged").toEqual(unaffected);
-    await choices.first().click();
-    await expect(choices.first()).toBeFocused();
-    await expectInlineGalleryFrame(card, project, project.gallery[0], ".supporting-screen");
-    expect(errors).toEqual([]);
-  });
-}
-
-for (const project of projects) {
-  test(`${project.title} archive gallery keeps its original images, captions, links, and keyboard selection together`, async ({ page }) => {
-    const errors = [];
-    page.on("pageerror", (error) => errors.push(error.message));
-    await page.goto("/#project-archive");
-    const card = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
-    const preview = card.locator(".archive-preview");
-    const choices = card.locator(".archive-gallery button[data-gallery][data-screen]");
-    await expect(card).toBeVisible();
-    await expect(choices).toHaveCount(project.gallery.length > 1 ? project.gallery.length : 0);
-    if (project.gallery.length > 1) {
-      await expect(choices).toHaveText(project.gallery.map((frame) => frame.label));
-      await expect(choices.first()).toHaveAttribute("aria-pressed", "true");
-    }
-    await expect(card.locator(".screen-caption")).toHaveAttribute("aria-live", "polite");
-    await expect(card.locator(".screen-caption")).toHaveText(project.imageCaption || project.previewContext);
-    await expect(card.locator(".showcase-original")).toHaveAttribute("href", project.image);
-    await expect(preview.locator(".primary-screen")).toHaveCount(1);
-    await expect(preview.locator("img")).toHaveCount(project.gallery[0].companion ? 2 : 1);
-    await expectLoadedImageToFit(preview.locator(".primary-screen"), {
-      image: project.image,
-      imageAlt: project.imageAlt,
-      width: project.imageWidth,
-      height: project.imageHeight,
-    });
-    await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
-    await expect(card.locator(".showcase-original")).toHaveAttribute("target", "_blank");
-    await expect(card.locator(".showcase-original")).toHaveAttribute("rel", /noopener/);
-    if (project.gallery.length === 1) {
-      await expect(page.getByRole("dialog")).toBeHidden();
-      expect(errors).toEqual([]);
-      return;
-    }
-    const unaffected = await page.locator(".archive-card").evaluateAll((cards, currentId) =>
-      cards.filter((entry) => entry.dataset.showcaseId !== currentId).map((entry) => ({
-        id: entry.dataset.showcaseId,
-        image: entry.querySelector(".archive-preview .primary-screen").getAttribute("src"),
-        pressed: [...entry.querySelectorAll('[data-gallery][aria-pressed="true"]')].map((button) => button.dataset.screen),
-      })), project.id);
-    const gallerySteps = project.gallery[0].image.startsWith("./assets/readme-overviews/")
-      ? [...new Set([0, 1, project.gallery.length - 1])] : [0, project.gallery.length - 1];
-    for (const [order, index] of gallerySteps.entries()) {
-      const choice = choices.nth(index);
-      await choice.scrollIntoViewIfNeeded();
-      await choice.focus();
-      await page.keyboard.press(order % 2 === 0 ? "Enter" : "Space");
-      await expect(choice).toBeFocused();
-      await expect(choice).toHaveAttribute("aria-pressed", "true");
-      await expect(card.locator('[data-gallery][aria-pressed="true"]')).toHaveCount(1);
-      await expectInlineGalleryFrame(card, project, project.gallery[index], ".archive-preview");
-      await expect(page.locator("#result-count")).toHaveText(`${projects.length} OF ${projects.length} PROJECTS`);
-      await expect(page.getByRole("searchbox")).toHaveValue("");
-    }
-    const remaining = await page.locator(".archive-card").evaluateAll((cards, currentId) =>
-      cards.filter((entry) => entry.dataset.showcaseId !== currentId).map((entry) => ({
-        id: entry.dataset.showcaseId,
-        image: entry.querySelector(".archive-preview .primary-screen").getAttribute("src"),
-        pressed: [...entry.querySelectorAll('[data-gallery][aria-pressed="true"]')].map((button) => button.dataset.screen),
-      })), project.id);
-    expect(remaining, "Changing one archive gallery leaves the other archive showcases unchanged").toEqual(unaffected);
-    await choices.first().click();
-    await expect(choices.first()).toBeFocused();
-    await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
-    expect(errors).toEqual([]);
-  });
-}
-
-test("archive re-rendering resets gallery state without changing selected-work galleries", async ({ page }) => {
-  const project = projects.find((entry) => entry.id === "Bill-Spilt");
-  await page.goto("/#project-archive");
-  const selectedCard = page.locator(`.supporting-card[data-supporting-id="${project.id}"]`);
-  await openSelectedGallery(selectedCard);
-  const archiveCard = page.locator(`.archive-card[data-showcase-id="${project.id}"]`);
-  const selectedChoices = selectedCard.locator("button[data-gallery][data-screen]");
-  const archiveChoices = archiveCard.locator("button[data-gallery][data-screen]");
-  await selectedChoices.nth(1).click();
-  await expectInlineGalleryFrame(selectedCard, project, project.gallery[1], ".supporting-screen");
-  await archiveChoices.last().click();
-  await expectInlineGalleryFrame(archiveCard, project, project.gallery.at(-1), ".archive-preview");
-  await expect(selectedChoices.nth(1)).toHaveAttribute("aria-pressed", "true");
-  await expect(selectedCard.locator(".primary-screen")).toHaveAttribute("src", project.gallery[1].image);
-
-  const search = page.getByRole("searchbox");
-  await search.fill("repayments");
-  await expect(page.locator(".archive-card")).toHaveCount(1);
-  await expect(archiveChoices.first()).toHaveAttribute("aria-pressed", "true");
-  await expect(archiveCard.locator(".archive-preview .primary-screen")).toHaveCount(1);
-  await expect(archiveCard.locator(".archive-preview .primary-screen")).toHaveAttribute("src", project.image);
-  await expect(archiveCard.locator(".screen-caption")).toHaveText(project.gallery[0].caption);
-  await expect(archiveCard.locator(".showcase-original")).toHaveAttribute("href", project.image);
-  await expectInlineGalleryFrame(archiveCard, project, project.gallery[0], ".archive-preview");
-  await archiveChoices.last().click();
-  await expectInlineGalleryFrame(archiveCard, project, project.gallery.at(-1), ".archive-preview");
-  await page.locator('[data-filter="ios"]').click();
-  await expect(archiveCard).toHaveCount(0);
-  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
-  await expect(search).toHaveValue("");
-  await expect(search).toBeFocused();
-  await expect(page.locator(".archive-card")).toHaveCount(projects.length);
-  await expect(archiveChoices.first()).toHaveAttribute("aria-pressed", "true");
-  await expect(archiveCard.locator(".archive-preview .primary-screen")).toHaveAttribute("src", project.image);
-  await expect(archiveCard.locator(".screen-caption")).toHaveText(project.gallery[0].caption);
-  await expect(archiveCard.locator(".showcase-original")).toHaveAttribute("href", project.image);
-  await expectInlineGalleryFrame(archiveCard, project, project.gallery[0], ".archive-preview");
-  await expect(selectedChoices.nth(1)).toHaveAttribute("aria-pressed", "true");
-  await expectInlineGalleryFrame(selectedCard, project, project.gallery[1], ".supporting-screen");
-});
-
-for (const width of [320, 768, 1024]) {
-  test(`all showcase media and gallery controls fit a ${width}px viewport`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 1000 });
-    await page.goto("/#project-archive");
-    await page.evaluate(() => document.fonts.ready);
-    await expectHeroPreview(page);
-    for (const card of await page.locator("#featured-projects .project-card, .archive-card").all()) {
-      const id = await card.getAttribute("data-case-id") ||
-        await card.getAttribute("data-supporting-id") || await card.getAttribute("data-showcase-id");
-      const project = projects.find((entry) => entry.id === id);
-      await openSelectedGallery(card);
-      const choices = card.locator("button[data-gallery][data-screen]");
-      const screenSelector = await card.getAttribute("data-case-id") ? ".case-screen" :
-        await card.getAttribute("data-supporting-id") ? ".supporting-screen" : ".archive-preview";
-      if (project.gallery.length > 1) {
-        await choices.last().click();
-        await expect(choices.last()).toHaveAttribute("aria-pressed", "true");
-        await expectInlineGalleryFrame(card, project, project.gallery.at(-1), screenSelector);
-      } else {
-        await expectLoadedImageToFit(card.locator(".archive-preview .primary-screen"), {
-          image: project.image,
-          imageAlt: project.imageAlt,
-          width: project.imageWidth,
-          height: project.imageHeight,
-        });
-        await expectInlineGalleryFrame(card, project, project.gallery[0], ".archive-preview");
-      }
-    }
-    const fit = await page.evaluate((supportingCount) => {
-      const bounds = (element) => {
-        const box = element.getBoundingClientRect();
-        return box.width > 0 && box.height > 0 && box.left >= -1 && box.right <= window.innerWidth + 1;
-      };
-      const controls = document.querySelectorAll(
-        "#featured-projects [data-gallery], .archive-card [data-gallery], .showcase-original",
-      );
-      const media = document.querySelectorAll(".case-screen, .supporting-screen, .archive-preview");
-      const gridWidth = document.querySelector(".supporting-grid").getBoundingClientRect().width;
-      return {
-        page: document.documentElement.scrollWidth <= window.innerWidth,
-        controls: [...controls].every(bounds),
-        media: [...media].every(bounds),
-        completeSupportingShowcases: [...document.querySelectorAll(".supporting-card.has-gallery")].length === supportingCount &&
-          [...document.querySelectorAll(".supporting-card.has-gallery")].every((card) =>
-            Math.abs(card.getBoundingClientRect().width - gridWidth) <= 1),
-        orderedNarrowCaseSections: window.innerWidth > 800 || [...document.querySelectorAll(".case-study")].every((card) => {
-          const media = card.querySelector(".case-media").getBoundingClientRect();
-          const header = card.querySelector(".case-header").getBoundingClientRect();
-          const proof = card.querySelector(".case-proof").getBoundingClientRect();
-          return header.top >= media.bottom - 1 && proof.top >= header.bottom - 1;
-        }),
-      };
-    }, featuredProjects.length - 3);
-    expect(fit).toEqual({
-      page: true, controls: true, media: true,
-      completeSupportingShowcases: true, orderedNarrowCaseSections: true,
-    });
-    await expect(page.getByRole("dialog")).toBeHidden();
-  });
-}

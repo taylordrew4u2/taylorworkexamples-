@@ -279,17 +279,17 @@ test("local brand fonts load on homepage and nested pages when Google Fonts is u
     await expectPageFits(page);
   }
 
-  // The delivery change also preserves the original gallery colors and controls.
-  await page.goto("/#work");
+  // The delivery change also preserves the original colors and preview controls.
+  await page.goto("/");
   const binder = projects.find((project) => project.id === "The-Bit-Binder");
-  const card = page.locator(`#featured-projects .project-card:is([data-case-id="${binder.id}"], [data-supporting-id="${binder.id}"])`);
-  await card.locator(".gallery-disclosure > summary").click();
-  await card.locator("button[data-gallery]").nth(1).click();
-  const image = card.locator(".primary-screen");
+  await page.locator(`.hero-project[data-project="${binder.id}"]`).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.locator("[data-dialog-screen]").nth(1).click();
+  const image = dialog.locator(".primary-screen");
   await expect(image).toHaveAttribute("src", binder.gallery[1].image);
   await expect(image).toHaveCSS("filter", "none");
   await expect(image).toHaveCSS("mix-blend-mode", "normal");
-  await expect(card.locator(".project-visual")).toHaveCSS("filter", "none");
+  await expect(dialog.locator(".dialog-preview")).toHaveCSS("filter", "none");
   await expectPageFits(page);
   expect(googleRequests).toEqual([]);
 });

@@ -7,7 +7,7 @@ import { readFile, readdir, stat } from "node:fs/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
 import sharp from "sharp";
-import { projects, featuredProjects } from "../public-projects.js";
+import { projects } from "../public-projects.js";
 import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
 import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
@@ -361,11 +361,17 @@ test("business guides and consultation details are discoverable, truthful, and r
 test("project and service content is crawlable in production HTML before JavaScript runs", () => {
   const home = documents.get("/");
   const homeAnchors = tags(home, "a").filter((tag) => tag.href && sameSite(tag.href, "/"));
-  assert.equal([...home.matchAll(/class="[^"]*\barchive-card\b/g)].length, projects.length);
-  assert.equal([...home.matchAll(/class="[^"]*\bproject-card\b/g)].length, featuredProjects.length);
+  const work = documents.get("/work/");
+  const workAnchors = tags(work, "a").filter((tag) => tag.href && sameSite(tag.href, "/work/"));
+  assert.doesNotMatch(home, /class="[^"]*\b(?:archive-card|project-card)\b/,
+    "The homepage introduces the portfolio without an inline project catalog");
+  assert.ok(homeAnchors.some((tag) => pathname(tag.href, "/") === "/work/"),
+    "The complete portfolio is discoverable through a real homepage link");
+  assert.equal([...work.matchAll(/class="[^"]*\bseo-project-card\b/g)].length, projects.length,
+    "Every selected project has a crawlable card on the dedicated portfolio page");
   for (const project of projects) {
     const route = `/work/${projectSlugs[project.id]}/`;
-    assert.ok(homeAnchors.some((tag) => pathname(tag.href, "/") === route), `${project.title}: crawlable homepage case link`);
+    assert.ok(workAnchors.some((tag) => pathname(tag.href, "/work/") === route), `${project.title}: crawlable portfolio case link`);
     const html = documents.get(route);
     assert.equal(h1s(html)[0], project.title);
     assert.ok(text(html).includes(project.purpose));
@@ -381,6 +387,23 @@ test("project and service content is crawlable in production HTML before JavaScr
       assert.ok(tags(html, "a").some((tag) => tag.href && sameSite(tag.href, route) &&
         pathname(tag.href, route) === `/work/${projectSlugs[id]}/`), `${service.title}: links to matching project proof`);
     }
+  }
+});
+
+test("App Store evidence remains published on the dedicated portfolio and reachable from the homepage", () => {
+  const home = documents.get("/");
+  const work = documents.get("/work/");
+  const store = work.match(/<article\b[^>]*id="app-store-proof"[^>]*>([\s\S]*?)<\/article>/i)?.[1];
+  assert.ok(store, "The portfolio includes the published-app evidence in its static HTML");
+  const openingLink = tags(home, "a").find((tag) => tag.class?.split(/\s+/).includes("hero-range-proof"));
+  assert.ok(openingLink, "The opening still links to the published apps");
+  assert.equal(new URL(openingLink.href, `${origin}/`).href, `${origin}/work/#app-store-proof`);
+  const apps = projects.filter((project) => project.demoLabel === "App Store");
+  assert.equal(apps.length, 3);
+  for (const app of apps) {
+    assert.ok(tags(store, "a").some((tag) => tag.href === app.demoUrl), `${app.title}: genuine App Store listing`);
+    assert.ok(tags(store, "a").some((tag) => tag.href && sameSite(tag.href, "/work/") &&
+      pathname(tag.href, "/work/") === `/work/${projectSlugs[app.id]}/`), `${app.title}: complete project story`);
   }
 });
 
@@ -472,7 +495,7 @@ test("the homepage displays all nine supplied testimonials directly with their o
   assert.ok(!schemaNodes(html).some((node) => hasType(node, "Review") || hasType(node, "AggregateRating")), "quotes do not invent review ratings");
 });
 
-test("the homepage keeps all project showcases together before client feedback, process, questions, and consultation", () => {
+test("the homepage keeps portfolio discovery compact before client feedback and the rest of the client journey", () => {
   const home = documents.get("/");
   const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
   const workStart = sectionTags.findIndex(([tag]) => attributes(tag).id === "work");
@@ -485,16 +508,16 @@ test("the homepage keeps all project showcases together before client feedback, 
   }
   assert.ok(workEnd, "the work section is complete");
   const work = home.slice(sectionTags[workStart].index, workEnd);
-  for (const id of ["featured-projects", "project-archive", "archive-projects"]) {
-    assert.ok([...work.matchAll(/<(?:section|div)\b[^>]*>/gi)].some(([tag]) => attributes(tag).id === id),
-      `${id} belongs to the same work section`);
-  }
+  assert.ok(tags(work, "a").some((tag) => tag.href && sameSite(tag.href, "/") && pathname(tag.href, "/") === "/work/"),
+    "The compact work section points to the dedicated project portfolio");
+  assert.doesNotMatch(home, /\bid="(?:featured-projects|project-archive|archive-projects|range-proof|app-store-proof)"/,
+    "The catalog, image galleries, and detailed App Store evidence live on their dedicated pages");
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
   const destinations = ["work", "testimonials", "process", "project-faq", "consultation", "business-guides"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
     "work is followed by client feedback, process, questions, consultation, and useful reads");
-  assert.ok(workEnd <= sectionPosition("testimonials"), "the whole personal-project archive finishes before client feedback");
+  assert.ok(workEnd <= sectionPosition("testimonials"), "portfolio discovery finishes before client feedback");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation panel or questions");
 });

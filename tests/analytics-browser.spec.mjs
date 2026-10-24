@@ -115,7 +115,7 @@ test("dynamic project inquiry links are tracked once without reading their email
   await page.goto("/");
   await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
-  await page.locator('#featured-projects [data-project="The-Bit-Binder"]').first().click();
+  await page.locator('.hero-project[data-project="The-Bit-Binder"]').click();
   await expect(page.locator("#project-dialog")).toBeVisible();
   await page.locator("#project-dialog .project-enquiry").click();
   expect(await contactEvents(page)).toEqual([

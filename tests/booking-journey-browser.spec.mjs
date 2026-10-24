@@ -171,8 +171,8 @@ test("the mobile booking dock stays out of project dialogs and the real project 
   await expect(dialog).toBeHidden();
   await expect(dock).toBeVisible();
 
-  await page.locator(".archive-disclosure > summary").click();
-  const search = page.getByRole("searchbox", { name: "Search projects by name, technology, or description" });
+  await page.goto("/work/");
+  const search = page.getByRole("searchbox", { name: /Search projects/ });
   await search.fill("calendar");
   await expect(search).toBeFocused();
   await expect(search).toBeInViewport({ ratio: 1 });
@@ -196,8 +196,8 @@ test("a service visitor can book directly from the opening and return to the sam
 });
 
 test("booking from a project preview preserves its selected image and returns focus when closed", async ({ page }) => {
-  await page.goto("/#project-archive");
-  const trigger = page.locator(`.archive-preview[data-project="${example.id}"]`);
+  await page.goto("/");
+  const trigger = page.locator(`.hero-project[data-project="${example.id}"]`);
   await trigger.click();
   const dialog = page.getByRole("dialog");
   await expect(dialog).toBeVisible();
@@ -246,7 +246,7 @@ test("a project story offers direct booking and an attributed email alternative 
 test("booking targets remain usable without horizontal scrolling from narrow phones through desktop", async ({ page }) => {
   for (const width of [320, 390, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const route of ["/", serviceRoute, example.caseUrl]) {
+    for (const route of ["/", "/work/", serviceRoute, example.caseUrl]) {
       await page.goto(route);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
         `${route} fits a ${width}px viewport`).toBe(true);
@@ -265,8 +265,8 @@ test("booking targets remain usable without horizontal scrolling from narrow pho
         expect(target.width, `${target.text} is wide enough to tap at ${width}px on ${route}`).toBeGreaterThanOrEqual(44);
         expect(target.fits, `${target.text} fits at ${width}px on ${route}`).toBe(true);
       }
-      if (route === "/" && width <= 390) {
-        expect(await page.locator("#project-search").evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
+      if (route === "/work/" && width <= 390) {
+        expect(await page.locator("#project-browser-search").evaluate((element) => parseFloat(getComputedStyle(element).fontSize)),
           "The project search avoids automatic iPhone zoom").toBeGreaterThanOrEqual(16);
       }
     }
@@ -287,7 +287,7 @@ test.describe("booking information without JavaScript", () => {
     for (const route of ["/", "/work/"]) {
       await page.goto(route);
       await expectExternalOnlyBooking(page);
-      const disclosure = page.locator(".portfolio-disclosure");
+      const disclosure = page.locator(".portfolio-disclosure, .portfolio-ownership");
       await expect(disclosure).toHaveCount(1);
       await expect(disclosure).toBeVisible();
       await expect(disclosure).toContainText(/personal|independent/i);

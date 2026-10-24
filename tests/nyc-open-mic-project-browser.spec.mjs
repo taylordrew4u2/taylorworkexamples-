@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { projects, featuredProjects } from "../public-projects.js";
+import { projects } from "../public-projects.js";
 import { bookingURL } from "../booking.js";
 
 const project = projects.find((entry) => entry.id === "nycstandupopenmicmaster");
 const route = "/work/nyc-open-mic-master-list/";
 
-async function expectOriginalAppearance(image, frame) {
+async function expectOriginalAppearance(image, frame, { allowLetterbox = false } = {}) {
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
   expect(new URL(await image.getAttribute("src"), image.page().url()).pathname)
@@ -21,26 +21,24 @@ async function expectOriginalAppearance(image, frame) {
   });
   expect(dimensions.left).toBeGreaterThanOrEqual(-1);
   expect(dimensions.right).toBeLessThanOrEqual(dimensions.viewport + 1);
-  expect(Math.abs(dimensions.height - dimensions.width * frame.height / frame.width),
-    "Supplied artwork and app captures retain their own complete proportions").toBeLessThanOrEqual(2);
+  if (!allowLetterbox) {
+    expect(Math.abs(dimensions.height - dimensions.width * frame.height / frame.width),
+      "Supplied artwork and app captures retain their own complete proportions").toBeLessThanOrEqual(2);
+  }
 }
 
-test("NYC directory is a leading project whose supplied artwork switches to genuine README views", async ({ page }) => {
-  expect(featuredProjects[1]).toBe(project);
-  await page.goto("/#work");
-  const card = page.locator(`.case-study[data-case-id="${project.id}"]`);
-  await expect(card.locator(".project-title")).toHaveText(project.title);
-  await expectOriginalAppearance(card.locator(".primary-screen"), project.gallery[0]);
-  await card.locator(".gallery-disclosure > summary").click();
-  await expect(card.locator(".screen-caption")).toHaveText(project.gallery[0].caption);
-  const choice = card.locator("[data-gallery][data-screen='1']");
-  await choice.click();
-  await expect(choice).toHaveAttribute("aria-pressed", "true");
-  await expectOriginalAppearance(card.locator(".primary-screen"), project.gallery[1]);
-  await expect(card.locator(".screen-caption")).toHaveText(project.gallery[1].caption);
-  await expect(page.getByRole("dialog")).toBeHidden();
-  await card.getByRole("link", { name: `View project: ${project.title}`, exact: true }).click();
+test("the dedicated portfolio opens NYC directory artwork and genuine README app views", async ({ page }) => {
+  await page.goto("/work/");
+  const card = page.locator(`.work-page-grid .seo-project-card[data-project-id="${project.id}"]`);
+  await expect(card.getByRole("heading", { level: 3 })).toHaveText(project.title);
+  await expectOriginalAppearance(card.locator(".seo-project-cover img"), project.gallery[0], { allowLetterbox: true });
+  await card.getByRole("link", { name: `See ${project.title}`, exact: false }).click();
   await expect(page).toHaveURL(new RegExp(`${route}$`));
+  await expectOriginalAppearance(page.locator("#project-cover img"), project.gallery[0]);
+  await expect(page.locator("#project-cover figcaption p")).toHaveText(project.gallery[0].caption);
+  const capture = page.locator('.project-page-frame[data-view="1"]');
+  await expectOriginalAppearance(capture.locator("img"), project.gallery[1]);
+  await expect(capture.locator("figcaption p")).toHaveText(project.gallery[1].caption);
 });
 
 test.describe("NYC project without JavaScript", () => {

@@ -8,7 +8,7 @@ import { launchOffer } from "../seo-offer.js";
 import { clientCare } from "../client-care.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projectStories } from "../project-stories.js";
-import { escape, enquiryURL, renderFeaturedProjects, renderArchiveProjects } from "../render-projects.js";
+import { escape, enquiryURL } from "../render-projects.js";
 import { bookingURL } from "../booking.js";
 import { addInquirySource } from "../contact-context.js";
 import { renderRangeProof } from "../range-proof.js";
@@ -126,6 +126,7 @@ export function pageHead(page, homepage = false) {
     <script type="module" src="${local(page.path, "analytics.js")}?v=${release}"></script>
     ${page.kickoffForm ? `<script type="module" src="${local(page.path, "kickoff-form.js")}?v=${release}"></script>` : ""}
     ${page.projectBrief ? `<link rel="stylesheet" href="${local(page.path, "project-brief.css")}?v=${release}" /><script type="module" src="${local(page.path, "project-brief.js")}?v=${release}"></script>` : ""}
+    ${page.projectIndex ? `<script type="module" src="${local(page.path, "projects-page.js")}?v=${release}"></script>` : ""}
     ${homepage ? `<script type="module" src="./app.js?v=${release}"></script>` : ""}
   </head>`;
 }
@@ -203,7 +204,25 @@ function iconFor(project, route) {
 }
 
 function projectCard(project, route) {
-  return `<article class="seo-project-card"><a class="seo-project-cover" href="${local(route, `work/${projectSlugs[project.id]}/`)}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><div class="seo-project-body"><p class="eyebrow">${escape(projectType(project))}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)}</a></h3></div><p>${escape(project.purpose)}</p><a class="text-link" href="${local(route, `work/${projectSlugs[project.id]}/`)}">See ${escape(project.title)} <span aria-hidden="true">↗</span></a></div></article>`;
+  const search = [project.title, project.purpose, project.summary, projectType(project), ...project.stack, ...project.workflows].join(" ");
+  return `<article class="seo-project-card" data-project-id="${escape(project.id)}" data-project-type="${projectFilterType(project)}" data-project-search="${escape(search)}"><a class="seo-project-cover" href="${local(route, `work/${projectSlugs[project.id]}/`)}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><div class="seo-project-body"><p class="eyebrow">${escape(projectType(project))}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)}</a></h3></div><p>${escape(project.purpose)}</p>${route === "/work/" ? `<p class="work-index-image-label">${escape(project.imageLabel || "Project image")}</p>` : ""}<a class="text-link" href="${local(route, `work/${projectSlugs[project.id]}/`)}">See ${escape(project.title)} <span aria-hidden="true">↗</span></a></div></article>`;
+}
+
+function projectFilterType(project) {
+  if (project.projectType === "Website") return "website";
+  if (project.category === "ios") return "ios";
+  if (project.category === "desktop") return "desktop";
+  return "web-app";
+}
+
+function projectIndexContent(route) {
+  const orderedProjects = [...featuredProjects, ...projects.filter((project) => !featuredProjects.includes(project))];
+  const filters = [["all", "All projects"], ["website", "Websites"], ["web-app", "Web apps"], ["ios", "iPhone & iPad"], ["desktop", "Desktop software"]];
+  const range = renderRangeProof().replace(/(href|src)="\.\//g, '$1="../');
+  return intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `Explore ${projects.length} selected websites, apps, and software projects. Choose a project to see what it does, browse all its original images, and explore the development behind it.`, `<div class="page-actions">${bookingLink()}</div>`) +
+    `<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside>` +
+    `<section id="project-collection" class="page-section" aria-labelledby="project-collection-title"><h2 id="project-collection-title">Find a project like your idea.</h2><div id="project-browser-controls" class="project-browser-controls" hidden><fieldset class="project-type-filter"><legend>Project type</legend><div class="project-filter-options">${filters.map(([type, label]) => `<button type="button" data-project-filter="${type}" aria-pressed="${type === "all"}" aria-controls="project-index-grid">${escape(label)} <span aria-hidden="true">${projects.filter((project) => type === "all" || projectFilterType(project) === type).length}</span></button>`).join("")}</div></fieldset><label class="project-browser-search" for="project-browser-search"><span>Search projects</span><input id="project-browser-search" type="search" placeholder="Name, feature, or technology" autocomplete="off" aria-controls="project-index-grid" /></label></div><p id="project-browser-count" class="project-browser-count" role="status" aria-live="polite" aria-atomic="true">${projects.length} of ${projects.length} projects</p><div id="project-index-grid" class="seo-project-grid work-page-grid">${orderedProjects.map((project) => projectCard(project, route)).join("")}</div><div id="project-browser-empty" class="project-browser-empty" hidden><h3>No matching projects.</h3><p>Try a different word or project type.</p><button type="button" id="project-browser-reset" class="button button-outline">Show all projects</button></div><noscript><p class="no-js-help">All ${projects.length} projects are shown. Choose any project to open its complete story and images.</p></noscript></section>` +
+    `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${range}</section>` + consultationCallout(route);
 }
 
 const serviceChoices = {
@@ -437,18 +456,10 @@ export async function generateSEO(output) {
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
-  html = html.replace('<div id="featured-projects" class="featured-grid"></div>', `<div id="featured-projects" class="featured-grid">${renderFeaturedProjects(featuredProjects)}</div>`);
-  html = html.replace(/(<span class="section-count mono">)\d+ FEATURED PROJECTS(<\/span>)/, `$1${featuredProjects.length} FEATURED PROJECTS$2`);
-  html = html.replace(/(<h2 id="archive-title">)Explore \d+ selected projects(<\/h2>)/, `$1Explore ${projects.length} selected projects$2`);
-  html = html.replace('<section id="range-proof" class="range-proof" aria-label="Development range and published app proof"></section>', `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${renderRangeProof()}</section>`);
   html = html.replace('<section id="client-care" class="client-care-section wrap" aria-labelledby="client-care-title"></section>', clientCareSection(true));
   html = html.replace(/(<p data-after-launch-summary>)[\s\S]*?(<\/p>)/, `$1${escape(clientCare.summary)}$2`);
-  html = html.replace('<div id="archive-projects" class="archive-list"></div>', `<div id="archive-projects" class="archive-list">${renderArchiveProjects(projects)}</div>`);
   html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
   html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);
-  html = html.replace('></p>\n            <div id="archive-projects"', `>${projects.length} OF ${projects.length} PROJECTS</p>\n            <div id="archive-projects"`);
-  // Also give client-only controls a working route when JavaScript is unavailable.
-  html = html.replace(/<noscript[\s\S]*?<\/noscript>/, '<noscript><p class="no-js-help">The projects below are available without JavaScript. Use each “View project” link to see every image and detail.</p></noscript>');
   html = sourceEmailLinks(html, "/");
   await writeFile(path.join(output, "index.html"), html);
 
@@ -459,7 +470,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", modified: "2026-10-24", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-10-24", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",
@@ -482,7 +493,7 @@ export async function generateSEO(output) {
     { ...home, html },
     { ...servicesPage, html: frame(servicesPage, servicesContent(servicesPage.path)) },
     ...services.map(servicePage),
-    { ...work, html: frame(work, intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `${projects.length} selected websites, apps, and software projects built around real tasks. Each project shows its purpose, original product visuals, and the development behind it.`) + `<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside><div class="seo-project-grid work-page-grid">${projects.map((project) => projectCard(project, work.path)).join("")}</div>${consultationCallout(work.path)}`) },
+    { ...work, html: frame(work, projectIndexContent(work.path)) },
     ...projects.map(projectPage),
     guidePage(),
     { ...insights, html: frame(insights, intro("BEFORE YOU BUILD", "Useful reads for your next business build.", "Just need a website? Find practical advice for your salon, restaurant, or local shop, along with short reads on pricing and planning apps or business software.") + articleIndex(insights.path) + consultationCallout(insights.path)) },
