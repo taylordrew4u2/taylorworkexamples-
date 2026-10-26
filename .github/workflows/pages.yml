@@ -32,7 +32,8 @@ jobs:
           if [ -f /etc/apt/apt-mirrors.txt ]; then
             sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' /etc/apt/apt-mirrors.txt
           fi
-          npx playwright install --with-deps --only-shell chromium
+          # Native new-tab gestures need full Chromium; other checks use the headless shell.
+          npx playwright install --with-deps chromium
       - run: npm run test:browser -- --reporter=line
       - uses: actions/upload-artifact@v4
         if: failure()

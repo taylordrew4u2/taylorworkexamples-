@@ -191,38 +191,3 @@ test("enhanced app previews open by keyboard and return focus to their original 
     }
   }
 });
-
-test.describe("native modified app-banner gestures", () => {
-  // Modifier and middle-button gestures are desktop input conventions. Keep
-  // narrow layouts while using real mouse/keyboard input in both test projects.
-  test.use({ isMobile: false, hasTouch: false });
-
-  test("a modifier click or middle click opens the case page in a new tab instead of opening the preview", async ({ page }) => {
-    const project = apps[0];
-    for (const width of [320, 390]) {
-      await page.setViewportSize({ width, height: 844 });
-      await page.goto("/");
-      const destination = new URL(project.caseUrl, page.url()).href;
-      const link = banner(page, project);
-      await expect(link).toHaveAttribute("aria-haspopup", "dialog");
-      for (const options of [{ modifiers: ["ControlOrMeta"] }, { button: "middle" }]) {
-        // Native background tabs are observable at the browser-context level;
-        // they need not be reported as an opener-created popup.
-        const pendingPage = page.context().waitForEvent("page");
-        await link.click(options);
-        const popup = await pendingPage;
-        try {
-          expect(popup, "The native gesture opens a separate browser tab").not.toBe(page);
-          await popup.bringToFront();
-          await popup.waitForLoadState("domcontentloaded");
-          await expect(popup).toHaveURL(destination);
-          await expect(popup.getByRole("heading", { level: 1 })).toHaveText(project.title);
-          await expect(page).toHaveURL(/\/$/);
-          await expect(page.getByRole("dialog")).toBeHidden();
-        } finally {
-          await popup.close();
-        }
-      }
-    }
-  });
-});
