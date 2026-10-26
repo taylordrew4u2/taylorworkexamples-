@@ -458,11 +458,11 @@ for (const project of projects) {
 
     const navigation = page.getByRole("navigation", { name: "On this project page", exact: true });
     await expect(navigation).toBeVisible();
-    expect(await navigation.evaluate((element) => Boolean(
-      element.compareDocumentPosition(document.querySelector("#project-cover")) & Node.DOCUMENT_POSITION_FOLLOWING,
-    )), "Project shortcuts are available before the large cover image").toBe(true);
-    await expect(navigation.locator("a")).toHaveCount(3);
-    for (const target of ["overview", "project-views", "development"]) {
+    expect(await navigation.evaluate((element) => element.closest(".project-story-hero") === null && Boolean(
+      document.querySelector("#project-cover").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )), "Project shortcuts sit after the original cover and outside the opening").toBe(true);
+    await expect(navigation.locator("a")).toHaveCount(4);
+    for (const target of ["overview", "your-business", "project-views", "development"]) {
       const link = navigation.locator(`a[href="#${target}"]`);
       await expect(link).toBeVisible();
       await link.focus();

@@ -15,6 +15,7 @@ import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
 import { projectClientUses } from "../content/project-client-uses.js";
+import { projectBuildCare } from "../content/project-build-care.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -468,8 +469,8 @@ test("salon and restaurant services explain the business workflow and connect to
     const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
       "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
-    const modified = route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
-      route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
+    const modified = editedProject ? "2026-10-26" : route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
+      route === "/insights/" ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
     assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }
 });
@@ -588,13 +589,42 @@ test("project stories explain the original workflows and preserve real developme
     }
     const storyNavigation = html.match(/<nav\b[^>]*aria-label="On this project page"[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
     assert.ok(storyNavigation, `${project.title}: the project has its own page navigation`);
-    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#project-views", "#development"]);
-    for (const target of ["overview", "project-views", "development", "project-cover"]) {
+    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#your-business", "#project-views", "#development"]);
+    for (const target of ["overview", "your-business", "project-views", "development", "project-cover"]) {
       assert.ok(tags(html, target === "project-cover" ? "figure" : "section").some((tag) => tag.id === target),
         `${project.title}: ${target} is a real static destination`);
     }
     assert.ok(html.indexOf('id="project-cover"') < html.indexOf('id="overview"'),
       `${project.title}: original cover introduces the project before the workflow`);
+    assert.ok(html.indexOf('id="project-cover"') < html.indexOf('aria-label="On this project page"') &&
+      html.indexOf('aria-label="On this project page"') < html.indexOf('id="overview"'),
+    `${project.title}: project navigation follows the original cover and precedes the workflow`);
+    const capabilities = html.match(/<ul\b[^>]*class="project-quick-capabilities"[^>]*>([\s\S]*?)<\/ul>/)?.[1];
+    assert.ok(capabilities, `${project.title}: the opening explains its actual capabilities`);
+    assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, item]) => text(item)),
+      projectClientUses[project.id].capabilities);
+    const releaseStatus = html.match(/<p\b[^>]*class="project-release-status"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+    assert.equal(text(releaseStatus || ""), project.demoLabel === "App Store" ? "On the App Store" :
+      project.id === "usbmic" ? "Release candidate" : "", `${project.title}: publication status matches its evidence`);
+    if (project.id === "usbmic") {
+      const releaseNote = html.match(/<p\b[^>]*class="project-release-note"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+      assert.match(text(releaseNote || ""), /physical[- ]microphone.*pending/i);
+    }
+    const business = html.match(/<section\b[^>]*id="your-business"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(business, `${project.title}: business context is available before scripts load`);
+    assert.match(text(business), /A similar business need/);
+    assert.ok(text(business).includes(projectClientUses[project.id].businessUse));
+    assert.ok(text(business).includes(projectBuildCare[project.id]), `${project.title}: explains the build decisions behind the example`);
+    assert.ok(html.indexOf('id="overview"') < html.indexOf('id="your-business"') &&
+      html.indexOf('id="your-business"') < html.indexOf('id="project-views"'),
+    `${project.title}: illustrative business context follows the actual workflow and precedes the full gallery`);
+    const businessLinks = tags(business, "a");
+    assert.ok(businessLinks.some((tag) => tag.href === bookingURL));
+    assert.ok(businessLinks.some((tag) => tag.href && sameSite(tag.href, route) &&
+      pathname(tag.href, route) === `/services/${projectClientUses[project.id].serviceSlug}/`),
+    `${project.title}: links to the relevant development service`);
+    assert.ok(businessLinks.some((tag) => tag.href && new URL(tag.href, `${origin}${route}`).href === `${origin}/#client-care`),
+      `${project.title}: clients can read the actual guarantee terms`);
     const buildCallout = html.match(/<section\b[^>]*class="[^"]*\bproject-build-cta\b[^"]*"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
     assert.ok(buildCallout, `${project.title}: business inquiry follows the project evidence`);
     assert.match(text(buildCallout), /Meet online/i);
