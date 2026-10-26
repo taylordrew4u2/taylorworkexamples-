@@ -12,6 +12,7 @@ export function initNavigation(doc = document) {
 
   const desktop = win.matchMedia("(min-width: 901px)");
   const isOpen = () => button.getAttribute("aria-expanded") === "true";
+  let lastFocusWasNavigation = navigation.contains(doc.activeElement);
   function close({ restoreFocus = false } = {}) {
     button.setAttribute("aria-expanded", "false");
     button.setAttribute("aria-label", "Open navigation");
@@ -31,11 +32,18 @@ export function initNavigation(doc = document) {
     if (link) close({ restoreFocus: link.target === "_blank" });
   });
   doc.addEventListener("click", (event) => {
+    if (!navigation.contains(event.target)) lastFocusWasNavigation = false;
     if (isOpen() && !header.contains(event.target)) {
       close({ restoreFocus: navigation.contains(doc.activeElement) });
     }
   });
   doc.addEventListener("focusin", (event) => {
+    // A breakpoint can hide a focused link before its media-query callback,
+    // leaving focus on body. Remember the last real control until the user
+    // explicitly focuses or clicks elsewhere.
+    if (event.target !== doc.body && event.target !== doc.documentElement) {
+      lastFocusWasNavigation = navigation.contains(event.target);
+    }
     if (isOpen() && !header.contains(event.target)) close();
   });
   doc.addEventListener("keydown", (event) => {
@@ -45,7 +53,9 @@ export function initNavigation(doc = document) {
     }
   });
   desktop.addEventListener("change", () => {
-    close({ restoreFocus: !desktop.matches && navigation.contains(doc.activeElement) });
+    const active = doc.activeElement;
+    const focusDropped = (!active || active === doc.body || active === doc.documentElement) && lastFocusWasNavigation;
+    close({ restoreFocus: !desktop.matches && (navigation.contains(active) || focusDropped) });
   });
 
   close();

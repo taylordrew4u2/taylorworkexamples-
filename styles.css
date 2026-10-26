@@ -3322,6 +3322,8 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 .intro-summary .intro-actions { gap: 1rem 1.5rem; }
 .hero-projects-link { display: inline-flex; align-items: center; justify-content: space-between; gap: .75rem; min-height: 48px; color: #fff; text-decoration: underline; text-underline-offset: .3em; }
 .hero-projects-link:hover { text-decoration-thickness: 2px; }
+.hero-services-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 48px; color: #fff; text-decoration: underline; text-underline-offset: .3em; }
+.hero-services-link:hover { text-decoration-thickness: 2px; }
 .hero-opening-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; padding-top: 1.5rem; border-top: 1px solid #393939; }
 .hero-opening-notes .intro-description, .hero-opening-notes .hero-consultation-note { max-width: 36rem; margin: 0; font-size: .875rem; line-height: 1.7; }
 .hero-stage { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; max-width: none; }
@@ -3368,6 +3370,7 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 }
 @media (max-width: 600px) {
   .intro { gap: 1.75rem; }
+  .intro-summary .intro-actions { gap: .5rem 1rem; }
   .intro h1 { max-width: 18ch; font-size: clamp(2.125rem, 9.2vw, 3rem); }
   .hero-explorer > legend { font-size: 1.375rem; }
   .hero-explorer-options { gap: .5rem; }
@@ -3461,4 +3464,18 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 @media (max-width: 600px) {
   .work-filter { padding: 1rem; }
   .work-filter-choice { padding: .75rem .625rem; font-size: .75rem; }
+}
+
+/* Secondary evidence links need the same comfortable touch area as booking. */
+@media (pointer: coarse), (max-width: 900px) {
+  .hero-range-proof,
+  .range-app-title,
+  .range-store-link,
+  .range-project-links a {
+    display: inline-flex;
+    align-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding-block: .5rem;
+  }
 }

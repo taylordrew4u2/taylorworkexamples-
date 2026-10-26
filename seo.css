@@ -13,6 +13,9 @@
 .service-discovery > p { color: var(--muted); line-height: 1.7; max-width: 48rem; }
 .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; margin-top: 1.5rem; }
 .related-links a { text-decoration: underline; text-underline-offset: 0.3rem; line-height: 1.6; }
+@media (pointer: coarse), (max-width: 900px) {
+  .related-links a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; padding-block: .375rem; }
+}
 .footer-pages { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #595959; line-height: 1.6; }
 .no-js-help { margin-top: 1rem; line-height: 1.6; color: var(--muted); }
 html:not(.js-enabled) .screen-choices,
@@ -536,4 +539,42 @@ html:has(body.project-detail-page) { scroll-behavior: auto; }
   .guide-choice-card .text-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-top: 1rem; font-size: .875rem; }
   .article-opening { padding-top: 1rem; }
   .article-detail-page .page-intro h1 { font-size: clamp(2rem, 8.5vw, 2.75rem); }
+}
+
+/* Direct product evidence and a native caption index keep project browsing useful. */
+.work-project-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.25rem; margin-top: auto; }
+.work-index-page .work-project-actions > a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-top: 0; padding-block: .75rem; }
+.work-project-live-link { font-size: .8125rem; font-weight: 550; text-decoration: underline; text-underline-offset: .25em; }
+.project-story-hero .booking-destination { color: #d0d0d0; font-size: .8125rem; line-height: 1.65; margin-top: 1rem; }
+.project-image-picker { margin: 1.5rem 0 2rem; border: 1px solid var(--line); border-radius: .75rem; background: #fafafa; }
+.project-image-picker > summary { min-height: 48px; padding: 1rem 1.25rem; cursor: pointer; font-size: .9375rem; font-weight: 600; line-height: 1.6; }
+.project-image-count { display: inline-block; margin-left: .5rem; color: var(--muted); font-size: .75rem; font-weight: 400; }
+.project-image-picker ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .375rem 1rem; list-style: none; padding: 0 1.25rem 1.25rem; margin: 0; }
+.project-image-picker li { min-width: 0; }
+.project-image-picker a { display: grid; grid-template-columns: 2ch minmax(0, 1fr); align-items: center; gap: .75rem; min-height: 44px; padding: .5rem .625rem; border: 1px solid var(--line); border-radius: .375rem; font-size: .875rem; line-height: 1.5; }
+.project-image-picker a > span:last-child { overflow-wrap: anywhere; }
+.project-image-picker a:hover { border-color: #999; text-decoration: underline; text-underline-offset: .2em; }
+.project-image-number { color: var(--muted); font-family: var(--mono); font-size: .6875rem; }
+.project-page-frame:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+@media (max-width: 700px) { .project-image-picker ol { grid-template-columns: minmax(0, 1fr); } }
+
+/* Keep booking context and offer commitments beside the decision to proceed. */
+.page-intro > .booking-destination-note { max-width: 44rem; margin-top: 1rem; color: var(--muted); font-size: .8125rem; line-height: 1.7; }
+.project-story-hero .page-intro > .booking-destination-note { color: #d0d0d0; }
+.offer-terms-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 1.25rem; margin-top: 1.5rem; }
+.offer-terms-grid > article { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--corner); background: #fafafa; }
+.offer-terms-grid h3, .offer-expanded-scope h3 { font-family: var(--display); font-size: 1.25rem; line-height: 1.4; letter-spacing: -.025em; }
+.offer-terms-grid p, .offer-expanded-scope p { margin-top: .875rem; color: var(--muted); font-size: .9375rem; line-height: 1.8; }
+.offer-terms-grid p strong { color: var(--ink); font-weight: 650; }
+.offer-package-details { margin-top: 1.25rem; padding-inline: 1.25rem; border: 1px solid var(--line); border-radius: var(--corner); }
+.offer-package-details > summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 44px; padding-block: 1rem; font-size: .9375rem; font-weight: 600; line-height: 1.6; list-style: none; cursor: pointer; }
+.offer-package-details > summary::-webkit-details-marker { display: none; }
+.offer-package-details > summary > span { flex: none; font-size: 1.25rem; font-weight: 400; }
+.offer-package-details[open] > summary > span { transform: rotate(45deg); }
+.offer-package-details > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: .25rem; }
+.offer-expanded-scope { display: grid; gap: 1.5rem; padding-block: .5rem 1.5rem; border-top: 1px solid var(--line); }
+.offer-expanded-scope > article { min-width: 0; padding-top: 1rem; }
+@media (max-width: 700px) {
+  .offer-terms-grid { grid-template-columns: minmax(0, 1fr); }
+  .offer-terms-grid > article { padding: 1.25rem; }
 }

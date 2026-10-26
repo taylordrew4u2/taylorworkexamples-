@@ -151,8 +151,8 @@ async function expectHeroPreview(page) {
   const appPreviews = stage.locator(".hero-app-previews");
   await expect(stage).toHaveAttribute("aria-label", "Featured websites, desktop software, and iPhone apps");
   await expect(appPreviews).toHaveCount(1);
-  await expect(stage.locator("button.hero-project")).toHaveCount(2);
-  expect(await stage.locator("button.hero-project").evaluateAll((buttons) =>
+  await expect(stage.locator("a.hero-project")).toHaveCount(2);
+  expect(await stage.locator("a.hero-project").evaluateAll((buttons) =>
     buttons.map((button) => button.dataset.project),
   )).toEqual(heroPreviews.map(([id]) => id));
   await expect(stage.locator("img.hero-project-screen")).toHaveCount(2);
@@ -167,7 +167,7 @@ async function expectHeroPreview(page) {
   await expect(stage).toHaveCSS("filter", "none");
   for (const [id, label] of heroPreviews) {
     const project = projects.find((entry) => entry.id === id);
-    const trigger = stage.getByRole("button", { name: label, exact: true });
+    const trigger = stage.getByRole("link", { name: label, exact: true });
     const image = trigger.locator("img.hero-project-screen");
     await expect(trigger).toHaveAttribute("data-project", project.id);
     await expect(image).toHaveCount(1);
@@ -322,7 +322,8 @@ test("portfolio renders, previews load, and the page fits the viewport", async (
       Node.DOCUMENT_POSITION_FOLLOWING,
   )), "The direct-developer explanation appears before the opening actions").toBe(true);
   await expect(page.locator(".hero-opening-notes, .hero-capabilities")).toHaveCount(0);
-  await expect(page.locator(".intro-actions > a")).toHaveCount(2);
+  await expect(page.locator(".intro-actions > a")).toHaveCount(3);
+  await expect(page.locator(".intro-actions .hero-services-link")).toHaveAttribute("href", "#services");
   await expect(page.locator(".intro-actions").getByRole("link", { name: "View all projects", exact: false }))
     .toHaveAttribute("href", "./work/");
   await expect(page.locator(".footer-identity")).toContainText("4u Digital");
@@ -451,7 +452,7 @@ test("the opening banners stay complete and separate, and each opens its matchin
   const dialog = page.getByRole("dialog");
   for (const [id, label] of heroPreviews) {
     const project = projects.find((entry) => entry.id === id);
-    const trigger = page.getByRole("button", { name: label, exact: true });
+    const trigger = page.getByRole("link", { name: label, exact: true });
     await trigger.focus();
     await page.keyboard.press("Enter");
     await expect(dialog).toBeVisible();
@@ -769,7 +770,7 @@ test("project dialog keeps background controls inactive, closes with Escape, and
   page,
 }) => {
   await page.goto("/");
-  const trigger = page.getByRole("button", {
+  const trigger = page.getByRole("link", {
     name: "View the BitBinder project",
     exact: true,
   });

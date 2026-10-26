@@ -12,6 +12,7 @@ import { publicRepositories, repositoryVerifiedAt } from "../repository-state.js
 import { projectIdentities } from "../identities.js";
 import { projects as publicProjects, featuredProjects as publicFeaturedProjects } from "../public-projects.js";
 import { portfolioProjectIds, featuredProjectIds } from "../portfolio-selection.js";
+import { projectSlugs } from "../seo-content.js";
 
 // Check the actual asset headers so stale dimensions cannot stretch a preview.
 function assetDimensions(image) {
@@ -269,23 +270,24 @@ test("the homepage opening shows real website and desktop work while preserving 
   assert.match(hero, /aria-label="Featured websites, desktop software, and iPhone apps"/);
   assert.match(hero, /<div\b[^>]*class="hero-app-previews"/,
     "The supplied banners stay in their own group outside the project explorer");
-  const buttons = [...hero.matchAll(/<button\b([^>]*)>([\s\S]*?)<\/button>/g)]
+  const banners = [...hero.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)]
     .filter(([, attributes]) => attribute(attributes, "class")?.split(/\s+/).includes("hero-project"));
-  assert.deepEqual(buttons.map(([, attributes]) => [attribute(attributes, "data-project"), attribute(attributes, "aria-label")]), [
+  assert.deepEqual(banners.map(([, attributes]) => [attribute(attributes, "data-project"), attribute(attributes, "aria-label")]), [
     ["The-Bit-Binder", "View the BitBinder project"],
     ["MyGigCalendar", "View the My Gig Calendar project"],
   ]);
   assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 2);
   assert.equal([...hero.matchAll(/<img\b[^>]*class="hero-project-screen"/g)].length, 2);
-  for (const [, attributes, contents] of buttons) {
+  for (const [, attributes, contents] of banners) {
     const id = attribute(attributes, "data-project");
     const project = projects.find((entry) => entry.id === id);
+    assert.equal(attribute(attributes, "href"), `./work/${projectSlugs[id]}/`, `${id}: a real case-page link works without scripts`);
     assert.equal(project.sourceAvailable, true);
     assert.ok(contents.includes(`class="hero-project-screen" src="${project.image}" alt="${project.imageAlt}" width="1920" height="1080"`),
       `${id}: opening artwork matches the supplied banner cover and its actual dimensions`);
     assert.match(project.image, /\/banner-1920x1080\.png$/);
     assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
-    assert.equal(contents.replace(/<img\b[^>]*>/g, "").trim(), "", `${id}: only the banner is inside its button`);
+    assert.equal(contents.replace(/<img\b[^>]*>/g, "").trim(), "", `${id}: only the banner is inside its link`);
   }
   const explorer = [...hero.matchAll(/<fieldset\b([^>]*)>([\s\S]*?)<\/fieldset>/g)]
     .find(([, attributes]) => attribute(attributes, "class")?.split(/\s+/).includes("hero-explorer"))?.[0];

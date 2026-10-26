@@ -39,9 +39,18 @@ test("dedicated portfolio filters work by pointer and keyboard without removing 
   for (const project of projects) {
     const card = page.locator(`.seo-project-card[data-project-id="${project.id}"]`);
     await expect(card.locator("a[href]")).not.toHaveCount(0);
+    const destination = new URL(`/work/${projectSlugs[project.id]}/`, page.url()).href;
+    const allowed = [destination, ...(project.demoUrl ? [new URL(project.demoUrl).href] : [])];
     for (const link of await card.locator("a[href]").all()) {
-      expect(new URL(await link.getAttribute("href"), page.url()).pathname).toBe(`/work/${projectSlugs[project.id]}/`);
+      const href = new URL(await link.getAttribute("href"), page.url()).href;
+      expect(allowed, "Cards link only to their own story and genuine product destination").toContain(href);
+      if (href !== destination) {
+        await expect(link).toHaveAttribute("target", "_blank");
+        await expect(link).toHaveAttribute("rel", /\bnoopener\b/);
+        await expect(link).toHaveAttribute("rel", /\bnoreferrer\b/);
+      }
     }
+    await expect(card.locator(".work-project-live-link")).toHaveCount(project.demoUrl ? 1 : 0);
   }
 });
 

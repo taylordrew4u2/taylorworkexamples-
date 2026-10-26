@@ -496,8 +496,17 @@ test("portfolio cards explain the personal projects and clearly distinguish illu
     assert.ok(text(businessUse).includes(use.businessUse), `${project.title}: the example is present with its illustrative label`);
     const anchors = tags(card, "a");
     assert.ok(anchors.length > 0, `${project.title}: a real case-page link remains`);
+    assert.ok(anchors.some((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`),
+      `${project.title}: the complete project story remains available`);
     for (const anchor of anchors) {
-      assert.equal(pathname(anchor.href, route), `/work/${projectSlugs[project.id]}/`, `${project.title}: card actions open its complete case page`);
+      if (anchor.class?.split(/\s+/).includes("work-project-live-link")) {
+        assert.equal(anchor.href, project.demoUrl, `${project.title}: the secondary link is its verified product destination`);
+        assert.equal(anchor.target, "_blank");
+        assert.match(anchor.rel, /\bnoopener\b/);
+        assert.match(anchor.rel, /\bnoreferrer\b/);
+      } else {
+        assert.equal(pathname(anchor.href, route), `/work/${projectSlugs[project.id]}/`, `${project.title}: story actions open its complete case page`);
+      }
     }
   }
   const collectionPosition = html.indexOf('id="project-collection"');

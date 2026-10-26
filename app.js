@@ -24,11 +24,18 @@ followLegacyProjectLink();
 window.addEventListener("hashchange", followLegacyProjectLink);
 
 const dialog = $("#project-dialog");
+if (dialog && typeof dialog.showModal === "function") {
+  document.querySelectorAll("a.hero-project[data-project]").forEach((link) => {
+    link.setAttribute("aria-haspopup", "dialog");
+  });
+}
 document.addEventListener("click", (event) => {
   const trigger = event.target.closest("[data-project]");
   if (!trigger) return;
+  // Keep ordinary link behavior for a new tab or when previews are unavailable.
+  if (trigger.matches("a[href]") && (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)) return;
   const project = projects.find((item) => item.id === trigger.dataset.project);
-  if (!project) return;
+  if (!project || !dialog || typeof dialog.showModal !== "function") return;
   const image = dialogVisual(project);
   const source = project.documentationUrl || project.repoUrl;
   const caseStudy = project.challenge
@@ -50,6 +57,7 @@ document.addEventListener("click", (event) => {
   storyLink.append(storyArrow);
   $(".dialog-booking-intro").append(storyLink);
   dialog.showModal();
+  event.preventDefault();
   dialog.scrollTop = 0;
 });
 $("#dialog-content").addEventListener("click", (event) => {
