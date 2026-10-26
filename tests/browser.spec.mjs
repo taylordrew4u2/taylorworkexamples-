@@ -979,7 +979,7 @@ test("dedicated project pages show the need, build evidence, and a project-speci
   const project = projects.find((entry) => entry.id === "PinsAndNeedlesComedyWebsite");
   await page.goto("/work/");
   const card = page.locator(`.work-page-grid .seo-project-card[data-project-id="${project.id}"]`);
-  await card.getByRole("link", { name: `See ${project.title}`, exact: false }).click();
+  await card.getByRole("link", { name: `See how it works: ${project.title}`, exact: true }).click();
   await expect(page).toHaveURL(/\/work\/pins-and-needles-comedy\/$/);
   await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary);
   await expect(page.locator("#development .project-context")).toContainText(project.challenge);

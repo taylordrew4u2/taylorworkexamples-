@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { projects } from "../public-projects.js";
 import { projectSlugs } from "../seo-content.js";
 import { bookingURL } from "../booking.js";
+import { projectClientUses } from "../content/project-client-uses.js";
 
 const typeOf = (project) => ["micro-short-website", "PinsAndNeedlesComedyWebsite"].includes(project.id)
   ? "website" : project.category === "ios" ? "ios" : project.category === "desktop" ? "desktop" : "web-app";
@@ -37,9 +38,22 @@ test("dedicated portfolio filters work by pointer and keyboard without removing 
   await expectResults(page, projects);
   for (const project of projects) {
     const card = page.locator(`.seo-project-card[data-project-id="${project.id}"]`);
+    await expect(card.locator("a[href]")).not.toHaveCount(0);
     for (const link of await card.locator("a[href]").all()) {
       expect(new URL(await link.getAttribute("href"), page.url()).pathname).toBe(`/work/${projectSlugs[project.id]}/`);
     }
+  }
+});
+
+test("clients can search the capability and illustrative business context as well as project names", async ({ page }) => {
+  await page.goto("/work/");
+  const search = page.getByRole("searchbox", { name: "Search projects", exact: true });
+  for (const [query, id] of [["Repayment planning", "Bill-Spilt"], ["suppliers", "nycstandupopenmicmaster"]]) {
+    await search.fill(query);
+    await expectResults(page, projects.filter((project) => project.id === id));
+    const card = page.locator(`.seo-project-card[data-project-id="${id}"]`);
+    await expect(card.locator(".work-project-capabilities li")).toHaveText(projectClientUses[id].capabilities);
+    await expect(card.locator(".work-project-business-use")).toContainText(projectClientUses[id].businessUse);
   }
 });
 
@@ -109,6 +123,9 @@ test.describe("the complete portfolio without JavaScript", () => {
     for (const project of projects) {
       const card = page.locator(`.seo-project-card[data-project-id="${project.id}"]`);
       await expect(card.locator(".seo-project-heading h3")).toHaveText(project.title);
+      await expect(card.locator(".work-project-purpose")).toHaveText(project.purpose);
+      await expect(card.locator(".work-project-capabilities li")).toHaveText(projectClientUses[project.id].capabilities);
+      await expect(card.locator(".work-project-business-use")).toContainText("A similar business need");
       const image = card.locator(".seo-project-cover img");
       expect(new URL(await image.getAttribute("src"), page.url()).pathname)
         .toBe(`/${project.image.replace(/^\.\//, "")}`);

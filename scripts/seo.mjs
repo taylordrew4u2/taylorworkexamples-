@@ -8,6 +8,7 @@ import { launchOffer } from "../seo-offer.js";
 import { clientCare } from "../client-care.js";
 import { projects, featuredProjects } from "../public-projects.js";
 import { projectStories } from "../project-stories.js";
+import { projectClientUses } from "../content/project-client-uses.js";
 import { escape, enquiryURL } from "../render-projects.js";
 import { bookingURL } from "../booking.js";
 import { addInquirySource } from "../contact-context.js";
@@ -204,8 +205,19 @@ function iconFor(project, route) {
 }
 
 function projectCard(project, route) {
+  if (route === "/work/") return projectIndexCard(project, route);
   const search = [project.title, project.purpose, project.summary, projectType(project), ...project.stack, ...project.workflows].join(" ");
   return `<article class="seo-project-card" data-project-id="${escape(project.id)}" data-project-type="${projectFilterType(project)}" data-project-search="${escape(search)}"><a class="seo-project-cover" href="${local(route, `work/${projectSlugs[project.id]}/`)}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><div class="seo-project-body"><p class="eyebrow">${escape(projectType(project))}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)}</a></h3></div><p>${escape(project.purpose)}</p>${route === "/work/" ? `<p class="work-index-image-label">${escape(project.imageLabel || "Project image")}</p>` : ""}<a class="text-link" href="${local(route, `work/${projectSlugs[project.id]}/`)}">See ${escape(project.title)} <span aria-hidden="true">↗</span></a></div></article>`;
+}
+
+function projectIndexCard(project, route) {
+  const context = projectClientUses[project.id];
+  if (!context) throw new Error(`Missing client context for ${project.id}`);
+  const destination = local(route, `work/${projectSlugs[project.id]}/`);
+  const search = [project.title, project.purpose, project.summary, projectType(project), ...project.stack, ...project.workflows,
+    ...context.capabilities, context.businessUse].join(" ");
+  const status = project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate" : "";
+  return `<article class="seo-project-card" data-project-id="${escape(project.id)}" data-project-type="${projectFilterType(project)}" data-project-search="${escape(search)}"><header class="work-project-header"><p class="eyebrow">${escape(projectType(project))}${status ? `<span class="work-project-status">${escape(status)}</span>` : ""}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${destination}">${escape(project.title)}</a></h3></div></header><a class="seo-project-cover" href="${destination}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><p class="work-index-image-label">${escape(project.imageLabel || "Project image")}</p><div class="seo-project-body"><p class="work-project-purpose">${escape(project.purpose)}</p><ul class="work-project-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul><p class="work-project-business-use"><span>A similar business need</span>${escape(context.businessUse)}</p><a class="text-link work-project-action" href="${destination}" aria-label="See how it works: ${escape(project.title)}">See how it works <span aria-hidden="true">↗</span></a></div></article>`;
 }
 
 function projectFilterType(project) {
@@ -219,9 +231,9 @@ function projectIndexContent(route) {
   const orderedProjects = [...featuredProjects, ...projects.filter((project) => !featuredProjects.includes(project))];
   const filters = [["all", "All projects"], ["website", "Websites"], ["web-app", "Web apps"], ["ios", "iPhone & iPad"], ["desktop", "Desktop software"]];
   const range = renderRangeProof().replace(/(href|src)="\.\//g, '$1="../');
-  return intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `Explore ${projects.length} selected websites, apps, and software projects. Choose a project to see what it does, browse all its original images, and explore the development behind it.`, `<div class="page-actions">${bookingLink()}</div>`) +
-    `<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside>` +
+  return intro("THE 4u Digital PORTFOLIO", "See the work. Picture your own.", `${projects.length} personal projects. Websites, apps, and software built around real tasks.`, `<p class="work-intro-promise">Work directly with the developer who designs, codes, and launches your product.</p><div class="page-actions">${bookingLink()}<a class="text-link" href="#project-collection">Browse projects <span aria-hidden="true">↓</span></a></div>`) +
     `<section id="project-collection" class="page-section" aria-labelledby="project-collection-title"><h2 id="project-collection-title">Find a project like your idea.</h2><div id="project-browser-controls" class="project-browser-controls" hidden><fieldset class="project-type-filter"><legend>Project type</legend><div class="project-filter-options">${filters.map(([type, label]) => `<button type="button" data-project-filter="${type}" aria-pressed="${type === "all"}" aria-controls="project-index-grid">${escape(label)} <span aria-hidden="true">${projects.filter((project) => type === "all" || projectFilterType(project) === type).length}</span></button>`).join("")}</div></fieldset><label class="project-browser-search" for="project-browser-search"><span>Search projects</span><input id="project-browser-search" type="search" placeholder="Name, feature, or technology" autocomplete="off" aria-controls="project-index-grid" /></label></div><p id="project-browser-count" class="project-browser-count" role="status" aria-live="polite" aria-atomic="true">${projects.length} of ${projects.length} projects</p><div id="project-index-grid" class="seo-project-grid work-page-grid">${orderedProjects.map((project) => projectCard(project, route)).join("")}</div><div id="project-browser-empty" class="project-browser-empty" hidden><h3>No matching projects.</h3><p>Try a different word or project type.</p><button type="button" id="project-browser-reset" class="button button-outline">Show all projects</button></div><noscript><p class="no-js-help">All ${projects.length} projects are shown. Choose any project to open its complete story and images.</p></noscript></section>` +
+    `<section id="work-with-me" class="page-section work-hiring" aria-labelledby="work-hiring-title"><p class="eyebrow">YOUR NEXT BUILD</p><h2 id="work-hiring-title">The same care. Built around your business.</h2><p class="work-hiring-intro">Your project starts with what your customers and team need. We’ll work out the right product together.</p><div class="work-hiring-grid"><article><h3>One developer, start to finish.</h3><p>Work with the person designing, coding, and launching your website, app, or software.</p></article><article><h3>Clear scope before building.</h3><p>Agree the features, price, start date, and target launch in writing before development begins.</p></article><article><h3>Your product. Your code.</h3><p>Receive your custom code and deployment handover, with a 30-day money-back guarantee after the completed product launches.</p></article></div><div class="work-hiring-actions">${bookingLink()}<a class="text-link" href="${local(route)}#client-care">Read the guarantee &amp; support details <span aria-hidden="true">↗</span></a></div><aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside></section>` +
     `<section id="range-proof" class="range-proof" aria-label="Development range and published app proof">${range}</section>` + consultationCallout(route);
 }
 
@@ -470,7 +482,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", projectIndex: true, modified: "2026-10-24", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-10-25", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",

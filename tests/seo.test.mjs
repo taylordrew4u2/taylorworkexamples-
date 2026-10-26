@@ -14,6 +14,7 @@ import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
+import { projectClientUses } from "../content/project-client-uses.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -467,10 +468,46 @@ test("salon and restaurant services explain the business workflow and connect to
     const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
       "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
-    const modified = clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
+    const modified = route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
       route === "/insights/" || editedProject ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
     assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }
+});
+
+test("portfolio cards explain the personal projects and clearly distinguish illustrative business uses", () => {
+  const route = "/work/";
+  const html = documents.get(route);
+  const cards = [...html.matchAll(/<article\b([^>]*)>([\s\S]*?)<\/article>/g)]
+    .filter(([, attrs]) => attributes(attrs).class?.split(/\s+/).includes("seo-project-card"));
+  assert.equal(cards.length, projects.length);
+  for (const [, attrs, card] of cards) {
+    const project = projects.find((entry) => entry.id === attributes(attrs)["data-project-id"]);
+    assert.ok(project, "Each card belongs to a selected public project");
+    const use = projectClientUses[project.id];
+    assert.ok(use, `${project.title}: explanatory business context exists`);
+    const heading = card.indexOf('class="work-project-header"');
+    const cover = card.indexOf('class="seo-project-cover"');
+    assert.ok(heading >= 0 && cover > heading, `${project.title}: the project name introduces its artwork`);
+    const purpose = card.match(/<p\b[^>]*class="work-project-purpose"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+    assert.equal(text(purpose || ""), project.purpose, `${project.title}: explains its actual purpose`);
+    const capabilities = card.match(/<ul\b[^>]*class="work-project-capabilities"[^>]*>([\s\S]*?)<\/ul>/)?.[1];
+    assert.ok(capabilities, `${project.title}: capabilities are readable without JavaScript`);
+    assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, value]) => text(value)), use.capabilities);
+    assert.equal(use.capabilities.length, 3);
+    const businessUse = card.match(/<p\b[^>]*class="work-project-business-use"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+    assert.match(text(businessUse || ""), /A similar business need/);
+    assert.ok(text(businessUse).includes(use.businessUse), `${project.title}: the example is present with its illustrative label`);
+    const anchors = tags(card, "a");
+    assert.ok(anchors.length > 0, `${project.title}: a real case-page link remains`);
+    for (const anchor of anchors) {
+      assert.equal(pathname(anchor.href, route), `/work/${projectSlugs[project.id]}/`, `${project.title}: card actions open its complete case page`);
+    }
+  }
+  const collectionPosition = html.indexOf('id="project-collection"');
+  const hiringPosition = html.indexOf('id="work-with-me"');
+  const rangePosition = html.indexOf('id="range-proof"');
+  assert.ok(collectionPosition >= 0 && hiringPosition > collectionPosition && rangePosition > hiringPosition,
+    "The collaboration commitments follow the collection and precede publication evidence");
 });
 
 test("the homepage displays all nine supplied testimonials directly with their original attribution", () => {
