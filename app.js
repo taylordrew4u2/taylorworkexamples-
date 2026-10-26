@@ -40,15 +40,15 @@ document.addEventListener("click", (event) => {
   $("#dialog-content").innerHTML =
     `<div class="project-identity dialog-identity">${projectIcon(project)}<h2 id="dialog-title" class="dialog-title">${escape(project.title)}</h2></div><p class="mono dialog-category">${escape(project.projectType || labels[project.category])}</p><p class="dialog-summary">${escape(project.purpose || project.clientSummary || project.summary)}</p>${bookingIntro}${projectWorkflows(project)}${project.demonstrates ? `<div class="project-tags capability-tags">${tags(project.demonstrates)}</div>` : ""}${image}${caseStudy}<details class="technical-details"><summary>Technical details</summary>${technical}</details>${project.notes ? `<p class="dialog-note">${escape(project.notes)}</p>` : ""}<p class="client-ownership-note">Your custom code is 100% yours. Client work and code stay out of this public portfolio unless you give permission.</p><div class="dialog-actions">${bookingAction}<a class="button button-outline project-enquiry" href="${escape(enquiryURL("general", project.title))}">Email about a similar project <span aria-hidden="true">↗</span></a>${project.demoUrl ? `<a class="button button-outline" href="${escape(project.demoUrl)}" ${external}>${escape(project.demoLabel || "See it live")} <span aria-hidden="true">↗</span></a>` : ""}</div><p class="dialog-source">${sourceLink(project, "Project documentation", "", source)}</p>`;
   const storyLink = document.createElement("a");
-  storyLink.className = "button button-outline dialog-story-link";
+  storyLink.className = "text-link dialog-story-link";
   storyLink.href = project.caseUrl;
-  storyLink.textContent = "View project";
-  storyLink.setAttribute("aria-label", `View project: ${project.title}`);
+  storyLink.textContent = "View full project";
+  storyLink.setAttribute("aria-label", `View full project: ${project.title}`);
   const storyArrow = document.createElement("span");
   storyArrow.setAttribute("aria-hidden", "true");
   storyArrow.textContent = "↗";
   storyLink.append(storyArrow);
-  $(".dialog-actions").insertBefore(storyLink, $(".project-enquiry"));
+  $(".dialog-booking-intro").append(storyLink);
   dialog.showModal();
   dialog.scrollTop = 0;
 });

@@ -316,7 +316,7 @@ function kickoffPage() {
 function projectBriefPage() {
   const page = { path: "/project-brief/", title: "Plan Your Website, App or Software Project | 4u Digital",
     description: "A guided project brief for your website, app or custom software. Explore features, colors, content and workflows, upload references, and send your ideas to 4u Digital.",
-    modified: "2026-10-23", projectBrief: true,
+    modified: "2026-10-26", projectBrief: true,
     breadcrumbs: [{ name: "Project planner", path: "/project-brief/" }],
   };
   const content = intro("4U DIGITAL · PROJECT PLANNER", "Your project planner.",
@@ -469,7 +469,7 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-24",
+    modified: "2026-10-26",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));

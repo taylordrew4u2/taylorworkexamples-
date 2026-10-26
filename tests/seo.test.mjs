@@ -459,7 +459,7 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-24");
-  assert.equal(sitemapDates.get("/"), "2026-10-24");
+  assert.equal(sitemapDates.get("/"), "2026-10-26");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
   for (const route of routes) {
     const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
@@ -469,7 +469,7 @@ test("salon and restaurant services explain the business workflow and connect to
     const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
       "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
     const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
-    const modified = editedProject ? "2026-10-26" : route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
+    const modified = editedProject || ["/", "/project-brief/"].includes(route) ? "2026-10-26" : route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
       route === "/insights/" ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
     assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
   }

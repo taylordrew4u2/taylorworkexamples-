@@ -245,6 +245,33 @@ test("booking from a project preview preserves its selected image and returns fo
   await expect(trigger).toBeFocused();
 });
 
+test("mobile clients can continue from a quick preview to the full project before browsing images", async ({ page }) => {
+  for (const width of [320, 390]) {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto("/");
+    await page.locator(`.hero-project[data-project="${example.id}"]`).click();
+    const dialog = page.getByRole("dialog");
+    const intro = dialog.locator(".dialog-booking-intro");
+    const story = intro.getByRole("link", { name: `View full project: ${example.title}`, exact: true });
+    await expect(story).toBeInViewport({ ratio: 1 });
+    await expect(story).toHaveAttribute("href", example.caseUrl);
+    expect(await story.getAttribute("target")).toBeNull();
+    const bounds = await story.boundingBox();
+    expect(bounds.height).toBeGreaterThanOrEqual(44);
+    expect(bounds.x).toBeGreaterThanOrEqual(0);
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
+    expect(await intro.evaluate(element => Boolean(
+      element.compareDocumentPosition(document.querySelector(".dialog-images")) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )), "The full project path is offered before the longer preview gallery").toBe(true);
+    await expectDirectBooking(intro.locator("[data-booking-link]"));
+    await story.click();
+    await expect(page).toHaveURL(new URL(example.caseUrl, "http://127.0.0.1:4173/").href);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
+    await expect(page.locator("#your-business")).toContainText("One developer. Your whole build.");
+    await openStubbedBooking(page, page.locator(".project-story-hero [data-booking-link]"));
+  }
+});
+
 test("a project story offers direct booking and an attributed email alternative before the gallery", async ({ page }) => {
   await page.goto(example.caseUrl);
   const opening = page.locator(".project-story-hero .page-intro");

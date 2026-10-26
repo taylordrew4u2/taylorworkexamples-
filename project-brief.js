@@ -83,7 +83,6 @@ export function initProjectBrief(doc = document) {
     const field = fieldsById.get(id);
     if (field) {
       const index = briefSteps.findIndex((step) => step.id === field.stepId);
-      editingReview = false;
       questionId = id;
       navigate(index, { validate: false, preserveQuestion: true });
       const container = form.querySelector(`[data-field-container="${id}"]`);
@@ -201,6 +200,7 @@ export function initProjectBrief(doc = document) {
     reviewPanel.hidden = !reviewing;
     get("brief-back").hidden = !reviewing && questionId === "projectType";
     get("brief-next").hidden = reviewing;
+    get("brief-return-review").hidden = reviewing || !editingReview;
     get("brief-send").hidden = !reviewing;
     get("brief-skip").hidden = reviewing || Boolean(fieldsById.get(questionId)?.required);
     get("brief-no-preference").hidden = reviewing || questionId === "__files" || Boolean(fieldsById.get(questionId)?.required);
@@ -411,6 +411,8 @@ export function initProjectBrief(doc = document) {
       if (entry?.url) win.URL.revokeObjectURL(entry.url);
       files = files.filter((file) => file !== entry);
       changed(); renderFiles(); get("brief-files").focus();
+    } else if (target.id === "brief-return-review") {
+      if (editingReview && validateStep()) renderReview();
     } else if (target.id === "brief-next" || target.id === "brief-skip") advance();
     else if (target.id === "brief-no-preference") {
       const field = fieldsById.get(questionId);
@@ -425,7 +427,7 @@ export function initProjectBrief(doc = document) {
       if (!rawAnswers().projectType) { showFieldError("projectType", "Please choose an option."); return; }
       goQuestion("contactName");
     } else if (target.id === "brief-back") {
-      editingReview = false;
+      if (stepIndex === briefSteps.length) editingReview = false;
       const path = questionPath();
       goQuestion(stepIndex === briefSteps.length ? path.at(-1) : path[Math.max(0, path.indexOf(questionId) - 1)]);
     }

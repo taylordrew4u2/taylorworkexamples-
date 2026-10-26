@@ -716,7 +716,7 @@ for (const [id, selector] of dialogEntryPoints) {
     await expect(dialog.locator(".dialog-summary")).toBeVisible();
     await expect(dialog.locator(".dialog-summary")).toHaveText(project.purpose);
     await expectProjectWorkflows(dialog, project);
-    const fullStory = dialog.getByRole("link", { name: `View project: ${project.title}`, exact: true });
+    const fullStory = dialog.getByRole("link", { name: `View full project: ${project.title}`, exact: true });
     await expect(fullStory).toHaveCount(1);
     await expect(fullStory).toHaveAttribute("href", project.caseUrl);
     expect(await fullStory.getAttribute("target"), "The full story continues in the same tab").toBeNull();

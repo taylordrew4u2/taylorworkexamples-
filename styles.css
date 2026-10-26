@@ -3140,7 +3140,7 @@ a, button, summary { touch-action: manipulation; }
 .footer-pages a:hover { text-decoration: underline; text-underline-offset: .3em; }
 .dialog-top { position: sticky; top: 0; background: #fff; z-index: 2; border-bottom: 1px solid var(--line); }
 .dialog-close { min-width: 2.75rem; min-height: 2.75rem; }
-.dialog-actions .dialog-story-link { flex-shrink: 0; }
+.dialog-story-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; text-decoration: underline; text-underline-offset: .25em; }
 .dialog-booking-intro { display: grid; justify-items: start; gap: .75rem; margin-top: 1.5rem; }
 
 @media (min-width: 901px) {
