@@ -3,9 +3,9 @@ import { escape, enquiryURL, tags, sourceLink, labels, external, projectIcon, pr
 import { dialogSizes } from "./responsive-images.js?v=50";
 import { trackContact } from "./analytics.js?v=50";
 import { bookingURL } from "./booking.js?v=50";
+import "./navigation.js?v=50";
 
 const $ = (selector) => document.querySelector(selector);
-document.documentElement.classList.add("js-enabled");
 document.querySelectorAll(".enquiry-link").forEach((link) => {
   link.href = enquiryURL(link.dataset.enquiry);
 });
@@ -80,39 +80,6 @@ dialog.addEventListener("click", (event) => {
   )
     dialog.close();
 });
-
-const menuButton = $(".menu-toggle");
-const navigation = $("#main-nav");
-function closeMenu() {
-  menuButton.setAttribute("aria-expanded", "false");
-  menuButton.setAttribute("aria-label", "Open navigation");
-  navigation.classList.remove("is-open");
-}
-menuButton.addEventListener("click", () => {
-  const expanded = menuButton.getAttribute("aria-expanded") !== "true";
-  menuButton.setAttribute("aria-expanded", String(expanded));
-  menuButton.setAttribute(
-    "aria-label",
-    expanded ? "Close navigation" : "Open navigation",
-  );
-  navigation.classList.toggle("is-open", expanded);
-});
-navigation.addEventListener("click", (event) => {
-  if (event.target.closest("a")) closeMenu();
-});
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".site-header")) closeMenu();
-});
-document.addEventListener("keydown", (event) => {
-  if (
-    event.key === "Escape" &&
-    menuButton.getAttribute("aria-expanded") === "true"
-  ) {
-    closeMenu();
-    menuButton.focus();
-  }
-});
-window.matchMedia("(min-width: 901px)").addEventListener("change", closeMenu);
 
 let copyReset;
 $("#copy-email").addEventListener("click", async () => {

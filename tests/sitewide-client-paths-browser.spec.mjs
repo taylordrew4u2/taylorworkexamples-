@@ -83,7 +83,7 @@ for (const javaScriptEnabled of [true, false]) {
       }
     });
 
-    test("the service directory exposes the website offer in its main content before service choices", async ({ page }) => {
+    test("the service directory keeps the website offer discoverable after the business-need choices", async ({ page }) => {
       await page.goto("/services/");
       const offer = page.locator("main .service-website-offer");
       const link = await linkTo(offer, page, "/offer/");
@@ -91,8 +91,8 @@ for (const javaScriptEnabled of [true, false]) {
       await expect(offer).toContainText("$1,200");
       await expect(offer).toContainText("$1,900");
       expect(await offer.evaluate((element) => Boolean(
-        element.compareDocumentPosition(document.querySelector("#service-choices")) & Node.DOCUMENT_POSITION_FOLLOWING,
-      )), "Website pricing is discoverable before a visitor classifies the technology").toBe(true);
+        document.querySelector("#service-choices").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
+      )), "Clients can choose a business need before seeing the website-specific promotion").toBe(true);
       await link.focus();
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(/\/offer\/$/);

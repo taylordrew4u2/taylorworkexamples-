@@ -229,11 +229,15 @@ test("structured data points to the canonical business and matches visible servi
       assert.equal(schema.mainEntityOfPage["@id"], page["@id"]);
       assert.equal(page.mainEntity["@id"], schema["@id"]);
       assert.equal(schema.datePublished, article.published || site.published);
-      assert.equal(schema.dateModified, article.modified || site.modified || schema.datePublished);
+      assert.equal(schema.dateModified, "2026-10-26", `${route}: the opening and shared navigation were updated`);
       assert.equal(metadata(html, "article:modified_time")[0].content, schema.dateModified);
       assert.ok(schema.dateModified >= schema.datePublished, `${route}: modification does not precede publication`);
       assert.deepEqual(tags(html, "time").map((tag) => tag.datetime), [schema.datePublished]);
       assert.ok(visible.includes("by 4u digital"), `${route}: visible company author`);
+      const openingLead = html.match(/<p\b[^>]*class="page-lead"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+      assert.equal(text(openingLead || ""), article.summary, `${route}: a short summary introduces the guide`);
+      const originalIntro = html.match(/<p\b[^>]*class="article-opening"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+      assert.equal(text(originalIntro || ""), article.intro, `${route}: the full original introduction remains in the article`);
     }
     const project = projects.find((entry) => route === `/work/${projectSlugs[entry.id]}/`);
     if (project) {
@@ -427,7 +431,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], service.heading);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), service.modified || "2026-10-19");
+    assert.equal(sitemapDates.get(route), "2026-10-26");
     assert.ok(linksTo(homeServices, "/", route), `${service.title}: homepage services entry`);
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
@@ -445,9 +449,10 @@ test("salon and restaurant services explain the business workflow and connect to
     }
     const guideRoute = `/insights/${service.guideSlug}/`;
     const serviceGuide = articles.find((entry) => entry.slug === service.guideSlug);
+    assert.ok(serviceGuide, `${service.title}: the planning guide remains part of the published collection`);
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
-    assert.equal(sitemapDates.get(guideRoute), serviceGuide.modified || "2026-10-19");
+    assert.equal(sitemapDates.get(guideRoute), "2026-10-26");
     const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
       .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
     assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
@@ -455,23 +460,14 @@ test("salon and restaurant services explain the business workflow and connect to
       `${service.title}: a real inquiry retains its source without JavaScript`);
   }
   for (const article of articles.filter((entry) => !entry.modified)) {
-    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-19",
-      `${article.title}: the booking navigation updates the guide while its publication date remains unchanged`);
+    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-26",
+      `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
-  assert.equal(sitemapDates.get("/services/"), "2026-10-24");
+  assert.equal(sitemapDates.get("/services/"), "2026-10-26");
   assert.equal(sitemapDates.get("/"), "2026-10-26");
-  assert.equal(sitemapDates.get("/insights/"), "2026-10-20");
+  assert.equal(sitemapDates.get("/insights/"), "2026-10-26");
   for (const route of routes) {
-    const article = articles.find((entry) => route === `/insights/${entry.slug}/`);
-    const service = services.find((entry) => route === `/services/${entry.slug}/`);
-    const editedProject = projects.some((project) => route === `/work/${projectSlugs[project.id]}/`);
-    const clientJourneyUpdate = ["/", "/services/", "/guides/website-or-app/", "/work/", "/about/", "/work/nyc-open-mic-master-list/"].includes(route);
-    const offerUpdate = ["/", "/offer/", "/project-brief/", "/privacy/", "/contact/",
-      "/new-york-city/", "/project-kickoff/", "/guides/website-or-app/"].includes(route);
-    const microShortUpdate = ["/work/", "/work/micro-short-film-website/"].includes(route);
-    const modified = editedProject || ["/", "/project-brief/"].includes(route) ? "2026-10-26" : route === "/work/" ? "2026-10-25" : clientJourneyUpdate ? "2026-10-24" : offerUpdate ? "2026-10-23" : microShortUpdate ? "2026-10-22" :
-      route === "/insights/" ? "2026-10-20" : service?.modified || article?.modified || "2026-10-19";
-    assert.equal(sitemapDates.get(route), modified, `${route}: modification dates reflect the pages whose content changed`);
+    assert.equal(sitemapDates.get(route), "2026-10-26", `${route}: the shared navigation changed every generated public page`);
   }
 });
 
@@ -567,9 +563,13 @@ test("project stories explain the original workflows and preserve real developme
     assert.ok(tags(html, "body")[0]?.class?.split(/\s+/).includes("project-detail-page"),
       `${project.title}: the dedicated project layout is present`);
     const clientScripts = tags(html, "script").filter((tag) => tag.src);
-    assert.equal(clientScripts.length, 1, `${project.title}: only the contact-tracking module is loaded`);
-    assert.match(pathname(clientScripts[0].src, route), /^\/static\/[a-f0-9]{16}\/analytics\.js$/);
-    assert.equal(clientScripts[0].type, "module");
+    assert.equal(clientScripts.length, 2, `${project.title}: static project content only needs the shared contact and navigation modules`);
+    assert.deepEqual(clientScripts.map((script) => path.posix.basename(pathname(script.src, route))).sort(),
+      ["analytics.js", "navigation.js"]);
+    for (const script of clientScripts) {
+      assert.match(pathname(script.src, route), /^\/static\/[a-f0-9]{16}\/(?:analytics|navigation)\.js$/);
+      assert.equal(script.type, "module");
+    }
     const visible = text(html);
     assert.ok(visible.includes(project.clientSummary || project.summary), `${project.title}: plain-language summary`);
     for (const original of [project.purpose, project.challenge, project.build, project.notes,

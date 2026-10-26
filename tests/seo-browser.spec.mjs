@@ -8,12 +8,26 @@ import { localConsultation } from "../seo-local.js";
 const bookingURL = "https://briefbooth.com/book/4u-digital";
 
 async function expectBookingLink(link) {
+  await expect(link).toBeVisible();
   await expect(link).toHaveAttribute("href", bookingURL);
   await expect(link).toHaveAttribute("data-booking-link", "");
   await expect(link).toHaveAttribute("target", "_blank");
   await expect(link).toHaveAttribute("rel", /\bnoopener\b/);
   await expect(link).toHaveAttribute("rel", /\bnoreferrer\b/);
   await expect(link).toContainText("Book a consultation");
+}
+
+async function expectHeaderBooking(page) {
+  const menu = page.getByRole("button", { name: "Open navigation", exact: true });
+  const hasMenu = await menu.isVisible();
+  if (hasMenu) await menu.click();
+  const navigation = page.getByRole("navigation", { name: "Main navigation", exact: true });
+  await expect(navigation).toBeVisible();
+  await expectBookingLink(navigation.locator(".nav-contact"));
+  if (hasMenu) {
+    await page.keyboard.press("Escape");
+    await expect(page.locator(".menu-toggle")).toHaveAttribute("aria-expanded", "false");
+  }
 }
 
 test.use({ javaScriptEnabled: false });
@@ -54,7 +68,7 @@ async function expectServiceSections(page, service) {
   await expect(navigation).toBeVisible();
   const destinations = [
     ["service-fit", `What could ${service.title.toLowerCase()} help you do?`],
-    ["examples", "See the work behind the offer."],
+    ["examples", "Explore related projects."],
     ["service-scope", "What do we decide before building?"],
     ["service-questions", `Questions about ${service.title.toLowerCase()}`],
   ];
@@ -384,8 +398,7 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     expect(draft.searchParams.get("body")).toContain("The problem:");
     expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}${route}`);
 
-    const consultationLink = page.locator(".page-nav .nav-contact");
-    await expectBookingLink(consultationLink);
+    await expectHeaderBooking(page);
     await expectPageFit(page);
 
     const planning = await linkTo(page, `/insights/${service.guideSlug}/`);
@@ -537,7 +550,7 @@ for (const project of projects) {
     expect(draft.searchParams.get("body")).toContain("The problem:");
     expect(draft.searchParams.get("body")).toContain("Who will use it:");
     expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
-    await expectBookingLink(page.locator(".page-nav .nav-contact"));
+    await expectHeaderBooking(page);
     await expectBookingLink(page.locator(".project-build-cta [data-booking-link]"));
     await expectPageFit(page);
   });
@@ -572,7 +585,7 @@ test("the comparison guide, business information, and contact remain usable with
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
   await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
-  await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await expectHeaderBooking(page);
   await expectPageFit(page);
 });
 
@@ -596,7 +609,7 @@ test("homepage visitors can open the optional planner without booking or finding
   await expect(page.locator(".page-intro")).toContainText(/optional planner before or after a consultation/i);
   await expect(page.locator(".page-intro")).toContainText("Skip anything undecided.");
   await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
-  await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await expectHeaderBooking(page);
   await expectPageFit(page);
 });
 
@@ -615,7 +628,7 @@ test("the later existing-client kickoff resource still prepares an attributed em
   expect(draft.searchParams.get("body")).toContain("without sending passwords");
   expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/project-kickoff/`);
   await expectPageFit(page);
-  await expectBookingLink(page.locator(".page-nav .nav-contact"));
+  await expectHeaderBooking(page);
   await page.setViewportSize({ width: 768, height: 1024 });
   await expectPageFit(page);
 });
@@ -799,7 +812,9 @@ test("a business guide connects the idea to a service and the supplied consultat
   expect(emailDestination.searchParams.get("subject") || "").not.toMatch(/consultation|Zoom|in.person/i);
   expect(emailDestination.searchParams.get("body") || "").not.toMatch(/Consultation format|Preferred (?:times|days)/i);
   await expect(generalEmail).not.toHaveAttribute("data-booking-link", "");
-  for (const booking of await page.locator("[data-booking-link]").all()) {
+  // The phone-only booking dock remains in the static HTML on desktop, where
+  // it is intentionally hidden. Check the usable actions for this viewport.
+  for (const booking of await page.locator("[data-booking-link]:visible").all()) {
     await expectBookingLink(booking);
   }
   await expect(page.locator("#consultation-form, [data-consultation-format]")).toHaveCount(0);

@@ -1,3 +1,7 @@
+import { clientCare } from "../client-care.js";
+
+const afterLaunchCare = `For 4u Digital projects: ${clientCare.changes.text} ${clientCare.support.text}`;
+
 export const pricingNotes = [
   {
     slug: "hourly-vs-fixed-price-development",
@@ -114,7 +118,8 @@ export const pricingNotes = [
         heading: "Define what maintenance means",
         paragraphs: [
           "Maintenance can include keeping software components current, checking a form after a service changes, or investigating a fault. Content updates are another kind of work. Replacing a photograph and adding a new staff approval process need different effort.",
-          "Ask what ongoing work is included, what needs a separate request, and who handles it. A site that you can edit yourself still needs a plan for technical changes. Discuss the arrangement for your project instead of assuming launch includes continuing support.",
+          "Ask what ongoing work is included, what needs a separate request, and who handles it. A site that you can edit yourself still needs a plan for technical changes. Provider charges are identified separately from development and support.",
+          afterLaunchCare,
         ],
       },
       {
@@ -138,7 +143,7 @@ export const pricingNotes = [
     serviceSlugs: ["website-development", "web-app-development", "app-development"],
     projectIds: ["PinsAndNeedlesComedyWebsite", "MyGigCalendar"],
     published: "2026-10-19",
-    modified: "2026-10-19",
+    modified: "2026-10-26",
     topic: "pricing",
     format: "note",
     closing: "For a 4u Digital discussion, bring any existing domain, hosting, and email details alongside the website changes you want to make.",
@@ -176,7 +181,7 @@ export const pricingNotes = [
     faq: [
       {
         question: "Does every small edit need a new price?",
-        answer: "That depends on what the project includes. Clarify how review edits and additional work are handled in the proposal. The size of an on-screen change can hide work elsewhere.",
+        answer: `${afterLaunchCare} Review edits during development and work outside those commitments are agreed in your contract before the changed work begins.`,
       },
       {
         question: "How can I reduce avoidable changes?",
@@ -186,7 +191,7 @@ export const pricingNotes = [
     serviceSlugs: ["website-development", "custom-software-development"],
     projectIds: ["PinsAndNeedlesComedyWebsite", "the-trip-handler"],
     published: "2026-10-19",
-    modified: "2026-10-19",
+    modified: "2026-10-26",
     topic: "pricing",
     format: "note",
     closing: "Bring the current website and the task you want to change to a 4u Digital discussion.",

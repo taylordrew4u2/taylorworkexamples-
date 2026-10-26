@@ -493,3 +493,47 @@ html:has(body.project-detail-page) { scroll-behavior: auto; }
   .project-build-actions { justify-self: start; }
   html:not(.js-enabled) #main-nav { gap: 0.75rem 1.25rem; font-size: 0.875rem; }
 }
+
+/* Consistent mobile navigation and shorter routes through business pages. */
+.page-actions > .text-link, .service-opening-proof .text-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font-size: .875rem; text-decoration: underline; text-underline-offset: .25em; }
+.service-opening-proof { margin-top: 1rem; }
+.service-more-projects { padding: 1.25rem; margin-top: 1.5rem; border: 1px solid var(--line); border-radius: var(--corner); background: #fafafa; }
+.service-more-projects a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font-size: .875rem; }
+.offer-package-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.offer-package-grid > article { min-width: 0; padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--corner); background: #f7f7f7; }
+.offer-package-grid .eyebrow { font-size: .6875rem; }
+.offer-package-grid h2 { margin-top: 1rem; font-size: 3rem; }
+.offer-package-grid .page-list { margin-bottom: 0; }
+.local-meeting-choices .page-columns { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.local-meeting-choices > h3 { margin-top: 2rem; }
+.article-opening { font-size: 1rem; line-height: 1.8; color: var(--muted); padding-top: 2.5rem; max-width: 50rem; }
+.article-next-step { margin-top: 1.5rem; }
+.article-next-step .related-links { padding-top: 1.25rem; border-top: 1px solid var(--line); }
+.article-next-step .related-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: .875rem; }
+.article-next-step .article-planner-note { margin-bottom: 0; font-size: .875rem; }
+.article-next-step .article-planner-note a { text-decoration: underline; text-underline-offset: .25em; }
+.guide-choice-grid { display: none; }
+@media (max-width: 900px) {
+  .content-page .page-header.navigation-ready { min-height: 5rem; padding-block: 1.25rem; flex-wrap: nowrap; gap: 1rem; }
+  .content-page .page-header.navigation-ready .page-nav { display: none; position: absolute; top: calc(100% - .25rem); left: 0; right: 0; width: auto; flex-direction: column; align-items: stretch; gap: 0; padding: .5rem; border: 1px solid var(--line); border-radius: .75rem; background: #fff; box-shadow: 0 1rem 2rem #0000001a; z-index: 20; font-size: .875rem; }
+  .content-page .page-header.navigation-ready .page-nav.is-open { display: flex; }
+  .content-page .page-header.navigation-ready .page-nav > a { display: flex; align-items: center; min-height: 48px; padding: .875rem; }
+  .content-page .page-header.navigation-ready .page-nav .nav-contact { width: 100%; justify-content: space-between; margin: .25rem 0 0; }
+  .site-header:not(.navigation-ready) .menu-toggle { display: none; }
+  .site-header:not(.page-header):not(.navigation-ready) #main-nav { display: flex; position: static; flex-direction: row; flex-wrap: wrap; width: 100%; padding: 0; gap: .5rem 1.25rem; background: none; border: 0; box-shadow: none; }
+  .site-header:not(.page-header):not(.navigation-ready) #main-nav a { padding: .5rem 0; }
+  .site-header:not(.page-header):not(.navigation-ready) { flex-wrap: wrap; }
+}
+@media (max-width: 700px) {
+  .offer-package-grid, .local-meeting-choices .page-columns { grid-template-columns: minmax(0, 1fr); }
+  .comparison-page .table-scroll { display: none; }
+  .guide-choice-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.25rem; margin-top: 1.75rem; }
+  .guide-choice-card { min-width: 0; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--corner); background: #fafafa; }
+  .guide-choice-card h3 { font-size: 1.5rem; }
+  .guide-choice-card p { color: var(--muted); font-size: .9375rem; line-height: 1.75; }
+  .guide-choice-example { padding-top: 1rem; margin-top: 1rem; border-top: 1px solid var(--line); }
+  .guide-choice-example strong { display: block; margin-bottom: .5rem; color: var(--ink); font-size: .8125rem; }
+  .guide-choice-card .text-link { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; margin-top: 1rem; font-size: .875rem; }
+  .article-opening { padding-top: 1rem; }
+  .article-detail-page .page-intro h1 { font-size: clamp(2rem, 8.5vw, 2.75rem); }
+}

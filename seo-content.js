@@ -385,7 +385,7 @@ export const guide = {
     {
       type: "Website",
       when: "Choose a website when visitors need to understand your services, view your work, or contact you. Public information and a clear next step are the priority. A request form can be included.",
-      example: "Pins & Needles Comedy combines a public show website with producer controls and audience submissions.",
+      example: "Micro-short Film Website presents film artwork, cast, crew, and contact information across five public views.",
       serviceSlug: "website-development",
     },
     {
@@ -403,7 +403,7 @@ export const guide = {
     {
       type: "Custom software",
       when: "Choose custom software for particular processing rules, integrations, or specialist controls. The result could be a browser tool, desktop utility, or data service. Define the input, actions, and result someone needs to check.",
-      example: "SobStage brings multiple microphone inputs, recording controls, and saved-take tools into a desktop application; its project notes explain the available demo evidence.",
+      example: "SobStage is a desktop release candidate with multiple microphone inputs, recording controls, and saved-take tools. Physical microphone validation is still pending.",
       serviceSlug: "custom-software-development",
     },
   ],

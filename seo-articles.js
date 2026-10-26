@@ -96,7 +96,6 @@ const guides = [
   },
   {
     slug: "salon-booking-website",
-    modified: "2026-10-16",
     title: "What should a salon booking website actually do?",
     metaTitle: "Planning a Salon Booking Website | 4u Digital",
     description: "Plan salon services, staff, appointment durations, requests, confirmations, and optional reminders or deposits before choosing a booking website build.",
@@ -114,7 +113,7 @@ const guides = [
         heading: "Distinguish a booking request from a confirmed appointment",
         paragraphs: [
           "A request workflow lets staff review the details before accepting the appointment. An automatic confirmation workflow needs availability and conflict rules that can make that decision. The customer should understand which step has happened and what they need to do next.",
-          "Pins & Needles Comedy connects a public website to audience submissions and producer controls. My Gig Calendar publishes saved dates to a public calendar. These related examples can help explain customer-facing information, scheduling, and operator workflows. They are not salon client projects or proof of appointment availability checks; your booking rules would be designed for your business.",
+          "BriefBooth brings client questions, availability, and consultation requests into one page, with requests reviewed before confirmation. My Gig Calendar demonstrates publishing saved dates to a public calendar. These are selected personal projects illustrating related patterns; your salon’s staff, treatment durations, and appointment rules would need their own scope.",
         ],
       },
       {
@@ -136,13 +135,13 @@ const guides = [
       },
     ],
     serviceSlugs: ["salon-booking-app-development", "website-development", "web-app-development"],
-    projectIds: ["PinsAndNeedlesComedyWebsite", "MyGigCalendar"],
-    modified: "2026-10-23",
+    projectIds: ["BriefBooth.com", "MyGigCalendar"],
+    relatedSlugs: ["salon-business-website"],
+    modified: "2026-10-26",
     closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your services, current booking process, and what you want customers or staff to do differently. A rough outline is enough to begin.",
   },
   {
     slug: "restaurant-ordering-app",
-    modified: "2026-10-16",
     title: "Plan the restaurant order before building the app",
     metaTitle: "Planning a Restaurant Ordering App | 4u Digital",
     description: "Define menu options, pickup or delivery, order acceptance, staff handling, payments, and POS access before building a restaurant ordering app.",
@@ -183,7 +182,8 @@ const guides = [
     ],
     serviceSlugs: ["restaurant-ordering-app-development", "web-app-development", "app-development"],
     projectIds: ["the-trip-handler"],
-    modified: "2026-10-23",
+    relatedSlugs: ["restaurant-business-website"],
+    modified: "2026-10-26",
     closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your current ordering process, menu setup, and POS system. We can discuss which part needs a custom build.",
   },
   {
@@ -212,6 +212,7 @@ const guides = [
         heading: "Plan imports and exports before retiring the spreadsheet",
         paragraphs: [
           "Existing records need a clear destination. If migration is included, map the old columns to the new fields and identify missing, duplicated, or inconsistent data. Agree how a sample import is reviewed before the full transfer. The migration work should be visible in the scope.",
+          "NYC Open Mic Master List is another selected personal project: new data sources are previewed before publication, and conflicting or missing records are flagged for review. That pattern can help explain how a proposed import might be reviewed.",
           "Decide how records can be exported and who maintains the system. An export format may be needed for reporting, backup, or another tool. Keep the first build focused on a useful workflow, with additional dashboards or connections scoped later.",
         ],
       },
@@ -227,8 +228,8 @@ const guides = [
       },
     ],
     serviceSlugs: ["custom-software-development", "web-app-development"],
-    projectIds: ["Showrunner-ICanRunAShow", "the-trip-handler"],
-    modified: "2026-10-23",
+    projectIds: ["nycstandupopenmicmaster", "Showrunner-ICanRunAShow", "the-trip-handler"],
+    modified: "2026-10-26",
     closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring the task your spreadsheet supports and a description of who uses it. We can identify a practical first workflow to build.",
   },
   {
@@ -268,12 +269,12 @@ const guides = [
       },
       {
         question: "Does an MVP have a fixed price or launch date?",
-        answer: "No. MVP describes a scope approach, not a standard package. The workflow, platform, integrations, and testing requirements determine the work. Price and delivery expectations need to be agreed for the specific project.",
+        answer: "Not by default. MVP describes how we limit a first version rather than a standard package. We agree the scope, price, start date, and target launch in writing before building. The workflow, platform, integrations, and testing requirements determine the work.",
       },
     ],
     serviceSlugs: ["app-development", "web-app-development"],
     projectIds: ["The-Bit-Binder", "the-trip-handler"],
-    modified: "2026-10-23",
+    modified: "2026-10-26",
     closing: "Start with a 4u Digital video consultation through BriefBooth. If you are unsure what to build, or the software needs to fit a particular space or workflow, an NYC in-person consultation can help us work it out. Bring your app idea, intended users, and the first task it should handle. We can work through the scope together.",
   },
 ];

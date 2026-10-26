@@ -126,9 +126,15 @@ test("dynamic project inquiry links are tracked once without reading their email
 test("service consultation requests identify the service carrying the button", async ({ page }) => {
   await page.goto("/services/restaurant-ordering-app-development/");
   expect(await enableTestAnalytics(page)).toBe(true);
+  const menu = page.getByRole("button", { name: "Open navigation", exact: true });
+  const hasMenu = await menu.isVisible();
+  if (hasMenu) await menu.click();
   const consultation = page.locator(".page-nav .nav-contact");
+  await expect(consultation).toBeVisible();
+  await expect(consultation).toHaveAttribute("href", bookingURL);
   await consultation.evaluate((element) => element.addEventListener("click", (event) => event.preventDefault()));
   await consultation.click();
+  if (hasMenu) await page.keyboard.press("Escape");
   expect(await contactEvents(page)).toEqual([
     { name: "Contact intent", data: { page: "/services/restaurant-ordering-app-development/", action: "consultation-booking" } },
   ]);

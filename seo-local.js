@@ -3,7 +3,7 @@ export const localConsultation = {
   metaTitle: "NYC Website, App & Software Consultations | 4u Digital",
   description: "Start with a 4u Digital video consultation. Arrange an NYC in-person visit to clarify your needs or plan technology for your space and daily workflow.",
   heading: "Not sure what to build? Let’s look at your business.",
-  intro: "You might need a website, a mobile app, a web platform, desktop software, or a custom tool for the way your business works. You don’t need to know which one yet. Start with a video consultation through BriefBooth. When seeing your space or day-to-day workflow would help clarify what to build, we can arrange an in-person consultation in Manhattan, Brooklyn, or parts of Queens. Travel farther afield is discussed in advance.",
+  intro: "Explore a website, mobile app, web platform, desktop software, or custom tool for your business. Start with a video consultation; arrange an NYC visit when seeing your space or workflow would help. No finished plan is needed.",
   sections: [
     {
       heading: "See the space before deciding on the software.",
