@@ -16,6 +16,8 @@ import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
 import { projectClientUses } from "../content/project-client-uses.js";
 import { projectBuildCare } from "../content/project-build-care.js";
+import { clientCare } from "../client-care.js";
+import { launchOffer, launchOfferPaymentTerms, launchOfferContentChangeTerms } from "../seo-offer.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -23,7 +25,7 @@ const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
 const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
-  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/project-brief/", "/privacy/", "/insights/",
+  "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/project-brief/", "/privacy/", "/terms/", "/guarantee/", "/insights/",
   ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/", "/offer/"];
 const documents = new Map();
 
@@ -82,7 +84,7 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   assert.equal(projects.length, 11);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 48);
+  assert.equal(routes.length, 50);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -105,6 +107,59 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   const missing = documents.get("/404.html");
   assert.match(metadata(missing, "robots")[0]?.content || "", /\bnoindex\b/);
   assert.equal(canonical(missing)[0]?.href, `${origin}/404.html`);
+});
+
+test("all public footers identify the operator and link to the three readable policy pages", () => {
+  const policies = [
+    ["/privacy/", "Privacy policy"],
+    ["/terms/", "Website terms"],
+    ["/guarantee/", "Guarantee, refunds & support"],
+  ];
+  for (const [route, html] of documents) {
+    const footer = html.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/i)?.[1];
+    assert.ok(footer, `${route}: a public footer exists`);
+    assert.ok(text(footer).includes("TaylorDrew4u LLC"), `${route}: the legal operator is visible`);
+    for (const [target, label] of policies) {
+      const links = [...footer.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi)]
+        .map(([, attrs, contents]) => ({ ...attributes(attrs), label: text(contents) }))
+        .filter((link) => link.href && sameSite(link.href, route) && pathname(link.href, route) === target);
+      assert.equal(links.length, 1, `${route}: one footer link reaches ${target}`);
+      assert.equal(links[0].label, label, `${route}: descriptive policy link`);
+    }
+  }
+  for (const [route, label] of policies) {
+    const html = documents.get(route);
+    assert.deepEqual(h1s(html), [`${label}.`]);
+    assert.match(html, /class=["'][^"']*\blegal-page\b/);
+    const contents = html.match(/<nav\b(?=[^>]*aria-label=["']On this page["'])[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
+    assert.ok(contents, `${route}: native contents navigation`);
+    const destinations = tags(contents, "a").map((link) => link.href);
+    assert.ok(destinations.length > 1, `${route}: policy sections can be reached directly`);
+    assert.equal(new Set(destinations).size, destinations.length, `${route}: unique contents destinations`);
+    for (const destination of destinations) {
+      assert.ok(destination.startsWith("#") && destination.length > 1, `${route}: native contents link`);
+      const id = decodeURIComponent(destination.slice(1));
+      assert.equal(tags(html, "section").filter((section) => section.id === id).length, 1,
+        `${route}: ${destination} names exactly one section`);
+    }
+  }
+});
+
+test("the guarantee page preserves every existing commitment and the website offer's extra benefits", () => {
+  const html = documents.get("/guarantee/");
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
+  const visible = text(main);
+  for (const section of clientCare.sections) {
+    assert.equal(visible.split(section.text).length - 1, 1, `${section.id}: existing promise appears once, unchanged`);
+    assert.ok(tags(main, "section").some((tag) => tag.id === section.id), `${section.id}: directly linkable commitment`);
+  }
+  assert.equal(launchOfferPaymentTerms, "Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.");
+  assert.equal(launchOfferContentChangeTerms, "This website offer also includes three months of content changes after launch, so hours, prices, and photos can settle in. That offer-specific benefit is in addition to the 30-day money-back guarantee and reasonable changes included with every project.");
+  for (const promise of [launchOfferPaymentTerms, launchOfferContentChangeTerms]) {
+    assert.equal(visible.split(promise).length - 1, 1, "The guarantee page preserves the existing website-offer promise once");
+    assert.ok(launchOffer.sections.some((section) => section.text.includes(promise)), "The same promise remains in the website offer");
+    assert.ok(text(documents.get("/offer/")).includes(promise), "The public offer still displays the original promise");
+  }
 });
 
 test("the kickoff checklist is a later project step with a complete, attributed business email draft", () => {
@@ -895,7 +950,9 @@ test("published pages, data, routes, and assets contain only the eleven selected
     const contents = await readFile(file, "utf8");
     for (const value of excluded) assert.ok(!contents.toLowerCase().includes(value.toLowerCase()),
       `${path.relative(output, file)} excludes ${value}`);
-    assert.doesNotMatch(contents, /\bTaylor\s+Drew\b|\bTaylorDrew\b|by taylordrew4u|class=["'][^"']*owner-credit/i);
+    // The owner-authorized operator disclosure is a legal entity, not a personal credit.
+    const withoutLegalEntity = contents.replaceAll("TaylorDrew4u LLC", "");
+    assert.doesNotMatch(withoutLegalEntity, /\bTaylor\s+Drew\b|\bTaylorDrew\b|by taylordrew4u|class=["'][^"']*owner-credit/i);
   }
   const assetsFor = (project) => [project.image, project.icon,
     ...(project.gallery || []).flatMap((frame) => [frame.image, frame.companion?.image])].filter(Boolean);

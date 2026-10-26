@@ -174,8 +174,8 @@ test("the planner shortcut stays behind project details and returns when they cl
   await expectAccessibleShortcut(page);
 });
 
-test("the planner shortcut does not compete with planner, kickoff, or privacy pages", async ({ page }) => {
-  for (const route of ["/project-brief/", "/project-kickoff/", "/privacy/"]) {
+test("the planner shortcut does not compete with planner, kickoff, or policy pages", async ({ page }) => {
+  for (const route of ["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/"]) {
     await page.goto(route);
     await expect(page.locator(".planner-shortcut")).toHaveCount(0);
   }

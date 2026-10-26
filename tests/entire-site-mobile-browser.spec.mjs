@@ -3,8 +3,8 @@ import { test, expect } from "@playwright/test";
 import { bookingURL } from "../booking.js";
 
 const check = expect.configure({ timeout: 2500 });
-const plannerExclusions = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/404.html"]);
-const resourceRoutes = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/404.html"]);
+const plannerExclusions = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/", "/404.html"]);
+const resourceRoutes = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/", "/404.html"]);
 const generatedSitemap = new URL("../dist/sitemap.xml", import.meta.url);
 
 async function publishedRoutes() {

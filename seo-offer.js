@@ -1,5 +1,9 @@
 import { clientCare } from "./client-care.js";
 
+// Shared unchanged offer promises for the offer and public guarantee policy.
+export const launchOfferPaymentTerms = "Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.";
+export const launchOfferContentChangeTerms = "This website offer also includes three months of content changes after launch, so hours, prices, and photos can settle in. That offer-specific benefit is in addition to the 30-day money-back guarantee and reasonable changes included with every project.";
+
 export const launchOffer = {
   title: "Website offer for New York City businesses",
   metaTitle: "Website Offer for New York City Businesses | 4u Digital",
@@ -13,7 +17,7 @@ export const launchOffer = {
   sections: [
     {
       heading: "What the $1,200 site includes.",
-      text: "Up to five pages, built in code and laid out for phones first: what you do, your services or menu, hours, address, examples of your work, and a contact or request form that lands in your inbox. The domain and hosting are set up in your name. This website offer also includes three months of content changes after launch, so hours, prices, and photos can settle in. That offer-specific benefit is in addition to the 30-day money-back guarantee and reasonable changes included with every project.",
+      text: `Up to five pages, built in code and laid out for phones first: what you do, your services or menu, hours, address, examples of your work, and a contact or request form that lands in your inbox. The domain and hosting are set up in your name. ${launchOfferContentChangeTerms}`,
     },
     {
       heading: "What $1,900 adds.",
@@ -21,7 +25,7 @@ export const launchOffer = {
     },
     {
       heading: "How it works.",
-      text: "Start with a video consultation to discuss the fit. If seeing your space or workflow would help, we can arrange a visit in Manhattan, Brooklyn, or parts of Queens. A consultation does not commit you to a paid project. Before the build, we agree the scope, price, project start, and target launch date in writing, including the pages, form or booking flow, and who supplies the content and access. Half is paid at the start and half at launch. If the first design review, before any code is written, is not right, the deposit comes back.",
+      text: `Start with a video consultation to discuss the fit. If seeing your space or workflow would help, we can arrange a visit in Manhattan, Brooklyn, or parts of Queens. A consultation does not commit you to a paid project. Before the build, we agree the scope, price, project start, and target launch date in writing, including the pages, form or booking flow, and who supplies the content and access. ${launchOfferPaymentTerms}`,
     },
     {
       heading: "What you own.",
