@@ -18,6 +18,7 @@ import { renderKickoffForm } from "../kickoff-view.js";
 import { renderProjectBrief } from "../project-brief-view.js";
 import { legalBusiness } from "../legal-content.js";
 import { renderLegalPages } from "../legal-pages.js";
+import { pricing } from "../content/pricing.js";
 
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
@@ -158,7 +159,7 @@ function footerPolicies(route) {
 }
 
 function footer(route) {
-  return `<footer${route === "/" ? ' id="contact"' : ""} class="page-footer compact-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p></div><div class="page-footer-contact">${bookingLink("text-link footer-booking")}<a class="text-link" href="mailto:${site.email}">${site.email}</a></div><nav class="compact-footer-links" aria-label="Footer navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "project-brief/")}">Project planner</a><a href="${local(route, "about/")}">About</a><a href="${local(route, "contact/")}">Contact</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital</p></footer>`;
+  return `<footer${route === "/" ? ' id="contact"' : ""} class="page-footer compact-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p></div><div class="page-footer-contact">${bookingLink("text-link footer-booking")}<a class="text-link" href="mailto:${site.email}">${site.email}</a></div><nav class="compact-footer-links" aria-label="Footer navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "pricing/")}">Pricing</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "project-brief/")}">Project planner</a><a href="${local(route, "about/")}">About</a><a href="${local(route, "contact/")}">Contact</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital</p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -169,7 +170,7 @@ function frame(page, content) {
   const pageClass = page.legal ? `legal-page ${page.path === "/privacy/" ? "privacy-page" : ""}` : page.project ? "project-detail-page" : page.article ? "article-detail-page" : page.local ? "local-consultation-page" : page.service ? "service-detail-page" : ({
     "/services/": "service-index-page", "/work/": "work-index-page", "/insights/": "insights-index-page",
     "/project-kickoff/": "kickoff-page", "/project-brief/": "project-brief-page", "/contact/": "contact-page", "/about/": "about-page",
-    "/privacy/": "privacy-page", "/offer/": "offer-page", "/guides/website-or-app/": "comparison-page",
+    "/privacy/": "privacy-page", "/offer/": "offer-page", "/pricing/": "pricing-page", "/guides/website-or-app/": "comparison-page",
   }[page.path] || "");
   return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${plannerShortcut(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
 }
@@ -270,6 +271,7 @@ function servicesContent(route) {
   const industrySlugs = ["salon-booking-app-development", "restaurant-ordering-app-development"];
   return intro("APPS, WEBSITES, AND SOFTWARE.", "What would you like to build?", "A new website, an app, or a better way to run your business. I design, code, and launch it with you.", `<div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}`) +
     `<section id="service-choices" class="page-section service-choice-section" aria-labelledby="service-choices-title"><h2 id="service-choices-title">Choose the closest fit.</h2>${serviceCards(route, services.filter((service) => !industrySlugs.includes(service.slug)))}</section>` +
+    `<p class="service-pricing-link"><a class="text-link" href="${local(route, "pricing/")}">See starting prices <span aria-hidden="true">→</span></a></p>` +
     `<aside id="services-website-offer" class="service-website-offer service-offer-quiet" aria-labelledby="services-offer-title"><h2 id="services-offer-title">NYC website offer.</h2><p>A custom website for $1,200, or $1,900 with booking or ordering. First ten eligible New York City projects agreed by November 30, 2026, subject to scope and capacity.</p><a class="text-link" href="${local(route, "offer/")}">See what’s included <span aria-hidden="true">→</span></a></aside>` +
     `<section class="page-section service-industry-links" aria-labelledby="industry-choices-title"><h2 id="industry-choices-title">For your kind of business.</h2><nav class="related-links" aria-label="Industry services">${services.filter((service) => industrySlugs.includes(service.slug)).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(serviceChoices[service.slug].heading)} <span aria-hidden="true">→</span></a>`).join("")}<a href="${local(route, "services/website-development/")}">Local shops and other businesses <span aria-hidden="true">→</span></a></nav></section>` +
     `<aside class="page-callout service-closing"><h2>Not sure yet? Let’s talk.</h2><p>An idea, an existing website, or a task that takes too long is enough to start. We’ll work out the right approach together.</p><div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}<a class="text-link service-comparison-link" href="${local(route, "guides/website-or-app/")}">Compare websites, web apps, and native apps <span aria-hidden="true">→</span></a></aside>`;
@@ -381,6 +383,23 @@ function localPage() {
 function clientCareSection(homepage = false) {
   if (homepage) return `<section id="client-care" class="simple-care wrap" aria-labelledby="client-care-title"><h2 id="client-care-title">Your product. Your code.</h2><p>Your custom code is 100% yours. Client work and code stay private unless you give permission. Every project includes a 30-day money-back guarantee after the completed product launches.</p><a class="text-link" href="./guarantee/">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><details><summary>Read the commitments</summary><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>`;
   return `<section id="client-care" class="${homepage ? "client-care-section wrap" : "page-section client-care"}" aria-labelledby="client-care-title"><div class="section-heading"><div><p class="eyebrow">${escape(clientCare.eyebrow)}</p><h2 id="client-care-title">${escape(clientCare.heading)}</h2><p class="client-care-intro">${escape(clientCare.intro)}</p></div></div><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div><a class="text-link" href="mailto:${site.email}">Email about your project or guarantee <span aria-hidden="true">↗</span></a></section>`;
+}
+
+function pricingPage() {
+  const route = pricing.path;
+  const page = { path: route, title: pricing.title, description: pricing.description,
+    modified: pricing.modified, breadcrumbs: [{ name: "Pricing", path: route }],
+  };
+  const amount = (value) => new Intl.NumberFormat("en-US", { style: "currency", currency: pricing.currency, maximumFractionDigits: 0 }).format(value);
+  const emphasizeOfferTerms = (text) => [pricing.websiteOffer.paymentTerms, pricing.websiteOffer.contentChangeTerms]
+    .reduce((markup, term) => markup.replace(escape(term), `<strong>${escape(term)}</strong>`), escape(text));
+  const cards = pricing.entries.map((entry) => `<article class="pricing-card" data-pricing-id="${escape(entry.id)}"><h2>${escape(entry.title)}</h2><p class="pricing-amount">${entry.kind === "starting-budget" ? '<span class="pricing-from">From </span>' : ""}<strong>${amount(entry.amount)}</strong>${entry.kind === "hourly" ? '<span class="pricing-unit">/hour</span>' : ""}</p>${entry.kind === "nyc-offer" ? '<p class="pricing-availability">Limited NYC website offer</p>' : ""}<p class="pricing-summary">${escape(entry.summary)}</p><ul>${entry.includes.map((item) => `<li>${escape(item)}</li>`).join("")}</ul></article>`).join("");
+  const content = intro("USD", pricing.heading, pricing.intro) +
+    `<section class="page-section pricing-starting-points" aria-label="Project starting prices"><p class="pricing-eligibility">${escape(pricing.websiteOffer.compactEligibility)} <span>${escape(pricing.websiteOffer.outsideOffer)}</span></p><div class="pricing-grid">${cards}</div></section>` +
+    `<section id="pricing-scope" class="page-section pricing-scope" aria-labelledby="pricing-scope-title"><h2 id="pricing-scope-title">Agree the whole cost first.</h2><p class="pricing-budget-note">${escape(pricing.budgetNote)}</p><p>${escape(pricing.runningCosts)}</p><p>The $70 hourly rate applies only to additional work agreed separately. Reasonable changes included in the launch guarantee and work covered by your existing agreement remain included.</p><p class="pricing-eligibility-full">${escape(pricing.websiteOffer.eligibility)}</p><details class="service-details pricing-offer-details"><summary>Read the NYC website offer scope and terms</summary><div class="service-reading">${pricing.websiteOffer.sections.map(({ heading, text }) => `<article><h3>${escape(heading)}</h3><p>${emphasizeOfferTerms(text)}</p></article>`).join("")}</div><a class="text-link" href="${local(route, pricing.websiteOffer.page.slice(1))}">Explore the complete NYC website offer <span aria-hidden="true">→</span></a></details></section>` +
+    `<section id="client-care" class="page-section pricing-care" aria-labelledby="client-care-title"><h2 id="client-care-title">Your product. Your code.</h2><p>Every project includes the 30-day money-back guarantee after the completed product launches, with reasonable changes included during those 30 days. Your custom code is 100% yours.</p><p>Optional six-month debugging and support includes changes at a 50% discount on the agreed standard rate.</p><a class="text-link" href="${local(route, "guarantee/")}">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><details class="service-details pricing-commitments"><summary>Read the commitments and support example</summary><div class="service-reading">${pricing.care.sections.map(({ id, title, text }) => `<article data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}<p class="pricing-support-example">${escape(pricing.hourlySupportExample)}</p></div></details></section>` +
+    `<aside class="page-callout pricing-closing"><h2>Let’s scope your idea.</h2><p>A rough idea is enough to start. We’ll discuss the useful first version and agree the price before building.</p><div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}</aside>`;
+  return { ...page, html: frame(page, content) };
 }
 
 function offerPage() {
@@ -544,6 +563,7 @@ export async function generateSEO(output) {
   const pages = [
     { ...home, html },
     { ...servicesPage, html: frame(servicesPage, servicesContent(servicesPage.path)) },
+    pricingPage(),
     ...services.map(servicePage),
     { ...work, html: frame(work, projectIndexContent(work.path)) },
     ...projects.map(projectPage),

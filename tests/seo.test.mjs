@@ -19,12 +19,13 @@ import { projectBuildCare } from "../content/project-build-care.js";
 import { clientCare } from "../client-care.js";
 import { launchOffer, launchOfferPaymentTerms, launchOfferContentChangeTerms } from "../seo-offer.js";
 import { serviceHeadings } from "./service-page-fixtures.mjs";
+import { pricing } from "../content/pricing.js";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
 const origin = "https://customtechbuilt4u.com";
 const githubPrefix = "/taylorworkexamples-";
-const routes = ["/", "/services/", ...services.map((service) => `/services/${service.slug}/`),
+const routes = ["/", "/services/", "/pricing/", ...services.map((service) => `/services/${service.slug}/`),
   "/work/", ...projects.map((project) => `/work/${projectSlugs[project.id]}/`),
   "/guides/website-or-app/", "/about/", "/contact/", "/project-kickoff/", "/project-brief/", "/privacy/", "/terms/", "/guarantee/", "/insights/",
   ...articles.map((article) => `/insights/${article.slug}/`), "/new-york-city/", "/offer/"];
@@ -85,7 +86,7 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   assert.equal(projects.length, 12);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 51);
+  assert.equal(routes.length, 52);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -108,6 +109,41 @@ test("the sitemap indexes exactly the public service, project, guide, and busine
   const missing = documents.get("/404.html");
   assert.match(metadata(missing, "robots")[0]?.content || "", /\bnoindex\b/);
   assert.equal(canonical(missing)[0]?.href, `${origin}/404.html`);
+});
+
+test("pricing publishes the six scoped budgets, original commitments, and one content-level booking action", () => {
+  const html = documents.get(pricing.path);
+  const visible = text(html);
+  assert.equal(title(html), pricing.title);
+  assert.deepEqual(h1s(html), [pricing.heading]);
+  assert.equal(metadata(html, "description")[0].content, pricing.description);
+  assert.equal(canonical(html)[0].href, origin + pricing.path);
+  assert.ok(visible.includes(pricing.websiteOffer.eligibility));
+  assert.ok(visible.includes(pricing.budgetNote));
+  assert.ok(visible.includes(pricing.runningCosts));
+  assert.ok(visible.includes(pricing.hourlySupportExample));
+  const cards = [...html.matchAll(/<article\b[^>]*data-pricing-id="([^"]+)"[^>]*>([\s\S]*?)<\/article>/g)];
+  assert.equal(cards.length, pricing.entries.length);
+  for (const entry of pricing.entries) {
+    const card = cards.find(([, id]) => id === entry.id);
+    assert.ok(card, `${entry.title}: a server-rendered pricing card is present`);
+    const content = text(card[2]);
+    const amount = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(entry.amount);
+    for (const value of [entry.title, entry.summary, amount, ...entry.includes]) assert.ok(content.includes(value), `${entry.title}: ${value}`);
+    assert.equal(content.includes("From "), entry.kind === "starting-budget");
+    assert.equal(content.includes("Limited NYC website offer"), entry.kind === "nyc-offer");
+    assert.equal(content.includes("/hour"), entry.kind === "hourly");
+  }
+  for (const section of launchOffer.sections) assert.ok(visible.includes(section.text), `${section.heading}: unchanged full offer scope and terms`);
+  for (const section of clientCare.sections) assert.ok(visible.includes(section.text), `${section.id}: unchanged shared commitment`);
+  const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)[1];
+  assert.equal(tags(main, "a").filter((tag) => "data-booking-link" in tag).length, 1);
+  assert.equal(tags(main, "a").filter((tag) => tag.href?.startsWith("mailto:")).length, 0);
+  assert.ok(tags(documents.get("/services/"), "a").some((tag) => tag.href && pathname(tag.href, "/services/") === pricing.path));
+  for (const [route, page] of documents) {
+    const footer = page.match(/<footer\b[^>]*>([\s\S]*?)<\/footer>/i)[1];
+    assert.equal(tags(footer, "a").filter((tag) => tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === pricing.path).length, 1, `${route}: one ordinary Pricing footer link`);
+  }
 });
 
 test("all public footers identify the operator and link to the three readable policy pages", () => {
