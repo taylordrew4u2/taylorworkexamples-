@@ -40,22 +40,21 @@ test("old homepage portfolio links reach the complete projects page", async ({ p
   }
 });
 
-test("dedicated project pages show the need, build evidence, and a project-specific inquiry", async ({ page }) => {
+test("dedicated project pages show the need, optional build evidence, and one consultation path", async ({ page }) => {
   const project = projects.find((entry) => entry.id === "PinsAndNeedlesComedyWebsite");
   await page.goto("/work/");
   const card = page.locator(`.work-page-grid .seo-project-card[data-project-id="${project.id}"]`);
   await card.getByRole("link", { name: `See how it works: ${project.title}`, exact: true }).click();
   await expect(page).toHaveURL(/\/work\/pins-and-needles-comedy\/$/);
   await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary);
+  await expect(page.locator("#development .project-technical")).not.toHaveAttribute("open");
+  await page.locator("#development .project-technical > summary").click();
   await expect(page.locator("#development .project-context")).toContainText(project.challenge);
   await expect(page.locator("#development .project-context")).toContainText(project.build);
   await expect(page.locator("#development .project-stack .tag")).toHaveText(project.stack);
   await expect(page.locator("#development").getByRole("link", { name: /source code on GitHub/ }))
     .toHaveAttribute("href", project.repoUrl);
-  const inquiry = page.locator('.project-story-hero .page-actions a[href^="mailto:"]');
-  const draft = new URL(await inquiry.getAttribute("href"));
-  expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
-  expect(draft.searchParams.get("body")).toContain(`Source page: https://customtechbuilt4u.com/work/pins-and-needles-comedy/`);
+  await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+  await expect(page.locator("#your-business [data-booking-link]")).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
   await expect(page.locator(".project-page-frame")).toHaveCount(project.gallery.length);
 });

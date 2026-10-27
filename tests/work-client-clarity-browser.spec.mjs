@@ -25,7 +25,9 @@ for (const javaScriptEnabled of [true, false]) {
   test.describe(`client-facing portfolio context with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
     test.use({ javaScriptEnabled });
 
-    test("mobile cards introduce the app before its full-color image and distinguish capabilities from illustrative business uses", async ({ page }) => {
+    test("mobile cards introduce the app before its full-color image with one purpose and three capabilities", async ({ page }) => {
+      // Check every selected project's original artwork and links at both widths.
+      test.setTimeout(120_000);
       for (const width of [320, 390]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto("/work/");
@@ -58,15 +60,14 @@ for (const javaScriptEnabled of [true, false]) {
           await expect(card.locator(".work-index-image-label")).toHaveText(project.imageLabel || "Project image");
           await expect(card.locator(".work-project-purpose")).toHaveText(project.purpose);
           await expect(card.locator(".work-project-capabilities li")).toHaveText(context.capabilities);
-          await expect(card.locator(".work-project-business-use")).toContainText("A similar business need");
-          await expect(card.locator(".work-project-business-use")).toContainText(context.businessUse);
+          await expect(card.locator(".work-project-business-use")).toHaveCount(0);
           expect(await card.evaluate((element) => {
             const box = element.getBoundingClientRect();
             const header = element.querySelector(".work-project-header").getBoundingClientRect();
             const cover = element.querySelector(".seo-project-cover").getBoundingClientRect();
             const source = element.querySelector(".work-index-image-label");
             const label = source.getBoundingClientRect();
-            const details = [...element.querySelectorAll(".work-project-purpose, .work-project-capabilities li, .work-project-business-use")];
+          const details = [...element.querySelectorAll(".work-project-purpose, .work-project-capabilities li")];
             return header.bottom <= cover.top + 1 && label.top >= cover.bottom - 1 &&
               source.closest(".seo-project-cover") === null && details.every((detail) => {
                 const bounds = detail.getBoundingClientRect();
@@ -78,15 +79,14 @@ for (const javaScriptEnabled of [true, false]) {
           expect(new URL(await action.getAttribute("href"), page.url()).pathname).toBe(`/work/${projectSlugs[project.id]}/`);
           await expectTapTarget(action, width);
         }
-        await expect(page.locator('.seo-project-card[data-project-id="usbmic"] .work-project-status')).toHaveText("Release candidate");
-        await expect(page.locator('.seo-project-card[data-project-id="usbmic"] .work-project-business-use'))
-          .toContainText(/physical microphone validation pending/i);
+        await expect(page.locator('.seo-project-card[data-project-id="usbmic"] .work-project-status')).toHaveText("Release candidate · Physical microphone validation pending");
         await expect(page.locator('.seo-project-card .work-project-status').filter({ hasText: "On the App Store" })).toHaveCount(3);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }
     });
 
-    test("the opening offers direct booking and project browsing, then explains collaboration before the publication evidence", async ({ page }) => {
+    test("the short opening books directly and the closing preserves ownership and guarantee commitments", async ({ page }) => {
+      test.setTimeout(120_000);
       // Keep the booking handoff local; no real appointment or email is created.
       await page.context().route(bookingURL, (route) => route.fulfill({
         status: 200, contentType: "text/html",
@@ -97,7 +97,8 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto("/work/");
         const opening = page.locator(".page-intro");
         await expect(opening.locator(".page-lead")).toContainText(/personal projects/i);
-        await expect(opening.locator(".work-intro-promise")).toContainText(/work directly.*developer.*designs.*codes.*launches/i);
+        await expect(opening.getByRole("heading", { level: 1 })).toHaveText("Projects.");
+        await expect(opening.locator(".page-actions a")).toHaveCount(1);
         const booking = opening.locator("[data-booking-link]");
         await expectDirectBooking(booking);
         await expectTapTarget(booking, width);
@@ -114,35 +115,33 @@ for (const javaScriptEnabled of [true, false]) {
         } finally {
           await popup.close();
         }
-        const browse = opening.getByRole("link", { name: "Browse projects", exact: false });
-        await expect(browse).toHaveAttribute("href", "#project-collection");
-        await expectTapTarget(browse, width);
-        await browse.focus();
-        await page.keyboard.press("Enter");
-        await expect(page).toHaveURL(/\/work\/#project-collection$/);
-        await expect(page.locator("#project-collection-title")).toBeInViewport();
-
         const hiring = page.locator("#work-with-me");
-        await expect(hiring.locator(".work-hiring-grid > article")).toHaveCount(3);
-        for (const commitment of [/one developer/i, /clear scope/i, /custom code/i, /30.day money.back guarantee/i]) {
+        await expect(hiring.locator(".work-hiring-grid")).toHaveCount(0);
+        for (const commitment of [/one developer/i, /scope and price/i, /custom code/i, /30.day money.back guarantee/i]) {
           await expect(hiring).toContainText(commitment);
         }
         expect(await hiring.evaluate((element) => Boolean(
           document.querySelector("#project-collection").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
-        ) && Boolean(element.compareDocumentPosition(document.querySelector("#range-proof")) & Node.DOCUMENT_POSITION_FOLLOWING)),
-        "Collaboration commitments follow the projects and precede publication evidence").toBe(true);
+        )), "The compact closing follows the complete collection").toBe(true);
+        const evidence = page.locator("#range-proof");
+        await expect(evidence).not.toHaveAttribute("open", "");
+        const evidenceToggle = evidence.locator(":scope > summary");
+        await evidenceToggle.focus();
+        await page.keyboard.press("Enter");
+        await expect(evidence).toHaveAttribute("open", "");
+        await expect(evidence.locator(".range-apps > li")).toHaveCount(3);
         const disclosure = hiring.locator(".portfolio-disclosure");
         await expect(disclosure).toHaveCount(1);
         await expect(disclosure).toContainText(/selected personal projects/i);
         await expect(disclosure).toContainText(/custom code.*100% yours/i);
         await expect(disclosure).toContainText(/without your permission/i);
         await expectDirectBooking(hiring.locator("[data-booking-link]"));
-        const terms = hiring.locator('a[href="../#client-care"]');
+        const terms = hiring.locator('a[href="../guarantee/"]');
         await expectTapTarget(terms, width);
         await terms.focus();
         await page.keyboard.press("Enter");
-        await expect(page).toHaveURL(/\/#client-care$/);
-        await expect(page.locator("#client-care-title")).toBeInViewport();
+        await expect(page).toHaveURL(/\/guarantee\/$/);
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }
     });

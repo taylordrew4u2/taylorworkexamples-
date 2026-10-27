@@ -205,9 +205,11 @@ test("a service visitor can book directly from the opening and return to the sam
   await expectDirectBooking(booking);
   await expectExternalOnlyBooking(page);
   await expect(opening.locator("form, input, textarea, select")).toHaveCount(0);
-  const email = opening.locator('.page-actions a[href^="mailto:"]');
+  await expect(opening.locator('a[href^="mailto:"]')).toHaveCount(0);
+  const email = page.locator('footer a[href^="mailto:"]');
   await expect(email).toBeVisible();
-  expectBusinessEmail(await email.getAttribute("href"));
+  const draft = expectBusinessEmail(await email.getAttribute("href"));
+  expect(draft.searchParams.get("body")).toContain(`Source page: https://customtechbuilt4u.com${serviceRoute}`);
   await openStubbedBooking(page, booking);
   await expect(opening.getByRole("heading", { level: 1 })).toBeVisible();
 });
@@ -224,24 +226,21 @@ test("phone clients open the full project through an ordinary homepage link and 
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new URL(example.caseUrl, "http://127.0.0.1:4173/").href);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
-    await expect(page.locator("#your-business")).toContainText("One developer. Your whole build.");
+    await expect(page.locator("#your-business")).toContainText("Work directly with the developer");
     await openStubbedBooking(page, page.locator(".project-story-hero [data-booking-link]"));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
   }
 });
 
-test("a project story offers direct booking and an attributed email alternative before the gallery", async ({ page }) => {
+test("a project story offers one clear booking path before the gallery", async ({ page }) => {
   await page.goto(example.caseUrl);
   const opening = page.locator(".project-story-hero .page-intro");
   const booking = opening.locator(".page-actions [data-booking-link]");
   await expectDirectBooking(booking);
   await expectExternalOnlyBooking(page);
   await expect(opening.locator("form, input, textarea, select")).toHaveCount(0);
-  const email = opening.locator('.page-actions a[href^="mailto:"]');
-  await expect(email).toBeVisible();
-  const draft = expectBusinessEmail(await email.getAttribute("href"));
-  expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${example.title}`);
-  expect(draft.searchParams.get("body")).toContain(`Source page: https://customtechbuilt4u.com${new URL(page.url()).pathname}`);
+  await expect(opening.locator(".page-actions a")).toHaveCount(2);
+  await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
   expect(await booking.evaluate((element) => Boolean(
     element.compareDocumentPosition(document.querySelector("#project-cover")) & Node.DOCUMENT_POSITION_FOLLOWING,
   )), "The consultation action comes before the project images").toBe(true);
@@ -287,7 +286,11 @@ test.describe("booking information without JavaScript", () => {
     await expectDirectBooking(opening.locator(".page-actions [data-booking-link]"));
     await expectExternalOnlyBooking(page);
     await expect(opening.locator("form, input, textarea, select")).toHaveCount(0);
-    expectBusinessEmail(await opening.locator('.page-actions a[href^="mailto:"]').getAttribute("href"));
+    await expect(opening.locator('a[href^="mailto:"]')).toHaveCount(0);
+    const email = page.locator('footer a[href^="mailto:"]');
+    await expect(email).toBeVisible();
+    const draft = expectBusinessEmail(await email.getAttribute("href"));
+    expect(draft.searchParams.get("body")).toContain(`Source page: https://customtechbuilt4u.com${serviceRoute}`);
     await openStubbedBooking(page, opening.locator(".page-actions [data-booking-link]"));
     for (const route of ["/", "/work/"]) {
       await page.goto(route);

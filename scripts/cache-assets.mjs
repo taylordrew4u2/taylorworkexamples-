@@ -32,6 +32,8 @@ export function responsiveHTML(html, route, manifest) {
       sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(60vw - 3.15rem), (max-width: 88rem) calc(60vw - 4.35rem), 48.45rem";
     } else if (/\bhero-choice-screen\b/.test(tag)) {
       sizes = "64px";
+    } else if (/\bservice-example-artwork\b/.test(tag)) {
+      sizes = "(max-width: 600px) calc(100vw - 58px), (max-width: 700px) calc(100vw - 66px), (max-width: 800px) calc(50vw - 66px), (max-width: 1100px) calc(50vw - 74px), (max-width: 1408px) calc(50vw - 90px), 614px";
     } else if (/\bservice-example-image\b/.test(tag)) {
       sizes = "(max-width: 600px) calc(100vw - 8rem), (max-width: 900px) calc(100vw - 10rem), 22rem";
     } else if (/^\/work\/[^/]+\/$/.test(route) && /fetchpriority="high"/.test(tag)) {

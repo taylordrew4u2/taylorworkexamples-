@@ -18,6 +18,7 @@ import { projectClientUses } from "../content/project-client-uses.js";
 import { projectBuildCare } from "../content/project-build-care.js";
 import { clientCare } from "../client-care.js";
 import { launchOffer, launchOfferPaymentTerms, launchOfferContentChangeTerms } from "../seo-offer.js";
+import { serviceHeadings } from "./service-page-fixtures.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
@@ -442,11 +443,37 @@ test("project and service content is crawlable in production HTML before JavaScr
     assert.ok(directoryAnchors.some((tag) => tag.href && pathname(tag.href, "/services/") === route), `${service.title}: crawlable service directory link`);
     if (!/salon|restaurant/.test(service.slug)) assert.ok(homeAnchors.some((tag) => pathname(tag.href, "/") === route), `${service.title}: homepage service link`);
     const html = documents.get(route);
-    assert.equal(h1s(html)[0], service.heading);
+    assert.equal(h1s(html)[0], serviceHeadings[service.slug]);
     for (const id of service.projectIds) {
       assert.ok(tags(html, "a").some((tag) => tag.href && sameSite(tag.href, route) &&
         pathname(tag.href, route) === `/work/${projectSlugs[id]}/`), `${service.title}: links to matching project proof`);
     }
+  }
+});
+
+test("minimal service pages retain complete planning information and all client commitments in native details", () => {
+  for (const service of services) {
+    const route = `/services/${service.slug}/`;
+    const html = documents.get(route);
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
+    for (const [id, entries] of [["service-fit", service.when], ["service-scope", service.scope]]) {
+      const detail = main.match(new RegExp(`<details\\b([^>]*id="${id}"[^>]*)>([\\s\\S]*?)<\\/details>`, "i"));
+      assert.ok(detail, `${service.title}: ${id} remains available in a native disclosure`);
+      assert.doesNotMatch(detail[1], /\bopen\b/i, `${service.title}: longer planning text is optional at first`);
+      for (const { title, text: explanation } of entries) {
+        assert.ok(text(detail[2]).includes(title));
+        assert.ok(text(detail[2]).includes(explanation), `${service.title}: the original explanation is retained`);
+      }
+    }
+    for (const commitment of clientCare.sections) {
+      assert.ok(text(main).includes(commitment.text), `${service.title}: the existing ${commitment.id} promise remains unchanged`);
+    }
+    assert.equal([...main.matchAll(/class="service-example"/g)].length, Math.min(2, service.projectIds.length),
+      `${service.title}: at most two original examples introduce the work`);
+    assert.ok(!tags(main, "a").some((tag) => tag.href?.startsWith("mailto:")),
+      `${service.title}: email does not compete with the booking action`);
+    assert.doesNotMatch(main, /<form\b|<iframe\b|type="(?:date|time|datetime-local)"/i,
+      `${service.title}: consultation scheduling stays on BriefBooth`);
   }
 });
 
@@ -483,7 +510,7 @@ test("salon and restaurant services explain the business workflow and connect to
     const visible = text(html);
     assert.deepEqual(canonical(html).map((tag) => tag.href), [origin + route]);
     assert.equal(title(html), service.metaTitle);
-    assert.equal(h1s(html)[0], service.heading);
+    assert.equal(h1s(html)[0], serviceHeadings[service.slug]);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
     assert.equal(sitemapDates.get(route), "2026-10-27");
     assert.ok(linksTo(homeServices, "/", "/services/web-app-development/"), "homepage gives a clear general workflow starting point");
@@ -507,11 +534,9 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
     assert.equal(sitemapDates.get(guideRoute), "2026-10-27");
-    const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
-      .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
-    assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
-    assert.ok(inquiry.searchParams.get("body").includes(`Source page: ${origin}${route}`),
-      `${service.title}: a real inquiry retains its source without JavaScript`);
+    const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
+    assert.ok(!tags(main, "a").some((tag) => tag.href?.startsWith("mailto:")),
+      `${service.title}: the service uses direct booking without a competing email request`);
   }
   for (const article of articles.filter((entry) => !entry.modified)) {
     assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-27",
@@ -526,7 +551,7 @@ test("salon and restaurant services explain the business workflow and connect to
   }
 });
 
-test("portfolio cards explain the personal projects and clearly distinguish illustrative business uses", () => {
+test("minimal portfolio cards explain each personal project and keep fuller business context on its case page", () => {
   const route = "/work/";
   const html = documents.get(route);
   const cards = [...html.matchAll(/<article\b([^>]*)>([\s\S]*?)<\/article>/g)]
@@ -546,9 +571,9 @@ test("portfolio cards explain the personal projects and clearly distinguish illu
     assert.ok(capabilities, `${project.title}: capabilities are readable without JavaScript`);
     assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, value]) => text(value)), use.capabilities);
     assert.equal(use.capabilities.length, 3);
-    const businessUse = card.match(/<p\b[^>]*class="work-project-business-use"[^>]*>([\s\S]*?)<\/p>/)?.[1];
-    assert.match(text(businessUse || ""), /A similar business need/);
-    assert.ok(text(businessUse).includes(use.businessUse), `${project.title}: the example is present with its illustrative label`);
+    assert.doesNotMatch(card, /class="work-project-business-use"/, `${project.title}: the index keeps one short purpose rather than a second illustrative story`);
+    assert.ok(text(documents.get(`/work/${projectSlugs[project.id]}/`)).includes(use.businessUse),
+      `${project.title}: its original illustrative business context remains on the full case page`);
     const anchors = tags(card, "a");
     assert.ok(anchors.length > 0, `${project.title}: a real case-page link remains`);
     assert.ok(anchors.some((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`),
@@ -567,8 +592,12 @@ test("portfolio cards explain the personal projects and clearly distinguish illu
   const collectionPosition = html.indexOf('id="project-collection"');
   const hiringPosition = html.indexOf('id="work-with-me"');
   const rangePosition = html.indexOf('id="range-proof"');
-  assert.ok(collectionPosition >= 0 && hiringPosition > collectionPosition && rangePosition > hiringPosition,
-    "The collaboration commitments follow the collection and precede publication evidence");
+  assert.ok(collectionPosition >= 0 && rangePosition > collectionPosition && hiringPosition > rangePosition,
+    "The projects come first, optional publication details follow, and one hiring panel closes the page");
+  const evidence = html.match(/<details\b[^>]*id="range-proof"[^>]*>/)?.[0];
+  assert.ok(evidence, "The complete release evidence uses a native disclosure");
+  assert.doesNotMatch(evidence, /\bopen\b/, "The release evidence is optional in the default index view");
+  assert.doesNotMatch(html, /\bwork-hiring-grid\b|\bwork-intro-promise\b/, "The index avoids duplicate collaboration cards and opening copy");
 });
 
 test("the minimal homepage preserves all nine supplied reviews in a native disclosure", () => {
@@ -620,7 +649,7 @@ test("the homepage keeps portfolio discovery compact before client feedback and 
     "no app showcase returns after the consultation panel or questions");
 });
 
-test("project stories explain the original workflows and preserve real development context and inquiry links", () => {
+test("minimal project stories preserve original workflows, optional technical context, and one business booking panel", () => {
   for (const project of projects) {
     const route = `/work/${projectSlugs[project.id]}/`;
     const html = documents.get(route);
@@ -653,7 +682,7 @@ test("project stories explain the original workflows and preserve real developme
     }
     const storyNavigation = html.match(/<nav\b[^>]*aria-label="On this project page"[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
     assert.ok(storyNavigation, `${project.title}: the project has its own page navigation`);
-    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#your-business", "#project-views", "#development"]);
+    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#project-views", "#your-business", "#development"]);
     for (const target of ["overview", "your-business", "project-views", "development", "project-cover"]) {
       assert.ok(tags(html, target === "project-cover" ? "figure" : "section").some((tag) => tag.id === target),
         `${project.title}: ${target} is a real static destination`);
@@ -674,39 +703,48 @@ test("project stories explain the original workflows and preserve real developme
       const releaseNote = html.match(/<p\b[^>]*class="project-release-note"[^>]*>([\s\S]*?)<\/p>/)?.[1];
       assert.match(text(releaseNote || ""), /physical[- ]microphone.*pending/i);
     }
+    if (project.id === "FreeScript") {
+      const releaseNote = html.match(/<p\b[^>]*class="project-release-note"[^>]*>([\s\S]*?)<\/p>/)?.[1];
+      assert.match(text(releaseNote || ""), /PDF import needs selectable text/);
+      assert.match(text(releaseNote || ""), /Scanned PDFs require OCR/);
+      assert.match(text(releaseNote || ""), /Physical Intel testing is pending/);
+    }
     const business = html.match(/<section\b[^>]*id="your-business"[^>]*>([\s\S]*?)<\/section>/)?.[1];
     assert.ok(business, `${project.title}: business context is available before scripts load`);
     assert.match(text(business), /A similar business need/);
     assert.ok(text(business).includes(projectClientUses[project.id].businessUse));
-    assert.ok(text(business).includes(projectBuildCare[project.id]), `${project.title}: explains the build decisions behind the example`);
-    assert.ok(html.indexOf('id="overview"') < html.indexOf('id="your-business"') &&
-      html.indexOf('id="your-business"') < html.indexOf('id="project-views"'),
-    `${project.title}: illustrative business context follows the actual workflow and precedes the full gallery`);
+    const buildCare = business.match(/<details\b([^>]*)>([\s\S]*?)<\/details>/i);
+    assert.ok(buildCare, `${project.title}: the optional build explanation uses a native disclosure`);
+    assert.ok(attributes(buildCare[1]).class?.split(/\s+/).includes("project-build-care"));
+    assert.doesNotMatch(buildCare[1], /\bopen\b/i, `${project.title}: detailed build promises start collapsed`);
+    assert.ok(text(buildCare[2]).includes(projectBuildCare[project.id]), `${project.title}: original build decisions remain available`);
+    assert.equal([...buildCare[2].matchAll(/<li\b/g)].length, 3, `${project.title}: all existing build promises remain available`);
+    assert.ok(html.indexOf('id="overview"') < html.indexOf('id="project-views"') &&
+      html.indexOf('id="project-views"') < html.indexOf('id="your-business"'),
+    `${project.title}: the real workflow and gallery precede the illustrative business offer`);
     const businessLinks = tags(business, "a");
     assert.ok(businessLinks.some((tag) => tag.href === bookingURL));
     assert.ok(businessLinks.some((tag) => tag.href && sameSite(tag.href, route) &&
       pathname(tag.href, route) === `/services/${projectClientUses[project.id].serviceSlug}/`),
     `${project.title}: links to the relevant development service`);
-    assert.ok(businessLinks.some((tag) => tag.href && new URL(tag.href, `${origin}${route}`).href === `${origin}/#client-care`),
+    assert.ok(businessLinks.some((tag) => tag.href && new URL(tag.href, `${origin}${route}`).href === `${origin}/guarantee/`),
       `${project.title}: clients can read the actual guarantee terms`);
-    const buildCallout = html.match(/<section\b[^>]*class="[^"]*\bproject-build-cta\b[^"]*"[^>]*>([\s\S]*?)<\/section>/i)?.[1];
-    assert.ok(buildCallout, `${project.title}: business inquiry follows the project evidence`);
-    assert.match(text(buildCallout), /Meet online/i);
-    assert.match(text(buildCallout), /space or workflow would help define the build/);
-    assert.match(text(buildCallout), /in-person consultation/i);
-    const inquiryLinks = tags(buildCallout, "a");
-    const draft = new URL(inquiryLinks.find((tag) => tag.href?.startsWith("mailto:"))?.href || "https://invalid.example");
-    assert.equal(draft.pathname, "admin@customtechbuilt4u.com");
-    assert.equal(draft.searchParams.get("subject"), `Project inspired by ${project.title}`);
-    assert.ok(draft.searchParams.get("body").includes("The problem:"));
-    assert.ok(draft.searchParams.get("body").includes("Who will use it:"));
-    assert.ok(draft.searchParams.get("body").includes(`Source page: ${origin}${route}`),
-      `${project.title}: source attribution remains available without JavaScript`);
-    const consultation = inquiryLinks.find((tag) => Object.hasOwn(tag, "data-booking-link"));
+    assert.match(text(business), /custom code is 100% yours/);
+    assert.match(text(business), /public portfolio unless you give permission/);
+    assert.doesNotMatch(html, /class="[^"]*\bproject-build-cta\b/, `${project.title}: the same booking pitch is not repeated after the gallery`);
+    const consultation = businessLinks.find((tag) => Object.hasOwn(tag, "data-booking-link"));
     assert.equal(consultation?.href, bookingURL, `${project.title}: clients can book directly from the project evidence`);
     assert.equal(consultation.target, "_blank");
     assert.match(consultation.rel, /\bnoopener\b/);
     assert.match(consultation.rel, /\bnoreferrer\b/);
+    const technical = html.match(/<details\b([^>]*\bclass="[^"]*\bproject-technical\b[^"]*"[^>]*)>([\s\S]*?)<\/details>/i);
+    assert.ok(technical, `${project.title}: technical context uses a native disclosure`);
+    assert.doesNotMatch(technical[1], /\bopen\b/i, `${project.title}: technical details start collapsed`);
+    for (const original of [project.challenge, project.build, project.notes, ...project.features, ...project.stack].filter(Boolean)) {
+      assert.ok(text(technical[2]).includes(original), `${project.title}: optional technical details retain the original evidence`);
+    }
+    const source = tags(html, "a").find((tag) => tag.class?.split(/\s+/).includes("project-source-link"));
+    assert.equal(source?.href, project.repoUrl, `${project.title}: source remains directly accessible outside optional details`);
     if (project.demoUrl) assert.ok(tags(html, "a").some((tag) => tag.href === project.demoUrl),
       `${project.title}: its real live or app destination is retained`);
   }

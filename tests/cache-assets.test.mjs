@@ -24,3 +24,11 @@ test("full project galleries retain automatic sizing and page-relative optimized
   assert.ok(result.includes(`sizes="${gallerySizes}"`));
   assert.match(result, /srcset="\.\.\/\.\.\/assets\/optimized\/project-400\.webp 400w, \.\.\/\.\.\/assets\/optimized\/project-800\.webp 800w"/);
 });
+
+test("service examples deliver sharp stacked-phone and two-column artwork without replacing originals", () => {
+  const result = responsiveHTML('<img class="service-example-artwork" src="../../assets/project.png" width="1600" height="1000" loading="lazy" />', "/services/website-development/", manifest);
+  assert.match(result, /sizes="\(max-width: 600px\) calc\(100vw - 58px\), \(max-width: 700px\) calc\(100vw - 66px\)/);
+  assert.match(result, /\(max-width: 1408px\) calc\(50vw - 90px\), 614px"/);
+  assert.match(result, /src="\.\.\/\.\.\/assets\/project\.png" width="1600" height="1000"/);
+  assert.match(result, /srcset="\.\.\/\.\.\/assets\/optimized\/project-400\.webp 400w, \.\.\/\.\.\/assets\/optimized\/project-800\.webp 800w"/);
+});

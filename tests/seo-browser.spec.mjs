@@ -4,6 +4,7 @@ import { services, guide, projectSlugs, site } from "../seo-content.js";
 import { articles, articleTopics } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
+import { serviceHeadings } from "./service-page-fixtures.mjs";
 
 const bookingURL = "https://briefbooth.com/book/4u-digital";
 
@@ -68,24 +69,28 @@ async function expectHeaderSection(page, path, current = "location") {
 }
 
 async function expectServiceSections(page, service) {
-  const navigation = page.getByRole("navigation", { name: "On this service page", exact: true });
-  await expect(navigation).toBeVisible();
-  const destinations = [
-    ["service-fit", `What could ${service.title.toLowerCase()} help you do?`],
-    ["examples", "Explore related projects."],
-    ["service-scope", "What do we decide before building?"],
-    ["service-questions", `Questions about ${service.title.toLowerCase()}`],
-  ];
-  await expect(navigation.locator("a")).toHaveCount(destinations.length);
-  for (const [id, heading] of destinations) {
-    const link = navigation.locator(`a[href="#${id}"]`);
-    await expect(link).toBeVisible();
-    await expect(page.locator(`#${id}`)).toHaveCount(1);
-    await expect(page.locator(`#${id}`).getByRole("heading", { level: 2 })).toHaveText(heading);
-    await link.focus();
+  await expect(page.getByRole("navigation", { name: "On this service page", exact: true })).toHaveCount(0);
+  await expect(page.locator(".service-capabilities > li")).toHaveCount(3);
+  const examples = page.locator('.page-intro a[href="#examples"]');
+  await expect(examples).toHaveCount(1);
+  await examples.focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#examples$/);
+  await expect(page.locator("#examples h2")).toHaveText("Explore related projects.");
+  await expect(page.locator(".service-example")).toHaveCount(2);
+  for (const [id, entries] of [["service-fit", service.when], ["service-scope", service.scope]]) {
+    const detail = page.locator(`#${id}`);
+    await expect(detail).not.toHaveAttribute("open");
+    await detail.locator(":scope > summary").focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`#${id}$`));
+    await expect(detail).toHaveAttribute("open", "");
+    for (const entry of entries) {
+      await expect(detail.getByRole("heading", { name: entry.title, exact: true })).toBeVisible();
+      await expect(detail).toContainText(entry.text);
+    }
+    await detail.locator(":scope > summary").press("Enter");
   }
+  await expect(page.locator("#service-questions > h2")).toHaveText(`Questions about ${service.title.toLowerCase()}`);
 }
 
 async function expectOriginalImage(image, frame) {
@@ -188,7 +193,7 @@ test("a service page leads to relevant project proof and a complete business inq
   await page.goto("/");
   const serviceLink = await linkTo(page, `/services/${service.slug}/`);
   await serviceLink.click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[service.slug]);
   await expectHeaderSection(page, "/services/");
   await expectServiceSections(page, service);
   await expectPageFit(page);
@@ -223,7 +228,7 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await start.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new RegExp(`${route}$`));
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[service.slug]);
     await expectHeaderSection(page, "/services/");
     await expectServiceSections(page, service);
     await expect(page.locator("main")).toContainText(service.intro);
@@ -240,16 +245,18 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
       const proof = await linkTo(page, `/work/${projectSlugs[id]}/`);
       await expect(proof).toBeVisible();
     }
-    const inquiry = page.locator(".page-intro .page-actions a[href^='mailto:']");
+    await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+    const inquiry = page.locator("footer a[href^='mailto:']");
     await expect(inquiry).toBeVisible();
     const draft = new URL(await inquiry.getAttribute("href"));
     expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-    expect(draft.searchParams.get("body")).toContain("The problem:");
     expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}${route}`);
 
     await expectHeaderBooking(page);
     await expectPageFit(page);
 
+    await page.locator(".service-other-options > summary").focus();
+    await page.keyboard.press("Enter");
     const planning = await linkTo(page, `/insights/${service.guideSlug}/`);
     await planning.focus();
     await page.keyboard.press("Enter");
@@ -261,7 +268,7 @@ for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-de
     await expect(returnToService).toBeVisible();
     await returnToService.focus();
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[service.slug]);
     await expectPageFit(page);
   });
 }
@@ -390,17 +397,15 @@ for (const project of projects) {
       name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false,
     });
     await expect(source).toHaveAttribute("href", project.repoUrl);
+    await expect(source).toBeVisible();
+    await expect(page.locator("#development .project-technical")).not.toHaveAttribute("open");
+    await page.locator("#development .project-technical > summary").click();
     if (project.notes) await expect(page.locator("#development")).toContainText(project.notes);
-    const inquiry = page.locator(".project-build-cta a[href^='mailto:']");
-    await expect(inquiry).toBeVisible();
-    const draft = new URL(await inquiry.getAttribute("href"));
-    expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-    expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
-    expect(draft.searchParams.get("body")).toContain("The problem:");
-    expect(draft.searchParams.get("body")).toContain("Who will use it:");
-    expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
+    await expect(page.locator(".project-build-cta")).toHaveCount(0);
+    await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+    await expect(page.locator("#development .project-stack .tag")).toHaveText(project.stack);
     await expectHeaderBooking(page);
-    await expectBookingLink(page.locator(".project-build-cta [data-booking-link]"));
+    await expectBookingLink(page.locator("#your-business [data-booking-link]"));
     await expectPageFit(page);
   });
 }
@@ -624,7 +629,7 @@ test("a business guide connects the idea to a service and the supplied consultat
   // after the preceding in-page links have started smooth scrolling.
   await development.focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[service.slug]);
   await expectPageFit(page);
 
   const contactLink = await linkTo(page, "/contact/");

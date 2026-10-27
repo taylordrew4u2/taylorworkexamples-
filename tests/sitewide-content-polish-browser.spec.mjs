@@ -47,7 +47,7 @@ test("the service directory helps phone visitors choose a need before presenting
   }
 });
 
-test("all six service openings prioritize booking, keep email secondary, and provide one clear examples jump", async ({ page }) => {
+test("all six service openings lead to booking or examples and keep longer planning optional", async ({ page }) => {
   test.setTimeout(120_000);
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
@@ -60,19 +60,35 @@ test("all six service openings prioritize booking, keep email secondary, and pro
         await expectBooking(booking);
         await expectTapTarget(booking, width);
         await expect(actions.locator("a").first()).toHaveAttribute("data-booking-link", "");
-        const email = actions.locator('a[href^="mailto:"]');
-        await expect(email).toHaveClass(/\btext-link\b/);
-        await expect(email).not.toHaveClass(/\bbutton\b/);
-        expect(new URL(await email.getAttribute("href")).pathname).toBe("admin@customtechbuilt4u.com");
-        await expect(opening.locator('a[href="#examples"]')).toHaveCount(0);
-        const examples = page.getByRole("navigation", { name: "On this service page", exact: true })
-          .locator('a[href="#examples"]');
+        await expect(page.locator('main a[href^="mailto:"]')).toHaveCount(0);
+        await expect(actions.locator("a")).toHaveCount(2);
+        await expect(opening.locator(".service-capabilities > li")).toHaveCount(3);
+        const examples = opening.locator('a[href="#examples"]');
         await expect(examples).toHaveCount(1);
         await expectTapTarget(examples, width);
         await examples.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`/services/${service.slug}/#examples$`));
         await expect(page.locator("#examples").getByRole("heading", { level: 2 })).toHaveText("Explore related projects.");
+        await expect(page.locator(".service-example")).toHaveCount(2);
+        for (const example of await page.locator(".service-example-link").all()) {
+          await expectTapTarget(example, width);
+          await expect(example.locator("img").last()).toHaveCSS("object-fit", "contain");
+          await expect(example.locator("img").last()).toHaveCSS("filter", "none");
+        }
+        for (const id of ["service-fit", "service-scope"]) {
+          const detail = page.locator(`#${id}`);
+          await expect(detail).not.toHaveAttribute("open");
+          await expectTapTarget(detail.locator(":scope > summary"), width);
+          await detail.locator(":scope > summary").focus();
+          await page.keyboard.press("Enter");
+          await expect(detail).toHaveAttribute("open", "");
+          await expect(detail.locator("article")).toHaveCount(3);
+          await detail.locator(":scope > summary").press("Enter");
+        }
+        const closing = page.locator("main .service-closing");
+        await expect(closing.locator("a")).toHaveCount(1);
+        await expectBooking(closing.locator("[data-booking-link]"));
         if (service.slug === "app-development") {
           const proof = page.locator(".service-opening-proof");
           await expect(proof).toContainText(/App Store/i);

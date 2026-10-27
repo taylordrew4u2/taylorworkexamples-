@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { services } from "../seo-content.js";
+import { serviceHeadings } from "./service-page-fixtures.mjs";
 import { bookingURL } from "../booking.js";
 
 async function expectTapTarget(link, width) {
@@ -56,7 +56,7 @@ for (const javaScriptEnabled of [true, false]) {
         await choice.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`/services/${slug}/$`));
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(services.find((service) => service.slug === slug).heading);
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[slug]);
         await expect(page.locator(".page-intro [data-booking-link]")).toHaveAttribute("href", bookingURL);
       }
     });

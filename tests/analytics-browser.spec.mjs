@@ -108,11 +108,11 @@ test("ordinary business email links record intent without reading their attribut
   ]);
 });
 
-test("project inquiry links are tracked once without reading their email draft", async ({ page }) => {
+test("a project page's quiet footer email is tracked once without reading its draft", async ({ page }) => {
   await page.goto("/work/bitbinder/");
   await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
-  await page.locator(".project-story-hero .page-actions a[href^='mailto:']").click();
+  await page.locator("footer a[href^='mailto:']").click();
   expect(await contactEvents(page)).toEqual([
     { name: "Contact intent", data: { page: "/work/bitbinder/", action: "email" } },
   ]);

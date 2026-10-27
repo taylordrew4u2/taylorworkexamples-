@@ -62,7 +62,8 @@ test("clients can search the capability and illustrative business context as wel
     await expectResults(page, projects.filter((project) => project.id === id));
     const card = page.locator(`.seo-project-card[data-project-id="${id}"]`);
     await expect(card.locator(".work-project-capabilities li")).toHaveText(projectClientUses[id].capabilities);
-    await expect(card.locator(".work-project-business-use")).toContainText(projectClientUses[id].businessUse);
+    await expect(card.locator(".work-project-business-use")).toHaveCount(0);
+    await expect(card.locator(".work-project-action")).toHaveAttribute("href", `${projectSlugs[id]}/`);
   }
 });
 
@@ -132,7 +133,7 @@ test.describe("the complete portfolio without JavaScript", () => {
       await expect(card.locator(".seo-project-heading h3")).toHaveText(project.title);
       await expect(card.locator(".work-project-purpose")).toHaveText(project.purpose);
       await expect(card.locator(".work-project-capabilities li")).toHaveText(projectClientUses[project.id].capabilities);
-      await expect(card.locator(".work-project-business-use")).toContainText("A similar business need");
+      await expect(card.locator(".work-project-business-use")).toHaveCount(0);
       const image = card.locator(".seo-project-cover img");
       expect(new URL(await image.getAttribute("src"), page.url()).pathname)
         .toBe(`/${project.image.replace(/^\.\//, "")}`);

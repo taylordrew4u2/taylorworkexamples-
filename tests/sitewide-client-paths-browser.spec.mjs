@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { services } from "../seo-content.js";
 import { bookingURL } from "../booking.js";
+import { serviceHeadings } from "./service-page-fixtures.mjs";
 
 const coreServiceSlugs = [
   "website-development", "web-app-development", "app-development", "custom-software-development",
@@ -67,7 +68,7 @@ for (const javaScriptEnabled of [true, false]) {
         await choice.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`/services/${slug}/$`));
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
+        await expect(page.getByRole("heading", { level: 1 })).toHaveText(serviceHeadings[service.slug]);
         await expectDirectBooking(page.locator(".page-intro [data-booking-link]"));
         await page.goto("/services/");
       }

@@ -118,6 +118,7 @@ for (const width of [320, 390]) {
             const nextStep = route === "/contact/" ? main.locator("[data-booking-link]") : main.locator([
               ".page-callout [data-booking-link]", ".project-build-cta [data-booking-link]",
               "#consultation [data-booking-link]", "#work-with-me [data-booking-link]",
+              "#your-business [data-booking-link]",
             ].join(", "));
             check(await nextStep.count(), "A marketing page offers a content-level consultation action beyond its header")
               .toBeGreaterThan(0);

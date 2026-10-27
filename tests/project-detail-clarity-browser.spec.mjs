@@ -32,6 +32,8 @@ for (const javaScriptEnabled of [true, false]) {
 
     for (const project of representatives) {
       test(`${project.title} helps a mobile client understand the project, their own build, and the next step`, async ({ page }) => {
+        // Each case exercises two phone widths, native disclosures and a booking popup.
+        test.setTimeout(120_000);
         const route = `/work/${projectSlugs[project.id]}/`;
         const context = projectClientUses[project.id];
         await page.context().route(bookingURL, (request) => request.fulfill({
@@ -46,7 +48,16 @@ for (const javaScriptEnabled of [true, false]) {
           await expect(hero.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
           await expect(hero.locator(".page-lead")).toHaveText(project.purpose);
           await expect(hero.locator(".project-personal-note")).toHaveText("Selected personal project");
-          await expect(hero.locator(".project-quick-capabilities li")).toHaveText(context.capabilities);
+          await expect(page.locator("#overview .project-quick-capabilities li")).toHaveText(context.capabilities);
+          await expect(hero.locator(".project-quick-capabilities")).toHaveCount(0);
+          const coverTop = await page.locator("#project-cover").evaluate((element) => element.getBoundingClientRect().top + scrollY);
+          expect(coverTop, "The original cover begins within 1.25 phone screens").toBeLessThanOrEqual(900 * 1.25);
+          const extraFeatures = page.locator("#overview .project-capabilities");
+          await expect(extraFeatures).not.toHaveAttribute("open");
+          await extraFeatures.locator("summary").focus();
+          await page.keyboard.press("Enter");
+          await expect(extraFeatures).toHaveAttribute("open", "");
+          await expect(extraFeatures.locator(".project-quick-capabilities")).toBeVisible();
           const status = hero.locator(".project-release-status");
           if (project.demoLabel === "App Store") await expect(status).toHaveText("On the App Store");
           else if (project.id === "usbmic") {
@@ -57,13 +68,11 @@ for (const javaScriptEnabled of [true, false]) {
           const actions = hero.locator(".page-actions");
           await expect(actions.locator("a").first()).toHaveAttribute("data-booking-link", "");
           await expectDirectBooking(actions.locator("[data-booking-link]"));
-          const email = actions.locator('.project-secondary-actions a[href^="mailto:"]');
-          await expect(email).toHaveClass(/\btext-link\b/);
-          await expect(email).not.toHaveClass(/\bbutton-dark\b/);
-          const draft = new URL(await email.getAttribute("href"));
-          expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
+          await expect(actions.locator("a")).toHaveCount(2);
+          await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+          await expect(page.locator(".project-build-cta")).toHaveCount(0);
           if (project.demoUrl) {
-            await expect(actions.locator(`.project-secondary-actions a[href="${project.demoUrl}"]`)).toBeVisible();
+            await expect(hero.locator(`.project-live-destination a[href="${project.demoUrl}"]`)).toBeVisible();
           }
           const browse = hero.locator(".project-hero-browse");
           await expect(browse).toHaveAttribute("href", "#overview");
@@ -91,6 +100,8 @@ for (const javaScriptEnabled of [true, false]) {
           const business = page.locator("#your-business");
           await expect(business.locator(".project-business-example")).toContainText("A similar business need");
           await expect(business.locator(".project-business-example")).toContainText(context.businessUse);
+          await expect(business.locator(".project-build-care")).not.toHaveAttribute("open");
+          await business.locator(".project-build-care > summary").click();
           await expect(business.locator(".project-build-care p")).toHaveText(projectBuildCare[project.id]);
           await expect(business.locator(".project-client-promises li")).toHaveCount(3);
           for (const promise of [/direct line|person building/i, /scope/i, /custom code/i, /30.day/i]) {
@@ -105,8 +116,8 @@ for (const javaScriptEnabled of [true, false]) {
             .toBe(`/services/${context.serviceSlug}/`);
           expect(await business.evaluate((element) => Boolean(
             document.querySelector("#overview").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
-          ) && Boolean(element.compareDocumentPosition(document.querySelector("#project-views")) & Node.DOCUMENT_POSITION_FOLLOWING)),
-          "The illustrative business use follows the real workflow and precedes the original gallery").toBe(true);
+          ) && Boolean(document.querySelector("#project-views").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING)),
+          "The illustrative business use follows the real workflow and original gallery").toBe(true);
           await expect(business.locator("form, input, select, textarea, iframe")).toHaveCount(0);
           const booking = business.locator("[data-booking-link]");
           await expectDirectBooking(booking);
@@ -128,13 +139,13 @@ for (const javaScriptEnabled of [true, false]) {
           await expect(page.locator(".planner-shortcut")).toHaveCount(0);
           const planner = page.locator("footer").getByRole("link", { name: "Project planner", exact: true });
           expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
-          const guarantee = business.locator('a[href$="#client-care"]');
+          const guarantee = business.locator('a[href$="guarantee/"]');
           await expectTapTarget(guarantee, width);
-          expect(new URL(await guarantee.getAttribute("href"), page.url()).pathname).toBe("/");
+          expect(new URL(await guarantee.getAttribute("href"), page.url()).pathname).toBe("/guarantee/");
           await guarantee.focus();
           await page.keyboard.press("Enter");
-          await expect(page).toHaveURL(/\/#client-care$/);
-          await expect(page.locator("#client-care-title")).toBeInViewport();
+          await expect(page).toHaveURL(/\/guarantee\/$/);
+          await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
           expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         }
       });
