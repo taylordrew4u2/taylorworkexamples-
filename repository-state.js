@@ -6,7 +6,7 @@ export const publicRepositories = {
   "description": "Free screenplay writing software",
   "homepage": "",
   "defaultBranch": "main",
-  "headSha": "0c49259af5488628f64cc8c9e5db3a1e595d9313",
+  "headSha": "6ee2cb79cb195f84126f85319063a010befe910e",
   "pushedAt": "2026-10-27T05:40:25Z",
   "verifiedAt": "2026-10-27",
   "archived": false,
