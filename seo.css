@@ -135,7 +135,7 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .project-page-frame { margin: 0; border: 1px solid var(--line); border-radius: 1rem; overflow: hidden; }
 .project-page-frame > div { background: #f3f3f3; display: flex; align-items: center; justify-content: center; gap: 1rem; padding: 1rem; }
 .project-page-frame img { width: 100%; height: auto; max-height: 48rem; object-fit: contain; filter: none; mix-blend-mode: normal; }
-.project-page-frame.portrait img { max-height: 40rem; width: auto; max-width: 100%; }
+.project-page-frame.portrait img { max-height: 40rem; width: 100%; max-width: 100%; }
 .project-page-frame.paired img { width: calc(50% - 0.5rem); }
 .project-page-frame figcaption { padding: 1.25rem 1.5rem; color: var(--muted); font-size: 0.9375rem; line-height: 1.6; }
 .project-page-frame figcaption strong { color: var(--ink); font-weight: 550; }
