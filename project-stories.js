@@ -4,9 +4,9 @@ export const projectStories = {
   FreeScript: {
   "audience": "Screenwriters, filmmakers and students starting or developing a screenplay",
   "workflowDescriptions": [
-    "Create a screenplay and write your first scene. Scene headings, action, character cues and dialogue use their own screenplay styling.",
+    "Open a new screenplay and write your first scene. FreeScript applies the layout for scene headings, action, characters and dialogue.",
     "Press Enter for the next element and Tab to change its type. Navigate scenes, use focus mode and keep writing with local autosave.",
-    "Export a PDF or Fountain draft when ready. Paste an existing script or import a text-based PDF to continue earlier work. The separate chat companion transfers drafts through import/export."
+    "Export a formatted PDF to share or a Fountain file to keep working elsewhere. You can also paste an existing script or import a text-based PDF and continue editing."
   ]
 },
   "BriefBooth.com": {

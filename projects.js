@@ -12,7 +12,7 @@ export const projects = [
   "id": "FreeScript",
   "title": "FreeScript",
   "category": "desktop",
-  "summary": "A free Mac app that makes writing a screenplay easy, with screenplay formatting as you write, local autosave and a separate ChatGPT and Claude companion.",
+  "summary": "A free screenplay editor for Mac that handles the layout while you write, with focus mode, local autosave and simple keyboard controls.",
   "stack": [
     "Electron",
     "JavaScript",
@@ -21,8 +21,8 @@ export const projects = [
     "MCP"
   ],
   "features": [
-    "Screenplay styling while writing, with simple Enter and Tab controls",
-    "Offline text-based PDF extraction and editable imports",
+    "Screenplay formatting as you type, with Enter and Tab shortcuts",
+    "Paste a script or import an editable text-based PDF",
     "Local autosave, undo/redo, scene navigation and search",
     "Fountain, JSON backup and formatted PDF export",
     "Universal Mac DMG with Developer ID signing",
@@ -42,7 +42,7 @@ export const projects = [
     "https://github.com/taylordrew4u2/FreeScript/blob/main/src/pdf-import.js",
     "https://github.com/taylordrew4u2/FreeScript/blob/main/integrations/README.md"
   ],
-  "clientSummary": "Write your screenplay easily, with formatting that follows as you write.",
+  "clientSummary": "Write your screenplay. Let FreeScript handle the formatting.",
   "demonstrates": [
     "Desktop software development",
     "Document import and export",
@@ -50,17 +50,17 @@ export const projects = [
     "AI-tool integration"
   ],
   "projectType": "Mac screenwriting application",
-  "challenge": "Make writing a screenplay easy, so writers can develop scenes and dialogue without manually adjusting margins and spacing.",
+  "challenge": "Keep writers focused on scenes and dialogue by taking care of screenplay margins, spacing and element styling.",
   "build": "An offline Mac editor with screenplay element styling, Enter and Tab shortcuts, focus mode and local autosave, packaged as a signed universal DMG. Paste formatting and text-based PDF import support existing drafts. A separate MCP service exposes screenplay tools to ChatGPT and Claude.",
   "highlights": [
     {
-      "title": "Write with easy formatting",
-      "text": "Screenplay elements receive their own styling. Enter moves to the next element, while Tab or the format menu changes its type.",
+      "title": "Formatting that follows your writing",
+      "text": "Scene headings, action and dialogue use screenplay styling automatically. Press Enter for the next element and Tab to change its type.",
       "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js"
     },
     {
       "title": "Write on your Mac",
-      "text": "Scene navigation, local autosave and export support a dedicated offline writing workflow.",
+      "text": "Find a scene, revise a line and keep going. Your drafts autosave locally, and the Mac editor works offline.",
       "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md"
     },
     {

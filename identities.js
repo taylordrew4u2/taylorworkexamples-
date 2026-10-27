@@ -1,11 +1,11 @@
 // Genuine product icons and client-facing explanations. BriefBooth verified October 19, 2026.
 export const projectIdentities = {
   FreeScript: {
-  "purpose": "Write your screenplay easily, with formatting that follows as you write in a free Mac editor.",
+  "purpose": "Write your screenplay. FreeScript handles the formatting as you type.",
   "workflows": [
     "Start your screenplay",
-    "Write with simple formatting",
-    "Export or continue a draft"
+    "Keep your story moving",
+    "Share your next draft"
   ],
   "previewContext": "Genuine app captures \u00b7 Fictional sample writing",
   "icon": "./assets/project-icons/freescript.png",

@@ -20,3 +20,5 @@ No client work, private draft, user library, private account screen, invented te
 PDFs need selectable text, scanned pages need OCR first, and formatting needs review. The Mac release is Developer ID signed, not notarized; Intel execution has not been validated on physical hardware. The hosted companion is a separate online/stateless service, with import/export rather than automatic Mac/chat sync.
 
 Owner clarification on October 27: lead with easy screenplay writing and formatting while writing. The README, brand copy, social graphics and videos now explain this purpose and the Enter/Tab controls; paste and PDF import support existing drafts.
+
+Launch-copy polish: FreeScript revision 763a57be7b81680e709f893df06ca74d3d06cf57. The downloadable kit includes this revised copy; visual asset provenance remains at the identity/capture revision above.

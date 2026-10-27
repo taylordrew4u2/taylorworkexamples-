@@ -4,7 +4,11 @@
 
 Your story. Your page.
 
-Meet FreeScript: a free, offline screenwriting app for Mac. Write your screenplay in a cream-paper, dark-ink workspace with screenplay styling as you write. Enter moves to the next element; Tab changes its type. Paste and text-based PDF import also let you continue existing work. Navigate scenes, revise dialogue, save drafts locally, and export Fountain or PDF.
+Write your screenplay. Let FreeScript handle the formatting.
+
+FreeScript is a free, offline screenplay editor for Mac. Start a scene, write the dialogue, and keep going in a quiet paper-and-ink workspace. Enter moves to the next screenplay element; Tab changes its type. Your drafts autosave on your Mac.
+
+Ready to share? Export a formatted PDF or Fountain file. Already have a draft? Paste your script or import a text-based PDF and continue writing.
 
 There is also a FreeScript companion for ChatGPT and Claude to format, revise, analyze, and export screenplay text. It is separate from your Mac library; move drafts between them with import and export.
 
@@ -14,7 +18,7 @@ Scanned PDFs need text recognition first. Review automatically inferred formatti
 
 ## Short social caption
 
-A page. A few words. Your next scene. FreeScript makes screenplay formatting easy while you write, with simple Enter and Tab controls, focus mode, and local autosave in a free Mac writing room. Your story. Your page.
+Your next scene starts here. FreeScript handles screenplay formatting while you write, with simple keyboard controls, focus mode, and local autosave. Free for Mac. Your story. Your page.
 
 Download: https://github.com/taylordrew4u2/FreeScript
 
