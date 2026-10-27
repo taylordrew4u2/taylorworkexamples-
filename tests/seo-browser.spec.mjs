@@ -630,6 +630,8 @@ test("a business guide connects the idea to a service and the supplied consultat
   const contactLink = await linkTo(page, "/contact/");
   await contactLink.focus();
   await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/contact\/$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("What would you like to build?");
   const local = await linkTo(page, "/new-york-city/");
   await local.focus();
   await page.keyboard.press("Enter");
