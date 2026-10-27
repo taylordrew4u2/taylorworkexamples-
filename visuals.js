@@ -1,5 +1,206 @@
 // Image evidence, source links, and accurate capture labels. README artwork refreshed 2026-10-19.
 export const projectVisuals = {
+  FreeScript: {
+  "image": "./assets/freescript/banner.png",
+  "imageAlt": "Repository product artwork · Typewriter identity with an actual app capture using fictional writing.",
+  "imageWidth": 1920,
+  "imageHeight": 1080,
+  "portrait": false,
+  "imageKind": "product-artwork",
+  "imageLabel": "Repository product artwork",
+  "imageCaption": "Repository product artwork · Typewriter identity with an actual app capture using fictional writing.",
+  "previewContext": "Repository product artwork · Actual app capture with fictional writing",
+  "gallery": [
+    {
+      "label": "Product overview",
+      "image": "./assets/freescript/banner.png",
+      "imageAlt": "Repository product artwork · Typewriter identity with an actual app capture using fictional writing.",
+      "width": 1920,
+      "height": 1080,
+      "portrait": false,
+      "caption": "Repository product artwork · Typewriter identity with an actual app capture using fictional writing.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/banner.png",
+      "sourceKind": "repository-product-artwork"
+    },
+    {
+      "label": "The writing room",
+      "image": "./assets/freescript/writing-room.png",
+      "imageAlt": "Actual Mac app capture · Fictional sample screenplay, scene navigation and local save status.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · Fictional sample screenplay, scene navigation and local save status.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/writing-room.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "Paste an existing script",
+      "image": "./assets/freescript/paste-script.png",
+      "imageAlt": "Actual Mac app capture · A fictional screenplay in the paste box before automatic formatting.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · A fictional screenplay in the paste box before automatic formatting.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/paste-script.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "Editable screenplay",
+      "image": "./assets/freescript/formatted-script.png",
+      "imageAlt": "Actual Mac app capture · Pasted text separated into editable screenplay elements.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · Pasted text separated into editable screenplay elements.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/formatted-script.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "Continue a PDF draft",
+      "image": "./assets/freescript/pdf-import.png",
+      "imageAlt": "Actual Mac app capture · A real exported PDF reimported as editable text and revised further.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · A real exported PDF reimported as editable text and revised further.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/pdf-import.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "Focus mode",
+      "image": "./assets/freescript/focus-mode.png",
+      "imageAlt": "Actual Mac app capture · The focused writing surface using fictional text.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · The focused writing surface using fictional text.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/focus-mode.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "Export your draft",
+      "image": "./assets/freescript/export-options.png",
+      "imageAlt": "Actual Mac app capture · PDF, Fountain and complete FreeScript backup options.",
+      "width": 1440,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Actual Mac app capture · PDF, Fountain and complete FreeScript backup options.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/export-options.png",
+      "sourceKind": "repository-app-capture"
+    },
+    {
+      "label": "The identity system",
+      "image": "./assets/freescript/brand-overview.png",
+      "imageAlt": "Repository product artwork · Logo family, palette, typography, product and voice; the campaign photograph is AI-generated.",
+      "width": 1600,
+      "height": 1200,
+      "portrait": false,
+      "caption": "Repository product artwork · Logo family, palette, typography, product and voice; the campaign photograph is AI-generated.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/brand-overview.png",
+      "sourceKind": "repository-product-artwork"
+    },
+    {
+      "label": "Editorial campaign",
+      "image": "./assets/freescript/campaign-poster.png",
+      "imageAlt": "Promotional artwork · An AI-generated typewriter photograph communicates the writing ritual; it is not a physical FreeScript product.",
+      "width": 1600,
+      "height": 1000,
+      "portrait": false,
+      "caption": "Promotional artwork · An AI-generated typewriter photograph communicates the writing ritual; it is not a physical FreeScript product.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/campaign-poster.png",
+      "sourceKind": "repository-product-artwork"
+    },
+    {
+      "label": "Square launch graphic",
+      "image": "./assets/freescript/social-square.png",
+      "imageAlt": "Repository product artwork · Square social format with a genuine fictional-sample app capture.",
+      "width": 1080,
+      "height": 1080,
+      "portrait": false,
+      "caption": "Repository product artwork · Square social format with a genuine fictional-sample app capture.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/social-square.png",
+      "sourceKind": "repository-product-artwork"
+    },
+    {
+      "label": "Vertical launch graphic",
+      "image": "./assets/freescript/social-story.png",
+      "imageAlt": "Repository product artwork · Vertical social story with a genuine app capture.",
+      "width": 1080,
+      "height": 1920,
+      "portrait": true,
+      "caption": "Repository product artwork · Vertical social story with a genuine app capture.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/social-story.png",
+      "sourceKind": "repository-product-artwork"
+    },
+    {
+      "label": "Repository introduction",
+      "image": "./assets/freescript/readme-hero.png",
+      "imageAlt": "Repository product artwork · The README introduction, using a real app capture.",
+      "width": 1600,
+      "height": 740,
+      "portrait": false,
+      "caption": "Repository product artwork · The README introduction, using a real app capture.",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/readme-hero.png",
+      "sourceKind": "repository-product-artwork"
+    }
+  ],
+  "promotion": {
+    "videos": [
+      {
+        "src": "./assets/freescript/workflow-demo.mp4",
+        "captions": "./assets/freescript/workflow-demo.vtt",
+        "poster": "./assets/freescript/banner.png",
+        "label": "Writing workflow · 31 seconds",
+        "caption": "An edited, silent demonstration built from real app captures: write a screenplay, use simple formatting controls, focus, import a PDF and export."
+      },
+      {
+        "src": "./assets/freescript/social-promo.mp4",
+        "captions": "./assets/freescript/social-promo.vtt",
+        "poster": "./assets/freescript/social-story.png",
+        "label": "Vertical product promo · 15 seconds",
+        "caption": "A silent vertical promo using genuine captures and visible captions."
+      }
+    ],
+    "downloads": [
+      {
+        "src": "./assets/freescript/freescript-brand-and-promo-kit.zip",
+        "label": "Complete brand & promotional kit (ZIP)"
+      },
+      {
+        "src": "./assets/freescript/brand-guidelines.md",
+        "label": "Brand guidelines"
+      },
+      {
+        "src": "./assets/freescript/promotional-copy.md",
+        "label": "Launch and social copy"
+      },
+      {
+        "src": "./assets/freescript/asset-manifest.md",
+        "label": "Asset provenance and image-generation prompt"
+      },
+      {
+        "src": "./assets/freescript/brand-tokens.json",
+        "label": "Design tokens"
+      },
+      {
+        "src": "./assets/freescript/freescript-mark.svg",
+        "label": "freescript mark (SVG)"
+      },
+      {
+        "src": "./assets/freescript/freescript-wordmark.svg",
+        "label": "freescript wordmark (SVG)"
+      },
+      {
+        "src": "./assets/freescript/freescript-wordmark-reverse.svg",
+        "label": "freescript wordmark reverse (SVG)"
+      },
+      {
+        "src": "./assets/freescript/freescript-app-icon.png",
+        "label": "freescript app icon (PNG)"
+      }
+    ]
+  }
+},
   "BriefBooth.com": {
     "image": "./assets/briefbooth/home-desktop.png",
     "imageAlt": "BriefBooth live website introducing its consultation booking platform alongside an illustrative consultant booking page.",

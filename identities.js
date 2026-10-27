@@ -1,5 +1,20 @@
 // Genuine product icons and client-facing explanations. BriefBooth verified October 19, 2026.
 export const projectIdentities = {
+  FreeScript: {
+  "purpose": "Write your screenplay. FreeScript handles the formatting as you type.",
+  "workflows": [
+    "Start your screenplay",
+    "Keep your story moving",
+    "Share your next draft"
+  ],
+  "previewContext": "Genuine app captures \u00b7 Fictional sample writing",
+  "icon": "./assets/project-icons/freescript.png",
+  "iconWidth": 2048,
+  "iconHeight": 2048,
+  "iconSource": "https://github.com/taylordrew4u2/FreeScript/blob/441e41092f398b6524dde7524b2de4599196901d/build/icon-1024.png",
+  "iconKind": "desktop-app-icon",
+  "iconNotes": "Byte-for-byte copy of the actual 2048\u00d72048 FreeScript app icon. Original colors, transparent padding and proportions preserved."
+},
   "BriefBooth.com": {
     "purpose": "Give clients one link to explain their needs and request a consultation.",
     "workflows": [

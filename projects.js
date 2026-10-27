@@ -9,6 +9,69 @@ export const email = "admin@customtechbuilt4u.com";
 // experiment marks focused utilities and development projects for the tools filter.
 export const projects = [
   {
+  "id": "FreeScript",
+  "title": "FreeScript",
+  "category": "desktop",
+  "summary": "A free screenplay editor for Mac that handles the layout while you write, with focus mode, local autosave and simple keyboard controls.",
+  "stack": [
+    "Electron",
+    "JavaScript",
+    "Vite",
+    "PDF.js",
+    "MCP"
+  ],
+  "features": [
+    "Screenplay formatting as you type, with Enter and Tab shortcuts",
+    "Paste a script or import an editable text-based PDF",
+    "Local autosave, undo/redo, scene navigation and search",
+    "Fountain, JSON backup and formatted PDF export",
+    "Universal Mac DMG with Developer ID signing",
+    "Stateless screenplay tools for ChatGPT and Claude"
+  ],
+  "repoUrl": "https://github.com/taylordrew4u2/FreeScript",
+  "demoUrl": "https://github.com/taylordrew4u2/FreeScript/releases/tag/v1.0.3",
+  "demoLabel": "Mac download",
+  "portrait": false,
+  "tone": "dark",
+  "badge": "SIGNED MAC APP",
+  "experiment": false,
+  "sources": [
+    "https://github.com/taylordrew4u2/FreeScript",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/src/pdf-import.js",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/integrations/README.md"
+  ],
+  "clientSummary": "Write your screenplay. Let FreeScript handle the formatting.",
+  "demonstrates": [
+    "Desktop software development",
+    "Document import and export",
+    "Brand identity and product promotion",
+    "AI-tool integration"
+  ],
+  "projectType": "Mac screenwriting application",
+  "challenge": "Keep writers focused on scenes and dialogue by taking care of screenplay margins, spacing and element styling.",
+  "build": "An offline Mac editor with screenplay element styling, Enter and Tab shortcuts, focus mode and local autosave, packaged as a signed universal DMG. Paste formatting and text-based PDF import support existing drafts. A separate MCP service exposes screenplay tools to ChatGPT and Claude.",
+  "highlights": [
+    {
+      "title": "Formatting that follows your writing",
+      "text": "Scene headings, action and dialogue use screenplay styling automatically. Press Enter for the next element and Tab to change its type.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js"
+    },
+    {
+      "title": "Write on your Mac",
+      "text": "Find a scene, revise a line and keep going. Your drafts autosave locally, and the Mac editor works offline.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md"
+    },
+    {
+      "title": "A coherent product identity",
+      "text": "A typewriter logo family, paper-and-ink palette, real captures and captioned promotional videos connect the brand to the working product.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md"
+    }
+  ],
+  "notes": "Selected personal project. Genuine app captures use fictional sample writing. Promotional compositions are labeled; the campaign photograph is AI-generated. The Mac app is Developer ID signed, not notarized. Scanned PDFs require OCR first; imported formatting should be reviewed. Runtime tested on Apple Silicon, with physical Intel testing pending. Chat tools use a separate stateless hosted service; no automatic Mac/chat sync is included."
+},
+  {
     id: "BriefBooth.com",
     title: "BriefBooth",
     category: "web",

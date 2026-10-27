@@ -1,6 +1,14 @@
 // Client-facing explanations of the existing catalog workflows.
 // Each description matches the workflow heading at the same index in projects.js.
 export const projectStories = {
+  FreeScript: {
+  "audience": "Screenwriters, filmmakers and students starting or developing a screenplay",
+  "workflowDescriptions": [
+    "Open a new screenplay and write your first scene. FreeScript applies the layout for scene headings, action, characters and dialogue.",
+    "Press Enter for the next element and Tab to change its type. Navigate scenes, use focus mode and keep writing with local autosave.",
+    "Export a formatted PDF to share or a Fountain file to keep working elsewhere. You can also paste an existing script or import a text-based PDF and continue editing."
+  ]
+},
   "BriefBooth.com": {
     audience: "Independent consultants and service businesses",
     workflowDescriptions: [

@@ -1,6 +1,17 @@
 // Public inventory checked on 2026-10-12; individual records retain their later verification dates.
 export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
+  FreeScript: {
+  "repoUrl": "https://github.com/taylordrew4u2/FreeScript",
+  "description": "Free screenplay writing software",
+  "homepage": "",
+  "defaultBranch": "main",
+  "headSha": "763a57be7b81680e709f893df06ca74d3d06cf57",
+  "pushedAt": "2026-10-27T06:02:56Z",
+  "verifiedAt": "2026-10-27",
+  "archived": false,
+  "readmeAvailable": true
+},
   "BriefBooth.com": {
     "repoUrl": "https://github.com/taylordrew4u2/BriefBooth.com",
     "description": null,

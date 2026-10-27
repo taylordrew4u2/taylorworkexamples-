@@ -1,0 +1,26 @@
+{
+  "name": "FreeScript",
+  "tagline": "Your story. Your page.",
+  "colors": {
+    "ink": "#342f29",
+    "paper": "#f7f2e8",
+    "page": "#fffdf6",
+    "ribbon": "#766852",
+    "rule": "#cfc4b2"
+  },
+  "typography": {
+    "brand": "Courier New, Courier, monospace",
+    "editor": "Courier New, Courier, monospace",
+    "editorial": "Georgia, serif"
+  },
+  "spacing": {
+    "unit": 8,
+    "clearSpace": "One paper width around the mark"
+  },
+  "voice": [
+    "Plainspoken",
+    "Writer-first",
+    "Calm",
+    "Practical"
+  ]
+}
