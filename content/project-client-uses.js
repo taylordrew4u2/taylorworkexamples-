@@ -3,11 +3,11 @@
 export const projectClientUses = {
   FreeScript: {
   "capabilities": [
-    "Editable document imports",
-    "Offline writing workspace",
-    "Portable document exports"
+    "Screenplay formatting",
+    "Focused writing",
+    "Portable drafts"
   ],
-  "businessUse": "A creative studio could use a dedicated document workflow to turn existing text into structured, editable drafts. This is an illustrative comparable need, not delivered client work.",
+  "businessUse": "A creative studio could use a dedicated writing workspace that handles document styling while its team develops structured drafts. This is an illustrative comparable need, not delivered client work.",
   "serviceSlug": "custom-software-development"
 },
   "BriefBooth.com": {

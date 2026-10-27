@@ -1,11 +1,11 @@
 // Genuine product icons and client-facing explanations. BriefBooth verified October 19, 2026.
 export const projectIdentities = {
   FreeScript: {
-  "purpose": "Paste a script, import a text-based PDF, and keep writing in a free Mac screenplay editor.",
+  "purpose": "Write your screenplay easily, with formatting that follows as you write in a free Mac editor.",
   "workflows": [
-    "Import an existing draft",
-    "Write and revise scenes",
-    "Export or continue in chat"
+    "Start your screenplay",
+    "Write with simple formatting",
+    "Export or continue a draft"
   ],
   "previewContext": "Genuine app captures \u00b7 Fictional sample writing",
   "icon": "./assets/project-icons/freescript.png",
@@ -13,7 +13,7 @@ export const projectIdentities = {
   "iconHeight": 2048,
   "iconSource": "https://github.com/taylordrew4u2/FreeScript/blob/441e41092f398b6524dde7524b2de4599196901d/build/icon-1024.png",
   "iconKind": "desktop-app-icon",
-  "iconNotes": "Byte-for-byte copy of the actual 1024\u00d71024 FreeScript app icon. Original colors, transparent padding and proportions preserved."
+  "iconNotes": "Byte-for-byte copy of the actual 2048\u00d72048 FreeScript app icon. Original colors, transparent padding and proportions preserved."
 },
   "BriefBooth.com": {
     "purpose": "Give clients one link to explain their needs and request a consultation.",

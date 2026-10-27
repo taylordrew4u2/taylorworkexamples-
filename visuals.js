@@ -19,7 +19,7 @@ export const projectVisuals = {
       "height": 1080,
       "portrait": false,
       "caption": "Repository product artwork · Typewriter identity with an actual app capture using fictional writing.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/banner.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/banner.png",
       "sourceKind": "repository-product-artwork"
     },
     {
@@ -30,7 +30,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · Fictional sample screenplay, scene navigation and local save status.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/writing-room.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/writing-room.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -41,7 +41,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · A fictional screenplay in the paste box before automatic formatting.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/paste-script.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/paste-script.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -52,7 +52,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · Pasted text separated into editable screenplay elements.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/formatted-script.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/formatted-script.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -63,7 +63,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · A real exported PDF reimported as editable text and revised further.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/pdf-import.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/pdf-import.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -74,7 +74,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · The focused writing surface using fictional text.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/focus-mode.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/focus-mode.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -85,7 +85,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Actual Mac app capture · PDF, Fountain and complete FreeScript backup options.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/screenshots/export-options.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/screenshots/export-options.png",
       "sourceKind": "repository-app-capture"
     },
     {
@@ -96,7 +96,7 @@ export const projectVisuals = {
       "height": 1200,
       "portrait": false,
       "caption": "Repository product artwork · Logo family, palette, typography, product and voice; the campaign photograph is AI-generated.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/brand-overview.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/brand-overview.png",
       "sourceKind": "repository-product-artwork"
     },
     {
@@ -107,7 +107,7 @@ export const projectVisuals = {
       "height": 1000,
       "portrait": false,
       "caption": "Promotional artwork · An AI-generated typewriter photograph communicates the writing ritual; it is not a physical FreeScript product.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/campaign-poster.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/campaign-poster.png",
       "sourceKind": "repository-product-artwork"
     },
     {
@@ -118,7 +118,7 @@ export const projectVisuals = {
       "height": 1080,
       "portrait": false,
       "caption": "Repository product artwork · Square social format with a genuine fictional-sample app capture.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/social-square.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/social-square.png",
       "sourceKind": "repository-product-artwork"
     },
     {
@@ -129,7 +129,7 @@ export const projectVisuals = {
       "height": 1920,
       "portrait": true,
       "caption": "Repository product artwork · Vertical social story with a genuine app capture.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/social-story.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/social-story.png",
       "sourceKind": "repository-product-artwork"
     },
     {
@@ -140,7 +140,7 @@ export const projectVisuals = {
       "height": 740,
       "portrait": false,
       "caption": "Repository product artwork · The README introduction, using a real app capture.",
-      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/6ee2cb79cb195f84126f85319063a010befe910e/branding/promotional/readme-hero.png",
+      "sourceUrl": "https://github.com/taylordrew4u2/FreeScript/blob/3122d28e58a05b5f0381bf696ec2aad4e4ab6183/branding/promotional/readme-hero.png",
       "sourceKind": "repository-product-artwork"
     }
   ],
@@ -151,7 +151,7 @@ export const projectVisuals = {
         "captions": "./assets/freescript/workflow-demo.vtt",
         "poster": "./assets/freescript/banner.png",
         "label": "Writing workflow · 31 seconds",
-        "caption": "An edited, silent demonstration built from real app captures: paste, format, focus, import a PDF and export."
+        "caption": "An edited, silent demonstration built from real app captures: write a screenplay, use simple formatting controls, focus, import a PDF and export."
       },
       {
         "src": "./assets/freescript/social-promo.mp4",

@@ -91,3 +91,5 @@ The homepage leads its work section with the six product stories, followed by gr
 ## FreeScript brand & portfolio addition — October 27, 2026
 
 The owner explicitly added FreeScript as a selected personal project at `/work/freescript/`. Its complete case preserves the site’s monochrome layout while displaying original paper-and-ink product artwork: 12 gallery images, six genuine Mac captures with fictional writing, two playable silent/captioned videos, and a complete brand/promotion ZIP. The standalone Mac app remains distinct from its stateless ChatGPT/Claude companion. Captions disclose the AI-generated editorial photograph, and release notes retain signed/not-notarized and text-based-PDF/OCR limits. Brand asset sources are pinned to the public FreeScript repository; see `docs/freescript-brand-assets.md`.
+
+FreeScript’s primary purpose is easy screenplay writing with formatting while you write. The case, brand copy, social graphics and videos lead with this writing workflow and explain Enter/Tab controls; paste and PDF import support existing drafts.

@@ -12,7 +12,7 @@ export const projects = [
   "id": "FreeScript",
   "title": "FreeScript",
   "category": "desktop",
-  "summary": "A free Mac screenplay editor that turns pasted drafts and text-based PDFs into editable scenes, with a separate ChatGPT and Claude companion.",
+  "summary": "A free Mac app that makes writing a screenplay easy, with screenplay formatting as you write, local autosave and a separate ChatGPT and Claude companion.",
   "stack": [
     "Electron",
     "JavaScript",
@@ -21,7 +21,7 @@ export const projects = [
     "MCP"
   ],
   "features": [
-    "Automatic screenplay formatting for pasted drafts",
+    "Screenplay styling while writing, with simple Enter and Tab controls",
     "Offline text-based PDF extraction and editable imports",
     "Local autosave, undo/redo, scene navigation and search",
     "Fountain, JSON backup and formatted PDF export",
@@ -42,7 +42,7 @@ export const projects = [
     "https://github.com/taylordrew4u2/FreeScript/blob/main/src/pdf-import.js",
     "https://github.com/taylordrew4u2/FreeScript/blob/main/integrations/README.md"
   ],
-  "clientSummary": "Turn an existing screenplay into an editable writing workspace.",
+  "clientSummary": "Write your screenplay easily, with formatting that follows as you write.",
   "demonstrates": [
     "Desktop software development",
     "Document import and export",
@@ -50,12 +50,12 @@ export const projects = [
     "AI-tool integration"
   ],
   "projectType": "Mac screenwriting application",
-  "challenge": "Let writers continue an existing script without retyping it or manually rebuilding every screenplay element.",
-  "build": "An offline Mac editor with paste formatting, text-based PDF import and local autosave, packaged as a signed universal DMG. A separate MCP service exposes screenplay tools to ChatGPT and Claude.",
+  "challenge": "Make writing a screenplay easy, so writers can develop scenes and dialogue without manually adjusting margins and spacing.",
+  "build": "An offline Mac editor with screenplay element styling, Enter and Tab shortcuts, focus mode and local autosave, packaged as a signed universal DMG. Paste formatting and text-based PDF import support existing drafts. A separate MCP service exposes screenplay tools to ChatGPT and Claude.",
   "highlights": [
     {
-      "title": "Continue an existing draft",
-      "text": "Pasted screenplay text and selectable PDF text become editable screenplay elements.",
+      "title": "Write with easy formatting",
+      "text": "Screenplay elements receive their own styling. Enter moves to the next element, while Tab or the format menu changes its type.",
       "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js"
     },
     {

@@ -6,16 +6,16 @@ Version 1.0 · October 27, 2026
 
 **Your story. Your page.**
 
-FreeScript is a quiet writing room for screenwriters. It combines the familiar rhythm of a typewriter with practical Mac software: paste a draft, import a text-based PDF, keep writing, and export a formatted screenplay. The desktop app works offline. A separate hosted companion brings screenplay formatting, revision, analysis, and export to ChatGPT and Claude.
+FreeScript is a quiet writing room for screenwriters. It combines the familiar rhythm of a typewriter with practical Mac software: write a screenplay with simple formatting controls, keep your story moving, and export a formatted draft. Paste and PDF import help writers bring existing work into the editor. The desktop app works offline. A separate hosted companion brings screenplay formatting, revision, analysis, and export to ChatGPT and Claude.
 
-The promise is control over your writing, without a subscription to the desktop editor. The audience is independent screenwriters, filmmakers, students, and anyone moving an existing screenplay into an editable writing space.
+The promise is control over your writing, without a subscription to the desktop editor. The audience is independent screenwriters, filmmakers, students, and anyone starting or developing a screenplay who wants formatting to be easy while writing.
 
 ## Positioning and messaging
 
 - Category: free Mac screenwriting software, with an optional AI-chat companion.
 - Main line: **Your story. Your page.**
 - Supporting line: **Free. Offline. Yours.** This line describes the desktop app, not the hosted companion.
-- Functional line: **Paste a script. Keep writing.**
+- Functional line: **Write your screenplay. Formatting made easy.**
 - Product description: FreeScript is a free, offline screenwriting app for Mac, with automatic screenplay formatting, editable PDF import, local autosave, and Fountain/PDF export.
 - Short description: A quiet place to write your next scene.
 - Primary action: **Download for Mac**.
@@ -64,7 +64,7 @@ Screenshots use fictional writing. Never publish a user's private draft, library
 
 ## Voice
 
-Write like a helpful editor: direct, calm, specific, and writer-first. “Paste a script. Keep writing.” is better than an abstract promise about productivity. Give the next action without talking down to the reader. Use “your draft” and “your next scene.” Avoid hype, guaranteed results, invented popularity, awards, testimonials, or suggestions that AI independently creates a screenplay inside the desktop app.
+Write like a helpful editor: direct, calm, specific, and writer-first. “Write your screenplay. Formatting made easy.” is better than an abstract promise about productivity. Give the next action without talking down to the reader. Use “your draft” and “your next scene.” Avoid hype, guaranteed results, invented popularity, awards, testimonials, or suggestions that AI independently creates a screenplay inside the desktop app.
 
 ## Accurate feature claims
 

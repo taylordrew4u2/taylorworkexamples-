@@ -4,7 +4,7 @@ Owner-authorized portfolio addition: October 27, 2026. This expands the public s
 
 Public source: https://github.com/taylordrew4u2/FreeScript
 Brand release: https://github.com/taylordrew4u2/FreeScript/releases/tag/brand-kit-v1
-Identity/capture revision: 6ee2cb79cb195f84126f85319063a010befe910e
+Identity/capture revision: 3122d28e58a05b5f0381bf696ec2aad4e4ab6183
 Original app-icon revision: 441e41092f398b6524dde7524b2de4599196901d
 
 The cover and supporting promotional compositions use actual app captures; the six app captures use temporary local storage and fictional sample writing. They show the writing room, script paste dialog, formatted elements, PDF import with continued editing, focus mode, and export choices. The 2048×2048 icon is copied without changing its pixels, colors, or padding.
@@ -18,3 +18,5 @@ The full ZIP includes editable SVG/PNG logos, original app icon, design tokens, 
 No client work, private draft, user library, private account screen, invented testimonial, measured business result, or paid advertising appears in this case. Source-code/GitHub links are permitted; public business styling and contact paths stay 4u Digital and admin@customtechbuilt4u.com.
 
 PDFs need selectable text, scanned pages need OCR first, and formatting needs review. The Mac release is Developer ID signed, not notarized; Intel execution has not been validated on physical hardware. The hosted companion is a separate online/stateless service, with import/export rather than automatic Mac/chat sync.
+
+Owner clarification on October 27: lead with easy screenplay writing and formatting while writing. The README, brand copy, social graphics and videos now explain this purpose and the Enter/Tab controls; paste and PDF import support existing drafts.

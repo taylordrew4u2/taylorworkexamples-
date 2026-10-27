@@ -2,11 +2,11 @@
 // Each description matches the workflow heading at the same index in projects.js.
 export const projectStories = {
   FreeScript: {
-  "audience": "Screenwriters, filmmakers and writers continuing an existing draft",
+  "audience": "Screenwriters, filmmakers and students starting or developing a screenplay",
   "workflowDescriptions": [
-    "Paste a script or import a PDF containing selectable text. Review the inferred scene and dialogue formatting.",
-    "Revise dialogue, navigate scenes and keep writing in the offline Mac editor with local autosave.",
-    "Export a PDF or Fountain draft, or use the separate ChatGPT/Claude companion and transfer files through import/export."
+    "Create a screenplay and write your first scene. Scene headings, action, character cues and dialogue use their own screenplay styling.",
+    "Press Enter for the next element and Tab to change its type. Navigate scenes, use focus mode and keep writing with local autosave.",
+    "Export a PDF or Fountain draft when ready. Paste an existing script or import a text-based PDF to continue earlier work. The separate chat companion transfers drafts through import/export."
   ]
 },
   "BriefBooth.com": {

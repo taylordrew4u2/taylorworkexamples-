@@ -4,7 +4,7 @@
 
 Your story. Your page.
 
-Meet FreeScript: a free, offline screenwriting app for Mac. Paste a pre-written script or import a text-based PDF, then keep writing in a cream-paper, dark-ink workspace. Navigate scenes, revise dialogue, save drafts locally, and export Fountain or PDF.
+Meet FreeScript: a free, offline screenwriting app for Mac. Write your screenplay in a cream-paper, dark-ink workspace with screenplay styling as you write. Enter moves to the next element; Tab changes its type. Paste and text-based PDF import also let you continue existing work. Navigate scenes, revise dialogue, save drafts locally, and export Fountain or PDF.
 
 There is also a FreeScript companion for ChatGPT and Claude to format, revise, analyze, and export screenplay text. It is separate from your Mac library; move drafts between them with import and export.
 
@@ -14,7 +14,7 @@ Scanned PDFs need text recognition first. Review automatically inferred formatti
 
 ## Short social caption
 
-A page. A few words. Your next scene. FreeScript brings paste-to-screenplay formatting, text-based PDF import, and local autosave to a free Mac writing room. Your story. Your page.
+A page. A few words. Your next scene. FreeScript makes screenplay formatting easy while you write, with simple Enter and Tab controls, focus mode, and local autosave in a free Mac writing room. Your story. Your page.
 
 Download: https://github.com/taylordrew4u2/FreeScript
 
@@ -22,7 +22,7 @@ Download: https://github.com/taylordrew4u2/FreeScript
 
 ## Product video caption
 
-From an existing draft to an editable screenplay: paste, format, write, export, and import a PDF. This demo uses the working FreeScript Mac app and fictional sample writing. No private manuscripts are shown. PDF import requires selectable text.
+Write your screenplay, move between screenplay elements, focus on a scene, and export a draft. PDF import supports existing work. This demo uses the working FreeScript Mac app and fictional sample writing. No private manuscripts are shown. PDF import requires selectable text.
 
 ## Chat companion caption
 
@@ -30,9 +30,9 @@ Already developing a scene in ChatGPT or Claude? Add the FreeScript companion to
 
 ## 4u Digital portfolio summary
 
-FreeScript is a selected personal project: a free Mac screenwriting app with a typewriter-inspired identity, automatic formatting for pasted drafts, editable text-based PDF import, local autosave, and screenplay export. A separate MCP companion connects the workflow to ChatGPT and Claude.
+FreeScript is a selected personal project: a free Mac screenwriting app with a typewriter-inspired identity, easy screenplay formatting while writing, local autosave, focus mode, and screenplay export. Paste and editable text-based PDF import support existing drafts. A separate MCP companion connects the workflow to ChatGPT and Claude.
 
-The project demonstrates desktop interface design, document conversion, application signing and packaging, and AI-tool integration. The brand system includes an adaptable logo family, real product captures, editorial campaign artwork, social formats, and captioned workflow videos. These are product capabilities and deliverables, not measured client outcomes.
+The project demonstrates desktop interface design, screenplay editing, document import and export, application signing and packaging, and AI-tool integration. The brand system includes an adaptable logo family, real product captures, editorial campaign artwork, social formats, and captioned workflow videos. These are product capabilities and deliverables, not measured client outcomes.
 
 ## Press boilerplate
 
