@@ -3489,6 +3489,7 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 .simple-descriptor { margin-top: 1.75rem; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.5; }
 .simple-intro { max-width: 35rem; margin-top: .65rem; color: var(--muted); font-size: 1rem; line-height: 1.7; }
 .simple-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.75rem; margin-top: 2rem; }
+.minimal-home .text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .simple-note { max-width: 37rem; font-size: .75rem; line-height: 1.65; color: var(--muted); margin-top: 1rem; }
 .minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 3.5rem; border-top: 1px solid var(--line); margin-block: 0; }
 .simple-section-heading { margin-bottom: 1.75rem; }
