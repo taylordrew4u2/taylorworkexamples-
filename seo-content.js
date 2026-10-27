@@ -230,7 +230,7 @@ export const services = [
         text: "We agree review criteria tied to the task, suitable sample records, and how issues are reported. Existing data needs a migration or import plan when relevant. Maintenance, access to external services, and later changes also belong in the discussion about scope and price.",
       },
     ],
-    projectIds: ["usbmic", "nycstandupopenmicmaster", "the-trip-handler", "Showrunner-ICanRunAShow"],
+    projectIds: ["FreeScript", "usbmic", "nycstandupopenmicmaster", "the-trip-handler", "Showrunner-ICanRunAShow"],
     proofIntro: "SobStage demonstrates desktop recording tools; its gallery identifies virtual-microphone captures and pending physical microphone validation. NYC Open Mic Master List shows scheduled data collection, review before publishing, and scoped host access. The Trip Handler demonstrates shared records and approvals, while I Can Run A Show connects agreements, scheduling, and live controls.",
     faq: [
       {
@@ -438,6 +438,7 @@ export const guide = {
 };
 
 export const projectSlugs = {
+  FreeScript: "freescript",
   "BriefBooth.com": "briefbooth",
   "Showrunner-ICanRunAShow": "i-can-run-a-show",
   "The-Bit-Binder": "bitbinder",

@@ -9,6 +9,10 @@ const root = path.resolve(
 );
 const port = Number(process.env.PORT || 5173);
 const types = {
+  ".mp4": "video/mp4",
+  ".vtt": "text/vtt; charset=utf-8",
+  ".zip": "application/zip",
+  ".md": "text/plain; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",

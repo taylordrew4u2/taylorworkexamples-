@@ -49,6 +49,8 @@ await writeFile(path.join(output, "contact-pages.js"), `export const contactPage
 const assets = new Set(projects.flatMap((project) => [
   project.image,
   project.icon,
+  ...(project.promotion?.videos || []).flatMap(video => [video.src, video.poster, video.captions]),
+  ...(project.promotion?.downloads || []).map(file => file.src),
   ...project.gallery.flatMap((frame) => [frame.image, frame.companion?.image]),
 ]).filter(Boolean));
 const fontManifest = JSON.parse(await readFile(path.join(root, "assets/fonts/manifest.json"), "utf8"));

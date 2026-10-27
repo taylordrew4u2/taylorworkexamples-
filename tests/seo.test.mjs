@@ -81,10 +81,10 @@ before(async () => {
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 11);
+  assert.equal(projects.length, 12);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 50);
+  assert.equal(routes.length, 51);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -522,7 +522,7 @@ test("salon and restaurant services explain the business workflow and connect to
   assert.equal(sitemapDates.get("/"), "2026-10-26");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-26");
   for (const route of routes) {
-    assert.equal(sitemapDates.get(route), "2026-10-26", `${route}: the shared navigation changed every generated public page`);
+    assert.equal(sitemapDates.get(route), ["/work/", "/work/freescript/", "/services/custom-software-development/"].includes(route) ? "2026-10-27" : "2026-10-26", `${route}: sitemap dates reflect the pages changed by the FreeScript addition`);
   }
 });
 
@@ -668,7 +668,7 @@ test("project stories explain the original workflows and preserve real developme
     assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, item]) => text(item)),
       projectClientUses[project.id].capabilities);
     const releaseStatus = html.match(/<p\b[^>]*class="project-release-status"[^>]*>([\s\S]*?)<\/p>/)?.[1];
-    assert.equal(text(releaseStatus || ""), project.demoLabel === "App Store" ? "On the App Store" :
+    assert.equal(text(releaseStatus || ""), project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" :
       project.id === "usbmic" ? "Release candidate" : "", `${project.title}: publication status matches its evidence`);
     if (project.id === "usbmic") {
       const releaseNote = html.match(/<p\b[^>]*class="project-release-note"[^>]*>([\s\S]*?)<\/p>/)?.[1];
@@ -938,7 +938,7 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the eleven selected projects", async () => {
+test("published pages, data, routes, and assets contain only the twelve selected projects", async () => {
   const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
   assert.equal(excludedProjects.length, 6, "Unselected projects still exist in the internal audited inventory");

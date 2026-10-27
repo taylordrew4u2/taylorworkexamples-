@@ -1,6 +1,15 @@
 // Capabilities reflect the selected personal projects. Business uses are
 // illustrative starting points for a new build, not client work or results.
 export const projectClientUses = {
+  FreeScript: {
+  "capabilities": [
+    "Editable document imports",
+    "Offline writing workspace",
+    "Portable document exports"
+  ],
+  "businessUse": "A creative studio could use a dedicated document workflow to turn existing text into structured, editable drafts. This is an illustrative comparable need, not delivered client work.",
+  "serviceSlug": "custom-software-development"
+},
   "BriefBooth.com": {
     capabilities: ["Booking requests", "Client questions", "Availability planning"],
     businessUse: "A service business could bring client questions, availability, and appointment requests into one place.",

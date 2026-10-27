@@ -1,5 +1,6 @@
 // Curated public portfolio. Repository inventory is evidence, not an automatic publishing list.
 export const portfolioProjectIds = [
+  "FreeScript",
   "Showrunner-ICanRunAShow",
   "The-Bit-Binder",
   "MyGigCalendar",

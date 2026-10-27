@@ -1,6 +1,14 @@
 // Client-facing explanations of the existing catalog workflows.
 // Each description matches the workflow heading at the same index in projects.js.
 export const projectStories = {
+  FreeScript: {
+  "audience": "Screenwriters, filmmakers and writers continuing an existing draft",
+  "workflowDescriptions": [
+    "Paste a script or import a PDF containing selectable text. Review the inferred scene and dialogue formatting.",
+    "Revise dialogue, navigate scenes and keep writing in the offline Mac editor with local autosave.",
+    "Export a PDF or Fountain draft, or use the separate ChatGPT/Claude companion and transfer files through import/export."
+  ]
+},
   "BriefBooth.com": {
     audience: "Independent consultants and service businesses",
     workflowDescriptions: [

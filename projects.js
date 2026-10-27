@@ -9,6 +9,69 @@ export const email = "admin@customtechbuilt4u.com";
 // experiment marks focused utilities and development projects for the tools filter.
 export const projects = [
   {
+  "id": "FreeScript",
+  "title": "FreeScript",
+  "category": "desktop",
+  "summary": "A free Mac screenplay editor that turns pasted drafts and text-based PDFs into editable scenes, with a separate ChatGPT and Claude companion.",
+  "stack": [
+    "Electron",
+    "JavaScript",
+    "Vite",
+    "PDF.js",
+    "MCP"
+  ],
+  "features": [
+    "Automatic screenplay formatting for pasted drafts",
+    "Offline text-based PDF extraction and editable imports",
+    "Local autosave, undo/redo, scene navigation and search",
+    "Fountain, JSON backup and formatted PDF export",
+    "Universal Mac DMG with Developer ID signing",
+    "Stateless screenplay tools for ChatGPT and Claude"
+  ],
+  "repoUrl": "https://github.com/taylordrew4u2/FreeScript",
+  "demoUrl": "https://github.com/taylordrew4u2/FreeScript/releases/tag/v1.0.3",
+  "demoLabel": "Mac download",
+  "portrait": false,
+  "tone": "dark",
+  "badge": "SIGNED MAC APP",
+  "experiment": false,
+  "sources": [
+    "https://github.com/taylordrew4u2/FreeScript",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/src/pdf-import.js",
+    "https://github.com/taylordrew4u2/FreeScript/blob/main/integrations/README.md"
+  ],
+  "clientSummary": "Turn an existing screenplay into an editable writing workspace.",
+  "demonstrates": [
+    "Desktop software development",
+    "Document import and export",
+    "Brand identity and product promotion",
+    "AI-tool integration"
+  ],
+  "projectType": "Mac screenwriting application",
+  "challenge": "Let writers continue an existing script without retyping it or manually rebuilding every screenplay element.",
+  "build": "An offline Mac editor with paste formatting, text-based PDF import and local autosave, packaged as a signed universal DMG. A separate MCP service exposes screenplay tools to ChatGPT and Claude.",
+  "highlights": [
+    {
+      "title": "Continue an existing draft",
+      "text": "Pasted screenplay text and selectable PDF text become editable screenplay elements.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/src/document.js"
+    },
+    {
+      "title": "Write on your Mac",
+      "text": "Scene navigation, local autosave and export support a dedicated offline writing workflow.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md"
+    },
+    {
+      "title": "A coherent product identity",
+      "text": "A typewriter logo family, paper-and-ink palette, real captures and captioned promotional videos connect the brand to the working product.",
+      "source": "https://github.com/taylordrew4u2/FreeScript/blob/main/README.md"
+    }
+  ],
+  "notes": "Selected personal project. Genuine app captures use fictional sample writing. Promotional compositions are labeled; the campaign photograph is AI-generated. The Mac app is Developer ID signed, not notarized. Scanned PDFs require OCR first; imported formatting should be reviewed. Runtime tested on Apple Silicon, with physical Intel testing pending. Chat tools use a separate stateless hosted service; no automatic Mac/chat sync is included."
+},
+  {
     id: "BriefBooth.com",
     title: "BriefBooth",
     category: "web",
