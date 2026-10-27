@@ -39,6 +39,11 @@ test("published apps and the development range are visible and usable without Ja
       await expect(item.locator(".project-icon-frame")).toHaveCSS("filter", "none");
     }
     await expect(proof.locator(".range-card")).toHaveCount(4);
+    const desktop = proof.locator(".range-card").filter({ hasText: "DESKTOP SOFTWARE" });
+    await expect(desktop.getByRole("link", { name: /^FreeScript/ })).toHaveAttribute("href", /work\/freescript\/$/);
+    await expect(desktop.getByRole("link", { name: /^SobStage/ })).toHaveAttribute("href", /work\/sobstage\/$/);
+    await expect(desktop).toContainText("signed Mac screenplay editor, not notarized");
+    await expect(desktop).toContainText("physical microphone validation pending");
     expect(await proof.evaluate(el => el.closest("main") !== null)).toBe(true);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     for (const link of await proof.locator("a").all()) {

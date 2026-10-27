@@ -1,6 +1,6 @@
 # App Store delivery evidence
 
-Verified against Apple's public United States App Store listings on **October 16, 2026**. These three portfolio products have current listings, so the homepage can identify them as published iPhone and iPad apps and link directly to their product pages.
+Verified against Apple's public United States App Store listings on **October 16, 2026**, and rechecked on **October 27, 2026**. These three portfolio products have current listings, so the homepage can identify them as published iPhone and iPad apps and link directly to their product pages.
 
 | Product | Official listing | Device scope verified from Apple |
 | --- | --- | --- |
@@ -19,3 +19,9 @@ Open Micer Timer's catalog entry previously omitted its live listing. It now lin
 - Public copy can explain App Store delivery, native app work, database-backed web applications, and desktop software through these products and their linked evidence. No years of experience, senior job title, commercial customer relationship, or performance result is inferred.
 
 This is a free verification and documentation update. No app was purchased, no Apple account was changed, and no paid analytics service was added.
+
+## October 27 evidence review
+
+The Projects page's optional development-range disclosure now links to both FreeScript and SobStage. FreeScript is a signed Mac screenplay editor, not notarized; SobStage remains desktop audio engineering with physical microphone validation pending. The complete project pages retain their release, capture, and testing context. No senior title, years of experience, client outcome, or additional Mac App Store publication is inferred.
+
+BitBinder's final merged image note already correctly distinguishes October 8 development captures from supplied artwork. The older base record is overridden by `visuals.js`; it is not the public technical disclosure. This review did not rewrite accurate public gallery labels or alter any original image.

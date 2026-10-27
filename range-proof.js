@@ -16,8 +16,8 @@ const capabilityCards = [
     description: "Show what you offer, update your content, and give customers a way to get in touch. Explore websites with tools for the people running them.",
     projects: ["micro-short-website", "PinsAndNeedlesComedyWebsite"] },
   { label: "DESKTOP SOFTWARE", title: "Software for the way you work.",
-    description: "Explore desktop audio software with multitrack recording, input routing, and recovery workflows. See its current development status and engineering details.",
-    projects: ["usbmic"] },
+    description: "FreeScript: a signed Mac screenplay editor, not notarized. SobStage: desktop audio engineering, with physical microphone validation pending.",
+    projects: ["FreeScript", "usbmic"] },
 ];
 
 export function renderRangeProof() {

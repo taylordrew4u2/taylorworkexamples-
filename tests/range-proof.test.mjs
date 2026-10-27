@@ -13,9 +13,11 @@ test("the range proof identifies three real App Store products and distinct engi
     assert.ok(html.includes(app.icon));
     assert.ok(html.includes(app.caseUrl));
   }
-  for (const route of ["trip-handler", "bill-spilt", "micro-short-film-website", "pins-and-needles-comedy", "sobstage"]) {
+  for (const route of ["trip-handler", "bill-spilt", "micro-short-film-website", "pins-and-needles-comedy", "freescript", "sobstage"]) {
     assert.ok(html.includes(`./work/${route}/`));
   }
+  assert.match(html, /FreeScript: a signed Mac screenplay editor, not notarized/);
+  assert.match(html, /SobStage: desktop audio engineering, with physical microphone validation pending/);
   assert.ok(html.includes("3 PUBLISHED iOS APPS"));
   assert.doesNotMatch(html, /DicType|TLC Massage Wellness|RoleCall|BleepKit|VlogNudge|dictype|tlc-massage-wellness/i);
   assert.doesNotMatch(html, /\bsenior\b|years of experience|client results|\bdownloads\b/i);
