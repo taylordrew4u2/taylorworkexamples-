@@ -7,7 +7,7 @@ import { launchOffer, launchOfferPaymentTerms, launchOfferContentChangeTerms } f
 test("pricing distinguishes the limited website offers, focused starting scopes, and additional hourly work", () => {
   assert.equal(pricing.path, "/pricing/");
   assert.equal(pricing.currency, "USD");
-  assert.deepEqual(pricing.entries.map(({ amount }) => amount), [190, 475, 575, 950, 575, 9.5]);
+  assert.deepEqual(pricing.entries.map(({ amount }) => amount), [1500, 3000, 4500, 6000, 4500, 75]);
   assert.deepEqual(pricing.entries.map(({ kind }) => kind), ["nyc-offer", "nyc-offer", "starting-budget", "starting-budget", "starting-budget", "hourly"]);
   assert.match(pricing.entries.find(({ id }) => id === "web-app").summary, /one core user workflow/i);
   const apple = pricing.entries.find(({ id }) => id === "apple-app");
@@ -33,6 +33,6 @@ test("pricing preserves the original NYC offer and shared refund, change, owners
   assert.match(pricing.care.changes.text, /reasonable changes are included/i);
   assert.match(pricing.care.support.text, /50% discount on the agreed standard rate/i);
   assert.match(pricing.care.handover.text, /custom code is 100% yours/i);
-  assert.match(pricing.hourlySupportExample, /^If an optional six-month support agreement uses the \$9\.50 standard hourly rate/);
-  assert.match(pricing.hourlySupportExample, /\$4\.75\/hour/);
+  assert.match(pricing.hourlySupportExample, /^If an optional six-month support agreement uses the \$75 standard hourly rate/);
+  assert.match(pricing.hourlySupportExample, /\$37\.50\/hour/);
 });

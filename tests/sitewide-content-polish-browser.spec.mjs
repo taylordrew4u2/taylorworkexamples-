@@ -35,8 +35,8 @@ test("the service directory helps phone visitors choose a need before presenting
       await expectTapTarget(choice.getByRole("link"), width);
     }
     const promotion = page.locator("#services-website-offer");
-    await expect(promotion).toContainText("$190");
-    await expect(promotion).toContainText("$475");
+    await expect(promotion).toContainText("$1,500");
+    await expect(promotion).toContainText("$3,000");
     await expect(promotion).toContainText(/New York City|NYC/i);
     expect(await promotion.evaluate((element) => Boolean(
       document.querySelector("#service-choices").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,

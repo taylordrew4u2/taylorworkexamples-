@@ -84,18 +84,18 @@ before(async () => {
 
 test("revised prices stay consistent across all public pages and structured offers", () => {
   for (const [route, html] of documents) {
-    assert.doesNotMatch(html, /\$(?:1,200|1,900|3,750|4,750|70(?:\D|$)|35\/hour)/, `${route}: no superseded development prices`);
+    assert.doesNotMatch(html, /\$(?:1,200|1,900|3,750|4,750|190\b|475\b|575\b|950\b|9\.50\b|4\.75\b|70(?:\D|$)|35\/hour)/, `${route}: no superseded development prices`);
   }
   const offer = documents.get("/offer/");
-  assert.match(text(offer), /A website you own, for \$190\./);
-  assert.match(text(offer), /WEBSITE \+ BOOKING OR ORDERING \$475/);
+  assert.match(text(offer), /A website you own, for \$1,500\./);
+  assert.match(text(offer), /WEBSITE \+ BOOKING OR ORDERING \$3,000/);
   const structuredOffer = schemaNodes(offer).find(node => hasType(node, "Service"))?.offers;
   assert.ok(structuredOffer, "the website has a structured offer");
-  assert.equal(Number(structuredOffer.price), 190);
+  assert.equal(Number(structuredOffer.price), 1500);
   assert.equal(structuredOffer.priceCurrency, "USD");
   const visiblePricing = text(documents.get("/pricing/"));
-  assert.match(visiblePricing, /Additional work \$9\.50\s*\/hour/);
-  assert.match(visiblePricing, /additional changes \$4\.75\/hour/);
+  assert.match(visiblePricing, /Additional work \$75\s*\/hour/);
+  assert.match(visiblePricing, /additional changes \$37\.50\/hour/);
   assert.doesNotMatch(visiblePricing, /Additional work \$10\s*\/hour/);
 });
 

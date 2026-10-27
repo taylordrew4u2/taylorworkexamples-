@@ -1,5 +1,7 @@
 # Competitive pricing update — October 27, 2026
 
+**Superseded:** The owner rejected overseas budget comparisons and requested actual NYC independent freelancer benchmarks later on October 27. This is a historical record only. Current decisions are in [NYC freelancer pricing](./nyc-freelancer-pricing-2026-10-27.md); do not use these former prices.
+
 The owner explicitly requested all prices slightly below the lowest prices found. This supersedes the earlier $1,200/$1,900 website and $3,750/$4,750 application prices. Research used free public search and primary provider pages. No quotes were requested, accounts created, paid tools used, or client messages sent.
 
 ## Decision and evidence

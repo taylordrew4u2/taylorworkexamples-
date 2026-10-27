@@ -35,7 +35,7 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(page.getByRole("heading", { level: 1 })).toHaveText(pricing.heading);
         await expect(page.locator(".pricing-card")).toHaveCount(6);
         await expect(page.locator(".pricing-amount").first()).toBeInViewport({ ratio: 1 });
-        const amounts = [/^\$190$/, /^\$475$/, /^From\s+\$575$/, /^From\s+\$950$/, /^From\s+\$575$/, /^\$9\.50\s*\/hour$/];
+        const amounts = [/^\$1,500$/, /^\$3,000$/, /^From\s+\$4,500$/, /^From\s+\$6,000$/, /^From\s+\$4,500$/, /^\$75\s*\/hour$/];
         for (const [index, entry] of pricing.entries.entries()) {
           const card = page.locator(`[data-pricing-id="${entry.id}"]`);
           await expect(card.locator("h2")).toHaveText(entry.title);

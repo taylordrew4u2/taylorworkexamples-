@@ -7,20 +7,20 @@ export const launchOfferContentChangeTerms = "This website offer also includes t
 export const launchOffer = {
   title: "Website offer for New York City businesses",
   metaTitle: "Website Offer for New York City Businesses | 4u Digital",
-  description: "A custom website for $190, or $475 with booking or ordering built in, for the first ten eligible New York City business projects agreed by November 30, 2026. Subject to scope and capacity; the code is yours.",
+  description: "A custom website for $1,500, or $3,000 with booking or ordering built in, for the first ten eligible New York City business projects agreed by November 30, 2026. Subject to scope and capacity; the code is yours.",
   eyebrow: "THROUGH NOVEMBER 30 · FIRST TEN NEW YORK CITY BUSINESSES",
-  heading: "A website you own, for $190.",
-  intro: "A custom website for $190, or $475 with booking or ordering built in. Available for the first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity. Start with a consultation to discuss whether it fits your business.",
+  heading: "A website you own, for $1,500.",
+  intro: "A custom website for $1,500, or $3,000 with booking or ordering built in. Available for the first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity. Start with a consultation to discuss whether it fits your business.",
   modified: "2026-10-27",
-  price: "190",
+  price: "1500",
   validUntil: "2026-11-30",
   sections: [
     {
-      heading: "What the $190 site includes.",
+      heading: "What the $1,500 site includes.",
       text: `Up to five pages, built in code and laid out for phones first: what you do, your services or menu, hours, address, examples of your work, and a contact or request form that lands in your inbox. The domain and hosting are set up in your name. ${launchOfferContentChangeTerms}`,
     },
     {
-      heading: "What $475 adds.",
+      heading: "What $3,000 adds.",
       text: "Booking or ordering built into the same site. For a salon or studio, that is choosing a service and requesting a time, with a staff view to accept it. For a restaurant, that is a pickup menu with options and a staff order queue. For a school or program, that is enrollment, tour booking, or a waitlist. A first version covers one complete task; delivery, loyalty, or a native app can come later.",
     },
     {
