@@ -79,15 +79,15 @@ for (const javaScriptEnabled of [true, false]) {
       const offer = page.locator("main .service-website-offer");
       const link = await linkTo(offer, page, "/offer/");
       await expect(link).toBeVisible();
-      await expect(offer).toContainText("$1,200");
-      await expect(offer).toContainText("$1,900");
+      await expect(offer).toContainText("$190");
+      await expect(offer).toContainText("$475");
       expect(await offer.evaluate((element) => Boolean(
         document.querySelector("#service-choices").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
       )), "Clients can choose a business need before seeing the website-specific promotion").toBe(true);
       await link.focus();
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(/\/offer\/$/);
-      await expect(page.locator("main")).toContainText("$1,200");
+      await expect(page.locator("main")).toContainText("$190");
       await expectDirectBooking(page.locator(".page-intro [data-booking-link]"));
     });
 

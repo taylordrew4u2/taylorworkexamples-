@@ -16,8 +16,8 @@ for (const javaScriptEnabled of [true, false]) {
         const packages = page.locator(".offer-packages");
         const terms = page.locator("#offer-terms");
         await expect(packages.locator(".offer-package-grid > article")).toHaveCount(2);
-        await expect(packages).toContainText("$1,200");
-        await expect(packages).toContainText("$1,900");
+        await expect(packages).toContainText("$190");
+        await expect(packages).toContainText("$475");
         await expect(packages).toContainText("Three months of content changes after launch.");
         await expect(packages).toContainText(/first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity/i);
         await expect(packages).toContainText(/30-day money-back guarantee after the completed product launches/i);

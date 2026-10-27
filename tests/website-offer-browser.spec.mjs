@@ -71,7 +71,7 @@ for (const javaScriptEnabled of [true, false]) {
       await page.goto("/");
       const offer = page.locator("#website-offer a");
       await expect(offer).toBeVisible();
-      await expect(offer).toContainText("$1,200");
+      await expect(offer).toContainText("$190");
       await expect(page.locator("#website-offer form, #website-offer iframe")).toHaveCount(0);
       await followOfferLink(page, offer);
       await expectClientCare(page);
@@ -82,8 +82,8 @@ for (const javaScriptEnabled of [true, false]) {
     test("the offer shows genuine work and attributed feedback and hands booking to BriefBooth", async ({ page }) => {
       await page.goto("/offer/");
       const main = page.locator("main");
-      await expect(main).toContainText("$1,200");
-      await expect(main).toContainText("$1,900");
+      await expect(main).toContainText("$190");
+      await expect(main).toContainText("$475");
       await expect(main).toContainText(/(?:three|3) months of content changes after launch/i);
       await expect(main).toContainText(/first design review.*before any code is written.*deposit comes back/i);
       await expect(main.locator("form, iframe, input[type='date'], input[type='time'], input[type='datetime-local']")).toHaveCount(0);

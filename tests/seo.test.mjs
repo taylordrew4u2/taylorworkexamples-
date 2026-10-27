@@ -82,6 +82,23 @@ before(async () => {
   }
 });
 
+test("revised prices stay consistent across all public pages and structured offers", () => {
+  for (const [route, html] of documents) {
+    assert.doesNotMatch(html, /\$(?:1,200|1,900|3,750|4,750|70(?:\D|$)|35\/hour)/, `${route}: no superseded development prices`);
+  }
+  const offer = documents.get("/offer/");
+  assert.match(text(offer), /A website you own, for \$190\./);
+  assert.match(text(offer), /WEBSITE \+ BOOKING OR ORDERING \$475/);
+  const structuredOffer = schemaNodes(offer).find(node => hasType(node, "Service"))?.offers;
+  assert.ok(structuredOffer, "the website has a structured offer");
+  assert.equal(Number(structuredOffer.price), 190);
+  assert.equal(structuredOffer.priceCurrency, "USD");
+  const visiblePricing = text(documents.get("/pricing/"));
+  assert.match(visiblePricing, /Additional work \$9\.50\s*\/hour/);
+  assert.match(visiblePricing, /additional changes \$4\.75\/hour/);
+  assert.doesNotMatch(visiblePricing, /Additional work \$10\s*\/hour/);
+});
+
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
   assert.equal(projects.length, 12);
   assert.equal(articles.length, 19);
@@ -128,7 +145,7 @@ test("pricing publishes the six scoped budgets, original commitments, and one co
     const card = cards.find(([, id]) => id === entry.id);
     assert.ok(card, `${entry.title}: a server-rendered pricing card is present`);
     const content = text(card[2]);
-    const amount = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(entry.amount);
+    const amount = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: Number.isInteger(entry.amount) ? 0 : 2, maximumFractionDigits: 2 }).format(entry.amount);
     for (const value of [entry.title, entry.summary, amount, ...entry.includes]) assert.ok(content.includes(value), `${entry.title}: ${value}`);
     assert.equal(content.includes("From "), entry.kind === "starting-budget");
     assert.equal(content.includes("Limited NYC website offer"), entry.kind === "nyc-offer");
@@ -267,7 +284,8 @@ test("structured data points to the canonical business and matches visible servi
     if (!value || typeof value !== "object") return;
     assert.ok(!hasType(value, "Person"), `${route}: independent business identity`);
     for (const [key, child] of Object.entries(value)) {
-      assert.ok(!forbidden.has(key), `${route}: no unsupported ${key}`);
+      const approvedOfferPrice = route === "/offer/" && hasType(value, "Offer") && ["price", "priceCurrency"].includes(key);
+      assert.ok(!forbidden.has(key) || approvedOfferPrice, `${route}: no unsupported ${key}`);
       if (typeof child === "object") inspect(child, route);
     }
   };
@@ -428,7 +446,8 @@ test("business guides and consultation details are discoverable, truthful, and r
   assert.deepEqual(service.areaServed, { "@type": "City", name: "New York City" });
   for (const route of routes.filter((route) => route !== localRoute)) {
     for (const schema of schemaNodes(documents.get(route)).filter((node) => hasType(node, "Service"))) {
-      assert.equal(schema.areaServed, undefined, `${route}: no invented local service claim`);
+      if (route === "/offer/") assert.deepEqual(schema.areaServed, { "@type": "City", name: "New York City" });
+      else assert.equal(schema.areaServed, undefined, `${route}: no invented local service claim`);
     }
   }
   for (const slug of localConsultation.serviceSlugs) assert.ok(linksTo(local, localRoute, `/services/${slug}/`));
