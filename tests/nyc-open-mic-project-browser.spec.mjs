@@ -5,22 +5,29 @@ import { bookingURL } from "../booking.js";
 const project = projects.find((entry) => entry.id === "nycstandupopenmicmaster");
 const route = "/work/nyc-open-mic-master-list/";
 
-async function expectOriginalAppearance(image, frame, { allowLetterbox = false } = {}) {
+async function expectOriginalAppearance(image, frame, { allowLetterbox = frame.portrait === true } = {}) {
   await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-  expect(new URL(await image.getAttribute("src"), image.page().url()).pathname)
-    .toBe(frame.image.slice(1));
-  await expect(image).toHaveAttribute("width", String(frame.width));
-  await expect(image).toHaveAttribute("height", String(frame.height));
-  await expect(image).toHaveCSS("filter", "none");
-  await expect(image).toHaveCSS("mix-blend-mode", "normal");
-  await expect(image).toHaveCSS("object-fit", "contain");
   const dimensions = await image.evaluate((element) => {
     const box = element.getBoundingClientRect();
-    return { left: box.left, right: box.right, width: box.width, height: box.height, viewport: innerWidth };
+    const style = getComputedStyle(element);
+    return { left: box.left, right: box.right, width: box.width, height: box.height, viewport: innerWidth,
+      src: element.getAttribute("src"), widthAttribute: element.getAttribute("width"), heightAttribute: element.getAttribute("height"),
+      filter: style.filter, mixBlendMode: style.mixBlendMode, objectFit: style.objectFit,
+      naturalWidth: element.naturalWidth, naturalHeight: element.naturalHeight };
   });
+  expect(new URL(dimensions.src, image.page().url()).pathname).toBe(frame.image.slice(1));
+  expect(dimensions.widthAttribute).toBe(String(frame.width));
+  expect(dimensions.heightAttribute).toBe(String(frame.height));
+  expect(dimensions.filter).toBe("none");
+  expect(dimensions.mixBlendMode).toBe("normal");
+  expect(dimensions.objectFit).toBe("contain");
   expect(dimensions.left).toBeGreaterThanOrEqual(-1);
   expect(dimensions.right).toBeLessThanOrEqual(dimensions.viewport + 1);
+  expect(Math.abs(dimensions.naturalWidth / dimensions.naturalHeight - frame.width / frame.height),
+    "Delivered artwork preserves the original image proportions").toBeLessThan(.01);
+  // Portraits reserve a full-width box before loading; contain keeps the image
+  // proportional inside that box when its maximum display height is reached.
   if (!allowLetterbox) {
     expect(Math.abs(dimensions.height - dimensions.width * frame.height / frame.width),
       "Supplied artwork and app captures retain their own complete proportions").toBeLessThanOrEqual(2);
