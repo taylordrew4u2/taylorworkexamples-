@@ -18,6 +18,14 @@ for (const javaScriptEnabled of [true, false]) {
     for (const width of [320, 390, 1440]) {
       test(`the six prices, full commitments, and native booking path work at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: width <= 390 ? 844 : 1000 });
+        await page.goto("/");
+        const costs = page.locator("details").filter({ has: page.getByText("How much will my project cost?", { exact: true }) });
+        await costs.locator("summary").focus();
+        await page.keyboard.press("Enter");
+        const costPricing = costs.getByRole("link", { name: "See project starting prices", exact: true });
+        await costPricing.focus();
+        await page.keyboard.press("Enter");
+        await expect(page).toHaveURL(/\/pricing\/$/);
         await page.goto("/services/");
         const servicePricing = page.locator('.service-pricing-link a[href$="pricing/"]');
         await expectTapTarget(servicePricing, width);

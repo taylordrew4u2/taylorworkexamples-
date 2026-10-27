@@ -4,9 +4,9 @@ import { launchOffer, launchOfferPaymentTerms, launchOfferContentChangeTerms } f
 export const pricing = {
   path: "/pricing/",
   title: "Website, App & Custom Software Pricing | 4u Digital",
-  description: "Explore 4u Digital starting budgets for custom websites, focused web apps, Apple apps, business software, and separately agreed hourly work. Scope and total price are agreed before building.",
+  description: "See prices for custom websites, web apps, Apple apps, and business software from 4u Digital. Agree the full scope and price before building.",
   heading: "Project pricing.",
-  intro: "Starting budgets for a focused website, app, or business tool.",
+  intro: "Website offers and starting budgets for apps and business tools.",
   modified: "2026-10-27",
   currency: "USD",
   entries: [
@@ -41,7 +41,7 @@ export const pricing = {
       includes: ["The work and hourly arrangement agreed in writing", "Included guarantee changes remain included", "Existing contracted support commitments still apply"],
     },
   ],
-  budgetNote: "All figures are in USD. These are budgets for defined starting scopes, not blanket flat fees for an unlimited build. Your written quote confirms the included work, total price, and timeline.",
+  budgetNote: "All figures are in USD. The NYC website offers cover the eligible scope below. App and software figures are starting budgets; additional hourly work must be agreed separately. Your written quote confirms the included work, total price, and timeline.",
   runningCosts: "There is no required maintenance subscription. Any third-party costs—such as domain renewals, hosting, app-store accounts, payment processing, or other services—are discussed and agreed before the build.",
   websiteOffer: {
     compactEligibility: "NYC offers: first 10 eligible projects agreed by November 30, 2026. Subject to scope and capacity.",

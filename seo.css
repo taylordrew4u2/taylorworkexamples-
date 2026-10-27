@@ -575,7 +575,7 @@ html:has(body.project-detail-page) { scroll-behavior: auto; }
   .pricing-grid { grid-template-columns: minmax(0, 1fr); }
   .pricing-card { padding: 1.25rem; }
 }
-.service-pricing-link { margin: 0 0 1.5rem; }
+.service-pricing-link { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin: 0 0 1.5rem; }
 .service-pricing-link > a { display: inline-flex; align-items: center; min-height: 44px; font-size: .9375rem; }
 .service-index-page .service-choice { padding: 0; overflow: hidden; }
 .service-choice-link { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .75rem 1rem; width: 100%; min-height: 44px; padding: 1.5rem; color: var(--ink); }

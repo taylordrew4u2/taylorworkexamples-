@@ -209,11 +209,33 @@ test("website social profiles accept handles or URLs, remain optional, and disap
   assert.equal(maxBriefLength, 60000);
 });
 
-test('website audiences and performer needs reach the email, but disappear for app-only projects', () => {
-  const input = {...minimum,websiteFor:['comedian','business'],websitePurpose:['shows','watch','hire'],websitePages:['shows','clips','press']};
-  const summary = formatBriefText(input);
-  assert.ok(summary.includes('A comedian') && summary.includes('Show dates and ticket links'));
-  assert.equal(normalizeBrief({...input,projectType:'app'}).websiteFor,undefined);
+test("website choices put general business needs before performer-specific choices without removing options", () => {
+  const expected = {
+    websiteFor: ["business", "organization", "personal", "event", "comedian", "actor", "musician", "creator", "other", "not_sure", "no_preference"],
+    websitePurpose: ["learn", "contact", "book", "buy", "visit", "explore", "shows", "watch", "hire", "press", "not_sure", "no_preference"],
+    websitePages: ["home", "about", "services", "products", "gallery", "menu", "contact", "faq", "articles", "shows", "clips", "press", "other", "not_sure", "no_preference"],
+  };
+  for (const [id, values] of Object.entries(expected)) {
+    const field = briefFields.find((entry) => entry.id === id);
+    assert.deepEqual(field.options.map((option) => option.value), values);
+    assert.equal(Boolean(field.required), false);
+  }
+});
+
+test("saved performer choices still validate and retain their labels in the emailed summary", () => {
+  const selections = {
+    websiteFor: [["comedian", "A comedian"], ["actor", "An actor or performer"], ["musician", "A musician or band"], ["creator", "A creator or entertainer"]],
+    websitePurpose: [["shows", "Find upcoming shows and get tickets"], ["watch", "Watch clips, a reel, or listen to my work"], ["hire", "Book me for a show or project"], ["press", "Find my bio, credits, or press kit"]],
+    websitePages: [["shows", "Show dates and ticket links"], ["clips", "Comedy clips, videos, or a reel"], ["press", "Press kit, bio, and credits"]],
+  };
+  const input = { ...minimum, ...Object.fromEntries(Object.entries(selections).map(([id, options]) => [id, options.map(([value]) => value)])) };
+  const answers = normalizeBrief(input);
+  const summary = formatBriefText(answers);
+  for (const [id, options] of Object.entries(selections)) {
+    assert.deepEqual(answers[id], options.map(([value]) => value));
+    for (const [, label] of options) assert.ok(summary.includes(label));
+    assert.equal(normalizeBrief({ ...input, projectType: "app" })[id], undefined);
+  }
 });
 test('no preference is allowed on optional answers including URLs, without relaxing contact identity', () => {
   const input={...minimum,businessWebsite:'No preference — help me decide',websiteFor:['no_preference'],colors:'No preference — help me decide'};

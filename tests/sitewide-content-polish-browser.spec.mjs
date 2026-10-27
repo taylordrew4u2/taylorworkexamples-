@@ -25,6 +25,9 @@ test("the service directory helps phone visitors choose a need before presenting
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/services/");
+    for (const brand of await page.locator('.site-header .wordmark, .page-footer .brand-signature').all()) {
+      await expectTapTarget(brand, width);
+    }
     const choices = page.locator("#service-choices");
     await expect(choices.locator("[data-service-choice]")).toHaveCount(4);
     for (const choice of await choices.locator("[data-service-choice]").all()) {
@@ -39,6 +42,11 @@ test("the service directory helps phone visitors choose a need before presenting
       document.querySelector("#service-choices").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
     )), "The four general business needs come before the website-specific promotion").toBe(true);
     const offer = promotion.locator('a[href$="offer/"]');
+    const comparison = page.locator('.service-pricing-link a[href$="guides/website-or-app/"]');
+    await expectTapTarget(comparison, width);
+    expect(await comparison.evaluate((element) => Boolean(
+      element.compareDocumentPosition(document.querySelector("#services-website-offer")) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )), "Comparison help appears beside service choices, before the offer").toBe(true);
     await expectTapTarget(offer, width);
     await offer.focus();
     await page.keyboard.press("Enter");
@@ -86,6 +94,8 @@ test("all six service openings lead to booking or examples and keep longer plann
           await expect(detail.locator("article")).toHaveCount(3);
           await detail.locator(":scope > summary").press("Enter");
         }
+        const pricing = page.locator('.service-planning a[href$="pricing/"]');
+        await expectTapTarget(pricing, width);
         const closing = page.locator("main .service-closing");
         await expect(closing.locator("a")).toHaveCount(1);
         await expectBooking(closing.locator("[data-booking-link]"));
