@@ -21,12 +21,27 @@ async function expectPageFits(page) {
     "The offer is readable without horizontal page scrolling").toBe(true);
 }
 
-async function expectClientCare(page) {
+async function expectClientCare(page, { minimal = false } = {}) {
   const care = page.locator("#client-care");
-  await expect(care.getByRole("heading", { level: 2 })).toHaveText(clientCare.heading);
-  await expect(care.locator(".client-care-intro")).toHaveText(clientCare.intro);
-  await expect(care.locator(".client-care-intro")).toContainText(/(?:every|all) projects?/i);
-  await expect(care.locator(".client-care-grid > .client-care-card")).toHaveCount(clientCare.sections.length);
+  if (minimal) {
+    await expect(care.getByRole("heading", { level: 2 })).toHaveText("Your product. Your code.");
+    await expect(care.locator(":scope > p")).toContainText(/custom code is 100% yours/i);
+    await expect(care.locator(":scope > p")).toContainText(/every project.*30-day money-back guarantee.*completed product launches/i);
+    const guarantee = care.locator(":scope > a");
+    await expect(guarantee).toBeVisible();
+    expect(new URL(await guarantee.getAttribute("href"), page.url()).pathname).toBe("/guarantee/");
+    const commitments = care.locator(":scope > details");
+    await expect(commitments).not.toHaveAttribute("open");
+    await commitments.locator(":scope > summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(commitments).toHaveAttribute("open", "");
+  } else {
+    await expect(care.getByRole("heading", { level: 2 })).toHaveText(clientCare.heading);
+    await expect(care.locator(".client-care-intro")).toHaveText(clientCare.intro);
+    await expect(care.locator(".client-care-intro")).toContainText(/(?:every|all) projects?/i);
+    await expect(care.locator(".client-care-grid > .client-care-card")).toHaveCount(clientCare.sections.length);
+  }
+  await expect(care.locator("[data-client-care]")).toHaveCount(clientCare.sections.length);
   for (const section of clientCare.sections) {
     const card = care.locator(`[data-client-care="${section.id}"]`);
     await expect(card.getByRole("heading", { level: 3 })).toHaveText(section.title);
@@ -43,7 +58,8 @@ async function expectClientCare(page) {
   await expect(support).toContainText(/agreed standard rate/i);
   await expect(support).not.toContainText(/\bfree\s+(?:debugging|support)\b/i);
   await expect(care.locator('[data-client-care="contract"]')).toContainText(/tailored.*specific needs/i);
-  const email = new URL(await care.locator('a[href^="mailto:"]').getAttribute("href"));
+  const emailLink = minimal ? page.locator('footer a[href^="mailto:"]') : care.locator('a[href^="mailto:"]');
+  const email = new URL(await emailLink.getAttribute("href"));
   expect(email.pathname).toBe("admin@customtechbuilt4u.com");
 }
 
@@ -143,7 +159,7 @@ for (const javaScriptEnabled of [true, false]) {
       expect(services).toHaveLength(6);
       for (const service of services) {
         await page.goto(`/services/${service.slug}/`);
-        await expectClientCare(page);
+        await expectClientCare(page, { minimal: true });
         await expect(page.locator("#client-care")).toContainText(clientCare.contract.text);
         await expectPageFits(page);
       }

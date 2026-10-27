@@ -99,7 +99,7 @@ for (const javaScriptEnabled of [true, false]) {
       }));
       for (const pathname of ["/services/", "/guides/website-or-app/", "/work/", "/about/"]) {
         await page.goto(pathname);
-        const closing = page.locator("main .page-callout").last();
+        const closing = pathname === "/work/" ? page.locator("main .work-hiring") : page.locator("main .page-callout").last();
         const booking = closing.locator("[data-booking-link]");
         await expectDirectBooking(booking);
         await expect(closing.locator("a").first()).toHaveAttribute("data-booking-link", "");

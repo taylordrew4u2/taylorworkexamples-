@@ -87,7 +87,7 @@ for (const javaScriptEnabled of [true, false]) {
           await expectHorizontalFitAndTapSize(live, width);
         }
         await expect(page.locator('.seo-project-card[data-project-id="usbmic"] .work-project-status'))
-          .toHaveText("Release candidate");
+          .toHaveText("Release candidate · Physical microphone validation pending");
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       }
 

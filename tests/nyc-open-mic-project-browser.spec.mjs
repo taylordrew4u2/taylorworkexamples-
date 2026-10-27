@@ -40,12 +40,14 @@ test("the dedicated portfolio opens NYC directory artwork and genuine README app
   await expect(card.getByRole("heading", { level: 3 })).toHaveText(project.title);
   await expect(card.locator(".work-project-header .seo-project-heading h3")).toHaveText(project.title);
   await expect(card.locator(".work-index-image-label")).toHaveText(project.imageLabel);
-  await expect(card.locator(".work-project-business-use")).toContainText("A similar business need");
+  await expect(card.locator(".work-project-business-use")).toHaveCount(0);
+  await expect(card.locator(".work-project-capabilities li")).toHaveCount(3);
   await expectOriginalAppearance(card.locator(".seo-project-cover img"), project.gallery[0], { allowLetterbox: true });
   const caseLink = card.getByRole("link", { name: `See how it works: ${project.title}`, exact: true });
   await expect(caseLink).toHaveText(/See how it works/);
   await caseLink.click();
   await expect(page).toHaveURL(new RegExp(`${route}$`));
+  await expect(page.locator("#your-business .project-business-example")).toContainText("A similar business need");
   await expectOriginalAppearance(page.locator("#project-cover img"), project.gallery[0]);
   await expect(page.locator("#project-cover figcaption p")).toHaveText(project.gallery[0].caption);
   const capture = page.locator('.project-page-frame[data-view="1"]');

@@ -187,7 +187,7 @@ test("the simple homepage remains readable and its service links work without Ja
   await expectPageFit(page);
 });
 
-test("a service page leads to relevant project proof and a complete business inquiry without JavaScript", async ({ page }, testInfo) => {
+test("a service page leads to project proof, direct booking, and a quiet attributed email without JavaScript", async ({ page }, testInfo) => {
   const service = services.find((entry) => entry.slug === "website-development");
   const project = projects.find((entry) => entry.id === service.projectIds[0]);
   await page.goto("/");
@@ -206,14 +206,14 @@ test("a service page leads to relevant project proof and a complete business inq
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
   await expectHeaderSection(page, "/work/");
-    await expect(page.getByRole("link", { name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
-  const inquiry = page.locator(".page-actions a[href^='mailto:']");
+  await expect(page.getByRole("link", { name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
+  await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+  await expectBookingLink(page.locator(".project-story-hero [data-booking-link]"));
+  const inquiry = page.locator("footer a[href^='mailto:']");
   await expect(inquiry).toBeVisible();
   const draft = new URL(await inquiry.getAttribute("href"));
   expect(draft.pathname).toBe("admin@customtechbuilt4u.com");
-  expect(draft.searchParams.get("subject")).toBe(`Project inspired by ${project.title}`);
-  expect(draft.searchParams.get("body")).toContain("The problem:");
-  expect(draft.searchParams.get("body")).toContain("Who will use it:");
+  expect(draft.protocol).toBe("mailto:");
   expect(draft.searchParams.get("body")).toContain(`Source page: ${site.origin}/work/${projectSlugs[project.id]}/`);
   await expectPageFit(page);
 });

@@ -63,7 +63,8 @@ test("clients can search the capability and illustrative business context as wel
     const card = page.locator(`.seo-project-card[data-project-id="${id}"]`);
     await expect(card.locator(".work-project-capabilities li")).toHaveText(projectClientUses[id].capabilities);
     await expect(card.locator(".work-project-business-use")).toHaveCount(0);
-    await expect(card.locator(".work-project-action")).toHaveAttribute("href", `${projectSlugs[id]}/`);
+    expect(new URL(await card.locator(".work-project-action").getAttribute("href"), page.url()).pathname)
+      .toBe(`/work/${projectSlugs[id]}/`);
   }
 });
 
