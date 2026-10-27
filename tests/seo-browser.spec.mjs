@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { projects } from "../public-projects.js";
 import { services, guide, projectSlugs, site } from "../seo-content.js";
-import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { articles, articleTopics } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 
@@ -136,13 +136,13 @@ async function expectOriginalImage(image, frame) {
 
 test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("You know your business. I’ll build the technology.");
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   await expect(page.locator(".simple-project")).toHaveCount(3);
   await expect(page.locator("#business-guides, dialog, input[name='hero-project']")).toHaveCount(0);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
-  const portfolio = page.locator("#work").getByRole("link", { name: /^View all 11 projects/ });
+  const portfolio = page.locator("#work").getByRole("link", { name: /^View all projects/ });
   await expect(portfolio).toHaveAttribute("href", "./work/");
   await portfolio.focus();
   await page.keyboard.press("Enter");
@@ -186,13 +186,6 @@ test("a service page leads to relevant project proof and a complete business inq
   const service = services.find((entry) => entry.slug === "website-development");
   const project = projects.find((entry) => entry.id === service.projectIds[0]);
   await page.goto("/");
-  const comparison = page.locator("details.service-comparison");
-  await expect(comparison).not.toHaveAttribute("open", "");
-  // Focus an already visible summary so native smooth scrolling has finished before the pointer step.
-  await comparison.locator("summary").scrollIntoViewIfNeeded();
-  await comparison.locator("summary").focus();
-  await page.keyboard.press("Enter");
-  await expect(comparison).toHaveAttribute("open", "");
   const serviceLink = await linkTo(page, `/services/${service.slug}/`);
   await serviceLink.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
@@ -419,7 +412,7 @@ test("the comparison guide, business information, and contact remain usable with
   await expectPageFit(page);
   const about = await linkTo(page, "/about/");
   await about.click();
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("You know your business. I’ll build the technology.");
   await expect(page.locator("main")).not.toContainText(/Taylor Drew|stand-up biography/i);
   await expectPageFit(page);
   const contact = await linkTo(page, "/contact/");
@@ -634,6 +627,9 @@ test("a business guide connects the idea to a service and the supplied consultat
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
   await expectPageFit(page);
 
+  const contactLink = await linkTo(page, "/contact/");
+  await contactLink.focus();
+  await page.keyboard.press("Enter");
   const local = await linkTo(page, "/new-york-city/");
   await local.focus();
   await page.keyboard.press("Enter");

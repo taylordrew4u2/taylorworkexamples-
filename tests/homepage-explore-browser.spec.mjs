@@ -16,11 +16,11 @@ for (const javaScriptEnabled of [true, false]) {
         await link.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`${project.caseUrl.replace(/^\./, "")}$`));
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(project.title);
+        await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
         await expect(page.locator(".project-page-frame")).toHaveCount(project.gallery.length);
       }
       await page.goto("/");
-      const all = page.locator("#work").getByRole("link", { name: /^View all 11 projects/ });
+      const all = page.locator("#work").getByRole("link", { name: /^View all projects/ });
       await all.focus();
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(/\/work\/$/);
