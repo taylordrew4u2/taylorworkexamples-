@@ -253,118 +253,25 @@ test("removed repositories cannot appear in the catalog or search results", () =
   }
 });
 
-test("the homepage opening shows real website and desktop work while preserving the supplied app banners", () => {
+test("the minimal homepage uses two primary choices and genuine native project links", () => {
   const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const attribute = (tag, name) => tag.match(new RegExp(`(?:^|\\s)${name}="([^"]*)"`))?.[1];
-  assert.doesNotMatch(html, /<nav\b[^>]*class="hero-capabilities"/,
-    "The opening avoids repeating a second set of project navigation cards");
-  const actions = html.match(/<div\b[^>]*class="intro-actions"[^>]*>[\s\S]*?<\/div>/)?.[0];
-  assert.ok(actions, "The opening has a clear group of primary and secondary actions");
-  const actionLinks = [...actions.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
-  assert.equal(attribute(actionLinks[0][1], "href"), "https://briefbooth.com/book/4u-digital",
-    "Booking is the primary action");
-  assert.ok(actionLinks.some(([, attributes, text]) => attribute(attributes, "href") === "./work/" && /View all projects/.test(text)),
-    "A real secondary link opens the complete portfolio");
-  const hero = html.match(/<section class="intro wrap"[\s\S]*?<\/section>/)?.[0];
-  assert.ok(hero, "Hero banners must be present");
-  assert.match(hero, /aria-label="Featured websites, desktop software, and iPhone apps"/);
-  assert.match(hero, /<div\b[^>]*class="hero-app-previews"/,
-    "The supplied banners stay in their own group outside the project explorer");
-  const banners = [...hero.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)]
-    .filter(([, attributes]) => attribute(attributes, "class")?.split(/\s+/).includes("hero-project"));
-  assert.deepEqual(banners.map(([, attributes]) => [attribute(attributes, "data-project"), attribute(attributes, "aria-label")]), [
-    ["The-Bit-Binder", "View the BitBinder project"],
-    ["MyGigCalendar", "View the My Gig Calendar project"],
-  ]);
-  assert.equal([...hero.matchAll(/\bdata-project=/g)].length, 2);
-  assert.equal([...hero.matchAll(/<img\b[^>]*class="hero-project-screen"/g)].length, 2);
-  for (const [, attributes, contents] of banners) {
-    const id = attribute(attributes, "data-project");
-    const project = projects.find((entry) => entry.id === id);
-    assert.equal(attribute(attributes, "href"), `./work/${projectSlugs[id]}/`, `${id}: a real case-page link works without scripts`);
-    assert.equal(project.sourceAvailable, true);
-    assert.ok(contents.includes(`class="hero-project-screen" src="${project.image}" alt="${project.imageAlt}" width="1920" height="1080"`),
-      `${id}: opening artwork matches the supplied banner cover and its actual dimensions`);
-    assert.match(project.image, /\/banner-1920x1080\.png$/);
-    assert.equal(project.gallery[0].sourceKind, "owner-supplied-product-artwork");
-    assert.equal(contents.replace(/<img\b[^>]*>/g, "").trim(), "", `${id}: only the banner is inside its link`);
-  }
-  const explorer = [...hero.matchAll(/<fieldset\b([^>]*)>([\s\S]*?)<\/fieldset>/g)]
-    .find(([, attributes]) => attribute(attributes, "class")?.split(/\s+/).includes("hero-explorer"))?.[0];
-  assert.ok(explorer, "Real project choices use a native fieldset without depending on JavaScript");
-  assert.match(explorer, /<legend\b[^>]*>[\s\S]*?\S[\s\S]*?<\/legend>/,
-    "The explorer has a visible group name");
-  assert.doesNotMatch(explorer, /class="hero-project"|hero-project-screen/,
-    "The supplied app banners remain outside the selectable previews");
-  const radioChoices = [...explorer.matchAll(/<input\b[^>]*>/g)]
-    .map(([tag]) => tag).filter((tag) => attribute(tag, "type") === "radio");
-  assert.equal(radioChoices.length, 3);
-  assert.deepEqual(radioChoices.map((tag) => attribute(tag, "name")), Array(3).fill("hero-project"));
-  assert.deepEqual(radioChoices.map((tag) => attribute(tag, "value")), ["briefbooth", "website", "desktop"]);
-  assert.deepEqual(radioChoices.filter((tag) => /\schecked(?:\s|=|\/?>)/.test(tag))
-    .map((tag) => attribute(tag, "value")), ["briefbooth"], "Only BriefBooth is selected initially");
-  const controls = radioChoices.map((tag) => attribute(tag, "aria-controls"));
-  assert.equal(new Set(controls).size, 3, "Each choice controls a different project preview");
-  for (const control of controls) assert.match(control, /^hero-/);
-  const choiceLabels = [...explorer.matchAll(/<label\b([^>]*)>([\s\S]*?)<\/label>/g)];
-  for (const radio of radioChoices) {
-    const value = attribute(radio, "value");
-    const label = choiceLabels.find(([, , contents]) => contents.includes(radio))?.[2];
-    assert.ok(label, `${value}: its wrapping native label activates the radio`);
-    assert.equal([...label.matchAll(/<input\b/g)].length, 1, `${value}: its label controls one radio`);
-    assert.match(label, /hero-choice-screen/);
-    assert.ok(label.replace(/<[^>]*>/g, "").trim(), `${value}: its choice has a text label`);
-  }
-  const platformCards = [...explorer.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)]
-    .filter(([, attributes]) => attribute(attributes, "class")?.split(/\s+/).includes("hero-platform-project"));
-  const thumbnails = [...explorer.matchAll(/<img\b[^>]*>/g)]
-    .map(([tag]) => tag).filter((tag) => attribute(tag, "class")?.split(/\s+/).includes("hero-choice-screen"));
-  assert.equal(platformCards.length, 3, "Website, web app, and desktop previews are present in the HTML");
-  assert.equal(thumbnails.length, 3, "Every native choice includes its genuine project thumbnail");
-  for (const [index, [id, status, imageDescription, displayName]] of [
-    ["BriefBooth.com", "Live website capture", /BriefBooth.*(?:booking|consultation|homepage)/i, "BriefBooth"],
-    ["micro-short-website", "Repository website capture", /Micro-short.*(?:film|website).*home/i, "Micro-short Film Website"],
-    ["usbmic", "Release candidate", /SobStage.*repository product artwork/i, "SobStage"],
-  ].entries()) {
-    const project = publicProjects.find((entry) => entry.id === id);
-    const frame = project.gallery[0];
-    const [, attributes, contents] = platformCards[index];
-    assert.equal(attribute(attributes, "id"), controls[index], `${id}: its radio identifies the matching panel`);
-    assert.ok(attributes.includes(`href="${project.caseUrl}"`), `${id}: the preview links to its real project story`);
-    const screen = contents.match(/<img class="hero-platform-screen"[^>]*>/)?.[0];
-    assert.ok(screen, `${id}: the real application screen is present`);
-    assert.ok(screen.includes(`src="${frame.image}"`), `${id}: the real screenshot matches the catalog`);
-    assert.ok(screen.includes(`width="${frame.width}" height="${frame.height}"`), `${id}: screenshot dimensions match the original`);
-    assert.match(attribute(screen, "alt"), imageDescription,
-      `${id}: the artwork has a project-specific description`);
-    const thumbnail = thumbnails[index];
-    assert.equal(attribute(thumbnail, "src"), frame.image, `${id}: its thumbnail uses the same genuine source`);
-    assert.equal(attribute(thumbnail, "width"), String(frame.width));
-    assert.equal(attribute(thumbnail, "height"), String(frame.height));
-    assert.equal(attribute(thumbnail, "alt"), "", `${id}: its choice label supplies the thumbnail's accessible name`);
-    if (project.icon) {
-      assert.ok(contents.includes(`src="${project.icon}" alt="" width="${project.iconWidth}" height="${project.iconHeight}"`),
-        `${id}: the project uses its authentic icon`);
-    } else {
-      assert.match(contents, /class="project-initials">MS<\/span>/,
-        "Micro-short uses its honest neutral initials rather than an invented logo");
-    }
-    const caption = contents.match(/<div\b[^>]*class="hero-platform-caption"[^>]*>([\s\S]*?)<\/div>/)?.[1];
-    assert.ok(caption, `${id}: its project caption is outside the image`);
-    assert.ok(caption.replaceAll("&amp;", "&").includes(displayName));
-    assert.ok(caption.includes(status), `${id}: the preview identifies its development or demo status`);
-    if (frame.sourceKind === "repository-product-artwork") {
-      assert.match(caption, /Repository product artwork/i, `${id}: repository artwork is identified below its image`);
-    }
-    assert.deepEqual(assetDimensions(frame.image), { width: frame.width, height: frame.height });
-  }
-  const heroClasses = [...hero.matchAll(/\bclass="([^"]*)"/g)].flatMap(([, value]) => value.split(/\s+/));
-  for (const name of ["hero-web", "hero-phone", "hero-orbit", "hero-asterisk", "hero-project-info", "hero-project-icon", "hero-project-copy", "hero-project-arrow"]) {
-    assert.ok(!heroClasses.includes(name), `${name}: no decorative mockup or text over the supplied artwork`);
-  }
-  assert.doesNotMatch(hero, /Mark Vegas|markvegas/i);
-  for (const id of removedIds) {
-    assert.ok(!hero.includes(`data-project="${id}"`), `${id}: removed from hero`);
+  const actions = html.match(/<div class="simple-actions">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(actions);
+  const links = [...actions.matchAll(/<a\b([^>]*)>/g)].map(([, tag]) => attribute(tag, "href"));
+  assert.deepEqual(links, ["https://briefbooth.com/book/4u-digital", "./work/"]);
+  assert.doesNotMatch(html, /hero-explorer|data-project=|project-dialog|planner-shortcut|capability-strip/);
+  const previews = [...html.matchAll(/<a class="simple-project"([^>]*)>([\s\S]*?)<\/a>/g)];
+  assert.equal(previews.length, 3);
+  for (const [, tag, content] of previews) {
+    const project = publicProjects.find((item) => item.caseUrl === attribute(tag, "href"));
+    assert.ok(project, "each preview opens a complete selected project");
+    const image = content.match(/<img\b[^>]*>/)?.[0];
+    const frame = project.gallery.find((frame) => frame.image === attribute(image, "src"));
+    assert.ok(frame, "the preview is an original catalog image");
+    assert.deepEqual(assetDimensions(frame.image), { width: Number(attribute(image, "width")), height: Number(attribute(image, "height")) });
+    assert.ok(attribute(image, "alt"));
+    assert.ok(content.includes("</div><p>"), "plain description sits below the full-color image");
   }
 });
 

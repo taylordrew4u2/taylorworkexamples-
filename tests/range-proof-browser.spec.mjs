@@ -6,25 +6,8 @@ test("published apps and the development range are visible and usable without Ja
   try {
     const page = await context.newPage();
     await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
-    await expect(page.locator(".hero-capabilities")).toHaveCount(0);
-    await expect(page.locator(".intro-actions").getByRole("link", { name: /^View all projects/ }))
-      .toHaveAttribute("href", "./work/");
-    const platformProjects = ["BriefBooth.com", "micro-short-website", "usbmic"].map((id) => projects.find((entry) => entry.id === id));
-    const platformPreviews = page.locator(".hero-platform-previews a.hero-platform-project");
-    await expect(platformPreviews).toHaveCount(3);
-    for (const project of platformProjects) {
-      const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
-      await expect(preview.locator(".hero-platform-screen")).toHaveAttribute("src", project.gallery[0].image);
-      await expect(preview.locator(".hero-platform-caption")).toContainText(project.title);
-      if (project.icon) await expect(preview.locator("img.project-icon")).toHaveAttribute("src", project.icon);
-      else {
-        await expect(preview.locator("img.project-icon")).toHaveCount(0);
-        await expect(preview.locator(".project-initials")).toHaveText("MS");
-      }
-    }
-    const opening = page.locator(".hero-range-proof");
-    await expect(opening).toHaveAttribute("href", "./work/#app-store-proof");
-    await expect(opening).toHaveText("3 apps published on the App Store ↗");
+    const opening = page.locator('.simple-work-next a[href="./work/#app-store-proof"]');
+    await expect(opening).toHaveText("3 apps on the App Store ↗");
     // The genuine publication evidence stays reachable through an ordinary link.
     await opening.focus();
     await page.keyboard.press("Enter");
@@ -63,22 +46,10 @@ test("published apps and the development range are visible and usable without Ja
       expect(fits).toBe(true);
     }
     await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
-    const portfolio = page.locator(".intro-actions").getByRole("link", { name: /^View all projects/ });
+    const portfolio = page.locator(".simple-actions").getByRole("link", { name: /^View projects/ });
     await portfolio.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/work\/$/);
     await expect(page.locator("#project-collection .seo-project-card:visible")).toHaveCount(projects.length);
-    for (const project of platformProjects) {
-      await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
-      const preview = page.locator(`.hero-platform-previews a[href="${project.caseUrl}"]`);
-      const panel = await preview.getAttribute("data-hero-panel");
-      await page.locator(`.hero-project-choice`).filter({ has: page.locator(`input[value="${panel}"]`) }).click();
-      const destination = new URL(project.caseUrl, page.url()).href;
-      // Keyboard activation follows the real project URL without depending on JavaScript or pointer scrolling.
-      await preview.focus();
-      await page.keyboard.press("Enter");
-      await expect(page).toHaveURL(destination);
-      await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName(project.title);
-    }
   } finally { await context.close(); }
 });

@@ -58,6 +58,10 @@ async function expectPageFit(page) {
 
 async function expectHeaderSection(page, path, current = "location") {
   const selected = page.locator(".page-nav a[aria-current]");
+  if (!["/services/", "/work/"].includes(path)) {
+    await expect(selected).toHaveCount(0);
+    return;
+  }
   await expect(selected).toHaveCount(1);
   await expect(selected).toHaveAttribute("aria-current", current);
   expect(new URL(await selected.getAttribute("href"), page.url()).pathname).toBe(path);
@@ -128,147 +132,17 @@ async function expectOriginalImage(image, frame) {
   expect(geometry.fits, "The full original remains inside its figure").toBe(true);
 }
 
-test("the hero lets visitors choose a real build with native controls without JavaScript or autoplay", async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 900 });
-  await page.clock.install();
-  await page.goto("/");
-  await page.evaluate(() => document.fonts.ready);
-  const previews = page.locator(".hero-platform-previews");
-  const explorer = previews.getByRole("group", { name: "Explore a real build.", exact: true });
-  await expect(explorer).toHaveClass(/\bhero-explorer\b/);
-  const choices = [
-    { value: "briefbooth", name: "Web app BriefBooth", title: "BriefBooth", id: "BriefBooth.com", status: /live website capture/i },
-    { value: "website", name: "Website Micro-short", title: "Micro-short Film Website", id: "micro-short-website", status: /Website.*Repository website capture/i },
-    { value: "desktop", name: "Desktop SobStage", title: "SobStage", id: "usbmic", status: /release candidate/i },
-  ].map((choice) => ({ ...choice, project: projects.find((project) => project.id === choice.id) }));
-  const panels = previews.locator(".hero-platform-panels a.hero-platform-project");
-  await expect(explorer.getByRole("radio")).toHaveCount(choices.length);
-  await expect(explorer.locator(".hero-explorer-options label.hero-project-choice")).toHaveCount(choices.length);
-  await expect(panels).toHaveCount(choices.length);
-  await expect(previews.locator("[hidden]")).toHaveCount(0);
 
-  const expectOriginalHeroImage = async (image, frame) => {
-    await expect(image).toBeVisible();
-    await expect(image).toHaveAttribute("src", frame.image);
-    await expect(image).toHaveAttribute("width", String(frame.width));
-    await expect(image).toHaveAttribute("height", String(frame.height));
-    // Hero media loads eagerly; keep the focused choice in place while checking its artwork.
-    await expect.poll(() => image.evaluate((element) => element.complete && element.naturalWidth > 0)).toBe(true);
-    await expect(image).toHaveCSS("object-fit", "contain");
-    await expect(image).toHaveCSS("filter", "none");
-    await expect(image).toHaveCSS("mix-blend-mode", "normal");
-    expect(await image.evaluate((element) => {
-      let originalAppearance = true;
-      for (let ancestor = element; ancestor && !ancestor.matches(".hero-shell"); ancestor = ancestor.parentElement) {
-        const style = getComputedStyle(ancestor);
-        originalAppearance &&= style.filter === "none" && style.transform === "none" && style.opacity === "1";
-      }
-      return originalAppearance;
-    }), "Hero images remain upright and in their original colors").toBe(true);
-    const bounds = await image.boundingBox();
-    expect(bounds.x).toBeGreaterThanOrEqual(-1);
-    expect(bounds.x + bounds.width).toBeLessThanOrEqual(321);
-    const natural = await image.evaluate((element) => ({ width: element.naturalWidth, height: element.naturalHeight }));
-    expect(Math.abs(natural.width - natural.height * frame.width / frame.height), "The source image keeps its original proportions")
-      .toBeLessThanOrEqual(1 + frame.width / frame.height);
-  };
-
-  for (const choice of choices) {
-    const radio = explorer.getByRole("radio", { name: choice.name, exact: true });
-    await expect(radio).toHaveAttribute("type", "radio");
-    await expect(radio).toHaveAttribute("name", "hero-project");
-    await expect(radio).toHaveAttribute("value", choice.value);
-    await expect(radio).toHaveAttribute("aria-controls", `hero-${choice.value}`);
-    const label = explorer.locator(`label.hero-project-choice:has(input[value="${choice.value}"])`);
-    await expect(label.locator("img.hero-choice-screen")).toHaveAttribute("src", choice.project.gallery[0].image);
-    await expect(label.locator("img.hero-choice-screen")).toHaveAttribute("alt", "");
-    // The panel itself is the controlled link, rather than a scripted tab body.
-    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("data-hero-panel", choice.value);
-    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("href", choice.project.caseUrl);
-    await expect(previews.locator(`#hero-${choice.value}`)).toHaveAttribute("aria-label", `View project: ${choice.title}`);
-  }
-
-  const banners = page.locator(".hero-app-previews .hero-project");
-  await expect(banners).toHaveCount(2);
-  const expectSelection = async (value, focused = true) => {
-    const selected = choices.find((choice) => choice.value === value);
-    const radio = explorer.getByRole("radio", { name: selected.name, exact: true });
-    await expect(radio).toBeChecked();
-    if (focused) await expect(radio).toBeFocused();
-    await expect(explorer.locator('input[name="hero-project"]:checked')).toHaveCount(1);
-    await expect(previews.locator(".hero-platform-panels a.hero-platform-project:visible")).toHaveCount(1);
-    for (const choice of choices) {
-      const panel = previews.locator(`a.hero-platform-project[data-hero-panel="${choice.value}"]`);
-      if (choice.value !== value) {
-        await expect(panel).toBeHidden();
-        continue;
-      }
-      await expect(panel).toBeVisible();
-      await expect(panel).toHaveAccessibleName(`View project: ${choice.title}`);
-      const image = panel.locator("img.hero-platform-screen");
-      await expectOriginalHeroImage(image, choice.project.gallery[0]);
-      const caption = panel.locator(".hero-platform-caption");
-      await expect(caption).toBeVisible();
-      await expect(caption).toContainText(choice.title);
-      await expect(caption).toContainText(choice.project.gallery[0].imageLabel);
-      await expect(caption).toContainText(choice.status);
-      await expect(caption).toContainText("View project");
-      if (choice.value === "desktop") await expect(caption).toContainText(/physical[- ]microphone.*(?:pending|in progress)|(?:pending|in progress).*physical[- ]microphone/i);
-      if (choice.project.icon) {
-        await expect(caption.locator("img.project-icon")).toHaveAttribute("src", choice.project.icon);
-      } else {
-        await expect(caption.locator("img.project-icon")).toHaveCount(0);
-        await expect(caption.locator(".project-initials")).toHaveText("MS");
-      }
-      expect(await panel.evaluate((element) => {
-        const image = element.querySelector(".hero-platform-screen").getBoundingClientRect();
-        const caption = element.querySelector(".hero-platform-caption").getBoundingClientRect();
-        return caption.top >= image.bottom - 1 && caption.left >= -1 && caption.right <= window.innerWidth + 1;
-      }), "The source and status caption stays below its image without an overlay").toBe(true);
-    }
-    for (const id of ["The-Bit-Binder", "MyGigCalendar"]) {
-      const project = projects.find((entry) => entry.id === id);
-      await expectOriginalHeroImage(page.locator(`.hero-app-previews .hero-project[data-project="${id}"] .hero-project-screen`), project.gallery[0]);
-    }
-    const dock = page.getByRole("complementary", { name: "Consultation booking", exact: true });
-    await expect(dock).toBeInViewport({ ratio: 1 });
-    await expectBookingLink(dock.locator("[data-booking-link]"));
-    await expectPageFit(page);
-    if (focused) await expect(radio).toBeFocused();
-  };
-
-  await expectSelection("briefbooth", false);
-  await page.clock.fastForward(120_000);
-  await expectSelection("briefbooth", false);
-  const website = explorer.getByRole("radio", { name: "Website Micro-short", exact: true });
-  await explorer.locator('label.hero-project-choice:has(input[value="website"])').click();
-  await expectSelection("website");
-  await page.keyboard.press("ArrowRight");
-  await expectSelection("desktop");
-  await page.keyboard.press("ArrowRight");
-  await expectSelection("briefbooth");
-  await website.focus();
-  await page.keyboard.press("Space");
-  await expectSelection("website");
-  await page.clock.fastForward(120_000);
-  await expectSelection("website");
-});
 
 test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("You know your business. I’ll build the technology.");
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
-  expect(await page.evaluate(() => {
-    const work = document.querySelector("#work");
-    const sections = ["work", "process", "testimonials", "client-care", "project-faq", "consultation", "business-guides"]
-      .map((id) => document.getElementById(id));
-    return Boolean(work) && sections.every((section, index) => section && (index === 0 || Boolean(
-        sections[index - 1].compareDocumentPosition(section) & Node.DOCUMENT_POSITION_FOLLOWING,
-      ))) && work.getBoundingClientRect().bottom <= sections[1].getBoundingClientRect().top + 1;
-  }), "Compact portfolio discovery precedes the working process, client feedback, launch care, questions, consultation, and guides").toBe(true);
+  await expect(page.locator(".simple-project")).toHaveCount(3);
+  await expect(page.locator("#business-guides, dialog, input[name='hero-project']")).toHaveCount(0);
   await expect(page.locator(".owner-credit")).toHaveCount(0);
   await page.evaluate(() => document.fonts.ready);
-  const portfolio = page.locator("#work").getByRole("link", { name: /^View all projects/ });
+  const portfolio = page.locator("#work").getByRole("link", { name: /^View all 11 projects/ });
   await expect(portfolio).toHaveAttribute("href", "./work/");
   await portfolio.focus();
   await page.keyboard.press("Enter");
@@ -288,37 +162,24 @@ test("the homepage leads to a complete dedicated portfolio and individual projec
   await expectPageFit(page);
 });
 
-test("homepage shortcuts let visitors skip to the service, work, or client feedback without JavaScript", async ({ page }) => {
+test("the simple homepage remains readable and its service links work without JavaScript at 320px", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
   await page.goto("/");
-  const shortcuts = page.getByRole("navigation", { name: "Explore 4u Digital", exact: true });
-  await expect(shortcuts.locator("a")).toHaveCount(3);
-  for (const id of ["services", "testimonials"]) {
-    const link = shortcuts.locator(`a[href="#${id}"]`);
-    await expect(link).toBeVisible();
-    expect(await link.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
-    await link.focus();
-    await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(new RegExp(`#${id}$`));
-    await expect(page.locator(`#${id} > .section-heading, #${id} > .services-heading`).getByRole("heading", { level: 2 })).toBeVisible();
+  await expect(page.locator(".simple-service")).toHaveCount(4);
+  await expect(page.locator("#services details, #services img")).toHaveCount(0);
+  for (const link of await page.locator(".simple-service").all()) {
+    await expect(link).toHaveAccessibleName(/\S/);
+    const box = await link.boundingBox();
+    expect(box.height).toBeGreaterThanOrEqual(44);
+    expect(box.x).toBeGreaterThanOrEqual(-1);
+    expect(box.x + box.width).toBeLessThanOrEqual(321);
   }
-  const projectsLink = await linkTo(shortcuts, "/work/");
-  await expect(projectsLink).toBeVisible();
-  expect(await projectsLink.evaluate((element) => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
-  await projectsLink.focus();
+  const service = page.locator('.simple-service[href="./services/website-development/"]');
+  await service.focus();
   await page.keyboard.press("Enter");
-  await expect(page).toHaveURL(/\/work\/$/);
-  await expect(page.locator(".work-page-grid .seo-project-card")).toHaveCount(projects.length);
-  await page.goto("/");
-  const originalViewport = page.viewportSize();
-  for (const width of [320, 390]) {
-    await page.setViewportSize({ width, height: 900 });
-    await expectPageFit(page);
-    expect(await shortcuts.evaluate((element) => {
-      const bounds = element.getBoundingClientRect();
-      return bounds.left >= 0 && bounds.right <= innerWidth;
-    })).toBe(true);
-  }
-  await page.setViewportSize(originalViewport);
+  await expect(page).toHaveURL(/\/services\/website-development\/$/);
+  await expectServiceSections(page, services.find((entry) => entry.slug === "website-development"));
+  await expectPageFit(page);
 });
 
 test("a service page leads to relevant project proof and a complete business inquiry without JavaScript", async ({ page }, testInfo) => {
@@ -360,19 +221,14 @@ test("a service page leads to relevant project proof and a complete business inq
 });
 
 for (const slug of ["salon-booking-app-development", "restaurant-ordering-app-development"]) {
-  test(`${slug} connects homepage visitors to a clear service, authentic evidence, and attributed contact without JavaScript`, async ({ page }) => {
+  test(`${slug} connects service-directory visitors to authentic evidence and attributed contact without JavaScript`, async ({ page }) => {
     const service = services.find((entry) => entry.slug === slug);
     const route = `/services/${slug}/`;
-    await page.goto("/");
-    const industryLinks = page.locator("#services .industry-services");
-    await expect(industryLinks.locator("a")).toHaveCount(2);
-    const entryIndex = await industryLinks.locator("a").evaluateAll((elements, target) => elements.findIndex((element) =>
-      new URL(element.getAttribute("href"), location.href).pathname === target), route);
-    expect(entryIndex, "The homepage industry navigation reaches this service").toBeGreaterThanOrEqual(0);
-    const start = industryLinks.locator("a").nth(entryIndex);
-    await expect(start).toContainText(slug.startsWith("salon") ? /salon/i : /restaurant/i);
+    await page.goto("/services/");
+    const start = await linkTo(page, route);
     await expect(start).toBeVisible();
-    await start.click();
+    await start.focus();
+    await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new RegExp(`${route}$`));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(service.heading);
     await expectHeaderSection(page, "/services/");
@@ -591,18 +447,11 @@ test("the comparison guide, business information, and contact remain usable with
 
 test("homepage visitors can open the optional planner without booking or finding the later kickoff form", async ({ page }) => {
   await page.goto("/");
-  for (const entry of ["#main-nav", ".planner-shortcut"]) {
-    const planner = entry === ".planner-shortcut" ? page.locator(entry)
-      : page.locator(entry).getByRole("link", { name: /project planner/i });
-    await expect(planner).toHaveCount(1);
-    expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
-  }
-  await expect(page.locator(".hero-planner-note, .consultation-planner")).toHaveCount(0);
-  await expect(page.locator(".intro-actions a[href*='project-brief'], #process a[href*='project-brief'], #consultation a[href*='project-brief']")).toHaveCount(0);
-  await expect(page.locator("#process a[href*='project-kickoff'], .footer-pages a[href*='project-kickoff']")).toHaveCount(0);
-  const planner = page.getByRole("link", { name: "Know what you want? Open the optional project planner", exact: true });
-  await expect(planner).toBeInViewport({ ratio: 1 });
-  // Native keyboard activation does not wait on pointer stability during smooth scrolling.
+  await expect(page.locator(".planner-shortcut")).toHaveCount(0);
+  await expect(page.locator("footer").getByRole("link", { name: "Project planner", exact: true }))
+    .toHaveAttribute("href", "./project-brief/");
+  await expect(page.locator("footer a[href*='project-kickoff']")).toHaveCount(0);
+  const planner = page.locator("#consultation a[href='./project-brief/']");
   await planner.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
@@ -633,30 +482,27 @@ test("the later existing-client kickoff resource still prepares an attributed em
   await expectPageFit(page);
 });
 
-test("all client testimonials are directly readable on smaller screens without JavaScript", async ({ page }) => {
-  await page.goto("/#testimonials");
+test("all nine client reviews remain available through native disclosure without JavaScript", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 900 });
+  await page.goto("/");
   const section = page.locator("#testimonials");
-  await expect(section.getByRole("heading", { name: "In their own words.", exact: true })).toBeVisible();
-  await expect(section.locator(".testimonial-card")).toHaveCount(clientTestimonials.length);
+  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
+  const disclosure = section.locator("details");
+  await disclosure.locator("summary").focus();
+  await page.keyboard.press("Enter");
   await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
-  await expect(section.locator("details, .feedback-controls, [data-feedback-next], [data-feedback-prev]")).toHaveCount(0);
   await expect(section.locator("blockquote p")).toHaveText(clientTestimonials.map((item) => item.quote));
   await expect(section.locator("figcaption strong")).toHaveText(clientTestimonials.map((item) => item.name));
-  await expectBookingLink(section.locator("[data-booking-link]"));
-  for (const width of [768, 320]) {
-    await page.setViewportSize({ width, height: 900 });
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    expect(await section.locator(".testimonial-card").evaluateAll((cards) => cards.every((card) => {
-      const box = card.getBoundingClientRect(); return box.left >= 0 && box.right <= innerWidth;
-    }))).toBe(true);
-    await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
-  }
+  await expectPageFit(page);
 });
 
 test("local businesses can find their website guide and reach consultation without JavaScript", async ({ page }) => {
   await page.goto("/");
-  const businessGuides = page.getByRole("navigation", { name: "Business website guides" }).getByRole("link", { name: "Website guides for salons, restaurants, and local shops" });
-  await businessGuides.focus();
+  const guides = await linkTo(page, "/insights/");
+  await guides.focus();
+  await page.keyboard.press("Enter");
+  const topic = page.locator('a[href="#guides-business-websites"]').first();
+  await topic.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/insights\/#guides-business-websites$/);
   await expect(page.locator("#guides-business-websites .insight-card")).toHaveCount(3);
@@ -696,8 +542,8 @@ test("local businesses can find their website guide and reach consultation witho
 
 test("website-only readers can browse short articles and reach booking without JavaScript", async ({ page }) => {
   const article = articles.find((entry) => entry.slug === "simple-business-website");
-  await page.goto("/");
-  const preview = page.locator("#business-guides .insight-card h3 a").first();
+  await page.goto("/insights/");
+  const preview = await linkTo(page, `/insights/${article.slug}/`);
   await preview.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
@@ -747,8 +593,7 @@ test("a business guide connects the idea to a service and the supplied consultat
   const article = articles.find((entry) => entry.slug === "salon-booking-website");
   const service = services.find((entry) => entry.slug === article.serviceSlugs[0]);
   await page.goto("/");
-  await expect(page.locator("#business-guides .insight-card")).toHaveCount(3);
-  await expect(page.locator("#business-guides .insight-card h3")).toHaveText(homepageArticles.map((entry) => entry.title));
+  await expect(page.locator("#business-guides")).toHaveCount(0);
   const guides = await linkTo(page, "/insights/");
   await guides.click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Useful reads for your next business build.");

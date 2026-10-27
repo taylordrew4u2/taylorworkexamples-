@@ -51,82 +51,14 @@ for (const javaScriptEnabled of [true, false]) {
   test.describe(`website offer with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
     test.use({ javaScriptEnabled });
 
-    test("clients can find the offer from the homepage opening, navigation, services, and footer", async ({ page }) => {
+    test("clients reach the complete offer from a compact service link or the footer", async ({ page }) => {
       await page.goto("/");
-      const heroOfferLink = page.locator(".intro").getByRole("link", { name: /^See the website offer\b/ });
-      await expect(heroOfferLink).toBeVisible();
-      const heroContrast = await heroOfferLink.evaluate((link) => {
-        const channels = (value) => value.match(/[\d.]+/g).map(Number);
-        const luminance = (color) => color.map((channel) => {
-          const value = channel / 255;
-          return value <= .04045 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4;
-        }).reduce((sum, value, index) => sum + value * [.2126, .7152, .0722][index], 0);
-        return [["offer link", link], ["supporting paragraph", link.closest(".hero-website-offer")]]
-          .map(([label, element]) => {
-            const layers = [];
-            for (let ancestor = element; ancestor; ancestor = ancestor.parentElement) {
-              const color = channels(getComputedStyle(ancestor).backgroundColor);
-              const alpha = color[3] ?? 1;
-              if (alpha > 0) layers.push(color);
-              if (alpha === 1) break;
-            }
-            // Composite any translucent ancestor over the next real background.
-            const background = layers.reverse().reduce((below, color) => color.slice(0, 3)
-              .map((channel, index) => channel * (color[3] ?? 1) + below[index] * (1 - (color[3] ?? 1))), [255, 255, 255]);
-            const foreground = channels(getComputedStyle(element).color);
-            const paintedText = foreground.slice(0, 3).map((channel, index) =>
-              channel * (foreground[3] ?? 1) + background[index] * (1 - (foreground[3] ?? 1)));
-            const light = luminance(paintedText);
-            const dark = luminance(background);
-            return { label, foreground: foreground.slice(0, 3), background,
-              ratio: (Math.max(light, dark) + .05) / (Math.min(light, dark) + .05) };
-          });
-      });
-      for (const contrast of heroContrast) {
-        expect(contrast.ratio,
-          `Hero ${contrast.label}: rgb(${contrast.foreground}) on rgb(${contrast.background}) remains readable`)
-          .toBeGreaterThanOrEqual(4.5);
-      }
-      const careLink = page.locator('.intro a[href="#client-care"]');
-      await expect(careLink).toBeVisible();
-      await careLink.focus();
-      await page.keyboard.press("Enter");
-      await expect(page).toHaveURL(/\/#client-care$/);
+      const offer = page.locator("#website-offer a");
+      await expect(offer).toBeVisible();
+      await expect(offer).toContainText("$1,200");
+      await expect(page.locator("#website-offer form, #website-offer iframe")).toHaveCount(0);
+      await followOfferLink(page, offer);
       await expectClientCare(page);
-      await expect(page.locator("#client-care-title")).toBeInViewport();
-      await followOfferLink(page, heroOfferLink);
-
-      await page.goto("/");
-      const menu = page.locator(".menu-toggle");
-      if (javaScriptEnabled && await menu.isVisible()) {
-        await menu.click();
-        await expect(menu).toHaveAttribute("aria-expanded", "true");
-      }
-      const navigation = page.getByRole("navigation", { name: "Main navigation", exact: true });
-      await expect(navigation).toBeVisible();
-      await expectPageFits(page);
-      await followOfferLink(page, navigation.getByRole("link", { name: "Website offer", exact: true }));
-
-      await page.goto("/");
-      const panel = page.locator("#website-offer");
-      await expect(panel.getByRole("heading", { level: 2 })).toBeVisible();
-      await expect(panel).toContainText("$1,200");
-      await expect(panel).toContainText("$1,900");
-      expect(await panel.evaluate((element) => {
-        const services = document.querySelector("#services");
-        const work = document.querySelector("#work");
-        return Boolean(services.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING) &&
-          Boolean(element.compareDocumentPosition(work) & Node.DOCUMENT_POSITION_FOLLOWING);
-      }), "The offer follows the services and precedes the project portfolio").toBe(true);
-      await expect(panel.locator("form, iframe, input[type='date'], input[type='time']")).toHaveCount(0);
-      await panel.locator('a[href="#client-care"]').click();
-      await expect(page).toHaveURL(/\/#client-care$/);
-      await expect(page.locator("#client-care-title")).toBeInViewport();
-      await followOfferLink(page, panel.getByRole("link", { name: "Explore the website offer", exact: true }));
-
-      await page.goto("/");
-      await followOfferLink(page, page.locator('#services [data-service="website"] a[href="./offer/"]').first());
-
       await page.goto("/");
       await followOfferLink(page, page.locator("footer").getByRole("link", { name: "Website offer", exact: true }));
     });
@@ -279,17 +211,14 @@ test("local brand fonts load on homepage and nested pages when Google Fonts is u
     await expectPageFits(page);
   }
 
-  // The delivery change also preserves the original colors and preview controls.
-  await page.goto("/");
+  // Local font delivery preserves the full project gallery's original artwork.
+  await page.goto("/work/bitbinder/");
   const binder = projects.find((project) => project.id === "The-Bit-Binder");
-  await page.locator(`.hero-project[data-project="${binder.id}"]`).click();
-  const dialog = page.getByRole("dialog");
-  await dialog.locator("[data-dialog-screen]").nth(1).click();
-  const image = dialog.locator(".primary-screen");
-  await expect(image).toHaveAttribute("src", binder.gallery[1].image);
+  const image = page.locator(".project-page-frame img").nth(1);
+  await image.scrollIntoViewIfNeeded();
+  expect(new URL(await image.getAttribute("src"), page.url()).pathname).toBe(`/${binder.gallery[1].image.replace(/^\.\//, "")}`);
   await expect(image).toHaveCSS("filter", "none");
   await expect(image).toHaveCSS("mix-blend-mode", "normal");
-  await expect(dialog.locator(".dialog-preview")).toHaveCSS("filter", "none");
   await expectPageFits(page);
   expect(googleRequests).toEqual([]);
 });

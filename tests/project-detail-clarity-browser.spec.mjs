@@ -123,13 +123,11 @@ for (const javaScriptEnabled of [true, false]) {
             await popup.close();
           }
           const dock = page.locator(".mobile-consultation [data-booking-link]");
-          const planner = page.locator(".planner-shortcut");
           await expectDirectBooking(dock);
           await expectTapTarget(dock, width);
-          await expectTapTarget(planner, width);
-          const dockBox = await dock.boundingBox();
-          const plannerBox = await planner.boundingBox();
-          expect(plannerBox.x + plannerBox.width).toBeLessThanOrEqual(dockBox.x);
+          await expect(page.locator(".planner-shortcut")).toHaveCount(0);
+          const planner = page.locator("footer").getByRole("link", { name: "Project planner", exact: true });
+          expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
           const guarantee = business.locator('a[href$="#client-care"]');
           await expectTapTarget(guarantee, width);
           expect(new URL(await guarantee.getAttribute("href"), page.url()).pathname).toBe("/");

@@ -22,8 +22,11 @@ export function responsiveHTML(html, route, manifest) {
     const variants = { [source]: manifest[key].map((variant) => ({ ...variant, src: relative(route, variant.src) })) };
     let sizes = /loading="lazy"/.test(tag) ? gallerySizes
       : "(max-width: 600px) calc(100vw - 40px), (max-width: 1200px) calc(100vw - 64px), 1136px";
-    // The hero uses full-width media through 900px, then a 60/40 split minus its 1.25rem gap.
-    if (/\bhero-project-screen\b/.test(tag)) {
+    // Homepage previews stack through 700px, then share the capped 72rem wrap.
+    if (/\bsimple-project-image\b/.test(tag)) {
+      sizes = "(max-width: 700px) calc(100vw - 2.5rem), (max-width: 1232px) calc(33.333vw - 2.667rem), 368px";
+    // The older hero uses full-width media through 900px, then a 60/40 split.
+    } else if (/\bhero-project-screen\b/.test(tag)) {
       sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(40vw - 2.1rem), (max-width: 88rem) calc(40vw - 2.9rem), 32.3rem";
     } else if (/\bhero-platform-screen\b/.test(tag)) {
       sizes = "(max-width: 600px) calc(100vw - 2.5rem), (max-width: 800px) calc(100vw - 3rem), (max-width: 900px) calc(100vw - 4rem), (max-width: 1100px) calc(60vw - 3.15rem), (max-width: 88rem) calc(60vw - 4.35rem), 48.45rem";

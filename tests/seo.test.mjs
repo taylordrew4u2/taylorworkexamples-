@@ -313,13 +313,10 @@ test("structured data points to the canonical business and matches visible servi
   }
 });
 
-test("short reads form a complete topic index and a focused homepage preview", async () => {
+test("short reads remain in a complete guide hub rather than expanding the homepage", async () => {
   const home = documents.get("/");
-  const homeCards = [...home.matchAll(/<article class="insight-card">([\s\S]*?)<\/article>/g)];
-  assert.equal(homeCards.length, 3, "the homepage stays focused on selected work");
-  assert.deepEqual(homeCards.map(([, card]) => pathname(tags(card, "a")[0].href, "/")),
-    homepageArticles.map((article) => `/insights/${article.slug}/`));
-  assert.ok(text(homeCards[0][1]).includes("Just need a website?"));
+  assert.doesNotMatch(home, /class="insight-card"/);
+  assert.ok(tags(home, "a").some((tag) => tag.href && pathname(tag.href, "/") === "/insights/"), "guide hub remains in the footer");
   const hub = documents.get("/insights/");
   const indexed = [];
   for (const topic of articleTopics) {
@@ -354,10 +351,10 @@ test("business guides and consultation details are discoverable, truthful, and r
     tag.href && sameSite(tag.href, route) && pathname(tag.href, route) === target);
   for (const route of ["/", "/contact/", hubRoute]) {
     const html = documents.get(route);
-    assert.ok(linksTo(html, route, localRoute), `${route}: reachable consultation page`);
-    assert.match(text(html), /video consultation/i);
+    if (route !== "/") assert.ok(linksTo(html, route, localRoute), `${route}: reachable consultation page`);
+    assert.match(text(html), /video consultation|Meet online/i);
     assert.match(text(html), /New York City|Manhattan/);
-    assert.match(text(html), /in-person/i);
+    assert.match(text(html), /in.person/i);
     assert.match(text(html), /space|workflow/i);
   }
   assert.ok(linksTo(documents.get("/"), "/", hubRoute), "the homepage links to the guide hub");
@@ -441,7 +438,9 @@ test("project and service content is crawlable in production HTML before JavaScr
   }
   for (const service of services) {
     const route = `/services/${service.slug}/`;
-    assert.ok(homeAnchors.some((tag) => pathname(tag.href, "/") === route), `${service.title}: crawlable homepage service link`);
+    const directoryAnchors = tags(documents.get("/services/"), "a");
+    assert.ok(directoryAnchors.some((tag) => tag.href && pathname(tag.href, "/services/") === route), `${service.title}: crawlable service directory link`);
+    if (!/salon|restaurant/.test(service.slug)) assert.ok(homeAnchors.some((tag) => pathname(tag.href, "/") === route), `${service.title}: homepage service link`);
     const html = documents.get(route);
     assert.equal(h1s(html)[0], service.heading);
     for (const id of service.projectIds) {
@@ -456,7 +455,7 @@ test("App Store evidence remains published on the dedicated portfolio and reacha
   const work = documents.get("/work/");
   const store = work.match(/<article\b[^>]*id="app-store-proof"[^>]*>([\s\S]*?)<\/article>/i)?.[1];
   assert.ok(store, "The portfolio includes the published-app evidence in its static HTML");
-  const openingLink = tags(home, "a").find((tag) => tag.class?.split(/\s+/).includes("hero-range-proof"));
+  const openingLink = tags(home, "a").find((tag) => tag.href === "./work/#app-store-proof");
   assert.ok(openingLink, "The opening still links to the published apps");
   assert.equal(new URL(openingLink.href, `${origin}/`).href, `${origin}/work/#app-store-proof`);
   const apps = projects.filter((project) => project.demoLabel === "App Store");
@@ -486,8 +485,8 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], service.heading);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), "2026-10-26");
-    assert.ok(linksTo(homeServices, "/", route), `${service.title}: homepage services entry`);
+    assert.equal(sitemapDates.get(route), "2026-10-27");
+    assert.ok(linksTo(homeServices, "/", "/services/web-app-development/"), "homepage gives a clear general workflow starting point");
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
       ...service.scope.flatMap(({ title, text }) => [title, text]), ...service.faq.flatMap(({ question, answer }) => [question, answer])]) {
@@ -507,7 +506,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.ok(serviceGuide, `${service.title}: the planning guide remains part of the published collection`);
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
-    assert.equal(sitemapDates.get(guideRoute), "2026-10-26");
+    assert.equal(sitemapDates.get(guideRoute), "2026-10-27");
     const inquiry = tags(html, "a").filter((tag) => tag.href?.startsWith("mailto:"))
       .map((tag) => new URL(tag.href)).find((draft) => draft.searchParams.get("body")?.includes("The problem:"));
     assert.equal(inquiry?.pathname, "admin@customtechbuilt4u.com");
@@ -515,14 +514,14 @@ test("salon and restaurant services explain the business workflow and connect to
       `${service.title}: a real inquiry retains its source without JavaScript`);
   }
   for (const article of articles.filter((entry) => !entry.modified)) {
-    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-26",
+    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-27",
       `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
-  assert.equal(sitemapDates.get("/services/"), "2026-10-26");
-  assert.equal(sitemapDates.get("/"), "2026-10-26");
-  assert.equal(sitemapDates.get("/insights/"), "2026-10-26");
+  assert.equal(sitemapDates.get("/services/"), "2026-10-27");
+  assert.equal(sitemapDates.get("/"), "2026-10-27");
+  assert.equal(sitemapDates.get("/insights/"), "2026-10-27");
   for (const route of routes) {
-    assert.equal(sitemapDates.get(route), "2026-10-26", `${route}: the shared navigation changed every generated public page`);
+    assert.equal(sitemapDates.get(route), "2026-10-27", `${route}: the shared navigation changed every generated public page`);
   }
 });
 
@@ -571,24 +570,24 @@ test("portfolio cards explain the personal projects and clearly distinguish illu
     "The collaboration commitments follow the collection and precede publication evidence");
 });
 
-test("the homepage displays all nine supplied testimonials directly with their original attribution", () => {
+test("the minimal homepage preserves all nine supplied reviews in a native disclosure", () => {
   const html = documents.get("/");
   const section = html.match(/<section id="testimonials"[^>]*>([\s\S]*?)<\/section>/)?.[1];
   assert.ok(section, "client feedback has its own section");
   assert.equal(clientTestimonials.length, 9);
   assert.equal([...section.matchAll(/<blockquote>/g)].length, 9);
   assert.equal([...section.matchAll(/<figcaption>/g)].length, 9);
-  assert.equal([...section.matchAll(/class="testimonial-grid"/g)].length, 1);
+  assert.equal([...section.matchAll(/class="testimonial-grid"/g)].length, 2);
   assert.equal([...section.matchAll(/class="testimonial-card"/g)].length, 9);
-  assert.doesNotMatch(section, /feedback-controls|feedback-ready|testimonial-more|<details\b|\shidden\b|data-feedback-/);
-  assert.match(html, /<a\b[^>]*href="#testimonials"[^>]*>Reviews<\/a>/, "the header links directly to Reviews");
+  assert.doesNotMatch(section, /feedback-controls|feedback-ready|data-feedback-/);
+  assert.match(section, /<details class="review-more"><summary>Read all 9 client reviews<\/summary>/);
+  assert.equal([...section.split("<details")[0].matchAll(/<blockquote>/g)].length, 3, "only three quotes precede the optional disclosure");
   for (const testimonial of clientTestimonials) {
     assert.ok(text(section).includes(testimonial.quote));
     for (const value of [testimonial.name, testimonial.role || testimonial.business, testimonial.location]) {
       assert.ok(text(section).includes(value), `${testimonial.name}: supplied attribution is present`);
     }
   }
-  assert.ok(tags(section, "a").some((tag) => tag.href === bookingURL));
   assert.doesNotMatch(section, /Gemini|Grok|AggregateRating|verified review|star rating/i);
   assert.ok(!schemaNodes(html).some((node) => hasType(node, "Review") || hasType(node, "AggregateRating")), "quotes do not invent review ratings");
 });
@@ -611,7 +610,7 @@ test("the homepage keeps portfolio discovery compact before client feedback and 
   assert.doesNotMatch(home, /\bid="(?:featured-projects|project-archive|archive-projects|range-proof|app-store-proof)"/,
     "The catalog, image galleries, and detailed App Store evidence live on their dedicated pages");
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["work", "process", "testimonials", "client-care", "project-faq", "consultation", "business-guides"].map(sectionPosition);
+  const destinations = ["services", "work", "process", "testimonials", "client-care", "project-faq", "consultation"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
     "portfolio discovery is followed by the working process, client feedback, launch care, questions, consultation, and useful reads");

@@ -3,7 +3,6 @@ import { test, expect } from "@playwright/test";
 import { bookingURL } from "../booking.js";
 
 const check = expect.configure({ timeout: 2500 });
-const plannerExclusions = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/", "/404.html"]);
 const resourceRoutes = new Set(["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/", "/404.html"]);
 const generatedSitemap = new URL("../dist/sitemap.xml", import.meta.url);
 
@@ -109,18 +108,11 @@ for (const width of [320, 390]) {
           result.inPageAnchorCount = inPageAnchors.length;
           result.checks.push("all main same-page destinations exist");
 
-          const planner = page.getByRole("link", { name: "Know what you want? Open the optional project planner", exact: true });
-          if (plannerExclusions.has(route)) {
-            await check(planner).toHaveCount(0);
-            result.checks.push("context-appropriate planner exclusion");
-          } else {
-            await check(planner).toHaveCount(1);
-            await check(planner).toBeInViewport({ ratio: 1 });
-            check(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
-            await check(planner).toHaveAccessibleName("Know what you want? Open the optional project planner");
-            await expectDirectHit(planner);
-            result.checks.push("optional planner is reachable");
-          }
+          await check(page.locator(".planner-shortcut")).toHaveCount(0);
+          const planner = page.locator("footer").getByRole("link", { name: "Project planner", exact: true });
+          await check(planner).toHaveCount(1);
+          check(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
+          result.checks.push("plain planner footer link");
 
           if (!resourceRoutes.has(route)) {
             const nextStep = route === "/contact/" ? main.locator("[data-booking-link]") : main.locator([
@@ -157,14 +149,7 @@ for (const width of [320, 390]) {
             const dockBox = await dock.boundingBox();
             check(footerBox.y + footerBox.height, "The footer remains above the persistent booking dock")
               .toBeLessThanOrEqual(dockBox.y + 1);
-            if (!plannerExclusions.has(route)) {
-              await check(planner).toBeInViewport({ ratio: 1 });
-              await expectDirectHit(planner);
-              const plannerBox = await planner.boundingBox();
-              const bookingBox = await dockBooking.boundingBox();
-              check(plannerBox.x + plannerBox.width, "The planner does not cover booking")
-                .toBeLessThanOrEqual(bookingBox.x);
-            }
+
           }
           check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
           result.checks.push("footer remains reachable", "booking dock respects page context", "no footer/control overlap");

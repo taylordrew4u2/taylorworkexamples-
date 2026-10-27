@@ -110,13 +110,11 @@ test("portfolio browsing fits narrow phones while preserving full-color artwork 
       await expect(image).toHaveCSS("mix-blend-mode", "normal");
       await expect(card.locator(".seo-project-cover")).toHaveCSS("filter", "none");
       const booking = page.locator(".mobile-consultation [data-booking-link]");
-      const planner = page.locator(".planner-shortcut");
       await expect(booking).toHaveAttribute("href", bookingURL);
       await expect(booking).toBeInViewport({ ratio: 1 });
-      await expect(planner).toBeInViewport({ ratio: 1 });
-      const bookingBox = await booking.boundingBox();
-      const plannerBox = await planner.boundingBox();
-      expect(plannerBox.x + plannerBox.width).toBeLessThanOrEqual(bookingBox.x);
+      await expect(page.locator(".planner-shortcut")).toHaveCount(0);
+      const planner = page.locator("footer").getByRole("link", { name: "Project planner", exact: true });
+      expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
     }
   }
 });

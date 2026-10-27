@@ -58,7 +58,7 @@ test("disabled analytics leaves booking usable and sends nothing", async ({ page
     });
   });
   expect(initialized).toBe(false);
-  const booking = page.locator(".intro-actions [data-booking-link]");
+  const booking = page.locator(".simple-actions [data-booking-link]");
   await expect(booking).toHaveAttribute("href", bookingURL);
   await booking.focus();
   await page.keyboard.press("Enter");
@@ -71,7 +71,7 @@ test("booking tracking records the current public page and excludes query values
   await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
   expect(await page.evaluate(() => window.__analyticsTestAPI.initAnalytics(document, window.__analyticsTestWindow))).toBe(false);
-  const booking = page.locator("#consultation .booking-primary");
+  const booking = page.locator("#consultation [data-booking-link]");
   await expect(booking).toHaveAttribute("href", bookingURL);
   await booking.focus();
   await page.keyboard.press("Enter");
@@ -86,7 +86,7 @@ test("booking tracking rejects changed URLs and private query parameters", async
   await page.goto("/");
   await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
-  const booking = page.locator(".intro-actions [data-booking-link]");
+  const booking = page.locator(".simple-actions [data-booking-link]");
   for (const destination of [
     `${bookingURL}?email=private@example.test`, `${bookingURL}#private-note`,
     "https://briefbooth.com/book/another-business", "https://example.com/book/4u-digital",
@@ -98,28 +98,23 @@ test("booking tracking rejects changed URLs and private query parameters", async
   expect(await contactEvents(page)).toEqual([]);
 });
 
-test("copying the business email address records intent only after clipboard success", async ({ page }) => {
-  await page.addInitScript(() => Object.defineProperty(navigator, "clipboard", {
-    configurable: true, value: { writeText: async () => {} },
-  }));
-  await page.goto("/");
-  expect(await enableTestAnalytics(page)).toBe(true);
-  await page.locator("#copy-email").click();
-  await expect(page.locator("#copy-status")).toContainText(/copied/i);
-  expect(await contactEvents(page)).toEqual([
-    { name: "Contact intent", data: { page: "/", action: "email-copy" } },
-  ]);
-});
-
-test("dynamic project inquiry links are tracked once without reading their email draft", async ({ page }) => {
+test("ordinary business email links record intent without reading their attributed draft", async ({ page }) => {
   await page.goto("/");
   await interceptContactNavigation(page);
   expect(await enableTestAnalytics(page)).toBe(true);
-  await page.locator('.hero-project[data-project="The-Bit-Binder"]').click();
-  await expect(page.locator("#project-dialog")).toBeVisible();
-  await page.locator("#project-dialog .project-enquiry").click();
+  await page.locator("footer a[href^='mailto:']").click();
   expect(await contactEvents(page)).toEqual([
     { name: "Contact intent", data: { page: "/", action: "email" } },
+  ]);
+});
+
+test("project inquiry links are tracked once without reading their email draft", async ({ page }) => {
+  await page.goto("/work/bitbinder/");
+  await interceptContactNavigation(page);
+  expect(await enableTestAnalytics(page)).toBe(true);
+  await page.locator(".project-story-hero .page-actions a[href^='mailto:']").click();
+  expect(await contactEvents(page)).toEqual([
+    { name: "Contact intent", data: { page: "/work/bitbinder/", action: "email" } },
   ]);
 });
 
@@ -146,7 +141,7 @@ test("privacy preferences and blocked analytics leave booking and email actions 
   expect(await enableTestAnalytics(page, { privacy: { globalPrivacyControl: true } })).toBe(false);
   expect(await contactEvents(page)).toEqual([]);
   expect(await enableTestAnalytics(page, { blocked: true })).toBe(true);
-  const booking = page.locator(".intro-actions [data-booking-link]");
+  const booking = page.locator(".simple-actions [data-booking-link]");
   await expect(booking).toHaveAttribute("href", bookingURL);
   await booking.focus();
   await page.keyboard.press("Enter");

@@ -79,17 +79,17 @@ for (const javaScriptEnabled of [true, false]) {
     test("the homepage footer prioritizes direct booking and keeps email as a secondary action", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto("/");
-      const footer = page.locator(".footer-contact");
-      const booking = footer.locator("a.button[data-booking-link]");
+      const footer = page.locator("footer .page-footer-contact");
+      const booking = footer.locator("[data-booking-link]");
       await expect(booking).toHaveCount(1);
       await expectDirectBooking(booking);
-      await expect(booking).toHaveClass(/button-dark/);
-      const email = footer.locator('.enquiry-link[data-enquiry="general"]');
+      await expect(booking).toHaveClass(/\bfooter-booking\b/);
+      const email = footer.locator('a[href^="mailto:"]');
       await expect(email).toHaveCount(1);
       await expect(email).not.toHaveClass(/\bbutton\b/);
       expectBusinessEmail(await email.getAttribute("href"));
       expect(await booking.evaluate((element) => Boolean(
-        element.compareDocumentPosition(element.closest(".footer-contact").querySelector('.enquiry-link[data-enquiry="general"]')) &
+        element.compareDocumentPosition(element.closest(".page-footer-contact").querySelector('a[href^="mailto:"]')) &
           Node.DOCUMENT_POSITION_FOLLOWING,
       )), "The primary booking action appears before the email alternative").toBe(true);
       await expectExternalOnlyBooking(page);
@@ -102,6 +102,8 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto(route);
         const dock = mobileConsultation(page);
         await expect(dock).toHaveClass(/\bmobile-consultation\b/);
+        await expect(dock.getByRole("link")).toHaveCount(1);
+        await expect(dock.locator("p, .planner-shortcut")).toHaveCount(0);
         const booking = dock.getByRole("link", { name: /^Book a consultation \(opens in a new tab\)$/ });
         await expectDirectBooking(booking);
         await expect(booking).toHaveAccessibleName("Book a consultation (opens in a new tab)");
@@ -178,18 +180,13 @@ for (const javaScriptEnabled of [true, false]) {
   });
 }
 
-test("the mobile booking dock stays out of project dialogs and the real project search", async ({ page }) => {
+test("the single mobile booking action leaves the real project search unobstructed", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
   const dock = mobileConsultation(page);
   await expect(dock).toBeVisible();
-  await page.locator(`.hero-project[data-project="${example.id}"]`).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dock).toBeHidden();
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(dock).toBeVisible();
+  await expect(dock.getByRole("link")).toHaveCount(1);
+  await expect(page.locator(".planner-shortcut")).toHaveCount(0);
 
   await page.goto("/work/");
   const search = page.getByRole("searchbox", { name: /Search projects/ });
@@ -215,60 +212,21 @@ test("a service visitor can book directly from the opening and return to the sam
   await expect(opening.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("booking from a project preview preserves its selected image and returns focus when closed", async ({ page }) => {
-  await page.goto("/");
-  const trigger = page.locator(`.hero-project[data-project="${example.id}"]`);
-  await trigger.click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("button", { name: "Close project details" })).toBeFocused();
-  const selected = dialog.locator('[data-dialog-screen="1"]');
-  await selected.click();
-  const frame = example.gallery[1];
-  await expect(selected).toHaveAttribute("aria-pressed", "true");
-  await expect(dialog.locator(".primary-screen")).toHaveAttribute("src", frame.image);
-  await expect(dialog.locator(".image-original")).toHaveAttribute("href", frame.image);
-
-  const bookingIntro = dialog.locator(".dialog-booking-intro");
-  const booking = bookingIntro.locator("[data-booking-link]");
-  await expectDirectBooking(booking);
-  await expectExternalOnlyBooking(page);
-  await expect(dialog.locator("form, input, textarea, select")).toHaveCount(0);
-  await openStubbedBooking(page, booking);
-  await expect(dialog).toBeVisible();
-  await expect(selected).toHaveAttribute("aria-pressed", "true");
-  await expect(dialog.locator(".primary-screen")).toHaveAttribute("src", frame.image);
-  await expect(dialog.locator(".dialog-image-caption")).toHaveText(frame.caption);
-  await expect(dialog.locator(".image-original")).toHaveAttribute("href", frame.image);
-  await page.keyboard.press("Escape");
-  await expect(dialog).toBeHidden();
-  await expect(trigger).toBeFocused();
-});
-
-test("mobile clients can continue from a quick preview to the full project before browsing images", async ({ page }) => {
+test("phone clients open the full project through an ordinary homepage link and book from its opening", async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
-    await page.locator(`.hero-project[data-project="${example.id}"]`).click();
-    const dialog = page.getByRole("dialog");
-    const intro = dialog.locator(".dialog-booking-intro");
-    const story = intro.getByRole("link", { name: `View full project: ${example.title}`, exact: true });
-    await expect(story).toBeInViewport({ ratio: 1 });
-    await expect(story).toHaveAttribute("href", example.caseUrl);
-    expect(await story.getAttribute("target")).toBeNull();
-    const bounds = await story.boundingBox();
-    expect(bounds.height).toBeGreaterThanOrEqual(44);
-    expect(bounds.x).toBeGreaterThanOrEqual(0);
-    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
-    expect(await intro.evaluate(element => Boolean(
-      element.compareDocumentPosition(document.querySelector(".dialog-images")) & Node.DOCUMENT_POSITION_FOLLOWING,
-    )), "The full project path is offered before the longer preview gallery").toBe(true);
-    await expectDirectBooking(intro.locator("[data-booking-link]"));
-    await story.click();
+    const story = page.locator(`main a[href="${example.caseUrl}"]`).first();
+    await expect(story).toBeVisible();
+    await expect(story).not.toHaveAttribute("aria-haspopup", "dialog");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await story.focus();
+    await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new URL(example.caseUrl, "http://127.0.0.1:4173/").href);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
     await expect(page.locator("#your-business")).toContainText("One developer. Your whole build.");
     await openStubbedBooking(page, page.locator(".project-story-hero [data-booking-link]"));
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
   }
 });
 
@@ -334,7 +292,7 @@ test.describe("booking information without JavaScript", () => {
     for (const route of ["/", "/work/"]) {
       await page.goto(route);
       await expectExternalOnlyBooking(page);
-      const disclosure = page.locator(".portfolio-disclosure, .portfolio-ownership");
+      const disclosure = page.locator(".portfolio-disclosure, .portfolio-ownership, .simple-disclosure");
       await expect(disclosure).toHaveCount(1);
       await expect(disclosure).toBeVisible();
       await expect(disclosure).toContainText(/personal|independent/i);

@@ -3479,3 +3479,83 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
     padding-block: .5rem;
   }
 }
+
+/* The minimal homepage: one short introduction and one job for each section. */
+.minimal-home .wrap { width: min(72rem, calc(100% - 5rem)); }
+.minimal-home .simple-hero { padding-block: clamp(3.5rem, 8vw, 7rem) 4.5rem; }
+.simple-kicker { color: var(--muted); font-size: .875rem; margin-bottom: 1.5rem; }
+.simple-hero h1 { font-family: var(--display); font-size: clamp(2.3rem, 4.6vw, 4.25rem); font-weight: 750; letter-spacing: -.055em; line-height: 1.13; text-wrap: balance; }
+.simple-hero h1 span { color: #737373; }
+.simple-descriptor { margin-top: 1.75rem; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.5; }
+.simple-intro { max-width: 35rem; margin-top: .65rem; color: var(--muted); font-size: 1rem; line-height: 1.7; }
+.simple-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.75rem; margin-top: 2rem; }
+.simple-note { max-width: 37rem; font-size: .75rem; line-height: 1.65; color: var(--muted); margin-top: 1rem; }
+.minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 3.5rem; border-top: 1px solid var(--line); margin-block: 0; }
+.simple-section-heading { margin-bottom: 1.75rem; }
+.minimal-home h2 { font-family: var(--display); font-size: clamp(1.6rem, 2.8vw, 2.35rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
+.simple-section-heading .eyebrow { margin-bottom: .65rem; color: var(--muted); }
+.simple-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; }
+.simple-service { min-height: 8.25rem; display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) 1rem; gap: .75rem; align-items: start; padding-block: 1.5rem; border-top: 1px solid var(--line); }
+.simple-service-number, .simple-process li > span { font-family: var(--mono); color: var(--muted); font-size: .75rem; padding-top: .3rem; }
+.simple-service h3 { font-size: 1.1rem; line-height: 1.4; letter-spacing: -.025em; }
+.simple-service p { font-size: .9375rem; color: var(--muted); line-height: 1.65; margin-top: .45rem; }
+.simple-service:hover h3, .simple-project:hover strong { text-decoration: underline; text-underline-offset: .2em; }
+.simple-offer { color: var(--muted); font-size: .875rem; line-height: 1.7; margin-top: 1rem; }
+.simple-offer a, .simple-planner a { color: var(--ink); text-decoration: underline; text-underline-offset: .2em; }
+.simple-offer a, .simple-planner a { display: inline-flex; align-items: center; min-height: 44px; }
+.simple-projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+.simple-project { display: block; min-width: 0; }
+.simple-project > img { width: 100%; height: auto; aspect-ratio: 16/10; object-fit: contain; background: #f3f3f3; border: 1px solid var(--line); border-radius: .5rem; }
+.simple-project > div { display: grid; gap: .25rem; margin-top: 1rem; }
+.simple-project strong { font-size: 1rem; }
+.simple-project > div > span { font-size: .75rem; line-height: 1.5; color: var(--muted); }
+.simple-project > p { font-size: .875rem; line-height: 1.65; color: var(--muted); margin-top: .5rem; }
+.simple-work-next { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 1.5rem; }
+.simple-disclosure { margin-top: .75rem; max-width: 38rem; font-size: .75rem; line-height: 1.7; color: var(--muted); }
+.simple-process { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; margin: 0; padding: 0; }
+.simple-process h3 { margin-top: .75rem; font-size: 1.1rem; letter-spacing: -.025em; }
+.simple-process p { margin-top: .5rem; font-size: .9375rem; color: var(--muted); line-height: 1.7; }
+.minimal-home #testimonials .section-heading { margin-bottom: 1.75rem; }
+.minimal-home .testimonial-grid { gap: 1.5rem; }
+.minimal-home .testimonial-card { padding: 0; border: 0; background: none; border-radius: 0; }
+.minimal-home .testimonial-mark { display: none; }
+.minimal-home .testimonial-card blockquote { margin: 0 0 1rem; }
+.minimal-home .testimonial-card blockquote p { font-size: .9375rem; line-height: 1.75; }
+.minimal-home .testimonial-card figcaption { padding-top: .75rem; }
+.minimal-home .testimonial-project-story { display: none; }
+.review-more { margin-top: 1.75rem; border-top: 1px solid var(--line); }
+.review-more > summary { min-height: 3.25rem; padding-block: 1rem; cursor: pointer; font-size: .875rem; font-weight: 600; }
+.review-more .testimonial-grid { margin-top: 1rem; row-gap: 2rem; }
+.simple-care > p { color: var(--muted); font-size: .9375rem; line-height: 1.7; margin-block: .75rem 1rem; max-width: 44rem; }
+.simple-care details { border-top: 1px solid var(--line); margin-top: 1.5rem; }
+.simple-care summary { cursor: pointer; min-height: 3.25rem; padding-block: 1rem; font-size: .875rem; font-weight: 600; }
+.simple-care .client-care-grid { margin-top: 1rem; }
+.minimal-home .simple-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem; }
+.minimal-home .simple-faq .faq-list { width: 100%; }
+.minimal-home .simple-contact { padding-block: 4rem; }
+.simple-contact h2 { margin-top: .75rem; }
+.simple-contact > p:not(.eyebrow):not(.simple-note):not(.simple-planner) { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+.simple-contact > .button { margin-top: 1.5rem; }
+.simple-planner { margin-top: 2rem; font-size: .875rem; line-height: 1.7; color: var(--muted); }
+@media (max-width: 700px) {
+  .minimal-home .wrap { width: calc(100% - 2.5rem); }
+  .minimal-home .simple-hero { padding-block: 2.5rem 3rem; }
+  .simple-hero h1 { font-size: clamp(2.15rem, 6.4vw, 2.8rem); line-height: 1.16; }
+  .simple-descriptor { font-size: 1.1rem; margin-top: 1.25rem; }
+  .simple-intro { font-size: .9375rem; }
+  .simple-actions { gap: .75rem 1.25rem; margin-top: 1.5rem; }
+  .minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 2.5rem; }
+  .simple-services { grid-template-columns: 1fr; }
+  .simple-service { min-height: auto; padding-block: 1.25rem; }
+  .simple-projects { grid-template-columns: 1fr; gap: 1.75rem; }
+  .simple-project > img { aspect-ratio: auto; }
+  .simple-project > div { margin-top: .75rem; }
+  .simple-project > p { margin-top: .35rem; }
+  .simple-process { grid-template-columns: 1fr; gap: 1.5rem; }
+  .simple-process li { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: 0 .75rem; }
+  .simple-process h3 { margin-top: 0; }
+  .simple-process p { grid-column: 2; }
+  .minimal-home .testimonial-grid { grid-template-columns: 1fr; gap: 1.75rem; }
+  .minimal-home .simple-faq { display: block; }
+  .simple-planner { margin-top: 1.5rem; }
+}

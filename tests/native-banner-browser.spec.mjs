@@ -6,20 +6,20 @@ import { projects } from "../public-projects.js";
 // https://playwright.dev/docs/browsers#chromium-new-headless-mode
 test.use({ channel: "chromium", isMobile: false, hasTouch: false });
 
-test.describe("native modified app-banner gestures", () => {
+test.describe("native homepage proof links", () => {
   for (const width of [320, 390]) {
     for (const gesture of [
       { name: "modifier click", options: { modifiers: ["ControlOrMeta"] } },
       { name: "middle click", options: { button: "middle" } },
     ]) {
-      test(`${width}px ${gesture.name} opens the case page in a new tab instead of opening the preview`, async ({ page }) => {
+      test(`${width}px ${gesture.name} opens the case page in a new tab while preserving the homepage`, async ({ page }) => {
         const project = projects.find((entry) => entry.id === "The-Bit-Binder");
         await page.setViewportSize({ width, height: 844 });
         await page.goto("/");
         const originalURL = page.url();
         const destination = new URL(project.caseUrl, originalURL).href;
-        const link = page.locator(`a.hero-project[data-project="${project.id}"]`);
-        await expect(link).toHaveAttribute("aria-haspopup", "dialog");
+        const link = page.locator(`a.simple-project[href="${project.caseUrl}"]`);
+        await expect(link).not.toHaveAttribute("aria-haspopup", "dialog");
         // Each gesture gets a fresh page and context. Activate its source tab
         // explicitly before relying on the browser's native background-tab action.
         await page.bringToFront();
@@ -35,7 +35,7 @@ test.describe("native modified app-banner gestures", () => {
           await expect(popup).toHaveURL(destination);
           await expect(popup.getByRole("heading", { level: 1 })).toHaveText(project.title);
           await expect(page).toHaveURL(originalURL);
-          await expect(page.getByRole("dialog")).toBeHidden();
+          await expect(page.locator("dialog")).toHaveCount(0);
         } finally {
           await popup.close();
         }

@@ -36,25 +36,15 @@ async function expectDirectBooking(link) {
 async function expectDockActions(page) {
   const dock = page.getByRole("complementary", { name: "Consultation booking", exact: true });
   const booking = dock.locator("[data-booking-link]");
-  const planner = page.getByRole("link", {
-    name: "Know what you want? Open the optional project planner", exact: true,
-  });
   await expectDirectBooking(booking);
-  await expectTapTarget(planner);
   await expect(booking).toBeInViewport({ ratio: 1 });
-  await expect(planner).toBeInViewport({ ratio: 1 });
-  expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");
-  const plannerBox = await planner.boundingBox();
-  const bookingBox = await booking.boundingBox();
-  expect(plannerBox.x + plannerBox.width, "The optional planner never covers the booking target")
-    .toBeLessThanOrEqual(bookingBox.x);
-  for (const action of [booking, planner]) {
-    expect(await action.evaluate((element) => {
-      const box = element.getBoundingClientRect();
-      const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
-      return hit === element || element.contains(hit);
-    }), "Both persistent actions can be tapped directly").toBe(true);
-  }
+  await expect(dock.getByRole("link")).toHaveCount(1);
+  await expect(page.locator(".planner-shortcut")).toHaveCount(0);
+  expect(await booking.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+    return hit === element || element.contains(hit);
+  }), "The persistent booking action can be tapped directly").toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     "Service and booking choices do not create horizontal scrolling").toBe(true);
 }
@@ -130,8 +120,15 @@ for (const javaScriptEnabled of [true, false]) {
     });
 
     test("short after-launch answers explain the existing guarantee and make the full terms reachable", async ({ page }) => {
+      await page.goto("/");
+      const commitments = page.locator("#client-care details");
+      await commitments.locator("summary").focus();
+      await page.keyboard.press("Enter");
+      for (const term of [/30.days?/i, /full refund/i, /reasonable changes/i, /six.month/i, /50%/]) {
+        await expect(commitments).toContainText(term);
+      }
+      await expect(page.locator('#client-care a[href="./guarantee/"]')).toBeVisible();
       for (const [pathname, summary] of [
-        ["/", "What happens after launch?"],
         ["/services/website-development/", "Can I change the website after launch?"],
       ]) {
         await page.goto(pathname);
@@ -154,7 +151,7 @@ for (const javaScriptEnabled of [true, false]) {
     });
 
     for (const width of [320, 390]) {
-      test(`the service and comparison journeys keep booking and the optional planner independently reachable at ${width}px`, async ({ page }) => {
+      test(`the service and comparison journeys keep booking reachable and planner links in the footer at ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 844 });
         for (const pathname of ["/services/", "/guides/website-or-app/", "/work/"]) {
           await page.goto(pathname);

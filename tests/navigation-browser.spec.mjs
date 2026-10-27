@@ -68,8 +68,9 @@ for (const width of [320, 390]) {
       }));
       await page.goto(route);
       let controls = await openMenu(page);
+      await expect(controls.navigation.getByRole("link")).toHaveCount(3);
       await expectTapTarget(controls.toggle, page);
-      const services = controls.navigation.getByRole("link", { name: route === "/" ? "What I build" : "Services", exact: true });
+      const services = controls.navigation.getByRole("link", { name: "Services", exact: true });
       await expectTapTarget(services, page);
       await page.keyboard.press("Tab");
       await expect(services).toBeFocused();
@@ -78,14 +79,8 @@ for (const width of [320, 390]) {
         return (style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0) || style.boxShadow !== "none";
       }), "Keyboard navigation has a visible focus indicator").toBe(true);
       await page.keyboard.press("Enter");
-      if (route === "/") {
-        await expect(page).toHaveURL(/\/#services$/);
-        await expect(controls.toggle).toHaveAttribute("aria-expanded", "false");
-        await expect(controls.navigation).toBeHidden();
-      } else {
-        await expect(page).toHaveURL(/\/services\/$/);
-        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-      }
+      await expect(page).toHaveURL(/\/services\/$/);
+      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
       await page.goto(route);
       controls = await openMenu(page);

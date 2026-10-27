@@ -137,7 +137,7 @@ export function pageHead(page, homepage = false) {
 }
 
 function header(route) {
-  const navigation = [["services/", "Services"], ["work/", "Projects"], ["insights/", "Guides"], ["project-brief/", "Project planner"]];
+  const navigation = [["services/", "Services"], ["work/", "Projects"]];
   const navLink = ([target, label]) => {
     const current = route === `/${target}` ? "page" : route.startsWith(`/${target}`) || (target === "insights/" && route.startsWith("/guides/")) ? "location" : "";
     return `<a href="${local(route, target)}"${current ? ` aria-current="${current}"` : ""}>${label}</a>`;
@@ -158,7 +158,7 @@ function footerPolicies(route) {
 }
 
 function footer(route) {
-  return `<footer class="page-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p><p>Meet online. NYC in-person consultations can help clarify your needs or plan technology around your space and workflow.</p><a class="text-link" href="mailto:${site.email}">${site.email} <span aria-hidden="true">↗</span></a></div><nav aria-label="Footer navigation"><div class="footer-link-group"><p class="eyebrow">EXPLORE</p><a href="${local(route, "services/")}">Development services</a><a href="${local(route, "work/")}">Project portfolio</a><a href="${local(route, "insights/")}">Business technology guides</a><a href="${local(route, "guides/website-or-app/")}">Website or app?</a></div><div class="footer-link-group"><p class="eyebrow">START A PROJECT</p>${bookingLink("text-link")}<a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "new-york-city/")}">New York City consultations</a><a href="${local(route, "contact/")}">Contact 4u Digital</a><a href="${local(route, "project-brief/")}">Project planner</a></div><div class="footer-link-group"><p class="eyebrow">4u Digital</p><a href="${local(route, "about/")}">About 4u Digital</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital<span>Apps, websites, and software for your business.</span></p></footer>`;
+  return `<footer${route === "/" ? ' id="contact"' : ""} class="page-footer compact-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p></div><div class="page-footer-contact">${bookingLink("text-link footer-booking")}<a class="text-link" href="mailto:${site.email}">${site.email}</a></div><nav class="compact-footer-links" aria-label="Footer navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "project-brief/")}">Project planner</a><a href="${local(route, "about/")}">About</a><a href="${local(route, "contact/")}">Contact</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital</p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -197,12 +197,11 @@ function bookingDestinationNote() {
 }
 
 function plannerShortcut(route) {
-  if (["/project-brief/", "/project-kickoff/", "/privacy/", "/terms/", "/guarantee/", "/404.html"].includes(route)) return "";
-  return `<a class="planner-shortcut" href="${local(route, "project-brief/")}" aria-label="Know what you want? Open the optional project planner" title="Optional planner — share your ideas before or after a consultation."><span>Know what you want?</span><small>Project planner <span aria-hidden="true">→</span></small></a>`;
+  return "";
 }
 
 function mobileConsultation() {
-  return `<aside class="mobile-consultation" aria-label="Consultation booking"><p>Meet online<span>BriefBooth · new tab</span></p>${bookingLink()}</aside>`;
+  return `<aside class="mobile-consultation" aria-label="Consultation booking">${bookingLink()}</aside>`;
 }
 
 function faqBlock(title, faqs, id = "") {
@@ -296,7 +295,7 @@ function testimonialCard(testimonial) {
 }
 
 function testimonialsSection() {
-  return `<div class="section-heading"><div><p class="eyebrow">CLIENT REVIEWS</p><h2 id="testimonials-title">In their own words.</h2><p class="testimonials-intro">Clients on taking an idea from the first conversation to a working product.</p></div>${bookingLink("text-link")}</div><div class="testimonial-grid">${clientTestimonials.map(testimonialCard).join("")}</div>`;
+  return `<div class="section-heading"><div><p class="eyebrow">CLIENT REVIEWS</p><h2 id="testimonials-title">In their own words.</h2></div></div><div class="testimonial-grid">${clientTestimonials.slice(0, 3).map(testimonialCard).join("")}</div><details class="review-more"><summary>Read all 9 client reviews</summary><div class="testimonial-grid">${clientTestimonials.slice(3).map(testimonialCard).join("")}</div></details>`;
 }
 
 function articleIndex(route) {
@@ -380,6 +379,7 @@ function localPage() {
 }
 
 function clientCareSection(homepage = false) {
+  if (homepage) return `<section id="client-care" class="simple-care wrap" aria-labelledby="client-care-title"><h2 id="client-care-title">Your product. Your code.</h2><p>Your custom code is 100% yours. Client work and code stay private unless you give permission. Every project includes a 30-day money-back guarantee after the completed product launches.</p><a class="text-link" href="./guarantee/">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><details><summary>Read the commitments</summary><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>`;
   return `<section id="client-care" class="${homepage ? "client-care-section wrap" : "page-section client-care"}" aria-labelledby="client-care-title"><div class="section-heading"><div><p class="eyebrow">${escape(clientCare.eyebrow)}</p><h2 id="client-care-title">${escape(clientCare.heading)}</h2><p class="client-care-intro">${escape(clientCare.intro)}</p></div></div><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div><a class="text-link" href="mailto:${site.email}">Email about your project or guarantee <span aria-hidden="true">↗</span></a></section>`;
 }
 
@@ -497,7 +497,7 @@ function guidePage() {
 export async function generateSEO(output) {
   const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
     description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-26",
+    modified: "2026-10-27",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
@@ -506,6 +506,7 @@ export async function generateSEO(output) {
   html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
   html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);
   html = html.replace('<div id="footer-policies"></div>', footerPolicies("/"));
+  html = html.replace('<div id="shared-footer"></div>', footer("/"));
   html = sourceEmailLinks(html, "/");
   await writeFile(path.join(output, "index.html"), html);
 
@@ -549,8 +550,8 @@ export async function generateSEO(output) {
     { ...contact, html: frame(contact, intro("LET’S TALK", "What would you like to build?", "Start with a rough idea, a website you need, or a problem to solve. You don’t need a finished plan or a technical background.", `<div class="page-actions">${bookingLink()}<a class="button button-outline" href="${local(contact.path, "project-brief/")}">Open project planner →</a></div><p class="contact-choice-note">Book a video consultation to talk it through. Prefer to write? The planner is optional before or after a consultation and does not book a meeting.</p><p class="booking-destination">Booking opens BriefBooth in a new tab. Requests are reviewed before confirmation.</p>`) + `<section class="page-section"><h2>A quick question first?</h2><p>You can email <a class="text-link" href="mailto:${site.email}">${site.email}</a>. A short description of what you need is enough; budget, features, and timing can be worked out together.</p>${inquiry("general", "Email a quick question", "", "text-link")}</section><section class="page-section"><h2>Online or in New York City.</h2><p>Use BriefBooth for the available video consultation and times. If you’re unsure what you need or the technology needs to fit a physical space, we can arrange an in-person visit in Manhattan, Brooklyn, or parts of Queens.</p><a class="text-link" href="${local(contact.path, "new-york-city/")}">About NYC consultations →</a></section><section class="page-section existing-client-resource"><h2>Already working together?</h2><p>The <a class="text-link" href="${local(contact.path, "project-kickoff/")}">existing-client kickoff form</a> records the agreed project scope, approvals, and handover before the build.</p></section>`) },
   ].map((page) => ({
     ...page,
-    // Every published page uses the selected public portfolio and shared navigation.
-    modified: [page.modified || page.article?.modified || site.modified || site.published, "2026-10-26"].sort().at(-1),
+    // The minimal shared navigation and footer changed every published page on October 27.
+    modified: [page.modified || page.article?.modified || site.modified || site.published, "2026-10-27"].sort().at(-1),
   }));
   for (const page of pages.filter((page) => page.path !== "/")) {
     const directory = path.join(output, page.path);
