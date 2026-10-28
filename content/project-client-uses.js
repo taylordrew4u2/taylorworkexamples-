@@ -45,6 +45,11 @@ export const projectClientUses = {
     businessUse: "A local shop or creative business could present its products, imagery, team, and contact details in a focused website.",
     serviceSlug: "website-development",
   },
+  tlcmassagewellness: {
+    capabilities: ["Treatment pages", "Appointment requests", "Owner content controls"],
+    businessUse: "A salon, wellness practice, or other service business could present its services, collect appointment preferences, and let staff manage requests and website content.",
+    serviceSlug: "website-development",
+  },
   nycstandupopenmicmaster: {
     capabilities: ["Searchable directories", "Location filters", "Reviewed updates"],
     businessUse: "A business could offer a directory of locations, suppliers, or events that staff and approved contributors keep updated.",

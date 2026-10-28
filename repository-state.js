@@ -163,10 +163,11 @@ export const publicRepositories = {
     "description": "Booking website for TLC Massage Wellness, editable end to end from a password-protected admin. Next.js on Vercel",
     "homepage": "",
     "defaultBranch": "main",
-    "headSha": "405e23478ed49d6419be8193f6d3b3f106cbacd8",
-    "pushedAt": "2026-08-24T08:51:31Z",
-    "archived": true,
-    "readmeAvailable": true
+    "headSha": "0e4f734b3b87fa4e4a8e15864390d24a94e07084",
+    "pushedAt": "2026-10-28T14:19:08Z",
+    "archived": false,
+    "readmeAvailable": true,
+    "verifiedAt": "2026-10-28"
   },
   "usbmic": {
     "repoUrl": "https://github.com/taylordrew4u2/usbmic",

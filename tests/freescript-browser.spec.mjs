@@ -5,7 +5,7 @@ test('FreeScript is searchable and opens its complete project case',async({page}
  await page.locator('#project-browser-search').fill('FreeScript');
  const card=page.locator('[data-project-id="FreeScript"]');
  await expect(card).toBeVisible();
- await expect(page.locator('#project-browser-count')).toHaveText('1 of 12 projects');
+ await expect(page.locator('#project-browser-count')).toHaveText('1 of 13 projects');
  await card.getByRole('link',{name:'See how it works: FreeScript'}).first().click();
  await expect(page).toHaveURL(/\/work\/freescript\/$/);
  await expect(page.getByRole('heading',{level:1})).toHaveText('FreeScript');

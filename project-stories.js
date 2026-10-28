@@ -122,11 +122,11 @@ export const projectStories = {
     ],
   },
   tlcmassagewellness: {
-    audience: "Massage businesses and their clients",
+    audience: "Wellness practices and prospective clients",
     workflowDescriptions: [
-      "Browse the available treatments before requesting an appointment.",
-      "Submit a treatment-aware appointment request for the owner to review.",
-      "Let the owner accept or decline requests from the admin panel.",
+      "Explore treatments and practitioner profiles on the public website.",
+      "Send a preferred date, time, and treatment for the owner to review. This is a request, not an instantly reserved appointment.",
+      "Accept or decline requests, add private notes, and keep treatments, profiles, and website content up to date.",
     ],
   },
   vlognudge: {

@@ -23,7 +23,7 @@ for (const javaScriptEnabled of [true, false]) {
       test(`all project and service pages have a clear mobile opening and optional detail at ${width}px`, async ({ page }) => {
         test.setTimeout(180_000);
         await page.setViewportSize({ width, height: 844 });
-        expect(routes).toHaveLength(20);
+        expect(routes).toHaveLength(21);
         for (const route of routes) {
           await test.step(route, async () => {
             await page.goto(route);

@@ -9,6 +9,7 @@ export const projectBuildCare = {
   "Bill-Spilt": "Keep expense records available offline and review a suggested repayment plan.",
   MyGigCalendar: "Connect a private working calendar with a separate public fan calendar.",
   "micro-short-website": "Keep film imagery, credits, and contact information organized across five directly linked views.",
+  tlcmassagewellness: "Keep treatment-aware appointment requests separate from accepted visits, with owner-controlled status changes and editable public content.",
   nycstandupopenmicmaster: "Preview new sources before publishing, while failed refreshes retain the last good records.",
   "Open-Micer-Timer": "Pair the large countdown with a visible final-minute cue.",
   PinsAndNeedlesComedyWebsite: "Keep public content, audience submissions, and the producer’s working controls distinct.",

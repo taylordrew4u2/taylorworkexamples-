@@ -133,22 +133,22 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("the public portfolio selects twelve complete projects while the audited inventory stays internal", () => {
+test("the public portfolio selects thirteen complete projects while the audited inventory stays internal", () => {
   const expectedPublic = [
     "FreeScript",
     "Showrunner-ICanRunAShow", "The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "Bill-Spilt",
-    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website", "nycstandupopenmicmaster",
+    "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website", "nycstandupopenmicmaster", "tlcmassagewellness",
   ];
   const expectedFeatured = [
-    "BriefBooth.com", "nycstandupopenmicmaster", "Showrunner-ICanRunAShow", "The-Bit-Binder", "micro-short-website", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
+    "BriefBooth.com", "nycstandupopenmicmaster", "tlcmassagewellness", "Showrunner-ICanRunAShow", "The-Bit-Binder", "micro-short-website", "the-trip-handler", "Bill-Spilt", "PinsAndNeedlesComedyWebsite", "MyGigCalendar",
   ];
   assert.deepEqual(portfolioProjectIds, expectedPublic);
   assert.deepEqual(featuredProjectIds, expectedFeatured);
-  assert.equal(publicProjects.length, 12);
+  assert.equal(publicProjects.length, 13);
   assert.deepEqual(publicProjects.map((project) => project.id).sort(), [...expectedPublic].sort());
   assert.deepEqual(publicFeaturedProjects.map((project) => project.id), expectedFeatured);
   assert.deepEqual(publicFeaturedProjects.filter((project) => project.projectType === "Website").map((project) => project.id),
-    ["micro-short-website", "PinsAndNeedlesComedyWebsite"], "The featured range includes two distinct websites");
+    ["tlcmassagewellness", "micro-short-website", "PinsAndNeedlesComedyWebsite"], "The featured range includes three distinct websites");
   assert.equal(publicFeaturedProjects.filter((project) => project.category === "web" && project.projectType !== "Website").length, 5);
   assert.equal(publicFeaturedProjects.filter((project) => project.category === "ios").length, 2);
   assert.equal(projects.length, 18, "Unselected evidence remains in the internal audited inventory");
@@ -157,7 +157,7 @@ test("the public portfolio selects twelve complete projects while the audited in
     assert.match(project.caseUrl, /^\.\/work\/[a-z0-9-]+\/$/);
   }
   for (const project of publicFeaturedProjects) assert.equal(project, publicProjects.find((entry) => entry.id === project.id));
-  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness", "taylordrewwebsite"]) {
+  for (const id of ["Role-Call", "bleepkit", "dictype", "vlognudge", "taylordrewwebsite"]) {
     assert.ok(projects.some((project) => project.id === id), `${id}: internal evidence is retained`);
     assert.equal(publicProjects.some((project) => project.id === id), false, `${id}: excluded from public pages and search data`);
   }
@@ -244,7 +244,7 @@ test("the audited catalog preserves inventory dates and canonical source links",
     assert.match(project.repositoryHead, /^[a-f0-9]{40}$/);
   }
   assert.ok(projects.every((project) => project.sourceAvailable === true));
-  assert.equal(projects.find((project) => project.id === "tlcmassagewellness").repositoryArchived, true);
+  assert.equal(projects.find((project) => project.id === "tlcmassagewellness").repositoryArchived, false);
   assert.equal(projects.some((project) => project.id === "taylosite"), false);
 });
 
@@ -520,7 +520,7 @@ test("all 18 public projects have traceable covers and galleries with accurate a
         assert.equal(project.imageHeight, project.id === "nycstandupopenmicmaster" ? 1536 : 1080);
       } else {
         assert.ok(["FreeScript", "Bill-Spilt", "Showrunner-ICanRunAShow", "bleepkit", "dictype", "usbmic",
-          "Role-Call", "the-trip-handler", "PinsAndNeedlesComedyWebsite"].includes(project.id));
+          "Role-Call", "the-trip-handler", "PinsAndNeedlesComedyWebsite", "tlcmassagewellness"].includes(project.id));
         assert.equal(project.gallery[0].sourceKind, "repository-product-artwork");
         assert.equal(project.imageLabel, "Repository product artwork");
         assert.match(project.imageCaption, /^Repository product artwork/);
@@ -960,7 +960,7 @@ test("limited capture states retain their user-facing disclosures beside their o
   for (const frame of find("the-trip-handler").gallery.slice(1)) {
     assert.match(frame.previewContext, /seeded demo.*no real payment/i);
   }
-  assert.match(find("tlcmassagewellness").previewContext, /development capture.*sample/i);
+  assert.match(find("tlcmassagewellness").previewContext, /(?:local demo|sample|promotional artwork)/i);
   const binder = find("The-Bit-Binder");
   assert.match(binder.previewContext, /owner-supplied.*promotional artwork/i);
   assert.ok(binder.gallery.filter((view) => !view.sourceKind).every((frame) =>

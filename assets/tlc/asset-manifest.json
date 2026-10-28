@@ -1,0 +1,344 @@
+{
+  "project": "TLC Massage Wellness",
+  "prepared_date": "2026-10-27",
+  "source_repository": "https://github.com/taylordrew4u2/tlcmassagewellness",
+  "source_commit": "ec8b6f349a42479765246369fae3d3919e71c287",
+  "brand": {
+    "forest": "#2f3b2a",
+    "gold": "#a89240",
+    "cream": "#f7f3e8",
+    "fonts": [
+      "Cormorant Garamond",
+      "Jost"
+    ]
+  },
+  "provenance": {
+    "photography": "Built-in image_gen, conceptual brand imagery; prompts in source/IMAGE-PROMPTS.md",
+    "interface": "Local project demo, fictional appointment sample",
+    "artwork": "HTML/CSS typesetting and project SVG motif",
+    "videos": "FFmpeg motion-graphic showcase assembled from ten included source PNGs"
+  },
+  "files": [
+    {
+      "path": "README-SECTION.md",
+      "bytes": 1411,
+      "sha256": "7adba18db5b3f2f77552af16cd0e6246ff0ec5acf8c470ec0229704884f96fc0"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1277,
+      "sha256": "85fcb9b68db69906d8c39bbd5b6eceb4ab9cfd2dc0c22e655f3e4b8d909ed203"
+    },
+    {
+      "path": "USAGE.md",
+      "bytes": 6842,
+      "sha256": "06d0c30b4168bf5968cb66be5034a495772147d72921dc1f0bd48019041df0d3"
+    },
+    {
+      "path": "copy/marketing-copy.md",
+      "bytes": 10294,
+      "sha256": "b2ee0431eb7921c67f445cc6e6ba9e8479ab3f5c8ac475a0cab1f5904a0454b3"
+    },
+    {
+      "path": "copy/portfolio-case-study.md",
+      "bytes": 6570,
+      "sha256": "e10b4d2a4e655c45664aae39c41dc79fd63ee3e127bc383c41b1e1c572b37495"
+    },
+    {
+      "path": "images/portfolio-cover.png",
+      "bytes": 376230,
+      "sha256": "aacdc9e609b6fa53932a6c89dcfb830f510dc40e5d911ab3adcd0b52e2db018a",
+      "width": 1920,
+      "height": 1080,
+      "purpose": "Portfolio case-study hero and video thumbnail"
+    },
+    {
+      "path": "images/readme-banner.png",
+      "bytes": 837777,
+      "sha256": "30da1017eb0e1ec22499d6ec4cc0b497e9394391d9f62037ca01b0e6d864e599",
+      "width": 1600,
+      "height": 800,
+      "purpose": "README project banner"
+    },
+    {
+      "path": "images/request-flow.png",
+      "bytes": 144311,
+      "sha256": "9d176fa64eafd3462ed373b647c8402c8b56c63e004511411dd41e3fadd814c8",
+      "width": 1920,
+      "height": 1080,
+      "purpose": "Appointment request workflow feature graphic"
+    },
+    {
+      "path": "images/social-portrait.png",
+      "bytes": 1606938,
+      "sha256": "cee1f9abd213f7a5200252f258e6f50b198aba2909790ec91e8db3a4734cb9aa",
+      "width": 1080,
+      "height": 1350,
+      "purpose": "Portrait promotional post"
+    },
+    {
+      "path": "images/social-square.png",
+      "bytes": 683704,
+      "sha256": "07e07d371198ecd31a1b9a775b99ecd2f6b5133f5c96410d522ccc77ad8deb1a",
+      "width": 1080,
+      "height": 1080,
+      "purpose": "Square promotional post"
+    },
+    {
+      "path": "images/wellness-detail.png",
+      "bytes": 2149252,
+      "sha256": "df17326a5636bf315d61875b86341c2adbd4f8decd0ee886ccab06088d11e676",
+      "width": 1122,
+      "height": 1402,
+      "purpose": "AI-generated conceptual wellness still-life photograph"
+    },
+    {
+      "path": "images/wellness-room.png",
+      "bytes": 2406468,
+      "sha256": "b276e2033ad3ede2cb59887d0817904a52a995b85b784ac5132d5312dda9fb58",
+      "width": 1672,
+      "height": 941,
+      "purpose": "AI-generated conceptual treatment-room photograph"
+    },
+    {
+      "path": "index.html",
+      "bytes": 12598,
+      "sha256": "f99fc6cc26a07766f1e106ed8e3089867f4a861fc108c985f17c620b75c7028b"
+    },
+    {
+      "path": "screenshots/admin-bookings-portrait.png",
+      "bytes": 60169,
+      "sha256": "59f51aa06ed7f78f6896ae9177559fd41fb4f4b3130d049d0cea4bd88e4449f1",
+      "width": 900,
+      "height": 1100
+    },
+    {
+      "path": "screenshots/admin-bookings.png",
+      "bytes": 63276,
+      "sha256": "0edcf60eef0a27f4942acc4fd89c9c5a9cdd87109e9fc0ef6e93fd160b219b97",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "screenshots/admin-treatments.png",
+      "bytes": 102487,
+      "sha256": "cf87d088392d48a4cf5239df11d2a2894f11ba633e58c9ef9cfcf2189f850143",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "screenshots/admin-website-portrait.png",
+      "bytes": 82295,
+      "sha256": "e58e0c4d7aab70fa310656f003f0699586f882ade746b139228709ec7761b599",
+      "width": 900,
+      "height": 1100
+    },
+    {
+      "path": "screenshots/admin-website.png",
+      "bytes": 79295,
+      "sha256": "e0567133879633a96564ca75239ecca49bf2ec1c264872f1916c5a94120143e5",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "screenshots/booking-confirmation.png",
+      "bytes": 65094,
+      "sha256": "6dd9c3436a8b120ebe91b391486fda755485f092d2ab1db85d44528b8b93624b",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "screenshots/booking-form.png",
+      "bytes": 27228,
+      "sha256": "4e554974345fe80901b12c6fc0a0842975da7e99c27f84c9038b89bc4533054c",
+      "width": 632,
+      "height": 509
+    },
+    {
+      "path": "screenshots/desktop-booking.png",
+      "bytes": 52786,
+      "sha256": "b08089c357d60df45f3ffb897af27fcf532b4c724f7c4426d87dd7773351172c",
+      "width": 1440,
+      "height": 1067
+    },
+    {
+      "path": "screenshots/desktop-home.png",
+      "bytes": 249237,
+      "sha256": "f7a37507654985e8f3b7b370fa2bac55944af79ce5915c1669ab6dac6f62418a",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "path": "screenshots/mobile-booking.png",
+      "bytes": 27669,
+      "sha256": "44fa6be5095719fd52c06c3797c45dc9e5294821217ba6f184ac2ec5890a70f7",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "screenshots/mobile-home.png",
+      "bytes": 119208,
+      "sha256": "6dc51a4e9d3f770038f93ae146251aa3425badfcfc671d2201b073b0a99a7bfb",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "source/ARTWORK-REBUILD.md",
+      "bytes": 2068,
+      "sha256": "82aa96c459a7006431f5c9a2988ef2191ff765372ecf8205c3168c6d27e615d2"
+    },
+    {
+      "path": "source/IMAGE-PROMPTS.md",
+      "bytes": 3469,
+      "sha256": "810bcc2a9a9b0115b8550ad7bb9537513b8b2075e0826556931654affc2b33f2"
+    },
+    {
+      "path": "source/VIDEO-REBUILD.md",
+      "bytes": 1694,
+      "sha256": "b6587cac79ac9a694579c77bb70e59a65dd06cb9bbdbcefda311832504a737e9"
+    },
+    {
+      "path": "source/designs.html",
+      "bytes": 13655,
+      "sha256": "c2397d156ec43bc7a6b36f5705eceebba131c2de4e9eadd12d0a210925cd5d00"
+    },
+    {
+      "path": "source/fonts/Cormorant-Garamond-OFL.txt",
+      "bytes": 4387,
+      "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956"
+    },
+    {
+      "path": "source/fonts/Jost-OFL.txt",
+      "bytes": 4384,
+      "sha256": "1af3438a4d5f0ed2bdbc5751a5a67ebf6d537334161184b7fbb68503ef0ea0c5"
+    },
+    {
+      "path": "source/fonts/cormorant-garamond-latin-400.woff2",
+      "bytes": 22876,
+      "sha256": "8048ac209bec741e1c29cd0cfac5aac1c0c2ba8c3ddbd4a58fa9bd92ef5c63c2"
+    },
+    {
+      "path": "source/fonts/jost-latin-400.woff2",
+      "bytes": 9404,
+      "sha256": "f94cffda16515fbb1667a2662d6b46f5610a942fd02fe88d67ff98f776288962"
+    },
+    {
+      "path": "source/render-artwork.cjs",
+      "bytes": 1949,
+      "sha256": "f6fa7e58191c926ccf8862714a2c0eba4a96534f0561fcba0c0dbb436f96fd7b"
+    },
+    {
+      "path": "source/render-videos.py",
+      "bytes": 5553,
+      "sha256": "d9fc953669987429c4d7c889655794dbe3880e28dbf815b06379e44a02536ac1"
+    },
+    {
+      "path": "source/video-slides/landscape/01.png",
+      "bytes": 376230,
+      "sha256": "aacdc9e609b6fa53932a6c89dcfb830f510dc40e5d911ab3adcd0b52e2db018a",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "source/video-slides/landscape/02.png",
+      "bytes": 106379,
+      "sha256": "132f6571954b0f6f75652037bb89e9f6d32e76f9944b6f6df111798e849531de",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "source/video-slides/landscape/03.png",
+      "bytes": 128323,
+      "sha256": "fa61f4bc4df916d6d89abcc85c40e49787ebdf446850095c59a284b47212bab3",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "source/video-slides/landscape/04.png",
+      "bytes": 140598,
+      "sha256": "4d439198d5449ed93d50363fce77cf5dd427efb43d73a336387596c617c02f5b",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "source/video-slides/landscape/05.png",
+      "bytes": 1024997,
+      "sha256": "edec8b91f4c0dee60f3932e00b89d1feba37b13f97a036f2955ed80594b5b477",
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "source/video-slides/portrait/01.png",
+      "bytes": 225024,
+      "sha256": "87b78b42c2237ed9c4940a4b1eda97e417e35c9327d4e854c7d369e9662dbeff",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "source/video-slides/portrait/02.png",
+      "bytes": 118569,
+      "sha256": "2ebfdc56bf3c891690873ecb5d2043d682bbea8f25ab566cda605a25a27423f6",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "source/video-slides/portrait/03.png",
+      "bytes": 158617,
+      "sha256": "12b4cc5391dd9c44d294b33299c3e57750133d40d45be253957b6b84415f2ff9",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "source/video-slides/portrait/04.png",
+      "bytes": 159891,
+      "sha256": "5b1fdbda81314e7a56d8dd48fcf200e88261130b2aedff9f49c2cd50e3a3f24b",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "source/video-slides/portrait/05.png",
+      "bytes": 92245,
+      "sha256": "c41a804d974665041d53226273664d1f75db5f77c2e4e3c5f41f1e5074dddc35",
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "source/video-timing.json",
+      "bytes": 1407,
+      "sha256": "046a58e3186f60f2f15bfb4aba824bc4c5b76208779b49db9820751831c8fa26"
+    },
+    {
+      "path": "videos/tlc-portfolio-landscape.mp4",
+      "bytes": 3621354,
+      "sha256": "4ebab3ef039434f5e6661f7c25329a2cc50e1ad3df71d8b231bd42cf29240bc5",
+      "duration_seconds": 20,
+      "frames": 600,
+      "fps": 30,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "audio": false,
+      "faststart": true,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "path": "videos/tlc-portfolio-vertical.mp4",
+      "bytes": 2905149,
+      "sha256": "bec687280e279dc54c9a533f13ee15471054049b6e69a9d9db353b8be3a1768b",
+      "duration_seconds": 20,
+      "frames": 600,
+      "fps": 30,
+      "codec": "H.264",
+      "pixel_format": "yuv420p",
+      "audio": false,
+      "faststart": true,
+      "width": 1080,
+      "height": 1920
+    },
+    {
+      "path": "videos/video-verification.txt",
+      "bytes": 3236,
+      "sha256": "64d6f3eaa5233c8e78c121ed934a2986f668a551e9b03a2d95751ebad1ef0446"
+    }
+  ]
+}

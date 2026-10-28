@@ -108,7 +108,7 @@ function featuredLinks(project) {
   return `<div class="project-links">${caseLink(project)}${liveLink(project)}<details class="project-more"><summary>More project details <span aria-hidden="true">+</span></summary><div class="project-more-links">${capabilities}${detailsButton(project, "Quick preview", "case-link")}${sourceLink(project, "Source code", "source-link")}</div></details></div>`;
 }
 
-const workType = (project) => ["PinsAndNeedlesComedyWebsite", "micro-short-website"].includes(project.id)
+const workType = (project) => project.projectType === "Website"
   ? "website"
   : project.category === "ios" ? "ios" : "web-app";
 

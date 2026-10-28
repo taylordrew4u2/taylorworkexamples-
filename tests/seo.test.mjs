@@ -100,10 +100,10 @@ test("revised prices stay consistent across all public pages and structured offe
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 12);
+  assert.equal(projects.length, 13);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 52);
+  assert.equal(routes.length, 53);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -601,8 +601,8 @@ test("salon and restaurant services explain the business workflow and connect to
   assert.equal(sitemapDates.get("/"), "2026-10-27");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-27");
   for (const route of routes) {
-    assert.equal(sitemapDates.get(route), "2026-10-27", `${route}: the shared navigation changed every generated public page`);
-
+    const expectedModified = ["/work/", "/work/tlc-massage-wellness/"].includes(route) ? "2026-10-28" : "2026-10-27";
+    assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
 
@@ -752,8 +752,8 @@ test("minimal project stories preserve original workflows, optional technical co
     assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, item]) => text(item)),
       projectClientUses[project.id].capabilities);
     const releaseStatus = html.match(/<p\b[^>]*class="project-release-status"[^>]*>([\s\S]*?)<\/p>/)?.[1];
-    assert.equal(text(releaseStatus || ""), project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" :
-      project.id === "usbmic" ? "Release candidate" : "", `${project.title}: publication status matches its evidence`);
+    assert.equal(text(releaseStatus || ""), project.releaseStatus || (project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" :
+      project.id === "usbmic" ? "Release candidate" : ""), `${project.title}: publication status matches its evidence`);
     if (project.id === "usbmic") {
       const releaseNote = html.match(/<p\b[^>]*class="project-release-note"[^>]*>([\s\S]*?)<\/p>/)?.[1];
       assert.match(text(releaseNote || ""), /physical[- ]microphone.*pending/i);
@@ -1031,10 +1031,10 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the twelve selected projects", async () => {
-  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "tlcmassagewellness", "taylordrewwebsite"];
+test("published pages, data, routes, and assets contain only the thirteen selected projects", async () => {
+  const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
-  assert.equal(excludedProjects.length, 6, "Unselected projects still exist in the internal audited inventory");
+  assert.equal(excludedProjects.length, 5, "Unselected projects still exist in the internal audited inventory");
   const excluded = ["https://www.taylordrew4u.com", ...excludedIds,
     ...excludedProjects.map((project) => project.title), ...excludedProjects.map((project) => `/work/${projectSlugs[project.id]}/`)];
   const outputFiles = await filesUnder(output);

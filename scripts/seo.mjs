@@ -244,7 +244,7 @@ function projectIndexCard(project, route) {
   const destination = local(route, `work/${projectSlugs[project.id]}/`);
   const search = [project.title, project.purpose, project.summary, projectType(project), ...project.stack, ...project.workflows,
     ...context.capabilities, context.businessUse].join(" ");
-  const status = project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate · Physical microphone validation pending" : "";
+  const status = project.releaseStatus || (project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate · Physical microphone validation pending" : "");
   const liveLink = project.demoUrl ? `<a class="text-link work-project-live-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escape(project.title)}: ${escape(project.demoLabel || "Live site")} (opens in a new tab)">${escape(project.demoLabel || "Live site")} <span aria-hidden="true">↗</span></a>` : "";
   return `<article class="seo-project-card" data-project-id="${escape(project.id)}" data-project-type="${projectFilterType(project)}" data-project-search="${escape(search)}"><header class="work-project-header"><p class="eyebrow">${escape(projectType(project))}${status ? `<span class="work-project-status">${escape(status)}</span>` : ""}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${destination}">${escape(project.title)}</a></h3></div></header><a class="seo-project-cover" href="${destination}" aria-label="Explore ${escape(project.title)}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><p class="work-index-image-label">${escape(project.imageLabel || "Project image")}</p><div class="seo-project-body"><p class="work-project-purpose">${escape(project.purpose)}</p><ul class="work-project-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul><div class="work-project-actions"><a class="text-link work-project-action" href="${destination}" aria-label="See how it works: ${escape(project.title)}">See how it works <span aria-hidden="true">↗</span></a>${liveLink}</div></div></article>`;
 }
@@ -495,21 +495,27 @@ function projectViews(project, route) {
 
 function projectPromotions(project, route) {
   if (!project.promotion) return "";
-  return `<section id="project-promotion" class="page-section project-promotion"><p class="eyebrow">BRAND &amp; PRODUCT STORY</p><h2>Watch the workflow. Explore the identity.</h2><p>Edited, captioned demonstrations built from genuine app captures with fictional sample writing. The separate campaign photograph is AI-generated promotional artwork.</p><div class="project-promo-videos">${project.promotion.videos.map(video => `<figure><video controls playsinline preload="none" poster="${local(route,video.poster.replace(/^\.\//,""))}" aria-label="${escape(video.label)}"><source src="${local(route,video.src.replace(/^\.\//,""))}" type="video/mp4"><track kind="captions" src="${local(route,video.captions.replace(/^\.\//,""))}" srclang="en" label="English"><a href="${local(route,video.src.replace(/^\.\//,""))}">Download video</a></video><figcaption><h3>${escape(video.label)}</h3><p>${escape(video.caption)}</p><a class="text-link" href="${local(route,video.src.replace(/^\.\//,""))}" download>Download MP4</a> · <a class="text-link" href="${local(route,video.captions.replace(/^\.\//,""))}">Read captions</a></figcaption></figure>`).join("")}</div><h3>Promotional downloads</h3><p>Logos, design tokens, brand guidelines, reusable social layouts, launch copy, real screenshots, and both videos.</p><ul class="page-list">${project.promotion.downloads.map(file=>`<li><a class="text-link" href="${local(route,file.src.replace(/^\.\//,""))}" download>${escape(file.label)}</a></li>`).join("")}</ul><p>PDF import requires selectable text. Mac drafts and the hosted chat companion transfer through import/export, without automatic synchronization.</p></section>`;
+  const promotion = project.promotion;
+  const heading = promotion.heading ?? "Watch the workflow. Explore the identity.";
+  const intro = promotion.intro ?? "Edited, captioned demonstrations built from genuine app captures with fictional sample writing. The separate campaign photograph is AI-generated promotional artwork.";
+  const downloadDescription = promotion.downloadDescription ?? "Logos, design tokens, brand guidelines, reusable social layouts, launch copy, real screenshots, and both videos.";
+  const note = promotion.note ?? "PDF import requires selectable text. Mac drafts and the hosted chat companion transfer through import/export, without automatic synchronization.";
+  const downloads = promotion.downloads || [];
+  return `<section id="project-promotion" class="page-section project-promotion"><p class="eyebrow">BRAND &amp; PRODUCT STORY</p><h2>${escape(heading)}</h2>${intro ? `<p>${escape(intro)}</p>` : ""}<div class="project-promo-videos">${(promotion.videos || []).map(video => `<figure><video controls playsinline preload="none" poster="${local(route,video.poster.replace(/^\.\//,""))}" aria-label="${escape(video.label)}"><source src="${local(route,video.src.replace(/^\.\//,""))}" type="video/mp4"><track kind="captions" src="${local(route,video.captions.replace(/^\.\//,""))}" srclang="en" label="English"><a href="${local(route,video.src.replace(/^\.\//,""))}">Download video</a></video><figcaption><h3>${escape(video.label)}</h3><p>${escape(video.caption)}</p><a class="text-link" href="${local(route,video.src.replace(/^\.\//,""))}" download>Download MP4</a> · <a class="text-link" href="${local(route,video.captions.replace(/^\.\//,""))}">Read captions</a></figcaption></figure>`).join("")}</div>${downloads.length ? `<h3>Promotional downloads</h3>${downloadDescription ? `<p>${escape(downloadDescription)}</p>` : ""}<ul class="page-list">${downloads.map(file=>`<li><a class="text-link" href="${local(route,file.src.replace(/^\.\//,""))}" download>${escape(file.label)}</a></li>`).join("")}</ul>` : ""}${note ? `<p>${escape(note)}</p>` : ""}</section>`;
 }
 
 function projectPage(project) {
   const route = `/work/${projectSlugs[project.id]}/`;
   const page = { path: route, title: `${project.title} — ${projectType(project)} | 4u Digital`,
     description: `${project.purpose} See the screens, workflows, and development details in the 4u Digital portfolio.`,
-    project, modified: "2026-10-27", image: project.image, imageAlt: project.imageAlt,
+    project, modified: project.modified || "2026-10-27", image: project.image, imageAlt: project.imageAlt,
     imageWidth: project.imageWidth, imageHeight: project.imageHeight,
     breadcrumbs: [{ name: "Projects", path: "/work/" }, { name: project.title, path: route }],
   };
   const story = projectStories[project.id];
   const context = projectClientUses[project.id];
   const service = services.find((entry) => entry.slug === context.serviceSlug);
-  const status = project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate" : "";
+  const status = project.releaseStatus || (project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate" : "");
   const pageNavigation = `<nav class="project-story-nav" aria-label="On this project page"><a href="#overview">How it works</a><a href="#project-views">Images</a><a href="#your-business">A similar build</a><a href="#development">Technical details</a></nav>`;
   const releaseNote = project.id === "usbmic" ? "Physical microphone validation is still pending." : project.id === "FreeScript" ? "PDF import needs selectable text. Scanned PDFs require OCR first. Physical Intel testing is pending." : "";
   const content = `<section class="project-story-hero">${intro(projectType(project), project.title, project.purpose,
@@ -560,7 +566,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", projectIndex: true, modified: "2026-10-27", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-10-28", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",

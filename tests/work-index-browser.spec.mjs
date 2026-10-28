@@ -4,7 +4,7 @@ import { projectSlugs } from "../seo-content.js";
 import { bookingURL } from "../booking.js";
 import { projectClientUses } from "../content/project-client-uses.js";
 
-const typeOf = (project) => ["micro-short-website", "PinsAndNeedlesComedyWebsite"].includes(project.id)
+const typeOf = (project) => ["micro-short-website", "PinsAndNeedlesComedyWebsite", "tlcmassagewellness"].includes(project.id)
   ? "website" : project.category === "ios" ? "ios" : project.category === "desktop" ? "desktop" : "web-app";
 const types = ["all", "website", "web-app", "ios", "desktop"];
 const cards = (page) => page.locator("#project-collection .work-page-grid .seo-project-card");

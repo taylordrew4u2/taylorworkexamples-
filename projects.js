@@ -895,6 +895,8 @@ export const projects = [
     id: "tlcmassagewellness",
     title: "TLC Massage Wellness",
     category: "web",
+    projectType: "Website",
+    clientSummary: "A wellness website with appointment requests and practical owner controls.",
     summary:
       "A booking website with an owner-editable admin panel for site content, treatments, staff, intake questions, and appointment requests.",
     stack: ["Next.js", "TypeScript", "PostgreSQL", "Vercel Blob"],
