@@ -251,7 +251,10 @@ button, a, input, select, textarea, summary {
   font-size: 0.875rem;
 }
 
-.site-header nav a {
+.site-header nav > a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   padding-block: 0.75rem;
 }
 
@@ -1873,21 +1876,31 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 
 /* The minimal homepage: one short introduction and one job for each section. */
 .minimal-home .wrap { width: min(72rem, calc(100% - 5rem)); }
-.minimal-home .simple-hero { padding-block: clamp(2rem, 5vw, 4.25rem) 2.5rem; }
-.simple-kicker { color: var(--muted); font-size: .875rem; margin-bottom: 1.5rem; }
-.simple-hero h1 { max-width: 19ch; font-family: var(--display); font-size: clamp(2.3rem, 4.6vw, 4.25rem); font-weight: 750; letter-spacing: -.055em; line-height: 1.13; text-wrap: balance; }
-.simple-descriptor { margin-top: 1.75rem; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.5; }
-.simple-intro { max-width: 35rem; margin-top: .65rem; color: var(--muted); font-size: 1rem; line-height: 1.7; }
-.simple-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.75rem; margin-top: 2rem; }
+.minimal-home .simple-hero { display: grid; gap: 1.25rem; margin-block: 1.5rem 2rem; padding: clamp(1.25rem, 4.2vw, 3.5rem); border-radius: .75rem; background: #171717; color: #fff; }
+.simple-kicker { color: #ccc; font-size: .875rem; margin-bottom: 1rem; }
+.simple-hero h1 { max-width: 18ch; font-family: var(--display); font-size: clamp(2.35rem, 4.65vw, 4.25rem); font-weight: 750; letter-spacing: -.055em; line-height: 1.08; text-wrap: balance; }
+.simple-descriptor { max-width: 35ch; font-size: clamp(1.1rem, 2vw, 1.35rem); line-height: 1.45; }
+.simple-intro { max-width: 35rem; margin-top: .65rem; color: #ccc; font-size: 1rem; line-height: 1.6; }
+.simple-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .625rem; margin-top: 1.25rem; }
+.simple-actions .button-dark { background: #fff; color: #171717; border-color: #fff; }
+.simple-actions .button-dark:hover { background: #e7e7e7; border-color: #e7e7e7; }
+.simple-actions .button-outline { color: #fff; border-color: #777; }
+.simple-actions .button-outline:hover { background: #292929; border-color: #aaa; }
+.simple-actions .button:focus-visible { outline-color: #fff; }
+.simple-hero .simple-note { color: #bbb; }
+@media (min-width: 980px) {
+  .minimal-home .simple-hero { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; gap: clamp(2rem, 5vw, 5rem); }
+}
 .minimal-home .text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .simple-note { max-width: 37rem; font-size: .75rem; line-height: 1.65; color: var(--muted); margin-top: 1rem; }
 .minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 3.5rem; border-top: 1px solid var(--line); margin-block: 0; }
 .simple-section-heading { margin-bottom: 1.75rem; }
 .minimal-home h2 { font-family: var(--display); font-size: clamp(1.6rem, 2.8vw, 2.35rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
 .simple-section-heading .eyebrow { margin-bottom: .65rem; color: var(--muted); }
-.simple-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 2.5rem; }
-.simple-service { min-height: 8.25rem; display: grid; grid-template-columns: 1.5rem minmax(0, 1fr) 1rem; gap: .75rem; align-items: start; padding-block: 1.5rem; border-top: 1px solid var(--line); }
-.simple-service-number, .simple-process li > span { font-family: var(--mono); color: var(--muted); font-size: .75rem; padding-top: .3rem; }
+.simple-services { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+.simple-service { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: .75rem; align-items: start; padding: 1.125rem 1.25rem; border: 1px solid var(--line); border-radius: .5rem; }
+.simple-service:hover { background: #f4f4f4; }
+.simple-process li > span { font-family: var(--mono); color: var(--muted); font-size: .75rem; padding-top: .3rem; }
 .simple-service h3 { font-size: 1.1rem; line-height: 1.4; letter-spacing: -.025em; }
 .simple-service p { font-size: .9375rem; color: var(--muted); line-height: 1.65; margin-top: .45rem; }
 .simple-service:hover h3, .simple-project:hover strong { text-decoration: underline; text-underline-offset: .2em; }
@@ -1895,12 +1908,13 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 .simple-offer a, .simple-planner a { color: var(--ink); text-decoration: underline; text-underline-offset: .2em; }
 .simple-offer a, .simple-planner a { display: inline-flex; align-items: center; min-height: 44px; }
 .simple-projects { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-.simple-project { display: block; min-width: 0; }
-.simple-project > img { width: 100%; height: auto; aspect-ratio: 16/10; object-fit: contain; background: #f3f3f3; border: 1px solid var(--line); border-radius: .5rem; }
-.simple-project > div { display: grid; gap: .25rem; margin-top: 1rem; }
-.simple-project strong { font-size: 1rem; }
-.simple-project > div > span { font-size: .75rem; line-height: 1.5; color: var(--muted); }
-.simple-project > p { font-size: .875rem; line-height: 1.65; color: var(--muted); margin-top: .5rem; }
+.simple-project { display: block; min-width: 0; border: 1px solid var(--line); border-radius: .625rem; overflow: hidden; }
+.simple-project:hover { border-color: #aaa; }
+.simple-project > img { width: 100%; height: auto; aspect-ratio: 16/10; object-fit: contain; background: #f3f3f3; border-bottom: 1px solid var(--line); }
+.simple-project > div { display: grid; gap: .25rem; padding: .875rem 1rem 0; }
+.simple-project strong { font-size: 1.0625rem; }
+.simple-project > div > span { font-size: .8125rem; line-height: 1.5; color: var(--muted); }
+.simple-project > p { font-size: .875rem; line-height: 1.6; color: var(--muted); padding: .5rem 1rem 1rem; }
 .simple-work-next { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 1.5rem; }
 .simple-disclosure { margin-top: .75rem; max-width: 38rem; font-size: .75rem; line-height: 1.7; color: var(--muted); }
 .simple-process { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; margin: 0; padding: 0; }
@@ -1923,35 +1937,34 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 .simple-care .client-care-grid { margin-top: 1rem; }
 .minimal-home .simple-faq { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 3rem; }
 .minimal-home .simple-faq .faq-list { width: 100%; }
-.minimal-home .simple-contact { padding-block: 4rem; }
+.minimal-home .simple-contact { margin-block: 1rem 2.5rem; padding: clamp(1.25rem, 4.2vw, 3.5rem); border: 1px solid var(--line); border-radius: .75rem; background: #f4f4f4; }
 .simple-contact h2 { margin-top: .75rem; }
 .simple-contact > p:not(.eyebrow):not(.simple-note):not(.simple-planner) { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
 .simple-contact > .button { margin-top: 1.5rem; }
 .simple-planner { margin-top: 2rem; font-size: .875rem; line-height: 1.7; color: var(--muted); }
 @media (max-width: 700px) {
   .minimal-home .wrap { width: calc(100% - 2.5rem); }
-  .minimal-home .simple-hero { padding-block: 1.375rem 1.5rem; }
+  .minimal-home .simple-hero { margin-block: .75rem 1.5rem; padding: 1rem; gap: .8rem; }
   .simple-kicker { margin-bottom: .625rem; }
-  .simple-hero h1 { font-size: clamp(2rem, 6.4vw, 2.8rem); line-height: 1.12; }
-  .simple-descriptor { font-size: 1.05rem; margin-top: .75rem; }
+  .simple-hero h1 { font-size: clamp(1.875rem, 7vw, 2.8rem); line-height: 1.1; text-wrap: initial; }
+  .simple-descriptor { font-size: 1rem; }
   .simple-intro { margin-top: .375rem; font-size: .9375rem; line-height: 1.5; }
-  .simple-actions { gap: .5rem .625rem; margin-top: 1rem; }
-  .simple-actions .button { min-height: 44px; gap: .5rem; padding: .625rem .75rem; }
+  .simple-actions { gap: .5rem; margin-top: .875rem; }
+  .simple-actions .button { min-height: 44px; gap: .375rem; padding: .5rem .625rem; font-size: .8125rem; }
   .simple-hero .simple-note { margin-top: .625rem; }
   .minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 2.5rem; }
   .minimal-home .simple-work { padding-top: 1.25rem; }
   .simple-work .simple-section-heading { margin-bottom: 1rem; }
   .simple-services { grid-template-columns: 1fr; }
-  .simple-service { min-height: auto; padding-block: 1.25rem; }
-  .simple-projects { grid-template-columns: 1fr; gap: 1.75rem; }
+  .simple-service { padding: .875rem 1rem; }
+  .simple-projects { grid-template-columns: 1fr; gap: 1.25rem; }
   .simple-project > img { aspect-ratio: auto; }
-  .simple-project > div { margin-top: .75rem; }
-  .simple-project > p { margin-top: .35rem; }
   .simple-process { grid-template-columns: 1fr; gap: 1.5rem; }
   .simple-process li { display: grid; grid-template-columns: 1.5rem minmax(0, 1fr); gap: 0 .75rem; }
   .simple-process h3 { margin-top: 0; }
   .simple-process p { grid-column: 2; }
   .minimal-home .testimonial-grid { grid-template-columns: 1fr; gap: 1.75rem; }
   .minimal-home .simple-faq { display: block; }
+  .minimal-home .simple-contact { margin-block: .5rem 2rem; padding: 1rem; }
   .simple-planner { margin-top: 1.5rem; }
 }

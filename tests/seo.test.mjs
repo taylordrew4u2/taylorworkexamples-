@@ -223,7 +223,7 @@ test("the kickoff checklist is a later project step with a complete, attributed 
     tag.href && sameSite(tag.href, base) && pathname(tag.href, base) === target);
   assert.ok(!linksTo(documents.get("/"), "/", route), "new clients use the project planner; kickoff is a later existing-client step");
   assert.ok(linksTo(documents.get("/contact/"), "/contact/", route));
-  assert.match(text(html), /AFTER THE CONSULTATION/);
+  assert.match(text(html), /Use this form once we’ve agreed to work together/);
   assert.match(text(html), /You don’t need this worked out before getting in touch/);
   assert.match(text(html), /This is an illustration/);
   const drafts = tags(html, "a").filter(tag => tag.href?.startsWith("mailto:"))
@@ -414,7 +414,7 @@ test("business guides and consultation details are discoverable, truthful, and r
   }
   assert.ok(linksTo(documents.get("/"), "/", hubRoute), "the homepage links to the guide hub");
   const hub = documents.get(hubRoute);
-  assert.equal([...hub.matchAll(/class="[^"]*\binsight-card\b/g)].length, articles.length);
+  assert.equal(tags(hub, "article").filter((tag) => tag.class?.split(/\s+/).includes("insight-card")).length, articles.length);
   for (const article of articles) {
     const route = `/insights/${article.slug}/`;
     const html = documents.get(route);
@@ -567,7 +567,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], serviceHeadings[service.slug]);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), "2026-10-27");
+    assert.equal(sitemapDates.get(route), "2026-11-11");
     assert.ok(linksTo(homeServices, "/", "/services/web-app-development/"), "homepage gives a clear general workflow starting point");
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
@@ -597,12 +597,14 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-27",
       `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
-  assert.equal(sitemapDates.get("/services/"), "2026-10-27");
-  assert.equal(sitemapDates.get("/"), "2026-11-10");
-  assert.equal(sitemapDates.get("/insights/"), "2026-10-27");
-  const changed = { "/project-brief/": "2026-11-11", "/privacy/": "2026-11-11", "/": "2026-11-10", "/work/": "2026-11-07", "/work/tlc-massage-wellness/": "2026-10-28" };
+  const revisedRoutes = new Set([
+    "/", "/services/", "/work/", "/insights/", "/guides/website-or-app/", "/offer/", "/pricing/",
+    "/privacy/", "/terms/", "/guarantee/", "/contact/", "/about/", "/new-york-city/", "/project-brief/", "/project-kickoff/",
+    ...services.map(({ slug }) => `/services/${slug}/`),
+    ...projects.map(({ id }) => `/work/${projectSlugs[id]}/`),
+  ]);
   for (const route of routes) {
-    const expectedModified = changed[route] || "2026-10-27";
+    const expectedModified = revisedRoutes.has(route) ? "2026-11-11" : "2026-10-27";
     assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
@@ -632,8 +634,8 @@ test("minimal portfolio cards explain each personal project and keep fuller busi
       `${project.title}: its original illustrative business context remains on the full case page`);
     const anchors = tags(card, "a");
     assert.ok(anchors.length > 0, `${project.title}: a real case-page link remains`);
-    assert.ok(anchors.some((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`),
-      `${project.title}: the complete project story remains available`);
+    assert.equal(anchors.filter((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`).length, 1,
+      `${project.title}: one link opens the complete project story`);
     for (const anchor of anchors) {
       if (anchor.class?.split(/\s+/).includes("work-project-live-link")) {
         assert.equal(anchor.href, project.demoUrl, `${project.title}: the secondary link is its verified product destination`);

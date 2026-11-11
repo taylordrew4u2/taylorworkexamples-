@@ -7,7 +7,7 @@ export const pricing = {
   description: "See prices for custom websites, web apps, Apple apps, and business software from 4u Digital. Agree the full scope and price before building.",
   heading: "Project pricing.",
   intro: "Website offers and starting budgets for apps and business tools.",
-  modified: "2026-10-27",
+  modified: "2026-11-11",
   currency: "USD",
   entries: [
     {

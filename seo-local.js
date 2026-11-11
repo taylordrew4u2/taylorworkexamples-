@@ -4,24 +4,9 @@ export const localConsultation = {
   description: "Start with a 4u Digital video consultation. Arrange an NYC in-person visit to clarify your needs or plan technology for your space and daily workflow.",
   heading: "Not sure what to build? Let’s look at your business.",
   intro: "Explore a website, mobile app, web platform, desktop software, or custom tool for your business. Start with a video consultation; arrange an NYC visit when seeing your space or workflow would help. No finished plan is needed.",
-  sections: [
-    {
-      heading: "See the space before deciding on the software.",
-      text: "An in-person consultation is useful when you are not sure what technology would help, or when the application needs to work in a specific setting. We can look at a reception desk, booking handoff, order station, shared workspace, or another part of your day-to-day work. Seeing who uses the system, where they use it, and what happens between steps helps us choose the right screens, devices, and workflow before planning the build.",
-    },
-    {
-      heading: "Show how your business works.",
-      text: "Bring your current website, booking form, spreadsheet, or another example of the work. Walk through what a customer or staff member does, what information they need, and where a handoff happens. Include the exceptions: a changed appointment, a missing order detail, or a record that needs correcting. Those examples help define what the technology should do.",
-    },
-    {
-      heading: "Connect the build to a useful task.",
-      text: "For example, a salon might need a booking-request website and a way to review requests. A restaurant might need an ordering flow that fits how staff receive and prepare orders. Another business might need a shared workspace instead of repeated spreadsheet entry. We discuss the users, current tools, and business rules before choosing a website, browser app, or native app.",
-    },
-    {
-      heading: "Agree the scope before building.",
-      text: "The next step is a defined project: the task to complete, the features included, the information involved, and the people who will use it. We agree the scope and price before development starts. Existing systems, hosting, outside services, launch requirements, and maintenance responsibilities belong in that discussion. A first version can focus on one complete, useful workflow.",
-    },
-  ],
+  visitExample: "We can look at a reception desk, booking handoff, order station, or shared workspace. Seeing who uses the system, where they use it, and how they pass work along helps us choose the right screens, devices, and workflow.",
+  preparation: "Bring a current website, form, spreadsheet, or example of a task you’d like to improve. If something often goes wrong, such as a changed appointment or a missing order detail, that’s useful to see too.",
+  afterConsultation: "We agree on what to build, what it will cost, and who will handle hosting and maintenance before work starts. A first version can focus on one useful workflow.",
   faq: [
     {
       question: "Can we meet online or in person?",

@@ -377,10 +377,10 @@ export const services = [
 
 export const guide = {
   slug: "website-or-app",
-  title: "Do you need a website, a web app, or custom software?",
+  title: "Website, app, or business software?",
   metaTitle: "Website, Web App, or Software? A Practical Guide | 4u Digital",
   description: "Compare websites, web apps, native Apple apps, and custom software by the task, users, and device requirements. Find a practical starting point with 4u Digital.",
-  intro: "Choose the build by the task people need to complete. A website explains a business; a web app manages ongoing work; a native app serves a device workflow. Custom software can use any of those forms. Bring 4u Digital the problem and an example before choosing the technology.",
+  intro: "Start with what people need to do. These four examples show where a website, web app, native app, or custom business software fits.",
   rows: [
     {
       type: "Website",

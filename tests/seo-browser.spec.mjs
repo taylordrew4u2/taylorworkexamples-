@@ -438,7 +438,7 @@ test("the comparison guide, business information, and contact remain usable with
   await contactPlanner.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
-  await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
+  await expect(page.locator(".page-intro")).toContainText("No account needed.");
   await expectHeaderBooking(page);
   await expectPageFit(page);
 });
@@ -453,9 +453,9 @@ test("homepage visitors can open the optional planner without booking or finding
   await planner.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
-  await expect(page.locator(".page-intro")).toContainText(/optional planner before or after a consultation/i);
+  await expect(page.locator(".page-intro")).toContainText(/before or after a consultation/i);
   await expect(page.locator(".page-intro")).toContainText("Skip anything undecided.");
-  await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
+  await expect(page.locator(".page-intro")).toContainText("No account needed.");
   await expectHeaderBooking(page);
   await expectPageFit(page);
 });
@@ -506,7 +506,7 @@ test("local businesses can find their website guide and reach consultation witho
   await expect(page.locator("#guides-business-websites .insight-card")).toHaveCount(3);
   await expectPageFit(page);
   for (const article of articles.filter((entry) => entry.topic === "business-websites")) {
-    const guide = page.locator(`#guides-business-websites h3 a[href$="${article.slug}/"]`);
+    const guide = page.locator("#guides-business-websites").getByRole("link", { name: article.title, exact: true });
     await guide.focus();
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(article.title);
@@ -579,7 +579,7 @@ test("website-only readers can browse short articles and reach booking without J
     await expect(page.locator(`#guides-${topic.id} > h2`)).toHaveText(topic.title);
     await expect(page.locator(`#guides-${topic.id} .insight-card`)).toHaveCount(articles.filter((entry) => entry.topic === topic.id).length);
   }
-  const pricing = page.locator('#guides-pricing h3 a[href*="why-website-quotes-vary/"]');
+  const pricing = page.locator('#guides-pricing a.insight-card-link[href*="why-website-quotes-vary/"]');
   await pricing.focus();
   await page.keyboard.press("Enter");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Why can two quotes for a website be so different?");

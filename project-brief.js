@@ -127,7 +127,9 @@ export function initProjectBrief(doc = document) {
     form.querySelectorAll(".brief-social-row").forEach(row => { row.hidden = row.querySelector("[data-field-container]").hidden; });
     updateMediaEmailLinks();
     const answeredCount = briefFields.filter((field) => applicable(field, answers.projectType) && meaningful(answers[field.id])).length;
-    get("brief-answered-count").textContent = answeredCount ? `${answeredCount} ${answeredCount === 1 ? "answer" : "answers"} shared. The rest can wait.` : "Make it yours, one step at a time.";
+    const answerCountLabel = get("brief-answered-count");
+    answerCountLabel.hidden = answeredCount === 0;
+    answerCountLabel.textContent = `${answeredCount} ${answeredCount === 1 ? "answer" : "answers"}`;
     briefSteps.forEach((step, index) => {
       const button = form.querySelector(`[data-brief-go="${index}"]`);
       const answered = step.fields.some((id) => applicable(fieldsById.get(id), answers.projectType) && meaningful(answers[id]));

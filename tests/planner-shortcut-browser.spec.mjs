@@ -15,13 +15,16 @@ async function expectPlainPlannerLink(page, width) {
   await expect(planner).not.toHaveAttribute("target", "_blank");
   await planner.focus();
   await expect(planner).toBeFocused();
-  await expect(planner).toBeInViewport({ ratio: 1 });
+  // Native focus scroll can round a fractional viewport edge by half a pixel.
+  await expect(planner).toBeInViewport({ ratio: .98 });
   await expect(planner).not.toHaveCSS("position", "fixed");
   const bounds = await planner.boundingBox();
   expect(bounds.width, "Planner remains easy to tap").toBeGreaterThanOrEqual(44);
   expect(bounds.height).toBeGreaterThanOrEqual(44);
   expect(bounds.x).toBeGreaterThanOrEqual(0);
   expect(bounds.x + bounds.width).toBeLessThanOrEqual(width + 1);
+  expect(bounds.y).toBeGreaterThanOrEqual(-1);
+  expect(bounds.y + bounds.height).toBeLessThanOrEqual(page.viewportSize().height + 1);
   expect(await planner.evaluate((element) => {
     const box = element.getBoundingClientRect();
     const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
@@ -58,8 +61,8 @@ for (const javaScriptEnabled of [true, false]) {
           await page.keyboard.press("Enter");
           await expect(page).toHaveURL(/\/project-brief\/$/);
           await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your project planner.");
-          await expect(page.locator(".page-intro")).toContainText("No account or consultation booking is needed.");
-          await expect(page.locator(".page-intro")).toContainText("It doesn’t book a meeting.");
+          await expect(page.locator(".page-intro")).toContainText("No account needed.");
+          await expect(page.locator(".page-intro")).toContainText("doesn’t book a meeting.");
           await expect(page.locator(".planner-shortcut")).toHaveCount(0);
         }
       });

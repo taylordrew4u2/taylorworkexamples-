@@ -93,7 +93,7 @@ test("portfolio search combines with the selected type and offers a usable empty
   await expectResults(page, projects);
   await search.fill("BitBinder");
   await expectResults(page, projects.filter((project) => project.id === "The-Bit-Binder"));
-  const detail = page.locator('.seo-project-card[data-project-id="The-Bit-Binder"] .seo-project-heading a');
+  const detail = page.locator('.seo-project-card[data-project-id="The-Bit-Binder"] .work-project-action');
   await detail.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/work\/bitbinder\/$/);
@@ -152,7 +152,7 @@ test.describe("the complete portfolio without JavaScript", () => {
         .toBe(`/${project.image.replace(/^\.\//, "")}`);
       await expect(image).toHaveAttribute("alt", project.imageAlt);
       await expect(image).toHaveCSS("filter", "none");
-      const link = card.locator(".seo-project-heading a");
+      const link = card.locator(".work-project-action");
       await link.focus();
       await page.keyboard.press("Enter");
       await expect(page).toHaveURL(new RegExp(`/work/${projectSlugs[project.id]}/$`));

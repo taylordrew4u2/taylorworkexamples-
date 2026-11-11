@@ -23,13 +23,14 @@ async function expectBooking(link) {
 
 test("the service directory helps phone visitors choose a need before presenting its website promotion", async ({ page }) => {
   for (const width of [320, 390]) {
-    await page.setViewportSize({ width, height: 844 });
+    await page.setViewportSize({ width, height: 760 });
     await page.goto("/services/");
     for (const brand of await page.locator('.site-header .wordmark, .page-footer .brand-signature').all()) {
       await expectTapTarget(brand, width);
     }
     const choices = page.locator("#service-choices");
     await expect(choices.locator("[data-service-choice]")).toHaveCount(4);
+    await expect(choices.locator("[data-service-choice]").first()).toBeInViewport({ ratio: 1 });
     for (const choice of await choices.locator("[data-service-choice]").all()) {
       await expect(choice.getByRole("heading")).toContainText(/I need/i);
       await expectTapTarget(choice.getByRole("link"), width);

@@ -17,8 +17,9 @@ export function renderLegalPages({ frame, intro, local }) {
     const related = `<nav class="legal-related" aria-label="Related policies"><h2>Related policies</h2>${links.filter(([route]) => route !== page.path).map(([route, label]) => `<a href="${local(page.path, route.slice(1))}">${escape(label)} <span aria-hidden="true">→</span></a>`).join("")}</nav>`;
     const updated = page.modified || legalBusiness.updated;
     const displayDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" }).format(new Date(updated));
-    return { ...page, legal: true, modified: updated, breadcrumbs: [{ name: page.label, path: page.path }], html: frame({ ...page, legal: true, breadcrumbs: [{ name: page.label, path: page.path }] },
-      intro("4u Digital · POLICIES", page.heading, page.summary) +
+    const legalPage = { ...page, legal: true, modified: "2026-11-11", breadcrumbs: [{ name: page.label, path: page.path }] };
+    return { ...legalPage, html: frame(legalPage,
+      intro("", page.heading, page.summary) +
       `<div class="legal-business"><p>4u Digital is operated by <strong>${escape(legalBusiness.name)}</strong>.</p><p>Last updated <time datetime="${updated}">${displayDate}</time></p></div>` +
       `<div class="legal-layout">${contents}<div class="legal-body">${body}${related}</div></div>`),
     };

@@ -8,10 +8,10 @@ export const launchOffer = {
   title: "Website offer for New York City businesses",
   metaTitle: "Website Offer for New York City Businesses | 4u Digital",
   description: "A custom website for $1,500, or $3,000 with booking or ordering built in, for the first ten eligible New York City business projects agreed by November 30, 2026. Subject to scope and capacity; the code is yours.",
-  eyebrow: "THROUGH NOVEMBER 30 · FIRST TEN NEW YORK CITY BUSINESSES",
+  eyebrow: "NEW YORK CITY WEBSITE OFFER",
   heading: "A website you own, for $1,500.",
-  intro: "A custom website for $1,500, or $3,000 with booking or ordering built in. Available for the first ten eligible New York City business projects agreed by November 30, 2026, subject to scope and capacity. Start with a consultation to discuss whether it fits your business.",
-  modified: "2026-10-27",
+  intro: "Get up to five pages for $1,500, or add one booking or ordering workflow for $3,000 total.",
+  modified: "2026-11-11",
   price: "1500",
   validUntil: "2026-11-30",
   sections: [

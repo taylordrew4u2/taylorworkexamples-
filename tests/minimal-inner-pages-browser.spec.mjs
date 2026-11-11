@@ -34,7 +34,7 @@ for (const javaScriptEnabled of [true, false]) {
             const opening = page.locator(".page-intro");
             const actions = opening.locator(".page-actions a");
             expect(await actions.count(), "The opening has at most two choices").toBeLessThanOrEqual(2);
-            const booking = route === "/work/"
+            const booking = route === "/work/" || route === "/services/"
               ? page.locator(".mobile-consultation [data-booking-link]")
               : opening.locator("[data-booking-link]");
             await expect(booking).toHaveCount(1);
