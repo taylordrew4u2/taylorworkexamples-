@@ -9,6 +9,7 @@ const typeOf = (project) => ["micro-short-website", "PinsAndNeedlesComedyWebsite
 const types = ["all", "website", "web-app", "ios", "desktop"];
 const cards = (page) => page.locator("#project-collection .work-page-grid .seo-project-card");
 const filter = (page, type) => page.locator(`#project-browser-controls [data-project-filter="${type}"]`);
+const filterToggle = (page) => page.locator("#project-browser-controls > summary");
 
 async function expectResults(page, expected) {
   await expect(cards(page)).toHaveCount(projects.length);
@@ -23,6 +24,10 @@ async function expectResults(page, expected) {
 test("dedicated portfolio filters work by pointer and keyboard without removing project links", async ({ page }) => {
   await page.goto("/work/");
   await expect(page.locator("#project-browser-controls")).toBeVisible();
+  await expect(filter(page, "all")).toBeHidden();
+  await filterToggle(page).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("#project-browser-controls")).toHaveAttribute("open", "");
   await expect(page.locator("#project-browser-count")).toHaveAttribute("role", "status");
   for (const type of types) {
     const choice = filter(page, type);
@@ -56,6 +61,7 @@ test("dedicated portfolio filters work by pointer and keyboard without removing 
 
 test("clients can search the capability and illustrative business context as well as project names", async ({ page }) => {
   await page.goto("/work/");
+  await filterToggle(page).click();
   const search = page.getByRole("searchbox", { name: "Search projects", exact: true });
   for (const [query, id] of [["Repayment planning", "Bill-Spilt"], ["suppliers", "nycstandupopenmicmaster"]]) {
     await search.fill(query);
@@ -70,6 +76,7 @@ test("clients can search the capability and illustrative business context as wel
 
 test("portfolio search combines with the selected type and offers a usable empty-state recovery", async ({ page }) => {
   await page.goto("/work/");
+  await filterToggle(page).click();
   const search = page.getByRole("searchbox", { name: "Search projects", exact: true });
   await filter(page, "website").click();
   await search.fill("  MiCrO  ");
@@ -77,6 +84,7 @@ test("portfolio search combines with the selected type and offers a usable empty
   await search.fill("BitBinder");
   await expectResults(page, []);
   await expect(filter(page, "website")).toHaveAttribute("aria-pressed", "true");
+  await filterToggle(page).click();
   const reset = page.locator("#project-browser-reset");
   await reset.click();
   await expect(search).toHaveValue("");
@@ -94,8 +102,12 @@ test("portfolio search combines with the selected type and offers a usable empty
 
 test("portfolio browsing fits narrow phones while preserving full-color artwork and direct booking", async ({ page }) => {
   for (const width of [320, 390]) {
-    await page.setViewportSize({ width, height: 900 });
+    await page.setViewportSize({ width, height: 664 });
     await page.goto("/work/");
+    await expect(cards(page).nth(0)).toHaveAttribute("data-project-id", "BriefBooth.com");
+    await expect(cards(page).nth(1)).toHaveAttribute("data-project-id", "tlcmassagewellness");
+    await expect(cards(page).first().locator(".seo-project-cover img")).toBeInViewport({ ratio: 0.5 });
+    await filterToggle(page).click();
     for (const type of types) {
       await filter(page, type).click();
       const expected = projects.filter((project) => type === "all" || typeOf(project) === type);

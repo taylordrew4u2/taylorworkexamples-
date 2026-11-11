@@ -19,14 +19,6 @@ export function getContactPage(doc = document) {
   } catch { return null; }
 }
 
-export function getConsultationSource(doc = document, location = window.location) {
-  try {
-    const from = normalizeSource(new URL(location.href).searchParams.get("from"));
-    if (from) return from;
-  } catch { /* The current public page remains a safe fallback. */ }
-  return getContactPage(doc) || "/";
-}
-
 export function addInquirySource(href, source) {
   try {
     const url = new URL(href);

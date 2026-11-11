@@ -189,6 +189,7 @@ test("the single mobile booking action leaves the real project search unobstruct
   await expect(page.locator(".planner-shortcut")).toHaveCount(0);
 
   await page.goto("/work/");
+  await page.locator("#project-browser-controls > summary").click();
   const search = page.getByRole("searchbox", { name: /Search projects/ });
   await search.fill("calendar");
   await expect(search).toBeFocused();

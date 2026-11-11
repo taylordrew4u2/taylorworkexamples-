@@ -2,6 +2,7 @@ import {test,expect} from '@playwright/test';
 
 test('FreeScript is searchable and opens its complete project case',async({page})=>{
  await page.goto('/work/');
+ await page.locator('#project-browser-controls > summary').click();
  await page.locator('#project-browser-search').fill('FreeScript');
  const card=page.locator('[data-project-id="FreeScript"]');
  await expect(card).toBeVisible();

@@ -42,6 +42,7 @@ if (controls && search && count && empty && reset && cards.length) {
     search.value = "";
     selectedType = "all";
     update();
+    controls.open = true;
     search.focus();
   });
   update();

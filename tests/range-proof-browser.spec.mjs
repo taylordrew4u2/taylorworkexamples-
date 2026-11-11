@@ -51,7 +51,7 @@ test("published apps and the development range are visible and usable without Ja
       expect(fits).toBe(true);
     }
     await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
-    const portfolio = page.locator(".simple-actions").getByRole("link", { name: /^View projects/ });
+    const portfolio = page.getByRole("link", { name: /^View all projects/ });
     await portfolio.focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/work\/$/);

@@ -10,7 +10,7 @@ import sharp from "sharp";
 import { projects } from "../public-projects.js";
 import { projects as auditedProjects } from "../projects.js";
 import { site, services, projectSlugs } from "../seo-content.js";
-import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { articles, articleTopics } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { bookingURL } from "../booking.js";
@@ -598,10 +598,11 @@ test("salon and restaurant services explain the business workflow and connect to
       `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
   assert.equal(sitemapDates.get("/services/"), "2026-10-27");
-  assert.equal(sitemapDates.get("/"), "2026-10-27");
+  assert.equal(sitemapDates.get("/"), "2026-11-10");
   assert.equal(sitemapDates.get("/insights/"), "2026-10-27");
+  const changed = { "/project-brief/": "2026-11-11", "/privacy/": "2026-11-11", "/": "2026-11-10", "/work/": "2026-11-07", "/work/tlc-massage-wellness/": "2026-10-28" };
   for (const route of routes) {
-    const expectedModified = ["/work/", "/work/tlc-massage-wellness/"].includes(route) ? "2026-10-28" : "2026-10-27";
+    const expectedModified = changed[route] || "2026-10-27";
     assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
@@ -695,10 +696,10 @@ test("the homepage keeps portfolio discovery compact before client feedback and 
   assert.doesNotMatch(home, /\bid="(?:featured-projects|project-archive|archive-projects|range-proof|app-store-proof)"/,
     "The catalog, image galleries, and detailed App Store evidence live on their dedicated pages");
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["services", "work", "process", "testimonials", "client-care", "project-faq", "consultation"].map(sectionPosition);
+  const destinations = ["work", "services", "process", "testimonials", "client-care", "project-faq", "consultation"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
-    "portfolio discovery is followed by the working process, client feedback, launch care, questions, consultation, and useful reads");
+    "the examples and services lead into the process, feedback, guarantee, questions, and consultation");
   assert.ok(workEnd <= sectionPosition("process"), "portfolio discovery finishes before the working process");
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation panel or questions");

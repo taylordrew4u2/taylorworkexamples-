@@ -1,0 +1,23 @@
+name = "4u-digital-project-brief"
+main = "worker.js"
+compatibility_date = "2026-11-11"
+workers_dev = false
+preview_urls = false
+routes = [{ pattern = "customtechbuilt4u.com/api/project-brief", zone_name = "customtechbuilt4u.com" }]
+
+[vars]
+PROJECT_BRIEF_FROM = "planner@planner-mail.customtechbuilt4u.com"
+
+[[send_email]]
+name = "PROJECT_BRIEF_EMAIL"
+destination_address = "admin@customtechbuilt4u.com"
+
+[[ratelimits]]
+name = "BRIEF_IP_LIMIT"
+namespace_id = "40112601"
+simple = { limit = 3, period = 60 }
+
+[[ratelimits]]
+name = "BRIEF_LOCATION_LIMIT"
+namespace_id = "40112602"
+simple = { limit = 12, period = 60 }

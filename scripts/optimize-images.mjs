@@ -5,14 +5,15 @@ import sharp from "sharp";
 
 const displayWidths = [480, 800, 1200, 1600];
 const rasterExtension = /\.(?:png|jpe?g|webp)$/i;
-const encoderSignature = JSON.stringify({
+const encoderConfiguration = {
   versions: sharp.versions,
   resize: { withoutEnlargement: true },
   profile: "srgb",
-  webp: { lossless: true, effort: 4 },
-});
+};
+const losslessWebp = { lossless: true, effort: 4 };
+const photographicWebp = { quality: 88, effort: 4, smartSubsample: true };
 
-async function encodedVariant(original, width, cacheDirectory) {
+async function encodedVariant(original, width, cacheDirectory, webp) {
   const cachePath = path.join(cacheDirectory, `${width}.webp`);
   try {
     const data = await readFile(cachePath);
@@ -25,7 +26,7 @@ async function encodedVariant(original, width, cacheDirectory) {
   const result = await sharp(original)
     .resize({ width, withoutEnlargement: true })
     .withIccProfile("srgb")
-    .webp({ lossless: true, effort: 4 })
+    .webp(webp)
     .toBuffer({ resolveWithObject: true });
   const temporaryPath = `${cachePath}.${randomUUID()}.tmp`;
   await writeFile(temporaryPath, result.data);
@@ -33,7 +34,8 @@ async function encodedVariant(original, width, cacheDirectory) {
   return result;
 }
 
-// Original artwork stays untouched. These lossless WebP files are display copies.
+// Original artwork stays untouched. JPEG previews use high-quality compression;
+// lossless input artwork retains lossless display copies.
 export async function optimizeImages({ root, output, assets }) {
   const originals = [...new Set(assets)]
     .filter((asset) => typeof asset === "string" && rasterExtension.test(asset))
@@ -57,6 +59,8 @@ export async function optimizeImages({ root, output, assets }) {
       if (original.length < 24 * 1024) continue;
       const metadata = await sharp(original).metadata();
       if (!metadata.width || metadata.width < 400 || !metadata.height) continue;
+      const webp = metadata.format === "jpeg" ? photographicWebp : losslessWebp;
+      const encoderSignature = JSON.stringify({ ...encoderConfiguration, webp });
       const sourceHash = createHash("sha256").update(original).update(encoderSignature).digest("hex");
       const cacheDirectory = path.join(root, ".image-cache", sourceHash);
       await mkdir(cacheDirectory, { recursive: true });
@@ -74,7 +78,7 @@ export async function optimizeImages({ root, output, assets }) {
         // Copy them rather than inflating a previously compressed image by re-encoding.
         const { data, info } = width === metadata.width && /\.webp$/i.test(asset)
           ? { data: original, info: { width: metadata.width, height: metadata.height } }
-          : await encodedVariant(original, width, cacheDirectory);
+          : await encodedVariant(original, width, cacheDirectory, webp);
         // Always retain the largest display size when smaller useful variants exist.
         // A high-density screen must not be restricted to a lower-resolution copy.
         if (data.length >= original.length && !(width === widths.at(-1) && variants.length)) continue;

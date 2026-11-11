@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { site, services, guide, projectSlugs } from "../seo-content.js";
-import { articles, articleTopics, homepageArticles } from "../seo-articles.js";
+import { articles, articleTopics } from "../seo-articles.js";
 import { clientTestimonials } from "../content/client-testimonials.js";
 import { localConsultation } from "../seo-local.js";
 import { launchOffer } from "../seo-offer.js";
@@ -33,7 +33,7 @@ function organization() {
   return {
     "@type": "Organization", "@id": organizationId, name: "4u Digital", url: `${origin}/`,
     slogan: "Custom tech build for you.",
-    description: "Custom apps, websites, and software for businesses.",
+    description: "Custom websites, apps, and software for businesses and people.",
     email: site.email, logo: `${origin}/assets/4u-digital-logo-mono.png`,
     sameAs: ["https://github.com/taylordrew4u2"],
   };
@@ -187,12 +187,16 @@ function frame(page, content) {
     "/project-kickoff/": "kickoff-page", "/project-brief/": "project-brief-page", "/contact/": "contact-page", "/about/": "about-page",
     "/privacy/": "privacy-page", "/offer/": "offer-page", "/pricing/": "pricing-page", "/guides/website-or-app/": "comparison-page",
   }[page.path] || "");
-  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${plannerShortcut(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
+  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
 }
 
 function sourceEmailLinks(html, route) {
-  return html.replace(/href="(mailto:[^"]*)"/g, (_, href) =>
-    `href="${escape(addInquirySource(href.replace(/&amp;/g, "&"), route))}"`);
+  // Keep native email links usable even when Cloudflare’s decoding script cannot run.
+  return html.replace(/<a\b[^>]*\bhref="mailto:[^"]*"[^>]*>[\s\S]*?<\/a>/g, (anchor) => {
+    const link = anchor.replace(/href="(mailto:[^"]*)"/, (_, href) =>
+      `href="${escape(addInquirySource(href.replace(/&amp;/g, "&"), route))}"`);
+    return `<!--email_off-->${link}<!--/email_off-->`;
+  });
 }
 
 function intro(eyebrow, heading, text, actions = "", icon = "") {
@@ -210,10 +214,6 @@ function bookingLink(className = "button button-dark") {
 
 function bookingDestinationNote() {
   return `<p class="booking-destination booking-destination-note">Video consultation · Opens BriefBooth in a new tab. Requests are reviewed before confirmation.</p>`;
-}
-
-function plannerShortcut(route) {
-  return "";
 }
 
 function mobileConsultation() {
@@ -257,13 +257,30 @@ function projectFilterType(project) {
 }
 
 function projectIndexContent(route) {
-  const orderedProjects = [...featuredProjects, ...projects.filter((project) => !featuredProjects.includes(project))];
+  const openingIds = ["BriefBooth.com", "tlcmassagewellness"];
+  const openingProjects = openingIds.map((id) => featuredProjects.find((project) => project.id === id)).filter(Boolean);
+  const orderedProjects = [
+    ...openingProjects,
+    ...featuredProjects.filter((project) => !openingProjects.includes(project)),
+    ...projects.filter((project) => !featuredProjects.includes(project)),
+  ];
   const filters = [["all", "All"], ["website", "Websites"], ["web-app", "Web apps"], ["ios", "iPhone & iPad"], ["desktop", "Desktop"]];
+  const filterButtons = filters.map(([type, label]) => {
+    const count = projects.filter((project) => type === "all" || projectFilterType(project) === type).length;
+    return `<button type="button" data-project-filter="${type}" aria-pressed="${type === "all"}" aria-controls="project-index-grid">${escape(label)} <span aria-hidden="true">${count}</span></button>`;
+  }).join("");
+  const browserControls = `<details id="project-browser-controls" class="project-browser-disclosure" hidden>
+    <summary>Filter or search projects</summary>
+    <div class="project-browser-controls">
+      <fieldset class="project-type-filter"><legend>Project type</legend><div class="project-filter-options">${filterButtons}</div></fieldset>
+      <label class="project-browser-search" for="project-browser-search"><span>Search projects</span><input id="project-browser-search" type="search" placeholder="Name, feature, or technology" autocomplete="off" aria-controls="project-index-grid" /></label>
+    </div>
+  </details>`;
   const range = renderRangeProof().replace(/(href|src)="\.\//g, '$1="../');
-  return intro("", "Projects.", `${projects.length} selected personal projects. Websites, apps, and software.`, `<div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}`) +
-    `<section id="project-collection" class="page-section" aria-labelledby="project-collection-title"><h2 id="project-collection-title">Find a project like your idea.</h2><div id="project-browser-controls" class="project-browser-controls" hidden><fieldset class="project-type-filter"><legend>Project type</legend><div class="project-filter-options">${filters.map(([type, label]) => `<button type="button" data-project-filter="${type}" aria-pressed="${type === "all"}" aria-controls="project-index-grid">${escape(label)} <span aria-hidden="true">${projects.filter((project) => type === "all" || projectFilterType(project) === type).length}</span></button>`).join("")}</div></fieldset><label class="project-browser-search" for="project-browser-search"><span>Search projects</span><input id="project-browser-search" type="search" placeholder="Name, feature, or technology" autocomplete="off" aria-controls="project-index-grid" /></label></div><p id="project-browser-count" class="project-browser-count" role="status" aria-live="polite" aria-atomic="true">${projects.length} of ${projects.length} projects</p><div id="project-index-grid" class="seo-project-grid work-page-grid">${orderedProjects.map((project) => projectCard(project, route)).join("")}</div><div id="project-browser-empty" class="project-browser-empty" hidden><h3>No matching projects.</h3><p>Try a different word or project type.</p><button type="button" id="project-browser-reset" class="button button-outline">Show all projects</button></div><noscript><p class="no-js-help">All ${projects.length} projects are shown. Choose any project to open its complete story and images.</p></noscript></section>` +
+  return intro("", "Projects.", "Explore business websites, booking tools, and apps I’ve built. Each example shows how it works.") +
+    `<section id="project-collection" class="page-section" aria-labelledby="project-collection-title"><h2 id="project-collection-title" class="sr-only">Project examples</h2>${browserControls}<p id="project-browser-count" class="project-browser-count" role="status" aria-live="polite" aria-atomic="true">${projects.length} of ${projects.length} projects</p><div id="project-index-grid" class="seo-project-grid work-page-grid">${orderedProjects.map((project) => projectCard(project, route)).join("")}</div><div id="project-browser-empty" class="project-browser-empty" hidden><h3>No matching projects.</h3><p>Try a different word or project type.</p><button type="button" id="project-browser-reset" class="button button-outline">Show all projects</button></div><noscript><p class="no-js-help">All ${projects.length} projects are shown. Choose any project to open its complete story and images.</p></noscript></section>` +
     `<details id="range-proof" class="work-release-details"><summary>Published apps and development range</summary><div class="range-proof" aria-label="Development range and published app proof">${range}</div></details>` +
-    `<section id="work-with-me" class="page-section work-hiring" aria-labelledby="work-hiring-title"><h2 id="work-hiring-title">Have something in mind?</h2><p class="work-hiring-intro">One developer for design, code, and launch. We agree the scope and price before building, with a 30-day money-back guarantee after your completed product launches.</p><div class="work-hiring-actions">${bookingLink()}<a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support <span aria-hidden="true">↗</span></a></div><aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside></section>`;
+    `<section id="work-with-me" class="page-section work-hiring" aria-labelledby="work-hiring-title"><h2 id="work-hiring-title">Have something in mind?</h2><p class="work-hiring-intro">One developer for design, code, and launch. We agree the scope and price before building, with a 30-day money-back guarantee after your completed product launches.</p><div class="work-hiring-actions">${bookingLink()}<a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support <span aria-hidden="true">↗</span></a></div>${bookingDestinationNote()}<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside></section>`;
 }
 
 const serviceChoices = {
@@ -345,7 +362,7 @@ function kickoffPage() {
 function projectBriefPage() {
   const page = { path: "/project-brief/", title: "Plan Your Website, App or Software Project | 4u Digital",
     description: "A guided project brief for your website, app or custom software. Explore features, colors, content and workflows, upload references, and send your ideas to 4u Digital.",
-    modified: "2026-10-26", projectBrief: true,
+    modified: "2026-11-11", projectBrief: true,
     breadcrumbs: [{ name: "Project planner", path: "/project-brief/" }],
   };
   const content = intro("4U DIGITAL · PROJECT PLANNER", "Your project planner.",
@@ -544,17 +561,14 @@ function guidePage() {
 }
 
 export async function generateSEO(output) {
-  const home = { path: "/", title: "Custom App, Website & Software Development | 4u Digital",
-    description: "Custom iOS apps, websites, and business software by 4u Digital. Explore three App Store apps, full-stack web platforms, and desktop development.",
-    modified: "2026-10-27",
+  const home = { path: "/", title: "Website, App & Software Development | 4u Digital",
+    description: "I build personal and business websites, from portfolios to online stores and booking sites. I also build apps and custom software.",
+    modified: "2026-11-10",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
   html = html.replace('<section id="client-care" class="client-care-section wrap" aria-labelledby="client-care-title"></section>', clientCareSection(true));
-  html = html.replace(/(<p data-after-launch-summary>)[\s\S]*?(<\/p>)/, `$1${escape(clientCare.summary)}$2`);
-  html = html.replace('<div id="home-insights"></div>', articleCards("/", homepageArticles));
   html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);
-  html = html.replace('<div id="footer-policies"></div>', footerPolicies("/"));
   html = html.replace('<div id="shared-footer"></div>', footer("/"));
   html = sourceEmailLinks(html, "/");
   await writeFile(path.join(output, "index.html"), html);
@@ -566,7 +580,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", projectIndex: true, modified: "2026-10-28", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-11-07", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",

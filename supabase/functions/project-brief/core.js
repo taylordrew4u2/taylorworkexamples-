@@ -65,7 +65,7 @@ export async function readBoundedBody(request) {
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
   return bytes;
 }
-export async function parseSubmission(request, normalizeAnswers, now = Date.now()) {
+export async function parseSubmission(request, normalizeAnswers, now = Date.now(), { attachmentContent = bytesToBase64 } = {}) {
   const bytes = await readBoundedBody(request);
   const contentType = request.headers.get('content-type') || ''; let brief; let files = []; let captions = [];
   try {
@@ -103,14 +103,17 @@ export async function parseSubmission(request, normalizeAnswers, now = Date.now(
     const extension = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'application/pdf': 'pdf' }[mime];
     const name = String(file.name || 'reference').split(/[\\/]/).at(-1).replace(/\.[^.]*$/, '').replace(/[^a-zA-Z0-9 _.-]/g, '').replace(/^\.+/, '').trim().slice(0, 95) || 'reference';
     const safeName = `${String(i + 1).padStart(2, '0')}-${name}.${extension}`;
-    attachments.push({ name: safeName, content: bytesToBase64(data) });
+    attachments.push({ name: safeName, content: attachmentContent(data) });
     fileMeta.push({ name: safeName, type: mime, size: data.byteLength, caption: (captions[i] || '').trim(), sha256: await sha256(data) });
   }
   const fingerprint = await sha256(JSON.stringify({ answers, files: fileMeta, consent: true, version: 1 }));
   return { requestId: brief.requestId.toLowerCase(), answers, attachments, fileMeta, fileBytes: total, fingerprint };
 }
+export function briefReference(requestId) {
+  return `4U-${requestId.replaceAll('-', '').slice(0, 12).toUpperCase()}`;
+}
 export function buildMail(submission, formatText) {
-  const reference = `4U-${submission.requestId.replaceAll('-', '').slice(0, 12).toUpperCase()}`;
+  const reference = briefReference(submission.requestId);
   const fileText = submission.fileMeta.length ? '\n\nREFERENCE FILES\n' + submission.fileMeta.map((file) => `${file.name}${file.caption ? '\nNote: ' + file.caption : ''}`).join('\n\n') : '\n\nNo reference files were added.';
   const textContent = `NEW PROJECT BRIEF — 4u Digital\nReference: ${reference}\n\n${formatText(submission.answers)}${fileText}\n\nThe client agreed to send these answers and files to 4u Digital. Skipped optional questions have been left out.\nReply to this email to contact ${submission.answers.contactName}.\n\n4u Digital\nadmin@customtechbuilt4u.com\nhttps://customtechbuilt4u.com/`;
   const htmlContent = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Project brief — 4u Digital</title></head><body style="margin:0;background:#f3f3f3;color:#171717;font-family:Arial,sans-serif"><main style="max-width:680px;margin:24px auto;padding:32px;background:#ffffff;border:1px solid #dddddd"><h1 style="font-size:26px;margin:0 0 20px">4u Digital · New project brief</h1><div style="font-size:15px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(textContent)}</div></main></body></html>`;
@@ -133,7 +136,7 @@ export function createBriefHandler({ repository, normalizeAnswers, formatText, i
       const result = await repository.save({ submission, ipHash, payload: buildMail(submission, formatText) });
       if (!result || !['created', 'existing', 'conflict', 'rate_limited', 'capacity'].includes(result.action)) throw new Error('Brief persistence was not acknowledged');
       if (['created', 'existing'].includes(result.action) && !['pending', 'accepted', 'uncertain', 'failed'].includes(result.status)) throw new Error('Brief persistence status was not acknowledged');
-      const reference = result.reference || `4U-${submission.requestId.replaceAll('-', '').slice(0, 12).toUpperCase()}`;
+      const reference = result.reference || briefReference(submission.requestId);
       if (result.action === 'conflict') return respond(409, { ok: false, message: 'This submission reference is already in use. Start a new brief to send different answers.' });
       if (result.action === 'rate_limited' || result.action === 'capacity') return respond(429, { ok: false, message: 'The brief form has reached its free delivery limit. Your answers are still on this device. Please try again later or email admin@customtechbuilt4u.com.' }, { 'Retry-After': '3600' });
       let status = result.status;

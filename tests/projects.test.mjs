@@ -261,7 +261,8 @@ test("the minimal homepage uses two primary choices and genuine native project l
   const actions = html.match(/<div class="simple-actions">([\s\S]*?)<\/div>/)?.[1];
   assert.ok(actions);
   const links = [...actions.matchAll(/<a\b([^>]*)>/g)].map(([, tag]) => attribute(tag, "href"));
-  assert.deepEqual(links, ["https://briefbooth.com/book/4u-digital", "./work/"]);
+  assert.deepEqual(links, ["#work-title", "https://briefbooth.com/book/4u-digital"]);
+  assert.match(html, /<h2 id="work-title" tabindex="-1">/);
   assert.doesNotMatch(html, /hero-explorer|data-project=|project-dialog|planner-shortcut|capability-strip/);
   const previews = [...html.matchAll(/<a class="simple-project"([^>]*)>([\s\S]*?)<\/a>/g)];
   assert.equal(previews.length, 3);

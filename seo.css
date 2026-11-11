@@ -18,8 +18,6 @@
 }
 .footer-pages { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #595959; line-height: 1.6; }
 .no-js-help { margin-top: 1rem; line-height: 1.6; color: var(--muted); }
-html:not(.js-enabled) .screen-choices,
-html:not(.js-enabled) .archive-controls { display: none; }
 html:not(.js-enabled) .menu-toggle { display: none; }
 html:not(.js-enabled) #main-nav { display: flex; position: static; flex-direction: row; align-items: center; flex-wrap: wrap; width: auto; background: none; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
 html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
@@ -227,9 +225,6 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
   .industry-guide .article-layout { gap: 0; }
   .industry-guide-summary { padding: 1.25rem; }
 }
-.consultation-offer { color: var(--muted); line-height: 1.7; margin-top: 1.25rem; }
-.consultation-offer a { text-decoration: underline; text-underline-offset: 0.25rem; }
-.site-footer .consultation-offer { color: #e6e6e6; }
 .article-byline { font-size: 0.8125rem; color: var(--muted); padding-bottom: 2.5rem; }
 .article-layout { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.8fr); gap: clamp(2rem, 5vw, 5rem); border-top: 1px solid var(--line); }
 .article-contents { align-self: start; padding-top: 2.5rem; }
@@ -258,7 +253,9 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .work-index-page .seo-project-body { padding: 1.75rem; }
 .work-index-page .seo-project-heading h3 { font-size: 1.5rem; letter-spacing: -.035em; }
 .project-browser-controls { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, .45fr); align-items: end; gap: 1.5rem 2rem; margin-top: 2rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--corner); background: var(--surface-soft); }
-.project-browser-controls[hidden], .project-browser-empty[hidden], .seo-project-card[hidden] { display: none; }
+.project-browser-disclosure[hidden], .project-browser-empty[hidden], .seo-project-card[hidden] { display: none; }
+.project-browser-disclosure > summary { display: list-item; min-height: 44px; padding-block: .625rem; font-size: .875rem; line-height: 1.6; font-weight: 600; cursor: pointer; }
+.project-browser-disclosure > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .project-type-filter { border: 0; padding: 0; margin: 0; min-width: 0; }
 .project-type-filter legend, .project-browser-search > span { font-size: .875rem; font-weight: 600; margin-bottom: .75rem; }
 .project-filter-options { display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -273,19 +270,12 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .project-browser-empty p { color: var(--muted); line-height: 1.7; margin: .75rem 0 1.25rem; }
 .seo-project-body .work-index-image-label { font-size: .75rem; line-height: 1.6; margin-top: .75rem; }
 .work-index-page .range-proof { scroll-margin-top: 2rem; margin-bottom: 3rem; }
-.work-index-page .page-intro { max-width: 48rem; padding: clamp(2rem, 4vw, 3.5rem) 0; margin: 0; background: #fff; color: var(--ink); }
+.work-index-page .page-intro { max-width: 48rem; padding: clamp(1.5rem, 3vw, 2.5rem) 0 1.5rem; margin: 0; background: #fff; color: var(--ink); }
 .work-index-page .page-intro h1 { font-size: clamp(2.75rem, 5vw, 4rem); margin-top: 0; }
-.work-index-page .page-intro .eyebrow, .work-index-page .page-lead { color: var(--muted); }
-.work-index-page .page-intro .page-lead { margin-top: 1rem; font-size: 1.0625rem; max-width: 42rem; }
-.work-index-page .page-intro .page-actions { gap: .75rem 1.5rem; margin-top: 1.25rem; }
-.work-index-page .page-intro .booking-destination { margin-top: .75rem; font-size: .8125rem; line-height: 1.65; color: var(--muted); }
-.work-index-page .page-intro .text-link { display: inline-flex; gap: .75rem; align-items: center; min-height: 48px; text-decoration: underline; text-underline-offset: .25em; }
-.work-index-page .page-intro .text-link span { color: inherit; }
-.work-index-page .page-intro :focus-visible { outline-color: var(--ink); }
-.work-index-page #project-collection { padding-top: 1.5rem; padding-bottom: 2rem; scroll-margin-top: 1rem; }
-.work-index-page #project-collection > h2 { font-size: 1.25rem; letter-spacing: -.025em; margin-bottom: 0; }
-.work-index-page .project-browser-controls { margin-top: 1rem; padding: 0; border: 0; background: #fff; gap: 1rem 2rem; }
-.work-index-page .project-browser-count { margin-block: 1rem; }
+.work-index-page .page-intro .page-lead { margin-top: .625rem; font-size: 1.0625rem; line-height: 1.55; max-width: 42rem; }
+.work-index-page #project-collection { padding-top: .25rem; padding-bottom: 2rem; scroll-margin-top: 1rem; }
+.work-index-page .project-browser-controls { margin: .5rem 0 1rem; padding: 0; border: 0; background: #fff; gap: 1rem 2rem; }
+.work-index-page .project-browser-count { margin-block: .125rem .75rem; }
 .work-project-header { padding: 1.5rem 1.5rem 1rem; }
 .work-project-header > .eyebrow { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; font-size: .6875rem; color: var(--muted); }
 .work-project-status { padding: .25rem .5rem; border: 1px solid var(--line); border-radius: .375rem; color: #111; background: #f5f5f5; font-family: var(--sans); font-size: .6875rem; letter-spacing: 0; text-transform: none; }
@@ -311,13 +301,14 @@ html:not(.js-enabled) .site-header { flex-wrap: wrap; row-gap: 1.25rem; }
 .work-hiring .portfolio-disclosure { margin-top: 1.5rem; }
 .work-index-page .work-hiring { padding-block: 2.5rem; }
 .work-index-page .work-hiring-intro { margin-top: 1rem; }
+.work-index-page .work-hiring .booking-destination-note { margin-top: .75rem; font-size: .8125rem; line-height: 1.65; }
 .work-release-details { border-top: 1px solid var(--line); padding-block: .5rem; margin-bottom: 1rem; }
 .work-release-details > summary { display: list-item; min-height: 48px; padding-block: .875rem; cursor: pointer; font-weight: 550; line-height: 1.6; }
 .work-release-details > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .work-release-details .range-proof { margin-top: 1rem; }
 @media (max-width: 800px) { .work-hiring-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 600px) {
-  .work-index-page .page-intro { padding: 2rem 0; margin: 0; }
+  .work-index-page .page-intro { padding-block: 1.25rem; }
   .work-index-page .page-intro h1 { font-size: 2.75rem; }
   .work-project-header { padding: 1.25rem 1.25rem 1rem; }
   .work-index-page .seo-project-heading h3 { font-size: 1.25rem; line-height: 1.4; }

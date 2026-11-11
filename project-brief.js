@@ -1,5 +1,5 @@
 import { briefSteps, briefFields, normalizeBrief, formatBriefText } from "./project-brief-schema.js";
-import { briefEndpoint, briefPublishableKey } from "./project-brief-config.js";
+import { briefEndpoint, canSendBriefOnline } from "./project-brief-config.js";
 import { briefPalettes, paletteAnswerPrefix, formatPaletteAnswer, parsePaletteAnswer } from "./project-brief-palettes.js";
 
 const draftKey = "4u-digital-project-brief-v1";
@@ -10,6 +10,7 @@ const permittedFiles = new Map([["image/jpeg", /\.jpe?g$/i], ["image/png", /\.pn
 const initialized = new WeakSet();
 const text = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
 const fileSize = (bytes) => bytes < 1024 * 1024 ? `${Math.max(1, Math.ceil(bytes / 1024))} KB` : `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+const wellFormed = (value) => String(value).replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/gu, "\uFFFD");
 
 export function validateBriefFiles(existing, incoming) {
   const files = [...existing];
@@ -41,6 +42,14 @@ export function initProjectBrief(doc = document) {
   const fieldsById = new Map(briefFields.map((field) => [field.id, field]));
   if (!win || panels.length !== briefSteps.length || !reviewPanel || !status || !saveDraft) return false;
   initialized.add(form);
+  const onlineDelivery = canSendBriefOnline(win.location.hostname);
+  const emailActions = get("brief-email-actions");
+  const emailLink = get("brief-email-draft");
+  if (!onlineDelivery) {
+    get("brief-consent").closest(".brief-consent").hidden = true;
+    get("brief-email-option-note").textContent = "Open a draft in your email app or download the brief to send it using webmail.";
+    emailLink.classList.replace("brief-button-secondary", "brief-button-primary");
+  }
   let stepIndex = 0;
   let questionId = "projectType";
   let editingReview = false;
@@ -201,7 +210,8 @@ export function initProjectBrief(doc = document) {
     get("brief-back").hidden = !reviewing && questionId === "projectType";
     get("brief-next").hidden = reviewing;
     get("brief-return-review").hidden = reviewing || !editingReview;
-    get("brief-send").hidden = !reviewing;
+    get("brief-send").hidden = !reviewing || !onlineDelivery;
+    emailActions.hidden = !reviewing || busy;
     get("brief-skip").hidden = reviewing || Boolean(fieldsById.get(questionId)?.required);
     get("brief-no-preference").hidden = reviewing || questionId === "__files" || Boolean(fieldsById.get(questionId)?.required);
     get("brief-review-early").hidden = reviewing || stepIndex === briefSteps.length - 1;
@@ -252,7 +262,18 @@ export function initProjectBrief(doc = document) {
     let answers;
     try { answers = normalizeBrief(rawAnswers()); }
     catch (error) { showFieldError(error.field, error.message || "Please check the highlighted answer."); return false; }
-    downloadText = formatBriefText(answers);
+    const fileDetails = files.map(({ file, caption }) => `${file.name}${caption ? ` — ${caption}` : ""}`);
+    downloadText = [formatBriefText(answers), fileDetails.length ? `\nReference files to attach:\n${fileDetails.join("\n")}` : ""].filter(Boolean).join("\n");
+    const project = (answers.projectName || answers.businessName || "").replace(/[\u0000-\u001f\u007f-\u009f]/gu, " ").trim();
+    const subject = project ? `4u Digital project brief — ${project.slice(0, 120)}` : "4u Digital project brief";
+    const draft = `mailto:admin@customtechbuilt4u.com?subject=${encodeURIComponent(wellFormed(subject))}&body=`;
+    const fullDraft = draft + encodeURIComponent(wellFormed(downloadText));
+    const needsAttachment = fullDraft.length > 1900;
+    emailLink.href = needsAttachment
+      ? draft + encodeURIComponent("Hi 4u Digital,\n\nPlease see the attached project brief.\n")
+      : fullDraft;
+    get("brief-email-attachment-note").hidden = !needsAttachment;
+    get("brief-email-files-note").hidden = fileDetails.length === 0;
     get("brief-review-content").innerHTML = briefSteps.map((step, index) => {
       const answered = step.fields.map((id) => fieldsById.get(id)).filter((field) => meaningful(answers[field.id]));
       const fileHTML = step.id === "assets" && files.length ? `<div class="brief-review-files">${files.map((entry) => `<div class="brief-review-file">${entry.url ? `<img src="${text(entry.url)}" alt="Uploaded reference: ${text(entry.file.name)}">` : '<span class="brief-file-document">PDF</span>'}<p>${text(entry.file.name)}${entry.caption ? `<br>${text(entry.caption)}` : ""}</p></div>`).join("")}</div>` : "";
@@ -283,7 +304,6 @@ export function initProjectBrief(doc = document) {
 
   function updateMediaEmailLinks() {
     const answers = rawAnswers();
-    const wellFormed = (value) => String(value).replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/gu, "\uFFFD");
     const oneLine = (value) => wellFormed(value || "").replace(/[\u0000-\u001f\u007f-\u009f]/gu, " ").trim();
     const project = oneLine(answers.projectName || answers.businessName || "My project");
     const reference = oneLine(receiptReference);
@@ -353,6 +373,7 @@ export function initProjectBrief(doc = document) {
     form.setAttribute("aria-busy", String(value));
     form.querySelectorAll("button, input, textarea").forEach((control) => { control.disabled = value; });
     updateVisibility();
+    emailActions.hidden = value || stepIndex !== briefSteps.length;
     get("brief-send").innerHTML = value ? "Sending your brief…" : 'Send my project brief <span aria-hidden="true">↗</span>';
   }
 
@@ -469,6 +490,7 @@ export function initProjectBrief(doc = document) {
     event.preventDefault();
     if (busy || submitted) return;
     if (stepIndex !== briefSteps.length) { advance(); return; }
+    if (!onlineDelivery) return;
     clearErrors();
     let answers;
     try { answers = normalizeBrief(rawAnswers()); }
@@ -492,14 +514,17 @@ export function initProjectBrief(doc = document) {
     const aborter = new AbortController();
     const timeout = win.setTimeout(() => aborter.abort(), 60_000);
     try {
-      const response = await win.fetch(briefEndpoint, { method: "POST", headers: { apikey: briefPublishableKey }, body, signal: aborter.signal });
+      const response = await win.fetch(briefEndpoint, { method: "POST", body, signal: aborter.signal });
+      const fallbackMessage = [402, 404, 503].includes(response.status)
+        ? "Online delivery is temporarily unavailable. Your answers and files are still here."
+        : "We could not confirm delivery. Your answers and files are still here.";
       let result;
-      try { result = await response.json(); } catch { throw new Error("The server did not return a confirmation. Your answers and files are still here. Please try again."); }
-      const validStatus = (result?.status === "sent" && [200, 201].includes(response.status)) || (["received", "queued"].includes(result?.status) && response.status === 202);
-      const validReceipt = response.ok && result?.ok === true && typeof result.reference === "string" && result.reference.trim() && validStatus;
+      try { result = await response.json(); } catch { throw new Error(fallbackMessage); }
+      const validReceipt = response.status === 200 && result?.ok === true && result.status === "sent" && typeof result.reference === "string" && result.reference.trim();
       if (!validReceipt) {
-        if (result?.field && fieldsById.has(result.field)) { setBusy(false); showFieldError(result.field, result.error || result.message || "Please check this answer."); return; }
-        throw new Error(response.status === 429 ? "Too many attempts in a short time. Your answers and files are still here. Please wait a little and try again." : result?.error || result?.message || "Your brief could not be confirmed. Your answers and files are still here. Please try again.");
+        if (result?.field && fieldsById.has(result.field)) { setBusy(false); showFieldError(result.field, result.message || result.error || "Please check this answer."); return; }
+        if (response.status === 429) throw new Error("Too many attempts in a short time. Your answers and files are still here. Please wait a little and try again.");
+        throw new Error(result?.ok === false && typeof result.message === "string" && result.message.trim() ? result.message.slice(0, 1500) : fallbackMessage);
       }
       submitted = true;
       receiptReference = result.reference;
@@ -507,9 +532,8 @@ export function initProjectBrief(doc = document) {
       downloadText = `${formatBriefText(answers)}\n\nFiles shared:\n${files.length ? files.map((entry) => `${entry.file.name}${entry.caption ? ` — ${entry.caption}` : ""}`).join("\n") : "No files attached."}\n\nReference: ${result.reference}`;
       removeDraft();
       form.hidden = true;
-      get("brief-success-title").textContent = result.status === "sent" ? "Your brief is on its way." : "Your brief is safely received.";
-      const deliveryNote = ["failed", "uncertain"].includes(result.delivery) ? "Your project details have been saved. The email notification needs attention; you do not need to send the brief again." : "Your project details have been saved. The email notification is still pending; you do not need to send the brief again.";
-      get("brief-success-message").textContent = result.status === "sent" ? "Your project details have been saved and the email notification has been accepted for delivery to 4u Digital." : typeof result.message === "string" && result.message.trim() ? result.message.slice(0, 1500) : deliveryNote;
+      get("brief-success-title").textContent = "Your brief is on its way.";
+      get("brief-success-message").textContent = "4u Digital’s email service accepted your brief for delivery.";
       get("brief-reference").textContent = `Your reference: ${result.reference}`;
       const success = get("brief-success");
       success.hidden = false;
@@ -518,12 +542,17 @@ export function initProjectBrief(doc = document) {
       releaseFiles();
     } catch (error) {
       setBusy(false);
-      const message = error?.name === "AbortError" ? "This is taking longer than expected. We could not confirm receipt. Your answers and files are still here; try again without changing anything to avoid a duplicate." : error?.message === "Failed to fetch" || error instanceof TypeError ? "We could not confirm receipt because the connection was interrupted. Your answers and files are still here. Try again; an unchanged retry uses the same request reference." : error.message || "We could not confirm receipt. Your answers and files are still here. Please try again.";
+      const message = error?.name === "AbortError"
+        ? "This is taking longer than expected. We could not confirm receipt. Your answers and files are still here."
+        : error instanceof TypeError
+          ? "We could not confirm receipt because the connection was interrupted. Your answers and files are still here."
+          : error.message || "We could not confirm receipt. Your answers and files are still here.";
       announce(message, { error: true, focus: true });
     } finally { win.clearTimeout(timeout); }
   });
 
   get("brief-success-download")?.addEventListener("click", downloadBrief);
+  get("brief-review-download")?.addEventListener("click", downloadBrief);
   // Keep selected files available when a browser restores this page from its back/forward cache.
   // Removed files, cleared briefs, and successful submissions release their object URLs explicitly.
   win.addEventListener("pagehide", persistDraft);

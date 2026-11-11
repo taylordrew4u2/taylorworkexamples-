@@ -34,7 +34,9 @@ for (const javaScriptEnabled of [true, false]) {
             const opening = page.locator(".page-intro");
             const actions = opening.locator(".page-actions a");
             expect(await actions.count(), "The opening has at most two choices").toBeLessThanOrEqual(2);
-            const booking = opening.locator("[data-booking-link]");
+            const booking = route === "/work/"
+              ? page.locator(".mobile-consultation [data-booking-link]")
+              : opening.locator("[data-booking-link]");
             await expect(booking).toHaveCount(1);
             await expect(booking).toHaveAttribute("href", bookingURL);
             await expect(booking).toHaveAttribute("target", "_blank");
@@ -67,7 +69,7 @@ for (const javaScriptEnabled of [true, false]) {
               }
             }
 
-            const disclosure = page.locator("main details").first();
+            const disclosure = page.locator("main details:not([hidden])").first();
             if (await disclosure.count()) {
               await expect(disclosure).not.toHaveAttribute("open", "");
               const summary = disclosure.locator(":scope > summary");

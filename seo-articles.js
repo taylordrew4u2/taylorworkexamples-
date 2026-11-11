@@ -290,6 +290,3 @@ export const articles = [...websiteNotes, ...industryWebsiteNotes, ...pricingNot
   ...article,
   topic: article.topic || (article.slug === "diy-vs-custom-website" ? "websites" : "planning"),
 }));
-
-export const homepageArticles = ["simple-business-website", "why-website-quotes-vary", "what-to-bring-to-a-developer"]
-  .map((slug) => articles.find((article) => article.slug === slug));

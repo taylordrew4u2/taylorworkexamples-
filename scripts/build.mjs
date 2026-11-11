@@ -9,32 +9,25 @@ import { responsiveHTML, fingerprintAssets } from "./cache-assets.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const output = path.join(root, "dist");
-await rm(output, { recursive: true, force: true });
-await mkdir(output, { recursive: true });
-for (const name of [
-  "index.html",
+const browserFiles = [
   "styles.css",
   "seo.css",
   "app.js",
   "navigation.js",
-  "homepage-explore.js",
   "projects-page.js",
   "booking.js",
   "kickoff-form.js",
   "project-brief.js",
   "project-brief-schema.js",
   "project-brief-palettes.js",
-  "project-brief-designs.js",
   "project-brief-config.js",
   "project-brief.css",
   "analytics.js",
   "contact-context.js",
-  "render-projects.js",
-  "range-proof.js",
-  "responsive-images.js",
-  "image-variants.js",
-  ".nojekyll",
-]) {
+];
+await rm(output, { recursive: true, force: true });
+await mkdir(output, { recursive: true });
+for (const name of ["index.html", ".nojekyll", ...browserFiles]) {
   await cp(path.join(root, name), path.join(output, name), { recursive: true });
 }
 
@@ -75,8 +68,6 @@ for (const route of routes) {
   await writeFile(file, responsiveHTML(await readFile(file, "utf8"), route, imageVariants));
 }
 const version = await fingerprintAssets({ output, routes, names: [
-  "styles.css", "seo.css", "app.js", "navigation.js", "homepage-explore.js", "projects-page.js", "booking.js", "kickoff-form.js", "project-brief.js", "project-brief-schema.js", "project-brief-palettes.js", "project-brief-designs.js", "project-brief-config.js", "project-brief.css", "analytics.js",
-  "contact-context.js", "contact-pages.js", "render-projects.js", "range-proof.js",
-  "public-projects.js", "responsive-images.js", "image-variants.js",
+  ...browserFiles, "contact-pages.js", "public-projects.js", "image-variants.js",
 ] });
 console.log(`4u Digital built in dist/: ${pages.length} indexable pages, ${projects.length} public projects, ${Object.keys(imageVariants).length} responsive images. Static version: ${version}.`);

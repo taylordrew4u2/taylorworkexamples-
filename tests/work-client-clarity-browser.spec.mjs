@@ -85,7 +85,7 @@ for (const javaScriptEnabled of [true, false]) {
       }
     });
 
-    test("the short opening books directly and the closing preserves ownership and guarantee commitments", async ({ page }) => {
+    test("the short opening leads with work and the booking dock and closing preserve the consultation path", async ({ page }) => {
       test.setTimeout(120_000);
       // Keep the booking handoff local; no real appointment or email is created.
       await page.context().route(bookingURL, (route) => route.fulfill({
@@ -96,13 +96,12 @@ for (const javaScriptEnabled of [true, false]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto("/work/");
         const opening = page.locator(".page-intro");
-        await expect(opening.locator(".page-lead")).toContainText(/personal projects/i);
+        await expect(opening.locator(".page-lead")).toContainText(/business websites, booking tools, and apps/i);
         await expect(opening.getByRole("heading", { level: 1 })).toHaveText("Projects.");
-        await expect(opening.locator(".page-actions a")).toHaveCount(1);
-        const booking = opening.locator("[data-booking-link]");
+        await expect(opening.locator("[data-booking-link]")).toHaveCount(0);
+        const booking = page.locator(".mobile-consultation [data-booking-link]");
         await expectDirectBooking(booking);
         await expectTapTarget(booking, width);
-        await expect(opening.locator(".page-actions a").first()).toHaveAttribute("data-booking-link", "");
         await expect(opening.locator("form, input, select, textarea")).toHaveCount(0);
         await booking.focus();
         const pendingPopup = page.waitForEvent("popup");

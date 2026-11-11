@@ -21,7 +21,7 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto("/");
         const hero = page.locator(".simple-hero");
         await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
-        await expect(hero).toContainText(/one developer/i);
+        await expect(hero.getByRole("heading", { level: 1 })).toHaveText("I build websites for businesses and people.");
         const actions = hero.locator(".simple-actions");
         await expect(actions.getByRole("link")).toHaveCount(2);
         const booking = actions.locator("[data-booking-link]");
@@ -30,8 +30,8 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(booking).toHaveAttribute("rel", /noopener/);
         await expect(booking).toHaveAttribute("rel", /noreferrer/);
         await expectTapTarget(booking, width);
-        const browse = actions.getByRole("link", { name: /^View projects/ });
-        await expect(browse).toHaveAttribute("href", "./work/");
+        const browse = actions.getByRole("link", { name: /^See examples/ });
+        await expect(browse).toHaveAttribute("href", "#work-title");
         await expectTapTarget(browse, width);
         await expect(hero).toContainText(/BriefBooth.*new tab/i);
         await expect(hero).toContainText(/reviewed before confirmation/i);
@@ -39,6 +39,9 @@ for (const javaScriptEnabled of [true, false]) {
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await browse.focus();
         await page.keyboard.press("Enter");
+        await expect(page).toHaveURL(/#work-title$/);
+        await expect(page.locator("#work-title")).toBeFocused();
+        await page.getByRole("link", { name: /^View all projects/ }).click();
         await expect(page).toHaveURL(/\/work\/$/);
       }
     });

@@ -141,7 +141,7 @@ async function expectOriginalImage(image, frame) {
 
 test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("You know your business. I’ll build the technology.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and people.");
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   await expect(page.locator(".simple-project")).toHaveCount(3);
   await expect(page.locator("#business-guides, dialog, input[name='hero-project']")).toHaveCount(0);
