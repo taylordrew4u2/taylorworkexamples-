@@ -9,6 +9,74 @@ export const email = "admin@customtechbuilt4u.com";
 // experiment marks focused utilities and development projects for the tools filter.
 export const projects = [
   {
+    id: "pixelatedrecordsnyc-old-layout",
+    title: "Pixelated Records",
+    category: "web",
+    summary:
+      "A photographic venue website demo with room navigation, a readable drinks menu, and protected controls for updating content.",
+    stack: ["Next.js", "React", "TypeScript", "Netlify Blobs", "Sharp"],
+    features: [
+      "Photo-led room navigation with responsive phone layouts",
+      "Accessible drinks menu and shared events/calendar interface",
+      "Private drafts, authenticated preview, and publishing controls",
+      "Persistent content, uploads, and sessions with conflict protection",
+    ],
+    repoUrl: "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout",
+    demoUrl: "https://pixeated.netlify.app",
+    demoLabel: "Live demo",
+    image: "./assets/pixelated-records/storefront-desktop.webp",
+    imageAlt:
+      "Pixelated Records portfolio demo with a nighttime storefront photograph and direct room navigation.",
+    portrait: false,
+    tone: "dark",
+    badge: "PORTFOLIO DEMO",
+    releaseStatus: "Live portfolio demo",
+    experiment: false,
+    modified: "2026-11-16",
+    sources: [
+      "https://pixeated.netlify.app",
+      "https://pixeated.netlify.app/inside",
+      "https://pixeated.netlify.app/bar",
+      "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout",
+      "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/README.md",
+      "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/src/components/PublicExperience.tsx",
+      "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/src/lib/server/content.ts",
+      "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/src/lib/server/netlify.ts",
+    ],
+    clientSummary:
+      "Explore the room, read the menu, and find venue information from a phone or computer.",
+    demonstrates: [
+      "Photo-led website design",
+      "Responsive room navigation",
+      "Accessible menu and event interfaces",
+      "Protected content-editing workflows",
+    ],
+    projectType: "Website",
+    challenge:
+      "Make a venue's photographs part of a usable website while keeping navigation and menus clear on phones.",
+    build:
+      "A Next.js and TypeScript website with separate room views, a readable drinks dialog, shared event information, and a protected owner workspace for drafts, previews, and publication.",
+    highlights: [
+      {
+        title: "Look around the room",
+        text: "Move between the storefront, record shop, DJ booth, and bar through photographs and direct links.",
+        source: "https://pixeated.netlify.app/inside",
+      },
+      {
+        title: "Menus visitors can read",
+        text: "Open the drinks menu as accessible text rather than relying on a photograph of the menu.",
+        source: "https://pixeated.netlify.app/bar",
+      },
+      {
+        title: "Separate drafts from the public site",
+        text: "Content controls keep drafts private until an authenticated editor publishes them.",
+        source: "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/src/lib/server/content.ts",
+      },
+    ],
+    notes:
+      "Selected personal portfolio demo, separate from the venue's current production website. The demo has its own content store and an empty event schedule; no client results or current event activity are claimed. Captures preserve the running interface and its edited storefront imagery, including the time-driven sky, without portfolio overlays or recoloring.",
+  },
+  {
   "id": "FreeScript",
   "title": "FreeScript",
   "category": "desktop",

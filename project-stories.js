@@ -1,6 +1,14 @@
 // Client-facing explanations of the existing catalog workflows.
 // Each description matches the workflow heading at the same index in projects.js.
 export const projectStories = {
+  "pixelatedrecordsnyc-old-layout": {
+    audience: "venue visitors and the staff who update the website",
+    workflowDescriptions: [
+      "Enter the room from the storefront and move between the records, booth, and bar using direct links and phone-friendly controls.",
+      "Open the bar menu as readable text, then browse venue details and the event/calendar interface. This independent demo has no scheduled events.",
+      "Use the protected owner workspace to save a private draft, preview it, and publish the chosen version. Drafts and public content stay separate.",
+    ],
+  },
   FreeScript: {
   "audience": "Screenwriters, filmmakers and students starting or developing a screenplay",
   "workflowDescriptions": [

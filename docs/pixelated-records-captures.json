@@ -1,0 +1,57 @@
+{
+  "project": "Pixelated Records portfolio demo",
+  "demoUrl": "https://pixeated.netlify.app",
+  "sourceCommit": "9c0adc67f688a029c34ff76726e05ef5ab084f11",
+  "captureMethod": "Genuine live Chromium viewport captures through verified HTTPS, preserving the running UI and current clock. Full viewport, original colors, WebP quality94.",
+  "context": "The demo has an empty event schedule. Captures contain public UI only. Storefront imagery includes approved edits and approximate extended surroundings.",
+  "captures": [
+    {
+      "file": "assets/pixelated-records/storefront-desktop.webp",
+      "sourceUrl": "https://pixeated.netlify.app/",
+      "context": "Current public page",
+      "capturedAtUTC": "2026-11-16T07:38:02.763273Z",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 204448,
+      "sha256": "3ba5eb66ee59e519965bac4fcaeed60d3a1db54f10997207633e24b3c91149c9"
+    },
+    {
+      "file": "assets/pixelated-records/inside-desktop.webp",
+      "sourceUrl": "https://pixeated.netlify.app/inside",
+      "context": "Current public page",
+      "capturedAtUTC": "2026-11-16T07:38:09.002062Z",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 342550,
+      "sha256": "1c8f6c7d4c90148dd628f64497690762d143384e19d9a40cecc0fcbf60bc6597"
+    },
+    {
+      "file": "assets/pixelated-records/bar-menu.webp",
+      "sourceUrl": "https://pixeated.netlify.app/bar",
+      "context": "Drinks menu opened using the native Bar menu button",
+      "capturedAtUTC": "2026-11-16T07:38:15.237244Z",
+      "width": 1440,
+      "height": 1000,
+      "bytes": 235538,
+      "sha256": "b0f2838ea95522d9d4c84badfd4c61157df2c9cea4da21c7448b1202d6422be3"
+    },
+    {
+      "file": "assets/pixelated-records/storefront-mobile.webp",
+      "sourceUrl": "https://pixeated.netlify.app/",
+      "context": "Current public page",
+      "capturedAtUTC": "2026-11-16T07:38:21.521827Z",
+      "width": 390,
+      "height": 844,
+      "bytes": 54154,
+      "sha256": "380941711015bf28d642ce706b65cd7fd7cfc43498a7ce8e33fe14d8b54aedbe"
+    }
+  ],
+  "icon": {
+    "file": "assets/project-icons/pixelated-records.png",
+    "width": 192,
+    "height": 192,
+    "sha256": "5914e154ee999c71ddc9e50bbfd577822e28a6d1253f32353b66be470ae7d60f",
+    "sourceUrl": "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/public/assets/mark.png",
+    "context": "Byte-for-byte copy of the original project mark."
+  }
+}

@@ -1,4 +1,4 @@
-# Curated portfolio — October 24, 2026
+# Curated portfolio — November 16, 2026
 
 The owner requested that the public portfolio show only the strongest repositories. Public repository availability is an eligibility condition, not an instruction to publish every repository.
 
@@ -6,6 +6,9 @@ The selection in `portfolio-selection.js` is the single publishing boundary for 
 
 | Selected project | Reason to show it |
 | --- | --- |
+| Pixelated Records | Owner-authorized personal website demo with photographic room navigation, a readable drinks menu, and protected draft/publish controls; added November 16 |
+| FreeScript | A screenplay-writing workspace with original product artwork, genuine Mac captures, and clearly documented release limits |
+| TLC Massage Wellness | A website and owner booking-request workflow with clearly labeled demo/sample content |
 | I Can Run A Show | Complete event and operator workflows across public and management interfaces |
 | The BitBinder | Published native iPhone/iPad product, with writing, organization, and rehearsal flows |
 | My Gig Calendar | Published native scheduling product with a public calendar |
@@ -18,12 +21,14 @@ The selection in `portfolio-selection.js` is the single publishing boundary for 
 | NYC Open Mic Master List | A searchable five-borough directory with a custom map, scheduled data ingestion, moderation, and host accounts; added by the owner on October 24 |
 | Micro-short Film Website | A focused promotional website with five linked views, film artwork, cast, crew, and festival recognition; explicitly added by the owner on October 22 |
 
-The dedicated Projects page at `/work/` contains all eleven curated projects. BriefBooth, NYC Open Mic Master List, I Can Run A Show, The BitBinder, Micro-short Film Website, The Trip Handler, BillSpilt, Pins & Needles Comedy, and My Gig Calendar lead the collection. The homepage links to this collection instead of repeating the full catalog. Three App Store listings remain available on the Projects page. Micro-short leads the homepage's website preview and website service example; Pins & Needles remains another website example. The Micro-short page uses five untouched repository screenshots with pinned source links. Its film laurels are part of the film presentation, not software-development outcomes.
+The dedicated Projects page at `/work/` contains all fourteen curated projects. BriefBooth, NYC Open Mic Master List, I Can Run A Show, The BitBinder, Micro-short Film Website, The Trip Handler, BillSpilt, Pins & Needles Comedy, and My Gig Calendar lead the collection. The homepage links to this collection instead of repeating the full catalog. Three App Store listings remain available on the Projects page. Micro-short leads the homepage's website preview and website service example; Pins & Needles remains another website example. The Micro-short page uses five untouched repository screenshots with pinned source links. Its film laurels are part of the film presentation, not software-development outcomes.
 
-RoleCall, BleepKit, DicType, VlogNudge, and TLC Massage Wellness are omitted from the public site. Their audit data and source files are retained internally; omission is a presentation decision, not a claim that their code is defective. The personal stand-up website also remains excluded.
+RoleCall, BleepKit, DicType, and VlogNudge are omitted from the public site. Their audit data and source files are retained internally; omission is a presentation decision, not a claim that their code is defective. The personal stand-up website also remains excluded.
 
 SobStage's current repository status is v1.13.29 release candidate with physical-microphone validation pending. Earlier interface captures used virtual microphones. Its repository product overview is presentation artwork and does not establish new hardware validation. The same distinction between product artwork and runtime evidence applies to every retained project.
 
 NYC Open Mic Master List uses the owner-supplied banner as promotional artwork, with original README screenshots as implementation evidence. The illustration does not establish live listing counts or a Mapbox integration; the repository implements its own renderer over OpenStreetMap tiles.
 
 The complete source inventory stays internal. Tests enforce the separate public selection, including the absence of omitted routes, names, IDs, and exclusive assets from `dist/`.
+
+Pixelated Records is labeled a portfolio demo, with genuine live captures, an original project icon, a direct demo link, and public source evidence. It has an intentionally empty demo event store. Its addition does not replace the three minimal homepage previews or imply a paid venue commission.

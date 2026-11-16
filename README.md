@@ -1,6 +1,6 @@
 # 4u Digital — Developer Portfolio
 
-[4u Digital](https://customtechbuilt4u.com/) builds websites for businesses and people, plus web apps, native Apple apps, and custom software. The homepage links directly to examples. The Projects page has 13 selected personal projects, with separate case studies and original full-color galleries.
+[4u Digital](https://customtechbuilt4u.com/) builds websites for businesses and people, plus web apps, native Apple apps, and custom software. The homepage links directly to examples. The Projects page has 14 selected personal projects, with separate case studies and original full-color galleries.
 
 ## Run and verify locally
 
@@ -59,3 +59,7 @@ The homepage leads its work section with the six product stories, followed by gr
 The owner explicitly added FreeScript as a selected personal project at `/work/freescript/`. Its complete case preserves the site’s monochrome layout while displaying original paper-and-ink product artwork: 12 gallery images, six genuine Mac captures with fictional writing, two playable silent/captioned videos, and a complete brand/promotion ZIP. The standalone Mac app remains distinct from its stateless ChatGPT/Claude companion. Captions disclose the AI-generated editorial photograph, and release notes retain signed/not-notarized and text-based-PDF/OCR limits. Brand asset sources are pinned to the public FreeScript repository; see `docs/freescript-brand-assets.md`.
 
 FreeScript’s primary purpose is easy screenplay writing with formatting while you write. The case, brand copy, social graphics and videos lead with this writing workflow and explain Enter/Tab controls; paste and PDF import support existing drafts.
+
+## Pixelated Records portfolio demo — November 16, 2026
+
+The owner added [Pixelated Records](https://customtechbuilt4u.com/work/pixelated-records/) as a photographic website example. Its [live demo](https://pixeated.netlify.app) and [public source](https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout) are independent of the venue's current website. The case uses genuine desktop, room, menu, and phone captures, retaining original colors and edited storefront imagery. The demo has its own empty event schedule. It is a selected personal project, not a commissioned-client or business-results claim.

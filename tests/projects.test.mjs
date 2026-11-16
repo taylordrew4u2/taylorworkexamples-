@@ -72,6 +72,7 @@ function assetDimensions(image) {
 }
 
 const expectedIds = [
+  "pixelatedrecordsnyc-old-layout",
   "FreeScript",
   "BriefBooth.com",
   "Showrunner-ICanRunAShow",
@@ -103,9 +104,9 @@ const removedIds = [
   "staybusy",
 ];
 
-test("the catalog represents all 18 public projects once, excluding profile and portfolio repos", () => {
-  assert.equal(projects.length, 18);
-  assert.equal(new Set(projects.map((project) => project.id)).size, 18);
+test("the catalog represents all 19 public projects once, excluding profile and portfolio repos", () => {
+  assert.equal(projects.length, 19);
+  assert.equal(new Set(projects.map((project) => project.id)).size, 19);
   assert.deepEqual(
     projects.map((project) => project.id).sort(),
     expectedIds.sort(),
@@ -133,8 +134,9 @@ test("featured work is ordered and points to the canonical catalog entries", () 
   }
 });
 
-test("the public portfolio selects thirteen complete projects while the audited inventory stays internal", () => {
+test("the public portfolio selects fourteen complete projects while the audited inventory stays internal", () => {
   const expectedPublic = [
+    "pixelatedrecordsnyc-old-layout",
     "FreeScript",
     "Showrunner-ICanRunAShow", "The-Bit-Binder", "MyGigCalendar", "Open-Micer-Timer", "Bill-Spilt",
     "the-trip-handler", "PinsAndNeedlesComedyWebsite", "usbmic", "BriefBooth.com", "micro-short-website", "nycstandupopenmicmaster", "tlcmassagewellness",
@@ -144,14 +146,14 @@ test("the public portfolio selects thirteen complete projects while the audited 
   ];
   assert.deepEqual(portfolioProjectIds, expectedPublic);
   assert.deepEqual(featuredProjectIds, expectedFeatured);
-  assert.equal(publicProjects.length, 13);
+  assert.equal(publicProjects.length, 14);
   assert.deepEqual(publicProjects.map((project) => project.id).sort(), [...expectedPublic].sort());
   assert.deepEqual(publicFeaturedProjects.map((project) => project.id), expectedFeatured);
   assert.deepEqual(publicFeaturedProjects.filter((project) => project.projectType === "Website").map((project) => project.id),
     ["tlcmassagewellness", "micro-short-website", "PinsAndNeedlesComedyWebsite"], "The featured range includes three distinct websites");
   assert.equal(publicFeaturedProjects.filter((project) => project.category === "web" && project.projectType !== "Website").length, 5);
   assert.equal(publicFeaturedProjects.filter((project) => project.category === "ios").length, 2);
-  assert.equal(projects.length, 18, "Unselected evidence remains in the internal audited inventory");
+  assert.equal(projects.length, 19, "Unselected evidence remains in the internal audited inventory");
   for (const project of publicProjects) {
     assert.ok(project.sourceAvailable);
     assert.match(project.caseUrl, /^\.\/work\/[a-z0-9-]+\/$/);
@@ -226,7 +228,7 @@ test("NYC Open Mic Master List is featured with the unchanged supplied artwork a
 
 test("the audited catalog preserves inventory dates and canonical source links", () => {
   assert.equal(repositoryVerifiedAt, "2026-10-12");
-  assert.equal(Object.keys(publicRepositories).length, 18);
+  assert.equal(Object.keys(publicRepositories).length, 19);
   assert.equal(publicRepositories["BriefBooth.com"].verifiedAt, "2026-10-19");
   assert.equal(publicRepositories["BriefBooth.com"].codeAvailable, false);
   assert.equal(publicRepositories["micro-short-website"].verifiedAt, "2026-10-22");
@@ -360,10 +362,10 @@ test("every public project has a purpose, three distinct workflows, and a visibl
   }
 });
 
-test("all 17 genuine project icons match their asset dimensions and have primary source provenance", () => {
+test("all 18 genuine project icons match their asset dimensions and have primary source provenance", () => {
   const withIcons = projects.filter((project) => project.icon);
   const iconKinds = new Set(["brand-mark", "app-icon", "ios-app-icon", "desktop-app-icon", "favicon"]);
-  assert.equal(withIcons.length, 17);
+  assert.equal(withIcons.length, 18);
   for (const project of withIcons) {
     assert.match(project.icon, /^\.\/assets\/project-icons\/[a-z0-9-]+\.(png|svg)$/);
     assert.ok(existsSync(new URL(`../${project.icon}`, import.meta.url)), `${project.id}: icon file required`);
@@ -464,7 +466,7 @@ test("App Store listings, RoleCall development captures, and known unavailable d
   assert.match(find("usbmic").notes, /physical[- ]microphone validation/i);
 });
 
-test("all 18 public projects have traceable covers and galleries with accurate asset dimensions", () => {
+test("all 19 public projects have traceable covers and galleries with accurate asset dimensions", () => {
   const imageKinds = new Set(["app-screenshot", "development-capture", "project-overview", "product-artwork"]);
   for (const project of projects) {
     assert.ok(project.image, `${project.id}: cover required`);
@@ -974,9 +976,9 @@ test("limited capture states retain their user-facing disclosures beside their o
 });
 
 test("platform filters are case-insensitive and keep all three platforms populated", () => {
-  assert.equal(filterProjects(projects).length, 18);
+  assert.equal(filterProjects(projects).length, 19);
   for (const [category, count] of [
-    ["web", 10],
+    ["web", 11],
     ["ios", 5],
     ["desktop", 3],
   ]) {
@@ -1017,7 +1019,7 @@ test("search finds names, repository names, summaries, stacks, and categories wi
       .filter((project) => project.category === "desktop")
       .every((project) => desktopSearch.includes(project)),
   );
-  assert.equal(filterProjects(projects, "all", "   ").length, 18);
+  assert.equal(filterProjects(projects, "all", "   ").length, 19);
   assert.deepEqual(
     filterProjects(projects, "all", "no-project-matches-this"),
     [],

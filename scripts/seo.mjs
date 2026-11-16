@@ -602,7 +602,7 @@ export async function generateSEO(output) {
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", projectIndex: true, modified: "2026-11-11", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-11-16", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",

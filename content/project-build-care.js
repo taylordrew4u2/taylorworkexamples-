@@ -1,6 +1,7 @@
 // Source-backed engineering examples from the selected personal projects.
 // These describe implementation choices, not new runtime tests or client results.
 export const projectBuildCare = {
+  "pixelatedrecordsnyc-old-layout": "Keep private drafts, authenticated previews, and published content separate; persist edits and reject outdated saves instead of silently overwriting another editor's work.",
   FreeScript: "Tested paste formatting, undo, PDF export-and-reimport, continued editing, and autosave in the installed signed Mac app, using temporary storage to protect the writer’s library.",
   "BriefBooth.com": "Booking requests stay separate from confirmed appointments.",
   "Showrunner-ICanRunAShow": "Keep signatures tied to the exact agreement and prevent outdated edits from replacing newer work.",

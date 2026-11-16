@@ -100,10 +100,10 @@ test("revised prices stay consistent across all public pages and structured offe
 });
 
 test("the sitemap indexes exactly the public service, project, guide, and business pages", async () => {
-  assert.equal(projects.length, 13);
+  assert.equal(projects.length, 14);
   assert.equal(articles.length, 19);
   assert.equal(services.length, 6);
-  assert.equal(routes.length, 53);
+  assert.equal(routes.length, 54);
   assert.equal(site.origin, origin);
   assert.equal(new Set(routes).size, routes.length);
   const xml = await readFile(path.join(output, "sitemap.xml"), "utf8");
@@ -603,8 +603,11 @@ test("salon and restaurant services explain the business workflow and connect to
     ...services.map(({ slug }) => `/services/${slug}/`),
     ...projects.map(({ id }) => `/work/${projectSlugs[id]}/`),
   ]);
+  const pixelatedAdditionRoutes = new Set(["/work/", "/work/pixelated-records/"]);
   for (const route of routes) {
-    const expectedModified = revisedRoutes.has(route) ? "2026-11-11" : "2026-10-27";
+    const expectedModified = pixelatedAdditionRoutes.has(route)
+      ? "2026-11-16"
+      : revisedRoutes.has(route) ? "2026-11-11" : "2026-10-27";
     assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
@@ -1034,7 +1037,7 @@ test("immutable caching applies only to content-versioned assets and keeps one c
   }
 });
 
-test("published pages, data, routes, and assets contain only the thirteen selected projects", async () => {
+test("published pages, data, routes, and assets contain only the fourteen selected projects", async () => {
   const excludedIds = ["Role-Call", "bleepkit", "dictype", "vlognudge", "taylordrewwebsite"];
   const excludedProjects = auditedProjects.filter((project) => excludedIds.includes(project.id));
   assert.equal(excludedProjects.length, 5, "Unselected projects still exist in the internal audited inventory");

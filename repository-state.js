@@ -1,6 +1,17 @@
 // Public inventory checked on 2026-10-12; individual records retain their later verification dates.
 export const repositoryVerifiedAt = "2026-10-12";
 export const publicRepositories = {
+  "pixelatedrecordsnyc-old-layout": {
+    repoUrl: "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout",
+    description: null,
+    homepage: "",
+    defaultBranch: "main",
+    headSha: "9c0adc67f688a029c34ff76726e05ef5ab084f11",
+    pushedAt: "2026-11-16T00:45:54Z",
+    verifiedAt: "2026-11-16",
+    archived: false,
+    readmeAvailable: true,
+  },
   FreeScript: {
   "repoUrl": "https://github.com/taylordrew4u2/FreeScript",
   "description": "Free screenplay writing software",

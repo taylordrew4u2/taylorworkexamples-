@@ -1,5 +1,20 @@
 // Genuine product icons and client-facing explanations. BriefBooth verified October 19, 2026.
 export const projectIdentities = {
+  "pixelatedrecordsnyc-old-layout": {
+    purpose: "Explore a record shop and bar through its rooms, menus, and venue information.",
+    workflows: [
+      "Explore the rooms",
+      "Read the drinks menu",
+      "Update venue content",
+    ],
+    previewContext: "Live portfolio demo capture · Separate demo content",
+    icon: "./assets/project-icons/pixelated-records.png",
+    iconWidth: 192,
+    iconHeight: 192,
+    iconSource: "https://github.com/taylordrew4u2/pixelatedrecordsnyc-old-layout/blob/9c0adc67f688a029c34ff76726e05ef5ab084f11/public/assets/mark.png",
+    iconKind: "brand-mark",
+    iconNotes: "Original 192×192 Pixelated Records mark copied byte-for-byte from the public demo repository. Full canvas, original colors, and proportions preserved.",
+  },
   FreeScript: {
   "purpose": "Write your screenplay. FreeScript handles the formatting as you type.",
   "workflows": [

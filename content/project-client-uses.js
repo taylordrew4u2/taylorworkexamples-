@@ -1,6 +1,11 @@
 // Capabilities reflect the selected personal projects. Business uses are
 // illustrative starting points for a new build, not client work or results.
 export const projectClientUses = {
+  "pixelatedrecordsnyc-old-layout": {
+    capabilities: ["Photo-led navigation", "Readable menus", "Owner content controls"],
+    businessUse: "A shop, bar, or other local venue could present its space, menus, and information through a photographic website that staff can update. This is an illustrative comparable need, not a claim of commissioned client work.",
+    serviceSlug: "website-development",
+  },
   FreeScript: {
   "capabilities": [
     "Screenplay formatting",

@@ -438,6 +438,7 @@ export const guide = {
 };
 
 export const projectSlugs = {
+  "pixelatedrecordsnyc-old-layout": "pixelated-records",
   FreeScript: "freescript",
   "BriefBooth.com": "briefbooth",
   "Showrunner-ICanRunAShow": "i-can-run-a-show",
