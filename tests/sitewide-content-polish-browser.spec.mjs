@@ -32,10 +32,12 @@ test("the service directory helps phone visitors choose a need before presenting
     await expect(choices.locator("[data-service-choice]")).toHaveCount(4);
     await expect(choices.locator("[data-service-choice]").first()).toBeInViewport({ ratio: 1 });
     for (const choice of await choices.locator("[data-service-choice]").all()) {
-      await expect(choice.getByRole("heading")).toContainText(/I need/i);
+      await expect(choice.getByRole("heading")).toHaveText(/^(Websites|Web apps|iPhone, iPad & Mac apps|Custom software)$/);
       await expectTapTarget(choice.getByRole("link"), width);
     }
     const promotion = page.locator("#services-website-offer");
+    await expect(promotion).not.toHaveAttribute("open", "");
+    await promotion.locator(":scope > summary").click();
     await expect(promotion).toContainText("$1,500");
     await expect(promotion).toContainText("$3,000");
     await expect(promotion).toContainText(/New York City|NYC/i);
@@ -78,7 +80,7 @@ test("all six service openings lead to booking or examples and keep longer plann
         await examples.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`/services/${service.slug}/#examples$`));
-        await expect(page.locator("#examples").getByRole("heading", { level: 2 })).toHaveText("Explore related projects.");
+        await expect(page.locator("#examples").getByRole("heading", { level: 2 })).toHaveText("Project examples");
         await expect(page.locator(".service-example")).toHaveCount(2);
         for (const example of await page.locator(".service-example-link").all()) {
           await expectTapTarget(example, width);

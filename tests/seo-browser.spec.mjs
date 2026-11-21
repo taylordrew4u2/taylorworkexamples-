@@ -38,7 +38,12 @@ async function linkTo(page, pathname) {
   const index = await links.evaluateAll((elements, target) => elements.findIndex((element) =>
     new URL(element.getAttribute("href"), location.href).pathname === target), pathname);
   expect(index, `A real navigation link reaches ${pathname}`).toBeGreaterThanOrEqual(0);
-  return links.nth(index);
+  const link = links.nth(index);
+  const ancestors = link.locator("xpath=ancestor::details");
+  for (const details of await ancestors.all()) {
+    if (await details.getAttribute("open") === null) await details.locator(":scope > summary").click();
+  }
+  return link;
 }
 
 async function expectPageFit(page) {
@@ -76,7 +81,7 @@ async function expectServiceSections(page, service) {
   await examples.focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/#examples$/);
-  await expect(page.locator("#examples h2")).toHaveText("Explore related projects.");
+  await expect(page.locator("#examples h2")).toHaveText("Project examples");
   await expect(page.locator(".service-example")).toHaveCount(2);
   for (const [id, entries] of [["service-fit", service.when], ["service-scope", service.scope]]) {
     const detail = page.locator(`#${id}`);
@@ -141,7 +146,7 @@ async function expectOriginalImage(image, frame) {
 
 test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and people.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Websites, apps & custom software.");
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   await expect(page.locator(".simple-project")).toHaveCount(3);
   await expect(page.locator("#business-guides, dialog, input[name='hero-project']")).toHaveCount(0);
@@ -208,7 +213,7 @@ test("a service page leads to project proof, direct booking, and a quiet attribu
   await expectHeaderSection(page, "/work/");
   await expect(page.getByRole("link", { name: `${project.title} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub`, exact: false })).toHaveAttribute("href", project.repoUrl);
   await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
-  await expectBookingLink(page.locator(".project-story-hero [data-booking-link]"));
+  await expectBookingLink(page.locator("#your-business [data-booking-link]"));
   const inquiry = page.locator("footer a[href^='mailto:']");
   await expect(inquiry).toBeVisible();
   const draft = new URL(await inquiry.getAttribute("href"));
@@ -330,8 +335,8 @@ for (const project of projects) {
     expect(await navigation.evaluate((element) => element.closest(".project-story-hero") === null && Boolean(
       document.querySelector("#project-cover").compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
     )), "Project shortcuts sit after the original cover and outside the opening").toBe(true);
-    await expect(navigation.locator("a")).toHaveCount(4);
-    for (const target of ["overview", "your-business", "project-views", "development"]) {
+    await expect(navigation.locator("a")).toHaveCount(2);
+    for (const target of ["project-views", "development"]) {
       const link = navigation.locator(`a[href="#${target}"]`);
       await expect(link).toBeVisible();
       await link.focus();
@@ -340,7 +345,8 @@ for (const project of projects) {
       await expect(page.locator(`#${target}`)).toBeVisible();
     }
 
-    await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary || project.summary);
+    await expect(page.locator(".project-story-hero .page-lead")).toHaveText(project.purpose);
+    await expect(page.locator("#overview .project-summary")).toHaveCount(0);
     const workflows = page.locator("#overview .project-workflow-card");
     await expect(workflows).toHaveCount(project.workflows.length);
     for (const [index, workflow] of project.workflows.entries()) {
@@ -484,8 +490,8 @@ test("all nine client reviews remain available through native disclosure without
   await page.setViewportSize({ width: 320, height: 900 });
   await page.goto("/");
   const section = page.locator("#testimonials");
-  await expect(section.locator(".testimonial-card:visible")).toHaveCount(3);
-  const disclosure = section.locator("details");
+  await expect(section.locator(".testimonial-card:visible")).toHaveCount(0);
+  const disclosure = section;
   await disclosure.locator("summary").focus();
   await page.keyboard.press("Enter");
   await expect(section.locator(".testimonial-card:visible")).toHaveCount(9);
@@ -660,8 +666,8 @@ test("a business guide connects the idea to a service and the supplied consultat
   expect(emailDestination.searchParams.get("subject") || "").not.toMatch(/consultation|Zoom|in.person/i);
   expect(emailDestination.searchParams.get("body") || "").not.toMatch(/Consultation format|Preferred (?:times|days)/i);
   await expect(generalEmail).not.toHaveAttribute("data-booking-link", "");
-  // The phone-only booking dock remains in the static HTML on desktop, where
-  // it is intentionally hidden. Check the usable actions for this viewport.
+  // The shared header and page content keep ordinary booking links.
+  await expect(page.locator(".mobile-consultation")).toHaveCount(0);
   for (const booking of await page.locator("[data-booking-link]:visible").all()) {
     await expectBookingLink(booking);
   }

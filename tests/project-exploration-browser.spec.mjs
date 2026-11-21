@@ -18,11 +18,11 @@ async function expectHorizontalFitAndTapSize(link, width) {
   expect(box.x + box.width).toBeLessThanOrEqual(width + 1);
 }
 
-async function expectReadableBookingNote(page, width) {
-  const hero = page.locator(".project-story-hero .page-intro");
-  const note = hero.locator(":scope > .booking-destination-note");
+async function expectReadableProjectContact(page, width) {
+  const hero = page.locator("#your-business");
+  const note = hero.locator(".project-client-offer > p");
   await expect(note).toHaveCount(1);
-  await expect(note).toHaveText("Video consultation · Opens BriefBooth in a new tab. Requests are reviewed before confirmation.");
+  await expect(note).toHaveText("Your custom code is 100% yours. Client work stays private unless you give permission.");
   await expect(hero.locator("[data-booking-link]")).toHaveAttribute("href", bookingURL);
   const metrics = await note.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -47,9 +47,9 @@ async function expectReadableBookingNote(page, width) {
     return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
   };
   const values = [luminance(metrics.color), luminance(metrics.background)].sort((a, b) => a - b);
-  expect((values[1] + 0.05) / (values[0] + 0.05), "Booking handoff instructions stay readable on the dark project opening")
+  expect((values[1] + 0.05) / (values[0] + 0.05), "The project ownership and contact information remains readable")
     .toBeGreaterThanOrEqual(4.5);
-  expect(metrics.whiteSpace, "Booking instructions wrap on a narrow phone").not.toBe("nowrap");
+  expect(metrics.whiteSpace, "Contact information wraps on a narrow phone").not.toBe("nowrap");
   expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.clientWidth + 1);
   expect(metrics.left).toBeGreaterThanOrEqual(-1);
   expect(metrics.right).toBeLessThanOrEqual(width + 1);
@@ -117,7 +117,7 @@ for (const javaScriptEnabled of [true, false]) {
         for (const width of widths) {
           await page.setViewportSize({ width, height: 844 });
           await page.goto(`/work/${projectSlugs[project.id]}/`);
-          await expectReadableBookingNote(page, width);
+          await expectReadableProjectContact(page, width);
           const before = await gallerySnapshot(page);
           expect(before).toHaveLength(project.gallery.length);
           const frames = page.locator(".project-page-frame");

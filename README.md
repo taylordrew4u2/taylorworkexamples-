@@ -1,6 +1,6 @@
 # 4u Digital — Developer Portfolio
 
-[4u Digital](https://customtechbuilt4u.com/) builds websites for businesses and people, plus web apps, native Apple apps, and custom software. The homepage links directly to examples. The Projects page has 14 selected personal projects, with separate case studies and original full-color galleries.
+[4u Digital](https://customtechbuilt4u.com/) builds websites for businesses and people, plus web apps, native Apple apps, and custom software. The homepage has a short introduction, three project examples, compact services, and contact. Reviews and guarantee details open on request; there are no floating booking controls. The Projects page has 14 selected personal projects, with separate case studies and original full-color galleries.
 
 ## Run and verify locally
 

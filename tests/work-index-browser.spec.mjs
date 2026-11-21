@@ -123,7 +123,9 @@ test("portfolio browsing fits narrow phones while preserving full-color artwork 
       await expect(image).toHaveCSS("filter", "none");
       await expect(image).toHaveCSS("mix-blend-mode", "normal");
       await expect(card.locator(".seo-project-cover")).toHaveCSS("filter", "none");
-      const booking = page.locator(".mobile-consultation [data-booking-link]");
+      const booking = page.locator("main [data-booking-link]").last();
+      await expect(page.locator(".mobile-consultation")).toHaveCount(0);
+      await booking.focus();
       await expect(booking).toHaveAttribute("href", bookingURL);
       await expect(booking).toBeInViewport({ ratio: 1 });
       await expect(page.locator(".planner-shortcut")).toHaveCount(0);

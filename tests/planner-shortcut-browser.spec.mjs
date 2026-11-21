@@ -45,18 +45,7 @@ for (const javaScriptEnabled of [true, false]) {
         for (const route of routes) {
           await page.goto(route);
           const planner = await expectPlainPlannerLink(page, width);
-          const dock = page.locator(".mobile-consultation");
-          if (route === "/project-brief/") {
-            await expect(dock).toHaveCount(0);
-          } else {
-            await expect(dock.locator("a")).toHaveCount(1);
-            await expect(dock.locator("a")).toHaveAttribute("href", "https://briefbooth.com/book/4u-digital");
-            if (width <= 900) {
-              await expect(dock.getByRole("link")).toHaveAccessibleName(/^Book a consultation/);
-            } else {
-              await expect(dock).toBeHidden();
-            }
-          }
+          await expect(page.locator(".mobile-consultation")).toHaveCount(0);
           await planner.focus();
           await page.keyboard.press("Enter");
           await expect(page).toHaveURL(/\/project-brief\/$/);

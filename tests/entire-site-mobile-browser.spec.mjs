@@ -128,9 +128,8 @@ for (const width of [320, 390]) {
 
           const footer = page.locator("footer");
           await check(footer).toHaveCount(1);
-          const footerBooking = footer.locator("[data-booking-link]");
-          check(await footerBooking.count(), "The end of the page offers direct booking").toBeGreaterThan(0);
-          await expectBookingLink(footerBooking.first(), width);
+          await check(footer.locator("[data-booking-link]")).toHaveCount(0);
+          await check(footer.locator('a[href^="mailto:admin@customtechbuilt4u.com"]')).toHaveCount(1);
           await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
           const lastFooterLink = footer.locator("a:visible").last();
           await lastFooterLink.focus();
@@ -138,22 +137,9 @@ for (const width of [320, 390]) {
           await check(lastFooterLink).toBeInViewport({ ratio: 1 });
           await expectDirectHit(lastFooterLink);
 
-          const dock = page.getByRole("complementary", { name: "Consultation booking", exact: true });
-          if (route === "/project-brief/") {
-            await check(dock).toHaveCount(0);
-          } else {
-            await check(dock).toBeInViewport({ ratio: 1 });
-            const dockBooking = dock.locator("[data-booking-link]");
-            await expectBookingLink(dockBooking, width);
-            await expectDirectHit(dockBooking);
-            const footerBox = await footer.boundingBox();
-            const dockBox = await dock.boundingBox();
-            check(footerBox.y + footerBox.height, "The footer remains above the persistent booking dock")
-              .toBeLessThanOrEqual(dockBox.y + 1);
-
-          }
+          await check(page.locator(".mobile-consultation")).toHaveCount(0);
           check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-          result.checks.push("footer remains reachable", "booking dock respects page context", "no footer/control overlap");
+          result.checks.push("footer remains reachable", "no floating booking dock", "no footer/control overlap");
           result.status = "passed";
         });
       } catch (error) {
