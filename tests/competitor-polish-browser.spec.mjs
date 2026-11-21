@@ -14,8 +14,8 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(page.locator("#project-dialog, .hero-explorer, .hero-project-types, .planner-shortcut, #business-guides")).toHaveCount(0);
         const controls = page.locator(".simple-actions a, .simple-service, .simple-project, #website-offer a");
         for (const control of await controls.all()) {
-          await control.scrollIntoViewIfNeeded();
           await control.focus();
+          await control.evaluate((element) => element.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" }));
           await expect(control).toBeFocused();
           const target = await control.evaluate((element) => {
             const box = element.getBoundingClientRect();
