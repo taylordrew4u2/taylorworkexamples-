@@ -463,7 +463,7 @@ test("business guides and consultation details are discoverable, truthful, and r
   assert.match(text(local), /See the space before deciding on the software\./);
   assert.match(text(local), /reception desk, booking handoff, order station/);
   assert.match(text(local), /in-person consultation can help us understand the work before choosing what to build/);
-  for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
+  for (const option of ["websites", "businesses and individuals", "online shops", "personal portfolios"]) {
     assert.ok(text(local).includes(option), `${option}: the consultation explains the available build range`);
   }
   assert.match(text(local), /Manhattan, Brooklyn, and parts of Queens/);
@@ -537,9 +537,9 @@ test("App Store evidence remains published on the dedicated portfolio and reacha
   const work = documents.get("/work/");
   const store = work.match(/<article\b[^>]*id="app-store-proof"[^>]*>([\s\S]*?)<\/article>/i)?.[1];
   assert.ok(store, "The portfolio includes the published-app evidence in its static HTML");
-  const openingLink = tags(home, "a").find((tag) => tag.href === "./work/#app-store-proof");
-  assert.ok(openingLink, "The opening still links to the published apps");
-  assert.equal(new URL(openingLink.href, `${origin}/`).href, `${origin}/work/#app-store-proof`);
+  const openingLink = tags(home, "a").find((tag) => tag.href === "./work/");
+  assert.ok(openingLink, "The homepage links to the complete portfolio, including its published apps");
+  assert.equal(new URL(openingLink.href, `${origin}/`).href, `${origin}/work/`);
   const apps = projects.filter((project) => project.demoLabel === "App Store");
   assert.equal(apps.length, 3);
   for (const app of apps) {
@@ -567,7 +567,7 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(title(html), service.metaTitle);
     assert.equal(h1s(html)[0], serviceHeadings[service.slug]);
     assert.equal(metadata(html, "description")[0]?.content, service.description);
-    assert.equal(sitemapDates.get(route), "2026-11-11");
+    assert.equal(sitemapDates.get(route), "2026-11-20");
     assert.ok(linksTo(homeServices, "/", "/services/web-app-development/"), "homepage gives a clear general workflow starting point");
     assert.ok(linksTo(documents.get("/services/"), "/services/", route), `${service.title}: service directory entry`);
     for (const content of [service.intro, service.proofIntro, ...service.when.flatMap(({ title, text }) => [title, text]),
@@ -588,26 +588,18 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.ok(serviceGuide, `${service.title}: the planning guide remains part of the published collection`);
     assert.ok(linksTo(html, route, guideRoute), `${service.title}: relevant planning guide`);
     assert.ok(linksTo(documents.get(guideRoute), guideRoute, route), `${service.title}: guide links back to the service`);
-    assert.equal(sitemapDates.get(guideRoute), "2026-10-27");
+    assert.equal(sitemapDates.get(guideRoute), "2026-11-20");
     const main = html.match(/<main\b[^>]*>([\s\S]*?)<\/main>/i)?.[1] || "";
     assert.ok(!tags(main, "a").some((tag) => tag.href?.startsWith("mailto:")),
       `${service.title}: the service uses direct booking without a competing email request`);
   }
   for (const article of articles.filter((entry) => !entry.modified)) {
-    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-10-27",
+    assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-11-20",
       `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
-  const revisedRoutes = new Set([
-    "/", "/services/", "/work/", "/insights/", "/guides/website-or-app/", "/offer/", "/pricing/",
-    "/privacy/", "/terms/", "/guarantee/", "/contact/", "/about/", "/new-york-city/", "/project-brief/", "/project-kickoff/",
-    ...services.map(({ slug }) => `/services/${slug}/`),
-    ...projects.map(({ id }) => `/work/${projectSlugs[id]}/`),
-  ]);
-  const pixelatedAdditionRoutes = new Set(["/work/", "/work/pixelated-records/"]);
+  const websiteSearchUpdates = new Set(["/", "/services/website-development/", "/new-york-city/"]);
   for (const route of routes) {
-    const expectedModified = pixelatedAdditionRoutes.has(route)
-      ? "2026-11-16"
-      : revisedRoutes.has(route) ? "2026-11-11" : "2026-10-27";
+    const expectedModified = websiteSearchUpdates.has(route) ? "2026-11-21" : "2026-11-20";
     assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
@@ -632,13 +624,17 @@ test("minimal portfolio cards explain each personal project and keep fuller busi
     assert.ok(capabilities, `${project.title}: capabilities are readable without JavaScript`);
     assert.deepEqual([...capabilities.matchAll(/<li\b[^>]*>([\s\S]*?)<\/li>/g)].map(([, value]) => text(value)), use.capabilities);
     assert.equal(use.capabilities.length, 3);
+    const featureDisclosure = card.match(/<details\b([^>]*class="work-project-features"[^>]*)>([\s\S]*?)<\/details>/);
+    assert.ok(featureDisclosure, `${project.title}: features are available without crowding the initial card`);
+    assert.doesNotMatch(featureDisclosure[1], /\bopen\b/, `${project.title}: optional features begin closed`);
+    assert.ok(featureDisclosure[2].includes(capabilities));
     assert.doesNotMatch(card, /class="work-project-business-use"/, `${project.title}: the index keeps one short purpose rather than a second illustrative story`);
     assert.ok(text(documents.get(`/work/${projectSlugs[project.id]}/`)).includes(use.businessUse),
       `${project.title}: its original illustrative business context remains on the full case page`);
     const anchors = tags(card, "a");
     assert.ok(anchors.length > 0, `${project.title}: a real case-page link remains`);
-    assert.equal(anchors.filter((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`).length, 1,
-      `${project.title}: one link opens the complete project story`);
+    assert.equal(anchors.filter((anchor) => pathname(anchor.href, route) === `/work/${projectSlugs[project.id]}/`).length, 3,
+      `${project.title}: the name, cover, and story link open the complete project`);
     for (const anchor of anchors) {
       if (anchor.class?.split(/\s+/).includes("work-project-live-link")) {
         assert.equal(anchor.href, project.demoUrl, `${project.title}: the secondary link is its verified product destination`);
@@ -663,16 +659,17 @@ test("minimal portfolio cards explain each personal project and keep fuller busi
 
 test("the minimal homepage preserves all nine supplied reviews in a native disclosure", () => {
   const html = documents.get("/");
-  const section = html.match(/<section id="testimonials"[^>]*>([\s\S]*?)<\/section>/)?.[1];
-  assert.ok(section, "client feedback has its own section");
+  const disclosure = html.match(/<details\b([^>]*id="testimonials"[^>]*)>([\s\S]*?)<\/details>/);
+  assert.ok(disclosure, "client feedback remains in a native disclosure");
+  assert.doesNotMatch(disclosure[1], /\bopen\b/, "reviews start closed");
+  const section = disclosure[2];
   assert.equal(clientTestimonials.length, 9);
   assert.equal([...section.matchAll(/<blockquote>/g)].length, 9);
   assert.equal([...section.matchAll(/<figcaption>/g)].length, 9);
-  assert.equal([...section.matchAll(/class="testimonial-grid"/g)].length, 2);
+  assert.equal([...section.matchAll(/class="testimonial-grid"/g)].length, 1);
   assert.equal([...section.matchAll(/class="testimonial-card"/g)].length, 9);
   assert.doesNotMatch(section, /feedback-controls|feedback-ready|data-feedback-/);
-  assert.match(section, /<details class="review-more"><summary>Read all 9 client reviews<\/summary>/);
-  assert.equal([...section.split("<details")[0].matchAll(/<blockquote>/g)].length, 3, "only three quotes precede the optional disclosure");
+  assert.match(section, /<summary>Read all 9 client reviews<\/summary>/);
   for (const testimonial of clientTestimonials) {
     assert.ok(text(section).includes(testimonial.quote));
     for (const value of [testimonial.name, testimonial.role || testimonial.business, testimonial.location]) {
@@ -683,7 +680,7 @@ test("the minimal homepage preserves all nine supplied reviews in a native discl
   assert.ok(!schemaNodes(html).some((node) => hasType(node, "Review") || hasType(node, "AggregateRating")), "quotes do not invent review ratings");
 });
 
-test("the homepage keeps portfolio discovery compact before client feedback and the rest of the client journey", () => {
+test("the homepage has four main sections with reviews and commitments optional in contact", () => {
   const home = documents.get("/");
   const sectionTags = [...home.matchAll(/<\/?section\b[^>]*>/gi)];
   const workStart = sectionTags.findIndex(([tag]) => attributes(tag).id === "work");
@@ -701,11 +698,18 @@ test("the homepage keeps portfolio discovery compact before client feedback and 
   assert.doesNotMatch(home, /\bid="(?:featured-projects|project-archive|archive-projects|range-proof|app-store-proof)"/,
     "The catalog, image galleries, and detailed App Store evidence live on their dedicated pages");
   const sectionPosition = (id) => sectionTags.find(([tag]) => attributes(tag).id === id)?.index;
-  const destinations = ["work", "services", "process", "testimonials", "client-care", "project-faq", "consultation"].map(sectionPosition);
+  const destinations = ["work", "services", "consultation"].map(sectionPosition);
   assert.ok(destinations.every((position) => Number.isInteger(position)), "all client journey sections are present");
   assert.ok(destinations.every((position, index) => index === 0 || destinations[index - 1] < position),
-    "the examples and services lead into the process, feedback, guarantee, questions, and consultation");
-  assert.ok(workEnd <= sectionPosition("process"), "portfolio discovery finishes before the working process");
+    "the examples and services lead into contact");
+  assert.equal(tags(home, "section").length, 4, "the introduction, examples, services, and contact are the only main sections");
+  assert.doesNotMatch(home, /<section\b[^>]*id="(?:process|testimonials|client-care|project-faq)"/);
+  const contact = home.match(/<section\b[^>]*id="consultation"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+  for (const id of ["project-faq", "client-care", "testimonials"]) {
+    const detail = tags(contact, "details").find((tag) => tag.id === id);
+    assert.ok(detail, `${id} stays available inside contact`);
+    assert.ok(!Object.hasOwn(detail, "open"), `${id} begins collapsed`);
+  }
   assert.doesNotMatch(home.slice(workEnd), /class="[^"]*\b(?:project-card|archive-card)\b/,
     "no app showcase returns after the consultation panel or questions");
 });
@@ -725,7 +729,8 @@ test("minimal project stories preserve original workflows, optional technical co
       assert.equal(script.type, "module");
     }
     const visible = text(html);
-    assert.ok(visible.includes(project.clientSummary || project.summary), `${project.title}: plain-language summary`);
+    assert.ok(visible.includes(project.purpose), `${project.title}: one plain-language purpose introduces the project`);
+    assert.doesNotMatch(html, /class="project-summary"/, `${project.title}: the opening purpose is not repeated as a summary`);
     for (const original of [project.purpose, project.challenge, project.build, project.notes,
       ...project.features, ...project.stack, ...(project.highlights || []).flatMap(({ title, text }) => [title, text])].filter(Boolean)) {
       assert.ok(visible.includes(original), `${project.title}: existing product and evidence context is preserved`);
@@ -743,7 +748,7 @@ test("minimal project stories preserve original workflows, optional technical co
     }
     const storyNavigation = html.match(/<nav\b[^>]*aria-label="On this project page"[^>]*>([\s\S]*?)<\/nav>/i)?.[1];
     assert.ok(storyNavigation, `${project.title}: the project has its own page navigation`);
-    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#overview", "#project-views", "#your-business", "#development"]);
+    assert.deepEqual(tags(storyNavigation, "a").map((tag) => tag.href), ["#project-views", "#development"]);
     for (const target of ["overview", "your-business", "project-views", "development", "project-cover"]) {
       assert.ok(tags(html, target === "project-cover" ? "figure" : "section").some((tag) => tag.id === target),
         `${project.title}: ${target} is a real static destination`);
@@ -791,7 +796,7 @@ test("minimal project stories preserve original workflows, optional technical co
     assert.ok(businessLinks.some((tag) => tag.href && new URL(tag.href, `${origin}${route}`).href === `${origin}/guarantee/`),
       `${project.title}: clients can read the actual guarantee terms`);
     assert.match(text(business), /custom code is 100% yours/);
-    assert.match(text(business), /public portfolio unless you give permission/);
+    assert.match(text(business), /Client work stays private unless you give permission/);
     assert.doesNotMatch(html, /class="[^"]*\bproject-build-cta\b/, `${project.title}: the same booking pitch is not repeated after the gallery`);
     const consultation = businessLinks.find((tag) => Object.hasOwn(tag, "data-booking-link"));
     assert.equal(consultation?.href, bookingURL, `${project.title}: clients can book directly from the project evidence`);
@@ -846,7 +851,8 @@ test("every public page offers the exact supplied booking destination without Ja
     assert.equal(action.href, bookingURL);
     assert.ok(text(header).includes("Book a consultation"));
     const bookingLinks = tags(html, "a").filter((tag) => Object.hasOwn(tag, "data-booking-link"));
-    assert.ok(bookingLinks.length >= 2, `${route}: booking is available in the header and the page`);
+    assert.ok(bookingLinks.length >= 1, `${route}: booking is available in the shared header`);
+    assert.doesNotMatch(html, /class="mobile-consultation"/, `${route}: booking does not use a floating dock`);
     for (const link of bookingLinks) {
       assert.equal(link.href, bookingURL, `${route}: no queries, fragments, or private data are added to booking links`);
       assert.equal(link.target, "_blank");
@@ -1013,7 +1019,7 @@ test("immutable caching applies only to content-versioned assets and keeps one c
     digest.update(name).update("\0").update(content).update("\0");
     if (!name.endsWith(".js")) continue;
     const importer = `${origin}/static/${version}/${name}`;
-    for (const [, reference] of content.toString("utf8").matchAll(/^\s*import\s+[^;\n]*?\bfrom\s+["']([^"']+)["']/gm)) {
+    for (const [, reference] of content.toString("utf8").matchAll(/^\s*import\s+(?:[^;\n]*?\bfrom\s+)?["']([^"']+)["']/gm)) {
       assert.ok(reference.startsWith("./"), `${name}: module imports stay relative to their versioned graph`);
       const target = new URL(reference, importer);
       assert.equal(path.posix.dirname(target.pathname), `/static/${version}`,

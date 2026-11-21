@@ -66,49 +66,46 @@ for (const javaScriptEnabled of [true, false]) {
           } else await expect(status).toHaveCount(0);
 
           const actions = hero.locator(".page-actions");
-          await expect(actions.locator("a").first()).toHaveAttribute("data-booking-link", "");
-          await expectDirectBooking(actions.locator("[data-booking-link]"));
-          await expect(actions.locator("a")).toHaveCount(2);
-          await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
-          await expect(page.locator(".project-build-cta")).toHaveCount(0);
-          if (project.demoUrl) {
-            await expect(hero.locator(`.project-live-destination a[href="${project.demoUrl}"]`)).toBeVisible();
+          await expect(actions.locator("[data-booking-link]")).toHaveCount(0);
+          await expect(actions.locator("a")).toHaveCount(project.demoUrl ? 2 : 1);
+          const source = actions.locator(`a[href="${project.repoUrl}"]`);
+          await expect(source).toHaveText(project.codeAvailable === false ? /Project repository/ : /Source code/);
+          await expectTapTarget(source, width);
+          for (const action of await actions.locator("a").all()) {
+            await expect(action).toHaveAttribute("target", "_blank");
+            await expect(action).toHaveAttribute("rel", /noopener/);
+            await expect(action).toHaveAttribute("rel", /noreferrer/);
           }
-          const browse = hero.locator(".project-hero-browse");
-          await expect(browse).toHaveAttribute("href", "#overview");
-          await expect(browse).toHaveText(/See how it works/);
-          await expectTapTarget(browse, width);
-          await browse.focus();
-          await page.keyboard.press("Enter");
-          await expect(page).toHaveURL(new RegExp(`${route}#overview$`));
+          if (project.demoUrl) await expect(actions.locator(`a[href="${project.demoUrl}"]`)).toBeVisible();
+          await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
+          await expect(page.locator(".project-build-cta, .project-hero-browse, .project-summary")).toHaveCount(0);
           await expect(page.locator("#overview .project-workflow-card")).toHaveCount(project.workflows.length);
-
           const navigation = page.getByRole("navigation", { name: "On this project page", exact: true });
-          await expect(navigation.locator("a")).toHaveCount(4);
+          await expect(navigation.locator("a")).toHaveCount(2);
           expect(await navigation.evaluate((element) => {
             const cover = document.querySelector("#project-cover");
             return element.closest(".project-story-hero") === null &&
               cover.getBoundingClientRect().bottom <= element.getBoundingClientRect().top + 1;
           }), "The section navigation follows the complete original cover and caption").toBe(true);
-          for (const target of ["overview", "your-business", "project-views", "development"]) {
-            const link = navigation.locator(`a[href="#${target}"]`);
-            await expectTapTarget(link, width);
+          for (const target of ["project-views", "development"]) {
+            await expectTapTarget(navigation.locator(`a[href="#${target}"]`), width);
           }
-          await navigation.locator('a[href="#your-business"]').focus();
+          await navigation.locator('a[href="#project-views"]').focus();
           await page.keyboard.press("Enter");
-          await expect(page).toHaveURL(new RegExp(`${route}#your-business$`));
+          await expect(page).toHaveURL(new RegExp(`${route}#project-views$`));
           const business = page.locator("#your-business");
           await expect(business.locator(".project-business-example")).toContainText("A similar business need");
           await expect(business.locator(".project-business-example")).toContainText(context.businessUse);
+          await expect(business.locator(".project-business-example")).toBeHidden();
           await expect(business.locator(".project-build-care")).not.toHaveAttribute("open");
           await business.locator(".project-build-care > summary").click();
-          await expect(business.locator(".project-build-care p")).toHaveText(projectBuildCare[project.id]);
+          await expect(business.locator(".project-build-care > p")).toHaveText(projectBuildCare[project.id]);
           await expect(business.locator(".project-client-promises li")).toHaveCount(3);
           for (const promise of [/direct line|person building/i, /scope/i, /custom code/i, /30.day/i]) {
             await expect(business.locator(".project-client-promises")).toContainText(promise);
           }
           await expect(business).toContainText(/100% yours/);
-          await expect(business).toContainText(/public portfolio/i);
+          await expect(business).toContainText(/Client work stays private/i);
           await expect(business).toContainText(/without your permission|unless you give permission/i);
           const service = business.locator(`a[href$="services/${context.serviceSlug}/"]`);
           await expectTapTarget(service, width);
@@ -129,13 +126,11 @@ for (const javaScriptEnabled of [true, false]) {
           try {
             await expect(popup).toHaveURL(bookingURL);
             await expect(popup.getByRole("heading", { level: 1 })).toHaveText("Booking handoff test");
-            await expect(page).toHaveURL(new RegExp(`${route}#your-business$`));
+            await expect(page).toHaveURL(new RegExp(`${route}#project-views$`));
           } finally {
             await popup.close();
           }
-          const dock = page.locator(".mobile-consultation [data-booking-link]");
-          await expectDirectBooking(dock);
-          await expectTapTarget(dock, width);
+          await expect(page.locator(".mobile-consultation")).toHaveCount(0);
           await expect(page.locator(".planner-shortcut")).toHaveCount(0);
           const planner = page.locator("footer").getByRole("link", { name: "Project planner", exact: true });
           expect(new URL(await planner.getAttribute("href"), page.url()).pathname).toBe("/project-brief/");

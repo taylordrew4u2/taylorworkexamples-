@@ -34,18 +34,21 @@ async function expectDirectBooking(link) {
   await expectTapTarget(link);
 }
 
-async function expectDockActions(page) {
-  const dock = page.getByRole("complementary", { name: "Consultation booking", exact: true });
-  const booking = dock.locator("[data-booking-link]");
+async function expectPageBooking(page) {
+  await expect(page.locator(".mobile-consultation, .planner-shortcut")).toHaveCount(0);
+  const booking = page.locator("main [data-booking-link]").last();
   await expectDirectBooking(booking);
+  // This is an ordinary page link. Refocusing a link that is already focused
+  // does not scroll it back after the test deliberately visits the footer.
+  await booking.scrollIntoViewIfNeeded();
+  await booking.focus();
+  await expect(booking).toBeFocused();
   await expect(booking).toBeInViewport({ ratio: 1 });
-  await expect(dock.getByRole("link")).toHaveCount(1);
-  await expect(page.locator(".planner-shortcut")).toHaveCount(0);
   expect(await booking.evaluate((element) => {
     const box = element.getBoundingClientRect();
     const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
     return hit === element || element.contains(hit);
-  }), "The persistent booking action can be tapped directly").toBe(true);
+  }), "The page booking action can be tapped directly").toBe(true);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
     "Service and booking choices do not create horizontal scrolling").toBe(true);
 }
@@ -63,7 +66,7 @@ for (const javaScriptEnabled of [true, false]) {
       for (const slug of coreServiceSlugs) {
         const service = services.find((entry) => entry.slug === slug);
         const choice = await linkTo(choices, page, `/services/${slug}/`);
-        await expect(choice).toHaveAccessibleName(/^I need\b/);
+        await expect(choice).toHaveAccessibleName(/^(Websites|Web apps|iPhone, iPad & Mac apps|Custom software)$/);
         await expectTapTarget(choice);
         await choice.focus();
         await page.keyboard.press("Enter");
@@ -76,7 +79,9 @@ for (const javaScriptEnabled of [true, false]) {
 
     test("the service directory keeps the website offer discoverable after the business-need choices", async ({ page }) => {
       await page.goto("/services/");
-      const offer = page.locator("main .service-website-offer");
+      const offer = page.locator("#services-website-offer");
+      await expect(offer).not.toHaveAttribute("open", "");
+      await offer.locator(":scope > summary").click();
       const link = await linkTo(offer, page, "/offer/");
       await expect(link).toBeVisible();
       await expect(offer).toContainText("$1,500");
@@ -122,7 +127,7 @@ for (const javaScriptEnabled of [true, false]) {
 
     test("short after-launch answers explain the existing guarantee and make the full terms reachable", async ({ page }) => {
       await page.goto("/");
-      const commitments = page.locator("#client-care details");
+      const commitments = page.locator("#client-care");
       await commitments.locator("summary").focus();
       await page.keyboard.press("Enter");
       for (const term of [/30.days?/i, /full refund/i, /reasonable changes/i, /six.month/i, /50%/]) {
@@ -146,7 +151,13 @@ for (const javaScriptEnabled of [true, false]) {
         await careLink.focus();
         await page.keyboard.press("Enter");
         await expect(page).toHaveURL(new RegExp(`${pathname}#client-care$`));
-        await expect(page.locator("#client-care-title")).toBeInViewport();
+        const care = page.locator("#client-care");
+        await expect(care.locator(":scope > summary")).toBeInViewport();
+        if (await care.getAttribute("open") === null) {
+          await care.locator(":scope > summary").focus();
+          await page.keyboard.press("Enter");
+        }
+        await expect(care).toHaveAttribute("open", "");
         await expect(page.locator('#client-care [data-client-care="handover"]')).toContainText(/code.*deployment handover/i);
       }
     });
@@ -157,24 +168,21 @@ for (const javaScriptEnabled of [true, false]) {
         for (const pathname of ["/services/", "/guides/website-or-app/", "/work/"]) {
           await page.goto(pathname);
           await page.evaluate(() => document.fonts.ready);
-          await expectDockActions(page);
+          await expectPageBooking(page);
           if (pathname === "/services/") {
             for (const choice of await page.locator("#service-choices a").all()) {
               await choice.focus();
               await expect(choice).toBeInViewport({ ratio: 1 });
               await expectTapTarget(choice);
-              const box = await choice.boundingBox();
-              const dock = await page.locator(".mobile-consultation").boundingBox();
-              expect(box.y + box.height, "Focusing a service choice leaves it above the persistent dock")
-                .toBeLessThanOrEqual(dock.y + 1);
+              await expect(page.locator(".mobile-consultation")).toHaveCount(0);
             }
           }
           await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
-          await expectDockActions(page);
-          const footer = await page.locator("footer").boundingBox();
-          const dock = await page.locator(".mobile-consultation").boundingBox();
-          expect(footer.y + footer.height, "The footer is not trapped under the consultation dock")
-            .toBeLessThanOrEqual(dock.y + 1);
+          await expectPageBooking(page);
+          const footerLink = page.locator("footer a:visible").last();
+          await footerLink.focus();
+          await expect(footerLink).toBeInViewport({ ratio: 1 });
+          await expect(page.locator(".mobile-consultation")).toHaveCount(0);
         }
       });
     }

@@ -6,13 +6,17 @@ test("published apps and the development range are visible and usable without Ja
   try {
     const page = await context.newPage();
     await page.goto(testInfo.project.use.baseURL || "http://127.0.0.1:4173");
-    const opening = page.locator('.simple-work-next a[href="./work/#app-store-proof"]');
-    await expect(opening).toHaveText("3 apps on the App Store ↗");
+    const opening = page.locator('.simple-work-next a[href="./work/"]');
+    await expect(opening).toHaveText("View all projects →");
     // The genuine publication evidence stays reachable through an ordinary link.
     await opening.focus();
     await page.keyboard.press("Enter");
-    await expect(page).toHaveURL(/\/work\/#app-store-proof$/);
+    await expect(page).toHaveURL(/\/work\/$/);
     const proof = page.locator("#range-proof");
+    await expect(proof).not.toHaveAttribute("open", "");
+    await proof.locator(":scope > summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(proof).toHaveAttribute("open", "");
     await expect(proof.getByRole("heading", { name: "On the App Store.", exact: true })).toBeVisible();
     const store = page.locator("#app-store-proof");
     await expect(store.locator(".range-apps > li")).toHaveCount(3);

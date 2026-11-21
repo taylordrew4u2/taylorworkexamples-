@@ -21,7 +21,7 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto("/");
         const hero = page.locator(".simple-hero");
         await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
-        await expect(hero.getByRole("heading", { level: 1 })).toHaveText("I build websites for businesses and people.");
+        await expect(hero.getByRole("heading", { level: 1 })).toHaveText("I build websites for businesses and individuals.");
         const actions = hero.locator(".simple-actions");
         await expect(actions.getByRole("link")).toHaveCount(2);
         const booking = actions.locator("[data-booking-link]");
@@ -33,8 +33,10 @@ for (const javaScriptEnabled of [true, false]) {
         const browse = actions.getByRole("link", { name: /^See examples/ });
         await expect(browse).toHaveAttribute("href", "#work-title");
         await expectTapTarget(browse, width);
-        await expect(hero).toContainText(/BriefBooth.*new tab/i);
-        await expect(hero).toContainText(/reviewed before confirmation/i);
+        await expect(page.locator("#consultation")).toContainText(/BriefBooth.*new tab/i);
+        await expect(page.locator("#consultation")).toContainText(/reviewed before confirmation/i);
+        await expect(page.locator("main > section")).toHaveCount(4);
+        await expect(page.locator(".mobile-consultation")).toHaveCount(0);
         await expect(hero.locator("form, input, select, textarea, [role='tablist']")).toHaveCount(0);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
         await browse.focus();

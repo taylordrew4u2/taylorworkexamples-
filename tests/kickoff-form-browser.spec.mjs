@@ -66,7 +66,7 @@ test("clients can fill in the kickoff form with native required-field and email 
   const form = page.locator("#kickoff-form");
   await expect(form).toBeVisible();
   await expect(page).toHaveTitle(/Project Kickoff.*4u Digital/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Before work starts");
   for (const name of ["company", "contactName", "contactEmail", "problem"]) {
     await expect(field(page, name)).toHaveAttribute("required", "");
   }

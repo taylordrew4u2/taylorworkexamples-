@@ -24,17 +24,15 @@ async function expectPageFits(page) {
 async function expectClientCare(page, { minimal = false } = {}) {
   const care = page.locator("#client-care");
   if (minimal) {
-    await expect(care.getByRole("heading", { level: 2 })).toHaveText("Your product. Your code.");
+    await expect(care).not.toHaveAttribute("open", "");
+    await care.locator(":scope > summary").focus();
+    await page.keyboard.press("Enter");
+    await expect(care).toHaveAttribute("open", "");
     await expect(care.locator(":scope > p")).toContainText(/custom code is 100% yours/i);
     await expect(care.locator(":scope > p")).toContainText(/every project.*30-day money-back guarantee.*completed product launches/i);
     const guarantee = care.locator(":scope > a");
     await expect(guarantee).toBeVisible();
     expect(new URL(await guarantee.getAttribute("href"), page.url()).pathname).toBe("/guarantee/");
-    const commitments = care.locator(":scope > details");
-    await expect(commitments).not.toHaveAttribute("open");
-    await commitments.locator(":scope > summary").focus();
-    await page.keyboard.press("Enter");
-    await expect(commitments).toHaveAttribute("open", "");
   } else {
     await expect(care.getByRole("heading", { level: 2 })).toHaveText(clientCare.heading);
     await expect(care.locator(".client-care-intro")).toHaveText(clientCare.intro);
@@ -67,16 +65,16 @@ for (const javaScriptEnabled of [true, false]) {
   test.describe(`website offer with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
     test.use({ javaScriptEnabled });
 
-    test("clients reach the complete offer from a compact service link or the footer", async ({ page }) => {
+    test("clients reach the complete offer through the optional footer resources", async ({ page }) => {
       await page.goto("/");
-      const offer = page.locator("#website-offer a");
+      const more = page.locator("footer .footer-more");
+      await expect(more).not.toHaveAttribute("open", "");
+      await more.locator("summary").focus();
+      await page.keyboard.press("Enter");
+      const offer = more.getByRole("link", { name: "Website offer", exact: true });
       await expect(offer).toBeVisible();
-      await expect(offer).toContainText("$1,500");
-      await expect(page.locator("#website-offer form, #website-offer iframe")).toHaveCount(0);
       await followOfferLink(page, offer);
       await expectClientCare(page);
-      await page.goto("/");
-      await followOfferLink(page, page.locator("footer").getByRole("link", { name: "Website offer", exact: true }));
     });
 
     test("the offer shows genuine work and attributed feedback and hands booking to BriefBooth", async ({ page }) => {

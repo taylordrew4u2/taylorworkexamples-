@@ -1893,7 +1893,7 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
 }
 .minimal-home .text-link { display: inline-flex; align-items: center; min-height: 44px; }
 .simple-note { max-width: 37rem; font-size: .75rem; line-height: 1.65; color: var(--muted); margin-top: 1rem; }
-.minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 3.5rem; border-top: 1px solid var(--line); margin-block: 0; }
+.minimal-home .simple-section { padding-block: 3.5rem; border-top: 1px solid var(--line); margin-block: 0; }
 .simple-section-heading { margin-bottom: 1.75rem; }
 .minimal-home h2 { font-family: var(--display); font-size: clamp(1.6rem, 2.8vw, 2.35rem); font-weight: 700; letter-spacing: -.04em; line-height: 1.2; }
 .simple-section-heading .eyebrow { margin-bottom: .65rem; color: var(--muted); }
@@ -1952,7 +1952,7 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
   .simple-actions { gap: .5rem; margin-top: .875rem; }
   .simple-actions .button { min-height: 44px; gap: .375rem; padding: .5rem .625rem; font-size: .8125rem; }
   .simple-hero .simple-note { margin-top: .625rem; }
-  .minimal-home .simple-section, .minimal-home #testimonials, .minimal-home #client-care { padding-block: 2.5rem; }
+  .minimal-home .simple-section { padding-block: 2.5rem; }
   .minimal-home .simple-work { padding-top: 1.25rem; }
   .simple-work .simple-section-heading { margin-bottom: 1rem; }
   .simple-services { grid-template-columns: 1fr; }
@@ -1967,4 +1967,21 @@ body:has(:is(input:not([type="radio"]):not([type="checkbox"]), textarea, select)
   .minimal-home .simple-faq { display: block; }
   .minimal-home .simple-contact { margin-block: .5rem 2rem; padding: 1rem; }
   .simple-planner { margin-top: 1.5rem; }
+}
+
+/* The homepage has four sections; supporting information opens only on request. */
+.simple-contact-details { margin-top: 2rem; border-top: 1px solid var(--line); }
+.home-detail { border-bottom: 1px solid var(--line); margin: 0; padding: 0; }
+.home-detail > summary { min-height: 52px; padding: 1rem 0; cursor: pointer; font-size: .9375rem; font-weight: 550; line-height: 1.5; }
+.home-detail > summary:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.home-detail[open] { padding-bottom: 1.25rem; }
+.home-detail > p { max-width: 48rem; margin: .5rem 0 1rem; color: var(--muted); font-size: .9375rem; line-height: 1.7; }
+.home-detail > p a { color: var(--ink); text-decoration: underline; text-underline-offset: .2em; }
+.home-detail .client-care-grid, .home-detail .testimonial-grid { margin-top: .75rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.home-detail .client-care-card { padding: 1rem; border: 0; background: #fff; }
+.home-detail .client-care-card h3 { font-size: 1rem; }
+.home-detail .client-care-card p { font-size: .875rem; line-height: 1.7; }
+.minimal-home .simple-contact h2 { margin-top: 0; }
+@media (max-width: 700px) {
+  .home-detail .client-care-grid, .home-detail .testimonial-grid { grid-template-columns: minmax(0, 1fr); }
 }

@@ -53,150 +53,75 @@ function expectBusinessEmail(href) {
   return draft;
 }
 
-function mobileConsultation(page) {
-  return page.getByRole("complementary", { name: "Consultation booking", exact: true });
-}
-
-async function expectAboveBookingDock(control, dock) {
-  await expect(control).toBeInViewport({ ratio: 1 });
-  const bounds = await control.boundingBox();
-  const dockBounds = await dock.boundingBox();
-  expect(bounds, "The page control has visible bounds").not.toBeNull();
-  expect(dockBounds, "The booking dock has visible bounds").not.toBeNull();
-  expect(bounds.y + bounds.height, "The booking dock does not cover the page control")
-    .toBeLessThanOrEqual(dockBounds.y + 1);
-  expect(await control.evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
-    return hit === element || element.contains(hit);
-  }), "The page control remains directly reachable").toBe(true);
-}
-
 for (const javaScriptEnabled of [true, false]) {
-  test.describe(`mobile consultation dock with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
+  test.describe(`in-page consultation links with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {
     test.use({ javaScriptEnabled });
 
-    test("the homepage footer prioritizes direct booking and keeps email as a secondary action", async ({ page }) => {
+    test("the homepage keeps booking in contact and the footer provides business email and optional resources", async ({ page }) => {
       await page.setViewportSize({ width: 390, height: 844 });
       await page.goto("/");
-      const footer = page.locator("footer .page-footer-contact");
-      const booking = footer.locator("[data-booking-link]");
-      await expect(booking).toHaveCount(1);
-      await expectDirectBooking(booking);
-      await expect(booking).toHaveClass(/\bfooter-booking\b/);
+      const footer = page.locator("footer");
+      await expect(footer.locator("[data-booking-link]")).toHaveCount(0);
       const email = footer.locator('a[href^="mailto:"]');
       await expect(email).toHaveCount(1);
       await expect(email).not.toHaveClass(/\bbutton\b/);
       expectBusinessEmail(await email.getAttribute("href"));
-      expect(await booking.evaluate((element) => Boolean(
-        element.compareDocumentPosition(element.closest(".page-footer-contact").querySelector('a[href^="mailto:"]')) &
-          Node.DOCUMENT_POSITION_FOLLOWING,
-      )), "The primary booking action appears before the email alternative").toBe(true);
+      await expect(footer.locator(".compact-footer-links > a")).toHaveText(["Projects", "Services", "Pricing", "Project planner"]);
+      const more = footer.locator("details.footer-more");
+      await expect(more).not.toHaveAttribute("open", "");
+      await more.locator("summary").focus();
+      await page.keyboard.press("Enter");
+      await expect(more.locator("a")).toHaveText(["About", "Contact", "Guides", "Website offer", "GitHub ↗"]);
       await expectExternalOnlyBooking(page);
+      const booking = page.locator("#consultation [data-booking-link]");
+      await expectDirectBooking(booking);
       await openStubbedBooking(page, booking);
     });
 
     for (const route of mobileBookingRoutes) {
-      test(`booking remains available at the end of ${route} without covering page controls`, async ({ page }) => {
+      test(`booking on ${route} uses an ordinary page link without covering controls`, async ({ page }) => {
         await page.setViewportSize({ width: 390, height: 844 });
         await page.goto(route);
-        const dock = mobileConsultation(page);
-        await expect(dock).toHaveClass(/\bmobile-consultation\b/);
-        await expect(dock.getByRole("link")).toHaveCount(1);
-        await expect(dock.locator("p, .planner-shortcut")).toHaveCount(0);
-        const booking = dock.getByRole("link", { name: /^Book a consultation \(opens in a new tab\)$/ });
+        await expect(page.locator(".mobile-consultation, .planner-shortcut")).toHaveCount(0);
+        const booking = page.locator("main [data-booking-link]").last();
         await expectDirectBooking(booking);
-        await expect(booking).toHaveAccessibleName("Book a consultation (opens in a new tab)");
         await expectExternalOnlyBooking(page);
-
-        await page.evaluate(async () => {
-          // Font swaps can change the document height after the load event.
-          await document.fonts.ready;
-          window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" });
-        });
-        expect(await page.evaluate(() => window.scrollY), "The visitor has scrolled beyond the opening").toBeGreaterThan(0);
-        await expect(dock).toBeInViewport({ ratio: 1 });
+        await booking.focus();
+        await expect(booking).toBeInViewport({ ratio: 1 });
         const bookingBounds = await booking.boundingBox();
-        expect(bookingBounds.height, "The persistent booking target is tall enough to tap").toBeGreaterThanOrEqual(44);
-        expect(bookingBounds.width, "The persistent booking target is wide enough to tap").toBeGreaterThanOrEqual(44);
-
-        const footerBounds = await page.locator("footer").boundingBox();
-        const dockBounds = await dock.boundingBox();
-        expect(footerBounds.y + footerBounds.height, "The end of the page stays above the booking dock")
-          .toBeLessThanOrEqual(dockBounds.y + 1);
+        expect(bookingBounds.height).toBeGreaterThanOrEqual(44);
+        expect(bookingBounds.width).toBeGreaterThanOrEqual(44);
+        await openStubbedBooking(page, booking);
         const lastFooterLink = page.locator("footer a:visible").last();
-        await lastFooterLink.evaluate((element) => element.scrollIntoView({ block: "end", behavior: "instant" }));
         await lastFooterLink.focus();
         await expect(lastFooterLink).toBeFocused();
-        await expectAboveBookingDock(lastFooterLink, dock);
-        await openStubbedBooking(page, booking);
-
-        await page.setViewportSize({ width: 900, height: 900 });
-        await expect(dock).toBeVisible();
-        await page.setViewportSize({ width: 901, height: 900 });
-        await expect(dock).toBeHidden();
-        await page.setViewportSize({ width: 844, height: 450 });
-        await expect(dock).toBeHidden();
-        await page.setViewportSize({ width: 390, height: 844 });
-        await expect(dock).toBeVisible();
+        await expect(lastFooterLink).toBeInViewport({ ratio: 1 });
+        expect(await lastFooterLink.evaluate((element) => {
+          const box = element.getBoundingClientRect();
+          const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+          return hit === element || element.contains(hit);
+        }), "The footer link remains directly reachable").toBe(true);
+        for (const [width, height] of [[900, 900], [901, 900], [844, 450]]) {
+          await page.setViewportSize({ width, height });
+          await expect(page.locator(".mobile-consultation")).toHaveCount(0);
+        }
       });
     }
-
-    test("the dock leaves room for native text, multiline, and selection controls", async ({ page }) => {
-      await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto(serviceRoute);
-      const dock = mobileConsultation(page);
-      await expect(dock).toBeVisible();
-      // This service page intentionally has no intake fields. Local-only controls
-      // exercise native focus without adding a booking form to the public page.
-      await page.locator("main").evaluate((main) => {
-        const probe = document.createElement("section");
-        probe.dataset.bookingFocusProbe = "";
-        for (const tag of ["input", "textarea", "select"]) {
-          const label = document.createElement("label");
-          label.textContent = `Booking focus check: ${tag}`;
-          const control = document.createElement(tag);
-          if (tag === "select") control.add(new Option("Example", "example"));
-          label.append(control);
-          probe.append(label);
-        }
-        main.append(probe);
-      });
-      const probe = page.locator("[data-booking-focus-probe]");
-      try {
-        for (const tag of ["input", "textarea", "select"]) {
-          const control = probe.locator(tag);
-          await control.focus();
-          await expect(control).toBeFocused();
-          await expect(control).toBeInViewport({ ratio: 1 });
-          await expect(dock).toBeHidden();
-          await control.evaluate((element) => element.blur());
-          await expect(dock).toBeVisible();
-        }
-      } finally {
-        await probe.evaluate((element) => element.remove());
-      }
-    });
   });
 }
 
-test("the single mobile booking action leaves the real project search unobstructed", async ({ page }) => {
+test("the project search remains unobstructed and retains results when focus moves", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-  const dock = mobileConsultation(page);
-  await expect(dock).toBeVisible();
-  await expect(dock.getByRole("link")).toHaveCount(1);
-  await expect(page.locator(".planner-shortcut")).toHaveCount(0);
-
   await page.goto("/work/");
   await page.locator("#project-browser-controls > summary").click();
   const search = page.getByRole("searchbox", { name: /Search projects/ });
   await search.fill("calendar");
   await expect(search).toBeFocused();
   await expect(search).toBeInViewport({ ratio: 1 });
-  await expect(dock).toBeHidden();
+  await expect(page.locator(".mobile-consultation, .planner-shortcut")).toHaveCount(0);
   await page.keyboard.press("Tab");
-  await expect(dock).toBeVisible();
+  await expect(search).toHaveValue("calendar");
+  await expect(page.locator('.seo-project-card[data-project-id="MyGigCalendar"]')).toBeVisible();
 });
 
 test("a service visitor can book directly from the opening and return to the same page", async ({ page }) => {
@@ -215,7 +140,7 @@ test("a service visitor can book directly from the opening and return to the sam
   await expect(opening.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("phone clients open the full project through an ordinary homepage link and book from its opening", async ({ page }) => {
+test("phone clients open the full project through an ordinary homepage link and book after reading it", async ({ page }) => {
   for (const width of [320, 390]) {
     await page.setViewportSize({ width, height: 844 });
     await page.goto("/");
@@ -227,24 +152,24 @@ test("phone clients open the full project through an ordinary homepage link and 
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(new URL(example.caseUrl, "http://127.0.0.1:4173/").href);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
-    await expect(page.locator("#your-business")).toContainText("Work directly with the developer");
-    await openStubbedBooking(page, page.locator(".project-story-hero [data-booking-link]"));
+    await expect(page.locator("#your-business")).toContainText("Your custom code is 100% yours.");
+    await openStubbedBooking(page, page.locator("#your-business [data-booking-link]"));
     await expect(page.getByRole("heading", { level: 1 })).toHaveText(example.title);
   }
 });
 
-test("a project story offers one clear booking path before the gallery", async ({ page }) => {
+test("a project story leads with its real product links and keeps one content-level booking path", async ({ page }) => {
   await page.goto(example.caseUrl);
   const opening = page.locator(".project-story-hero .page-intro");
-  const booking = opening.locator(".page-actions [data-booking-link]");
-  await expectDirectBooking(booking);
+  await expect(opening.locator("[data-booking-link]")).toHaveCount(0);
+  await expect(opening.locator(`a[href="${example.demoUrl}"]`)).toBeVisible();
+  await expect(opening.locator(`a[href="${example.repoUrl}"]`)).toBeVisible();
   await expectExternalOnlyBooking(page);
   await expect(opening.locator("form, input, textarea, select")).toHaveCount(0);
-  await expect(opening.locator(".page-actions a")).toHaveCount(2);
+  await expect(page.locator("main [data-booking-link]")).toHaveCount(1);
   await expect(page.locator("main a[href^='mailto:']")).toHaveCount(0);
-  expect(await booking.evaluate((element) => Boolean(
-    element.compareDocumentPosition(document.querySelector("#project-cover")) & Node.DOCUMENT_POSITION_FOLLOWING,
-  )), "The consultation action comes before the project images").toBe(true);
+  const booking = page.locator("#your-business [data-booking-link]");
+  await expectDirectBooking(booking);
   await openStubbedBooking(page, booking);
 });
 

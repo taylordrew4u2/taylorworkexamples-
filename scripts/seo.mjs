@@ -23,7 +23,7 @@ import { pricing } from "../content/pricing.js";
 const origin = site.origin;
 const organizationId = `${origin}/#organization`;
 const websiteId = `${origin}/#website`;
-export const release = "50";
+export const release = "51";
 const assetsFrom = (route) => "../".repeat(Math.max(0, route.split("/").filter(Boolean).length - (route.endsWith("/") ? 0 : 1)));
 const local = (route, target = "") => `${assetsFrom(route) || "./"}${target}`;
 const absolute = (asset) => `${origin}/${asset.replace(/^\.\//, "")}`;
@@ -33,7 +33,7 @@ function organization() {
   return {
     "@type": "Organization", "@id": organizationId, name: "4u Digital", url: `${origin}/`,
     slogan: "Custom tech build for you.",
-    description: "Custom websites, apps, and software for businesses and people.",
+    description: "Website design and development, with apps and custom software for businesses and individuals.",
     email: site.email, logo: `${origin}/assets/4u-digital-logo-mono.png`,
     sameAs: ["https://github.com/taylordrew4u2"],
   };
@@ -174,7 +174,7 @@ function footerPolicies(route) {
 }
 
 function footer(route) {
-  return `<footer${route === "/" ? ' id="contact"' : ""} class="page-footer compact-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p></div><div class="page-footer-contact">${bookingLink("text-link footer-booking")}<a class="text-link" href="mailto:${site.email}">${site.email}</a></div><nav class="compact-footer-links" aria-label="Footer navigation"><a href="${local(route, "services/")}">Services</a><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "pricing/")}">Pricing</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "offer/")}">Website offer</a><a href="${local(route, "project-brief/")}">Project planner</a><a href="${local(route, "about/")}">About</a><a href="${local(route, "contact/")}">Contact</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital</p></footer>`;
+  return `<footer${route === "/" ? ' id="contact"' : ""} class="page-footer compact-footer wrap"><div class="page-footer-brand">${brandSignature(route)}<p class="page-footer-tagline">Custom tech build for you.</p></div><div class="page-footer-contact"><a class="text-link" href="mailto:${site.email}">${site.email}</a></div><nav class="compact-footer-links" aria-label="Footer navigation"><a href="${local(route, "work/")}">Projects</a><a href="${local(route, "services/")}">Services</a><a href="${local(route, "pricing/")}">Pricing</a><a href="${local(route, "project-brief/")}">Project planner</a><details class="footer-more"><summary>More</summary><div><a href="${local(route, "about/")}">About</a><a href="${local(route, "contact/")}">Contact</a><a href="${local(route, "insights/")}">Guides</a><a href="${local(route, "offer/")}">Website offer</a><a href="https://github.com/taylordrew4u2" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></details></nav>${footerPolicies(route)}<p class="page-copyright">© 2026 4u Digital</p></footer>`;
 }
 
 function breadcrumbs(page) {
@@ -187,7 +187,7 @@ function frame(page, content) {
     "/project-kickoff/": "kickoff-page", "/project-brief/": "project-brief-page", "/contact/": "contact-page", "/about/": "about-page",
     "/privacy/": "privacy-page", "/offer/": "offer-page", "/pricing/": "pricing-page", "/guides/website-or-app/": "comparison-page",
   }[page.path] || "");
-  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}${page.projectBrief ? "" : mobileConsultation()}</body></html>`, page.path);
+  return sourceEmailLinks(`<!doctype html><html lang="en">${pageHead(page)}<body class="content-page ${pageClass}">${header(page.path)}<main id="main" class="page-main wrap">${breadcrumbs(page)}${content}</main>${footer(page.path)}</body></html>`, page.path);
 }
 
 function sourceEmailLinks(html, route) {
@@ -213,11 +213,7 @@ function bookingLink(className = "button button-dark") {
 }
 
 function bookingDestinationNote() {
-  return `<p class="booking-destination booking-destination-note">Video consultation · Opens BriefBooth in a new tab. Requests are reviewed before confirmation.</p>`;
-}
-
-function mobileConsultation() {
-  return `<aside class="mobile-consultation" aria-label="Consultation booking">${bookingLink()}</aside>`;
+  return `<p class="booking-destination booking-destination-note">Online via BriefBooth (opens in a new tab). Requests are reviewed before confirmation.</p>`;
 }
 
 function faqBlock(title, faqs, id = "") {
@@ -247,9 +243,9 @@ function projectIndexCard(project, route) {
   const status = project.releaseStatus || (project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate · Physical microphone validation pending" : "");
   const liveLink = project.demoUrl ? `<a class="text-link work-project-live-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open ${escape(project.title)}: ${escape(project.demoLabel || "Live site")} (opens in a new tab)">${escape(project.demoLabel || "Live site")} <span aria-hidden="true">↗</span></a>` : "";
   return `<article class="seo-project-card" data-project-id="${escape(project.id)}" data-project-type="${projectFilterType(project)}" data-project-search="${escape(search)}">
-    <header class="work-project-header"><p class="eyebrow">${escape(projectType(project))}${status ? `<span class="work-project-status">${escape(status)}</span>` : ""}</p><div class="seo-project-heading">${iconFor(project, route)}<h3>${escape(project.title)}</h3></div></header>
-    <figure class="work-project-figure"><div class="seo-project-cover"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></div><figcaption class="work-index-image-label">${escape(project.imageLabel || "Project image")}</figcaption></figure>
-    <div class="seo-project-body"><p class="work-project-purpose">${escape(project.purpose)}</p><ul class="work-project-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul><div class="work-project-actions"><a class="button button-outline work-project-action" href="${destination}" aria-label="See how it works: ${escape(project.title)}">See how it works <span aria-hidden="true">→</span></a>${liveLink}</div></div>
+    <header class="work-project-header"><p class="eyebrow">${escape(projectType(project))}${status ? `<span class="work-project-status">${escape(status)}</span>` : ""}</p><div class="seo-project-heading">${iconFor(project, route)}<h3><a href="${destination}">${escape(project.title)}</a></h3></div></header>
+    <figure class="work-project-figure"><a class="seo-project-cover" href="${destination}" aria-label="View project: ${escape(project.title)}"><img src="${local(route, project.image.replace(/^\.\//, ""))}" alt="${escape(project.imageAlt)}" width="${project.imageWidth}" height="${project.imageHeight}" loading="lazy" decoding="async" /></a><figcaption class="work-index-image-label">${escape(project.imageLabel || "Project image")}</figcaption></figure>
+    <div class="seo-project-body"><p class="work-project-purpose">${escape(project.purpose)}</p><details class="work-project-features"><summary>Features</summary><ul class="work-project-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul></details><div class="work-project-actions"><a class="text-link work-project-action" href="${destination}" aria-label="See how it works: ${escape(project.title)}">See how it works <span aria-hidden="true">→</span></a>${liveLink}</div></div>
   </article>`;
 }
 
@@ -283,15 +279,15 @@ function projectIndexContent(route) {
   const range = renderRangeProof().replace(/(href|src)="\.\//g, '$1="../');
   return intro("", "Projects.", "Explore business websites, booking tools, and apps I’ve built.") +
     `<section id="project-collection" class="page-section" aria-labelledby="project-collection-title"><h2 id="project-collection-title" class="sr-only">Project examples</h2><div class="work-project-browser">${browserControls}<p id="project-browser-count" class="project-browser-count" role="status" aria-live="polite" aria-atomic="true">${projects.length} of ${projects.length} projects</p></div><div id="project-index-grid" class="seo-project-grid work-page-grid">${orderedProjects.map((project) => projectCard(project, route)).join("")}</div><div id="project-browser-empty" class="project-browser-empty" hidden><h3>No matching projects.</h3><p>Try a different word or project type.</p><button type="button" id="project-browser-reset" class="button button-outline">Show all projects</button></div><noscript><p class="no-js-help">All ${projects.length} projects are shown. Choose any project to open its complete story and images.</p></noscript></section>` +
-    `<details id="range-proof" class="work-release-details"><summary>Published apps and development range</summary><div class="range-proof" aria-label="Development range and published app proof">${range}</div></details>` +
-    `<section id="work-with-me" class="page-section work-hiring" aria-labelledby="work-hiring-title"><h2 id="work-hiring-title">Have something in mind?</h2><p class="work-hiring-intro">One developer for design, code, and launch. We agree the scope and price before building, with a 30-day money-back guarantee after your completed product launches.</p><div class="work-hiring-actions">${bookingLink()}<a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support <span aria-hidden="true">↗</span></a></div>${bookingDestinationNote()}<aside class="portfolio-disclosure"><p>These are selected personal projects, not every app I’ve built. All custom code I build for your project is 100% yours. Client work and code will never appear in my public portfolio without your permission.</p></aside></section>`;
+    `<details id="range-proof" class="work-release-details"><summary>App Store releases</summary><div class="range-proof" aria-label="Development range and published app proof">${range}</div></details>` +
+    `<section id="work-with-me" class="page-section work-hiring" aria-labelledby="work-hiring-title"><h2 id="work-hiring-title">Have something in mind?</h2><p class="work-hiring-intro">Tell me what you need. We’ll agree on the scope and price before work starts.</p><div class="work-hiring-actions">${bookingLink()}<a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support <span aria-hidden="true">↗</span></a></div>${bookingDestinationNote()}<aside class="portfolio-disclosure"><p>Selected personal projects. Your custom code is 100% yours, and client work stays private unless you give permission. Every project includes a 30-day money-back guarantee after launch.</p></aside></section>`;
 }
 
 const serviceChoices = {
-  "website-development": { heading: "I need a website.", title: "Custom websites.", text: "Show your business, explain your services, and help customers get in touch. New sites and rebuilds.", capabilities: ["Clear service and product pages", "Useful inquiry or booking flows", "Layouts made for phones and computers"] },
-  "web-app-development": { heading: "I need a web app.", title: "Web apps.", text: "Customer portals, bookings, shared records, and payments. Open it in a browser on any device.", capabilities: ["Customer and team accounts", "Requests, approvals, and shared records", "Payments connected to your workflow"] },
-  "app-development": { heading: "I need an iPhone or Mac app.", title: "iPhone, iPad & Mac apps.", text: "A native app for iPhone, iPad, or Mac, built around the task your users need to do.", capabilities: ["Native iPhone, iPad, and Mac screens", "Device features and offline workflows", "Testing and release preparation"] },
-  "custom-software-development": { heading: "I need custom software.", title: "Custom software.", text: "Internal tools, desktop software, and integrations that fit the way your team works.", capabilities: ["Tools for specialist team tasks", "Documents turned into useful records", "Connections between existing systems"] },
+  "website-development": { heading: "Websites", title: "Website design & development.", text: "Business sites, portfolios, and online shops. New websites or improvements to an existing one.", capabilities: ["Clear service and product pages", "Useful inquiry or booking flows", "Layouts made for phones and computers"] },
+  "web-app-development": { heading: "Web apps", title: "Web apps.", text: "Booking systems, customer accounts, and tools your team can use in a browser.", capabilities: ["Customer and team accounts", "Requests, approvals, and shared records", "Payments connected to your workflow"] },
+  "app-development": { heading: "iPhone, iPad & Mac apps", title: "iPhone, iPad & Mac apps.", text: "Apps designed for Apple devices, from writing tools to calendars.", capabilities: ["Native iPhone, iPad, and Mac screens", "Device features and offline workflows", "Testing and release preparation"] },
+  "custom-software-development": { heading: "Custom software", title: "Custom software.", text: "Tools that organize everyday work, automate repeated tasks, or connect your existing systems.", capabilities: ["Tools for specialist team tasks", "Documents turned into useful records", "Connections between existing systems"] },
   "salon-booking-app-development": { heading: "Salon bookings.", title: "Salon booking apps.", text: "Services, appointment requests, and a schedule your staff can manage.", capabilities: ["Services, staff, and appointment choices", "A clear schedule for your team", "Rescheduling and cancellation rules"] },
   "restaurant-ordering-app-development": { heading: "Restaurant ordering.", title: "Restaurant ordering apps.", text: "Your menu, pickup orders, and a clear queue for the team preparing them.", capabilities: ["Menus, options, and item availability", "Customer orders and a staff queue", "Pickup or delivery rules that fit your team"] },
 };
@@ -305,12 +301,12 @@ function serviceCards(route, entries) {
 
 function servicesContent(route) {
   const industrySlugs = ["salon-booking-app-development", "restaurant-ordering-app-development"];
-  return intro("", "What would you like to build?", "I design, build, and launch websites, apps, and business software.") +
-    `<section id="service-choices" class="page-section service-choice-section" aria-labelledby="service-choices-title"><h2 id="service-choices-title">Choose a service.</h2>${serviceCards(route, services.filter((service) => !industrySlugs.includes(service.slug)))}</section>` +
+  return intro("", "Services", "Websites, apps, and tools for your business. If you’re unsure what you need, we can work it out together.") +
+    `<section id="service-choices" class="page-section service-choice-section" aria-labelledby="service-choices-title"><h2 id="service-choices-title" class="sr-only">Services</h2>${serviceCards(route, services.filter((service) => !industrySlugs.includes(service.slug)))}</section>` +
     `<p class="service-pricing-link"><a class="text-link" href="${local(route, "guides/website-or-app/")}">Compare websites, web apps, and native apps <span aria-hidden="true">→</span></a><a class="text-link" href="${local(route, "pricing/")}">See starting prices <span aria-hidden="true">→</span></a></p>` +
-    `<aside id="services-website-offer" class="service-website-offer service-offer-quiet" aria-labelledby="services-offer-title"><h2 id="services-offer-title">NYC website offer.</h2><p>A custom website for $1,500, or $3,000 with booking or ordering. First ten eligible New York City projects agreed by November 30, 2026, subject to scope and capacity.</p><a class="text-link" href="${local(route, "offer/")}">See what’s included <span aria-hidden="true">→</span></a></aside>` +
-    `<section class="page-section service-industry-links" aria-labelledby="industry-choices-title"><h2 id="industry-choices-title">For your kind of business.</h2><nav class="related-links" aria-label="Industry services">${services.filter((service) => industrySlugs.includes(service.slug)).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(serviceChoices[service.slug].heading)} <span aria-hidden="true">→</span></a>`).join("")}<a href="${local(route, "services/website-development/")}">Local shops and other businesses <span aria-hidden="true">→</span></a></nav></section>` +
-    `<aside class="page-callout service-closing"><h2>Not sure yet? Let’s talk.</h2><p>An idea, an existing website, or a task that takes too long is enough to start. We’ll work out the right approach together.</p><div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}</aside>`;
+    `<details id="services-website-offer" class="service-extra"><summary>NYC website offer</summary><p>A custom website for $1,500, or $3,000 with booking or ordering. First ten eligible New York City projects agreed by November 30, 2026, subject to scope and capacity.</p><a class="text-link" href="${local(route, "offer/")}">See what’s included <span aria-hidden="true">→</span></a></details>` +
+    `<details class="service-extra service-industry-links"><summary>Salon and restaurant projects</summary><nav class="related-links" aria-label="Industry services">${services.filter((service) => industrySlugs.includes(service.slug)).map((service) => `<a href="${local(route, `services/${service.slug}/`)}">${escape(serviceChoices[service.slug].heading)} <span aria-hidden="true">→</span></a>`).join("")}<a href="${local(route, "services/website-development/")}">Local shops and other businesses <span aria-hidden="true">→</span></a></nav></details>` +
+    `<aside class="page-callout service-closing"><h2>Have a project in mind?</h2><p>Tell me what you need. We’ll agree on the scope and price before work starts.</p><div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}</aside>`;
 }
 
 function businessIcon(type) {
@@ -340,7 +336,7 @@ function testimonialCard(testimonial) {
 }
 
 function testimonialsSection() {
-  return `<div class="section-heading"><div><p class="eyebrow">CLIENT REVIEWS</p><h2 id="testimonials-title">In their own words.</h2></div></div><div class="testimonial-grid">${clientTestimonials.slice(0, 3).map(testimonialCard).join("")}</div><details class="review-more"><summary>Read all 9 client reviews</summary><div class="testimonial-grid">${clientTestimonials.slice(3).map(testimonialCard).join("")}</div></details>`;
+  return `<details id="testimonials" class="home-detail review-more"><summary>Read all 9 client reviews</summary><div class="testimonial-grid">${clientTestimonials.map(testimonialCard).join("")}</div></details>`;
 }
 
 function articleIndex(route) {
@@ -355,12 +351,12 @@ function consultationCallout(route) {
 function kickoffPage() {
   const page = { path: "/project-kickoff/", title: "Project Kickoff Checklist | 4u Digital",
     description: "Plan your 4u Digital project after consultation: first-version scope, approvals, assets, account access, and a clear handover before building.",
-    modified: "2026-11-11", kickoffForm: true, breadcrumbs: [{ name: "Project kickoff checklist", path: "/project-kickoff/" }],
+    modified: "2026-11-20", kickoffForm: true, breadcrumbs: [{ name: "Project kickoff checklist", path: "/project-kickoff/" }],
   };
   const draft = new URL(`mailto:${site.email}`);
   draft.searchParams.set("subject", "4u Digital project kickoff details");
   draft.searchParams.set("body", `Hi 4u Digital,\n\nFollowing our consultation, here are the details for my project. We can work through anything still undecided.\n\nBUSINESS AND CONTACTS\nCompany / project:\nMain contact and business email:\nWho approves scope, price, and the final work:\nWho gathers feedback, and how we will record approvals:\n\nFIRST VERSION\nThe business problem and intended users:\nOne complete task the first version should support:\nWhat is included:\nWhat is outside this version:\nExamples of a successful result to check together:\nBudget, price, and target dates to agree:\nDependencies that could affect those dates:\n\nASSETS AND ACCOUNTS\nContent, images, brand files, or other material to supply:\nWho supplies and approves each item, and its permitted use:\nExisting tools / accounts involved and their owners:\nAccount invitations and access to arrange separately:\n\nREVIEW AND HANDOVER\nThe next review step:\nProject files, account ownership, and handover to agree:\nLaunch responsibilities and any support / maintenance to agree:\n\nPlease list the accounts involved without sending passwords, payment details, or customer records.\n\nThanks!`);
-  const content = intro("EXISTING CLIENTS", "A clear plan before the build.",
+  const content = intro("EXISTING CLIENTS", "Before work starts",
     "Use this form once we’ve agreed to work together. You don’t need this worked out before getting in touch.",
     `<div class="page-actions"><a class="button button-dark" data-kickoff-start href="${escape(draft.href)}">Prepare a kickoff email <span aria-hidden="true">↗</span></a></div><p class="kickoff-intro-note">Record the scope, approvals, and handover. Review your answers before opening an email draft to 4u Digital.</p>`) + `<div id="kickoff-fallback">` +
     `<section class="page-section"><h2>1. Agree the first useful version.</h2><ul class="page-list"><li><strong>The problem and the people.</strong> Identify who will use the technology and one complete task it should help them finish.</li><li><strong>What’s included—and what comes later.</strong> Record the features, project boundaries, existing-tool connections, price, and dates we agree.</li><li><strong>What a successful result looks like.</strong> Write down examples we can check together, including everyday use and what should happen if something changes or goes wrong.</li><li><strong>Dependencies and changes.</strong> Note any content, account access, or outside decisions needed. Agree changes to scope and their effect on price or dates before adding them.</li></ul><aside class="page-callout"><h3>An example to make it concrete.</h3><p>For a salon booking project, one possible check is: a customer can choose a service and available time, receive the agreed confirmation, and the team can see the booking. We would check it with sample appointments and agree how cancellations or unavailable times should behave.</p><p>This is an illustration. Your project’s features and checks are agreed together.</p></aside></section>` +
@@ -373,7 +369,7 @@ function kickoffPage() {
 function projectBriefPage() {
   const page = { path: "/project-brief/", title: "Plan Your Website, App or Software Project | 4u Digital",
     description: "A guided project brief for your website, app or custom software. Explore features, colors, content and workflows, upload references, and send your ideas to 4u Digital.",
-    modified: "2026-11-11", projectBrief: true,
+    modified: "2026-11-20", projectBrief: true,
     breadcrumbs: [{ name: "Project planner", path: "/project-brief/" }],
   };
   const content = intro("4U DIGITAL · PROJECT PLANNER", "Your project planner.",
@@ -410,10 +406,10 @@ function articlePage(article) {
 function localPage() {
   const route = "/new-york-city/";
   const page = { path: route, title: localConsultation.metaTitle, description: localConsultation.description,
-    service: localConsultation, local: true, modified: "2026-11-11", faq: localConsultation.faq,
-    breadcrumbs: [{ name: "New York City consultations", path: route }],
+    service: localConsultation, local: true, modified: "2026-11-21", faq: localConsultation.faq,
+    breadcrumbs: [{ name: "Website development in NYC", path: route }],
   };
-  const content = intro("NYC CONSULTATIONS", localConsultation.heading, localConsultation.intro,
+  const content = intro("NEW YORK CITY", localConsultation.heading, localConsultation.intro,
     `<div class="page-actions">${bookingLink()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>${bookingDestinationNote()}`) +
     `<section class="page-section local-meeting-choices" aria-labelledby="meeting-choices-title"><h2 id="meeting-choices-title">Choose how we work through it.</h2><div class="page-columns"><article><h3>Start with a video call.</h3><p>Bring a rough idea, a question, or an example of something you want to make easier. Pick a time through BriefBooth.</p></article><article><h3>Arrange a visit in NYC.</h3><p>We can walk through your space if you’re unsure what you need or the technology has to fit a specific workflow. Visits are available in Manhattan, Brooklyn, and parts of Queens.</p></article></div></section>` +
     `<section class="page-section" aria-labelledby="consultation-examples-title"><h2 id="consultation-examples-title">See the space before deciding on the software.</h2><p>${escape(localConsultation.visitExample)}</p><div class="faq-list local-preparation"><details class="faq-item"><summary>What should I bring to the consultation?</summary><p>${escape(localConsultation.preparation)}</p></details><details class="faq-item"><summary>What happens after we talk?</summary><p>${escape(localConsultation.afterConsultation)}</p></details></div></section>` +
@@ -424,7 +420,7 @@ function localPage() {
 }
 
 function clientCareSection(homepage = false) {
-  if (homepage) return `<section id="client-care" class="simple-care wrap" aria-labelledby="client-care-title"><h2 id="client-care-title">Your product. Your code.</h2><p>Your custom code is 100% yours. Client work and code stay private unless you give permission. Every project includes a 30-day money-back guarantee after the completed product launches.</p><a class="text-link" href="./guarantee/">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><details><summary>Read the commitments</summary><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>`;
+  if (homepage) return `<details id="client-care" class="home-detail"><summary>30-day guarantee &amp; support</summary><p>Your custom code is 100% yours. Client work stays private unless you give permission.</p><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div><a class="text-link" href="./guarantee/">Full guarantee, refunds &amp; support <span aria-hidden="true">→</span></a></details>`;
   return `<section id="client-care" class="${homepage ? "client-care-section wrap" : "page-section client-care"}" aria-labelledby="client-care-title"><div class="section-heading"><div><p class="eyebrow">${escape(clientCare.eyebrow)}</p><h2 id="client-care-title">${escape(clientCare.heading)}</h2><p class="client-care-intro">${escape(clientCare.intro)}</p></div></div><div class="client-care-grid">${clientCare.sections.map(({ id, title, text }) => `<article class="client-care-card" data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div><a class="text-link" href="mailto:${site.email}">Email about your project or guarantee <span aria-hidden="true">↗</span></a></section>`;
 }
 
@@ -489,7 +485,7 @@ function offerPage() {
 function servicePage(service) {
   const route = `/services/${service.slug}/`;
   const page = { path: route, title: service.metaTitle, description: service.description, service, faq: service.faq,
-    modified: "2026-11-11",
+    modified: service.modified > "2026-11-20" ? service.modified : "2026-11-20",
     breadcrumbs: [{ name: "Services", path: "/services/" }, { name: service.title, path: route }],
   };
   const examples = service.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
@@ -502,10 +498,10 @@ function servicePage(service) {
   const storeProof = service.slug === "app-development" ? `<p class="service-opening-proof"><a class="text-link" href="${local(route, "work/")}#app-store-proof">3 apps published on the App Store <span aria-hidden="true">↗</span></a></p>` : "";
   const websiteOffer = launchOffer.serviceSlugs.includes(service.slug) ? `<aside class="service-website-offer service-offer-quiet"><p><strong>NYC website offer:</strong> $1,500 for a custom website, or $3,000 with booking or ordering. First ten eligible projects agreed by November 30, 2026, subject to scope and capacity.</p><a class="text-link" href="${local(route, "offer/")}">See the website offer <span aria-hidden="true">→</span></a></aside>` : "";
   const content = intro("", serviceChoices[service.slug].title, service.intro, `<div class="page-actions">${bookingLink()}<a class="text-link" href="#examples">See project examples <span aria-hidden="true">↓</span></a></div>${bookingDestinationNote()}<ul class="service-capabilities" aria-label="What this service can include">${serviceChoices[service.slug].capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul>${storeProof}`) +
-    `<section id="examples" class="page-section service-examples"><h2>Explore related projects.</h2><p>${/salon|restaurant/.test(service.slug) ? "Related personal projects, not salon or restaurant client work. Your own workflow would be designed with you." : "Selected personal projects. Open one to see its workflow and complete original gallery."}</p><div class="service-example-grid">${leadingExamples.map(exampleCard).join("")}</div>${remainingExamples.length ? `<nav class="related-links service-more-projects" aria-label="More related project examples">${remainingExamples.map((project) => `<a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)} <span aria-hidden="true">→</span></a>`).join("")}</nav>` : ""}<details class="service-details service-evidence"><summary>About these examples</summary><p>${escape(service.proofIntro)}</p></details></section>` +
+    `<section id="examples" class="page-section service-examples"><h2>Project examples</h2><p>${/salon|restaurant/.test(service.slug) ? "Related personal projects, not salon or restaurant client work. Your own workflow would be designed with you." : "Personal projects. Open one to see what it does."}</p><div class="service-example-grid">${leadingExamples.map(exampleCard).join("")}</div>${remainingExamples.length ? `<nav class="related-links service-more-projects" aria-label="More related project examples">${remainingExamples.map((project) => `<a href="${local(route, `work/${projectSlugs[project.id]}/`)}">${escape(project.title)} <span aria-hidden="true">→</span></a>`).join("")}</nav>` : ""}<details class="service-details service-evidence"><summary>About these examples</summary><p>${escape(service.proofIntro)}</p></details></section>` +
     websiteOffer +
-    `<section class="page-section service-planning" aria-labelledby="service-planning-title"><h2 id="service-planning-title">A clear plan before the build.</h2><p>We agree the useful first version, price, and timeline together. Expand the details that matter to you.</p><p class="service-pricing-link"><a class="text-link" href="${local(route, "pricing/")}">See starting prices <span aria-hidden="true">→</span></a></p><details id="service-fit" class="service-details"><summary>What this can include</summary><div class="service-reading">${service.when.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details><details id="service-scope" class="service-details"><summary>Planning your scope</summary><div class="service-reading">${service.scope.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>` +
-    `<section id="client-care" class="page-section service-care" aria-labelledby="client-care-title"><h2 id="client-care-title">Your product. Your code.</h2><p>Your custom code is 100% yours. Client work stays private unless you give permission. Every project includes the 30-day money-back guarantee after the completed product launches.</p><a class="text-link" href="${local(route, "guarantee/")}">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><details class="service-details"><summary>Read the commitments</summary><div class="service-reading">${clientCare.sections.map(({ id, title, text }) => `<article data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>` +
+    `<section class="page-section service-planning" aria-labelledby="service-planning-title"><h2 id="service-planning-title">Before work starts</h2><p>We agree on the work, price, and timeline in writing.</p><p class="service-pricing-link"><a class="text-link" href="${local(route, "pricing/")}">See starting prices <span aria-hidden="true">→</span></a></p><details id="service-fit" class="service-details"><summary>What this can include</summary><div class="service-reading">${service.when.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details><details id="service-scope" class="service-details"><summary>Planning your scope</summary><div class="service-reading">${service.scope.map(({ title, text }) => `<article><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details></section>` +
+    `<details id="client-care" class="service-details service-care"><summary>Code ownership, guarantee &amp; support</summary><p>Your custom code is 100% yours. Client work stays private unless you give permission. Every project includes the 30-day money-back guarantee after the completed product launches.</p><a class="text-link" href="${local(route, "guarantee/")}">Guarantee, refunds &amp; support <span aria-hidden="true">→</span></a><div class="service-reading">${clientCare.sections.map(({ id, title, text }) => `<article data-client-care="${escape(id)}"><h3>${escape(title)}</h3><p>${escape(text)}</p></article>`).join("")}</div></details>` +
     faqBlock(`Questions about ${service.title.toLowerCase()}`, service.faq, "service-questions") +
     `<details class="service-details service-other-options"><summary>Still comparing your options?</summary><p>A website, browser app, and native app solve different problems.</p><nav class="related-links" aria-label="Service planning guides"><a href="${local(route, "guides/website-or-app/")}">Compare websites and apps <span aria-hidden="true">→</span></a>${service.guideSlug ? `<a href="${local(route, `insights/${service.guideSlug}/`)}">${service.topic === "salon" ? "Salon booking" : "Restaurant ordering"} planning guide <span aria-hidden="true">→</span></a>` : ""}</nav><nav class="related-links" aria-label="Other development services">${services.filter((other) => other.slug !== service.slug).map((other) => `<a href="${local(route, `services/${other.slug}/`)}">${escape(other.serviceLabel)}</a>`).join("")}</nav></details>` +
     `<aside class="page-callout service-closing"><h2>Start with the problem.</h2><p>Tell me what your business needs to do. A rough idea is enough to start the conversation.</p><div class="page-actions">${bookingLink()}</div>${bookingDestinationNote()}</aside>`;
@@ -546,7 +542,7 @@ function projectPage(project) {
   const route = `/work/${projectSlugs[project.id]}/`;
   const page = { path: route, title: `${project.title} — ${projectType(project)} | 4u Digital`,
     description: `${project.purpose} See the screens, workflows, and development details in the 4u Digital portfolio.`,
-    project, modified: [project.modified || "", "2026-11-11"].sort().at(-1), image: project.image, imageAlt: project.imageAlt,
+    project, modified: [project.modified || "", "2026-11-20"].sort().at(-1), image: project.image, imageAlt: project.imageAlt,
     imageWidth: project.imageWidth, imageHeight: project.imageHeight,
     breadcrumbs: [{ name: "Projects", path: "/work/" }, { name: project.title, path: route }],
   };
@@ -554,14 +550,14 @@ function projectPage(project) {
   const context = projectClientUses[project.id];
   const service = services.find((entry) => entry.slug === context.serviceSlug);
   const status = project.releaseStatus || (project.id === "FreeScript" ? "Signed Mac release · Not notarized" : project.demoLabel === "App Store" ? "On the App Store" : project.id === "usbmic" ? "Release candidate" : "");
-  const storySections = [["overview", "How it works"], ["project-views", "Images"], ["your-business", "A similar build"], ["development", "Technical details"]];
+  const storySections = [["project-views", "Images"], ["development", "Technical details"]];
   const pageNavigation = `<nav class="project-story-nav" aria-label="On this project page">${storySections.map(([id, label]) => `<a href="#${id}">${label} <span aria-hidden="true">↓</span></a>`).join("")}</nav>`;
   const releaseNote = project.id === "usbmic" ? "Physical microphone validation is still pending." : project.id === "FreeScript" ? "PDF import needs selectable text. Scanned PDFs require OCR first. Physical Intel testing is pending." : "";
   const content = `<section class="project-story-hero">${intro(projectType(project), project.title, project.purpose,
-    `<p class="project-audience"><span>Made for</span> ${escape(story.audience)}</p><div class="project-release-context"><p class="project-personal-note">Selected personal project</p>${status ? `<p class="project-release-status">${escape(status)}</p>` : ""}</div>${releaseNote ? `<p class="project-release-note">${escape(releaseNote)}</p>` : ""}<div class="page-actions">${bookingLink()}<a class="text-link project-hero-browse" href="#overview">See how it works</a></div>${bookingDestinationNote()}`, iconFor(project, route))}<div class="project-page-gallery" aria-label="Main image from ${escape(project.title)}">${projectFrame(project.gallery[0], 0, route).replace("<figure ", '<figure tabindex="-1" ')}${project.demoUrl ? `<p class="project-live-destination"><a class="text-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.demoLabel || "Visit the project")} <span aria-hidden="true">↗</span></a></p>` : ""}</div></section>` + pageNavigation +
-    `<section id="overview" class="page-section project-overview"><div class="project-section-heading"><div><h2>How it works</h2></div><p class="project-summary">${escape(project.clientSummary || project.summary)}</p></div><div class="project-workflow-grid">${project.workflows.map((workflow, index) => `<article class="project-workflow-card"><h3>${escape(workflow)}</h3><p>${escape(story.workflowDescriptions[index])}</p></article>`).join("")}</div><details class="project-extra project-capabilities"><summary>More features</summary><ul class="project-quick-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul>${project.highlights?.length ? `<div class="page-columns">${project.highlights.map(({ title, text }) => `<article><h4>${escape(title)}</h4><p>${escape(text)}</p></article>`).join("")}</div>` : ""}</details></section>` +
+    `<p class="project-audience"><span>Made for</span> ${escape(story.audience)}</p><div class="project-release-context"><p class="project-personal-note">Selected personal project</p>${status ? `<p class="project-release-status">${escape(status)}</p>` : ""}</div>${releaseNote ? `<p class="project-release-note">${escape(releaseNote)}</p>` : ""}<div class="page-actions">${project.demoUrl ? `<a class="text-link" href="${escape(project.demoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.demoLabel || "Visit the project")} <span aria-hidden="true">↗</span></a>` : ""}<a class="text-link" href="${escape(project.repoUrl)}" target="_blank" rel="noopener noreferrer">${project.codeAvailable === false ? "Project repository" : "Source code"} <span aria-hidden="true">↗</span></a></div>`, iconFor(project, route))}<div class="project-page-gallery" aria-label="Main image from ${escape(project.title)}">${projectFrame(project.gallery[0], 0, route).replace("<figure ", '<figure tabindex="-1" ')}</div></section>` + pageNavigation +
+    `<section id="overview" class="page-section project-overview"><div class="project-section-heading"><div><h2>How it works</h2></div></div><div class="project-workflow-grid">${project.workflows.map((workflow, index) => `<article class="project-workflow-card"><h3>${escape(workflow)}</h3><p>${escape(story.workflowDescriptions[index])}</p></article>`).join("")}</div><details class="project-extra project-capabilities"><summary>More features</summary><ul class="project-quick-capabilities" aria-label="What ${escape(project.title)} does">${context.capabilities.map((capability) => `<li>${escape(capability)}</li>`).join("")}</ul>${project.highlights?.length ? `<div class="page-columns">${project.highlights.map(({ title, text }) => `<article><h4>${escape(title)}</h4><p>${escape(text)}</p></article>`).join("")}</div>` : ""}</details></section>` +
     projectViews(project, route) +
-    `<section id="your-business" class="page-section project-business-fit" aria-labelledby="project-business-title"><div><h2 id="project-business-title">Need something similar?</h2><div class="project-business-example"><h3>A similar business need</h3><p>${escape(context.businessUse)}</p></div><details class="project-extra project-build-care"><summary>How I would approach your build</summary><p>${escape(projectBuildCare[project.id])}</p><ul class="project-client-promises"><li>Design, development, testing, and launch with a direct line to the person building your product.</li><li>Scope, price, start date, and target launch agreed before development.</li><li>Your custom code and deployment handover, with the 30-day money-back guarantee after the completed product launches.</li></ul></details></div><div class="project-client-offer"><p>Work directly with the developer, from the first idea to launch. Your custom code is 100% yours. Client work and code stay out of this public portfolio unless you give permission.</p><div class="project-fit-actions">${bookingLink()}<a class="text-link" href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a><a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support</a></div></div></section>` +
+    `<section id="your-business" class="page-section project-business-fit" aria-labelledby="project-business-title"><div><h2 id="project-business-title">Need something similar?</h2><details class="project-extra project-build-care"><summary>How this could apply to your business</summary><div class="project-business-example"><h3>A similar business need</h3><p>${escape(context.businessUse)}</p></div><p>${escape(projectBuildCare[project.id])}</p><ul class="project-client-promises"><li>Design, development, testing, and launch with a direct line to the person building your product.</li><li>Scope, price, start date, and target launch agreed before development.</li><li>Your custom code and deployment handover, with the 30-day money-back guarantee after the completed product launches.</li></ul></details></div><div class="project-client-offer"><p>Your custom code is 100% yours. Client work stays private unless you give permission.</p><div class="project-fit-actions">${bookingLink()}<a class="text-link" href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a><a class="text-link" href="${local(route, "guarantee/")}">Guarantee &amp; support</a></div></div></section>` +
     projectPromotions(project, route) +
     `<section id="development" class="page-section project-development"><h2>Behind the build</h2><a class="text-link project-source-link" href="${escape(project.repoUrl)}" target="_blank" rel="noopener noreferrer">${escape(project.title)} ${project.codeAvailable === false ? "project repository" : "source code"} on GitHub ↗</a><details class="project-extra project-technical"><summary>Technical details &amp; image context</summary>${project.challenge ? `<div class="project-context"><article><h3>The problem</h3><p>${escape(project.challenge)}</p></article><article><h3>What was built</h3><p>${escape(project.build)}</p></article></div>` : ""}<div class="project-development-grid"><div><h3>Development details</h3><ul class="page-list">${project.features.map((feature) => `<li>${escape(feature)}</li>`).join("")}</ul></div><aside class="project-stack"><h3>Built with</h3><div class="project-tags">${project.stack.map((technology) => `<span class="tag">${escape(technology)}</span>`).join("")}</div></aside></div>${project.notes ? `<div class="project-evidence"><h3>About these images and previews</h3><p>${escape(project.notes)}</p></div>` : ""}</details></section>` +
     `<nav class="related-links project-related" aria-label="Related services"><a href="${local(route, "work/")}">Back to all projects</a><a href="${local(route, `services/${service.slug}/`)}">${escape(service.title)}</a></nav>`;
@@ -570,7 +566,7 @@ function projectPage(project) {
 
 function guidePage() {
   const route = "/guides/website-or-app/";
-  const page = { path: route, title: guide.metaTitle, description: guide.description, modified: "2026-11-11", faq: guide.faq,
+  const page = { path: route, title: guide.metaTitle, description: guide.description, modified: "2026-11-20", faq: guide.faq,
     breadcrumbs: [{ name: "Website or app?", path: route }],
   };
   const content = intro("", guide.title, guide.intro) +
@@ -583,38 +579,38 @@ function guidePage() {
 }
 
 export async function generateSEO(output) {
-  const home = { path: "/", title: "Website, App & Software Development | 4u Digital",
-    description: "I build personal and business websites, from portfolios to online stores and booking sites. I also build apps and custom software.",
-    modified: "2026-11-11",
+  const home = { path: "/", title: "Website Design & Development | 4u Digital",
+    description: "Custom website design and development for businesses and individuals. View project examples, see starting prices, and work directly with the developer.",
+    modified: "2026-11-21",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));
-  html = html.replace('<section id="client-care" class="client-care-section wrap" aria-labelledby="client-care-title"></section>', clientCareSection(true));
-  html = html.replace('<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title"></section>', `<section id="testimonials" class="testimonials-section wrap" aria-labelledby="testimonials-title">${testimonialsSection()}</section>`);
+  html = html.replace('<div id="home-guarantee"></div>', clientCareSection(true));
+  html = html.replace('<div id="home-reviews"></div>', testimonialsSection());
   html = html.replace('<div id="shared-footer"></div>', footer("/"));
   html = sourceEmailLinks(html, "/");
   await writeFile(path.join(output, "index.html"), html);
 
   const servicesPage = { path: "/services/", title: "App, Website & Business Software Services | 4u Digital",
     description: "Custom website development, web applications, native apps, and business software by 4u Digital. Compare services and see real project examples.",
-    modified: "2026-11-11",
+    modified: "2026-11-20",
     breadcrumbs: [{ name: "Services", path: "/services/" }],
   };
   const work = { path: "/work/", title: "Website, App & Software Project Portfolio | 4u Digital",
     description: `See ${projects.length} selected 4u Digital software projects: websites, business web apps, native apps, and desktop tools. View original product images and development details.`,
-    type: "CollectionPage", projectIndex: true, modified: "2026-11-16", breadcrumbs: [{ name: "Projects", path: "/work/" }],
+    type: "CollectionPage", projectIndex: true, modified: "2026-11-20", breadcrumbs: [{ name: "Projects", path: "/work/" }],
   };
   const about = { path: "/about/", title: "About 4u Digital | Custom Technology for Your Business",
     description: "4u Digital builds custom apps, websites, and business software. Learn how an idea becomes a defined scope, working technology, and a launch plan.",
-    type: "AboutPage", modified: "2026-11-11", breadcrumbs: [{ name: "About 4u Digital", path: "/about/" }],
+    type: "AboutPage", modified: "2026-11-20", breadcrumbs: [{ name: "About 4u Digital", path: "/about/" }],
   };
   const contact = { path: "/contact/", title: "Discuss Your App, Website or Software Project | 4u Digital",
     description: "Contact 4u Digital about your website, app, or business software. Book your first video consultation through BriefBooth or email a project inquiry.",
-    type: "ContactPage", modified: "2026-11-11", breadcrumbs: [{ name: "Contact 4u Digital", path: "/contact/" }],
+    type: "ContactPage", modified: "2026-11-20", breadcrumbs: [{ name: "Contact 4u Digital", path: "/contact/" }],
   };
   const insights = { path: "/insights/", title: "Business Website, App & Software Guides | 4u Digital",
     description: "Practical website guides for salons, restaurants, and local shops, plus advice on pricing, comparing quotes, and planning apps or business software.",
-    modified: "2026-11-11",
+    modified: "2026-11-20",
     type: "CollectionPage", breadcrumbs: [{ name: "Business guides", path: "/insights/" }],
   };
   const pages = [
@@ -641,8 +637,8 @@ export async function generateSEO(output) {
       `<section class="page-section existing-client-resource"><h2>Already working together?</h2><p>Use the <a class="text-link" href="${local(contact.path, "project-kickoff/")}">kickoff form</a> to record the agreed scope, approvals, and handover.</p></section>`) },
   ].map((page) => ({
     ...page,
-    // The minimal shared navigation and footer changed every published page on October 27.
-    modified: [page.modified || page.article?.modified || site.modified || site.published, "2026-10-27"].sort().at(-1),
+    // Shared navigation and footer content changed on November 20.
+    modified: [page.modified || page.article?.modified || site.modified || site.published, "2026-11-20"].sort().at(-1),
   }));
   for (const page of pages.filter((page) => page.path !== "/")) {
     const directory = path.join(output, page.path);

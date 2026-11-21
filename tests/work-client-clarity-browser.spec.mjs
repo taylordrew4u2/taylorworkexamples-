@@ -59,7 +59,16 @@ for (const javaScriptEnabled of [true, false]) {
           }
           await expect(card.locator(".work-index-image-label")).toHaveText(project.imageLabel || "Project image");
           await expect(card.locator(".work-project-purpose")).toHaveText(project.purpose);
-          await expect(card.locator(".work-project-capabilities li")).toHaveText(context.capabilities);
+          const features = card.locator(".work-project-features");
+          await expect(features).not.toHaveAttribute("open", "");
+          await expect(features.locator("li")).toHaveText(context.capabilities);
+          await expect(features.locator("li").first()).toBeHidden();
+          await features.locator("summary").focus();
+          await page.keyboard.press("Enter");
+          await expect(features.locator("li").first()).toBeVisible();
+          for (const link of [header.locator("h3 a"), card.locator("a.seo-project-cover")]) {
+            expect(new URL(await link.getAttribute("href"), page.url()).pathname).toBe(`/work/${projectSlugs[project.id]}/`);
+          }
           await expect(card.locator(".work-project-business-use")).toHaveCount(0);
           expect(await card.evaluate((element) => {
             const box = element.getBoundingClientRect();
@@ -85,7 +94,7 @@ for (const javaScriptEnabled of [true, false]) {
       }
     });
 
-    test("the short opening leads with work and the booking dock and closing preserve the consultation path", async ({ page }) => {
+    test("the short opening leads with work and the closing preserves the consultation path", async ({ page }) => {
       test.setTimeout(120_000);
       // Keep the booking handoff local; no real appointment or email is created.
       await page.context().route(bookingURL, (route) => route.fulfill({
@@ -99,7 +108,9 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(opening.locator(".page-lead")).toContainText(/business websites, booking tools, and apps/i);
         await expect(opening.getByRole("heading", { level: 1 })).toHaveText("Projects.");
         await expect(opening.locator("[data-booking-link]")).toHaveCount(0);
-        const booking = page.locator(".mobile-consultation [data-booking-link]");
+        const booking = page.locator("main [data-booking-link]").last();
+        await expect(page.locator(".mobile-consultation")).toHaveCount(0);
+        await booking.focus();
         await expectDirectBooking(booking);
         await expectTapTarget(booking, width);
         await expect(opening.locator("form, input, select, textarea")).toHaveCount(0);
@@ -116,7 +127,7 @@ for (const javaScriptEnabled of [true, false]) {
         }
         const hiring = page.locator("#work-with-me");
         await expect(hiring.locator(".work-hiring-grid")).toHaveCount(0);
-        for (const commitment of [/one developer/i, /scope and price/i, /custom code/i, /30.day money.back guarantee/i]) {
+        for (const commitment of [/scope and price/i, /custom code/i, /30.day money.back guarantee/i]) {
           await expect(hiring).toContainText(commitment);
         }
         expect(await hiring.evaluate((element) => Boolean(
@@ -133,7 +144,7 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(disclosure).toHaveCount(1);
         await expect(disclosure).toContainText(/selected personal projects/i);
         await expect(disclosure).toContainText(/custom code.*100% yours/i);
-        await expect(disclosure).toContainText(/without your permission/i);
+        await expect(disclosure).toContainText(/unless you give permission/i);
         await expectDirectBooking(hiring.locator("[data-booking-link]"));
         const terms = hiring.locator('a[href="../guarantee/"]');
         await expectTapTarget(terms, width);

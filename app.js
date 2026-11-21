@@ -1,4 +1,4 @@
-import "./navigation.js?v=50";
+import "./navigation.js?v=51";
 
 // Keep previously shared portfolio anchors useful after moving work to its own page.
 function followLegacyProjectLink() {

@@ -27,7 +27,7 @@ for (const javaScriptEnabled of [true, false]) {
       }
       await expect(page.locator("#consultation")).toContainText(/BriefBooth.*new tab.*reviewed before confirmation/i);
       await expect(page.locator("#project-faq")).toContainText(/First consultations are online/);
-      await expect(page.locator("#project-faq")).toContainText(/physical space or workflow/);
+      await expect(page.locator("#project-faq")).toContainText(/available by arrangement when a project needs an in-person discussion/);
       await expect(page.locator("#project-faq")).toContainText(/Manhattan, Brooklyn, and parts of Queens/);
       await expect(page.locator("main form, main iframe, main input[type='date'], main input[type='time']")).toHaveCount(0);
       await expect(page.locator("footer a[href^='mailto:']")).toHaveAttribute("href", /^mailto:admin@customtechbuilt4u\.com/);

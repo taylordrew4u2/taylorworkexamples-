@@ -34,9 +34,7 @@ for (const javaScriptEnabled of [true, false]) {
             const opening = page.locator(".page-intro");
             const actions = opening.locator(".page-actions a");
             expect(await actions.count(), "The opening has at most two choices").toBeLessThanOrEqual(2);
-            const booking = route === "/work/" || route === "/services/"
-              ? page.locator(".mobile-consultation [data-booking-link]")
-              : opening.locator("[data-booking-link]");
+            const booking = page.locator("main [data-booking-link]").last();
             await expect(booking).toHaveCount(1);
             await expect(booking).toHaveAttribute("href", bookingURL);
             await expect(booking).toHaveAttribute("target", "_blank");
@@ -44,6 +42,7 @@ for (const javaScriptEnabled of [true, false]) {
             await expect(booking).toHaveAttribute("rel", /\bnoreferrer\b/);
             await expect(booking).toHaveAccessibleName(/^Book a consultation/);
             await expectPhoneTarget(booking, width);
+            await booking.focus();
             await expect(booking).toBeInViewport({ ratio: 1 });
             await expect(opening.locator('a[href^="mailto:"]')).toHaveCount(0);
             await expect(page.locator("main form, main iframe, main input[type=date], main input[type=time]"))
@@ -87,9 +86,7 @@ for (const javaScriptEnabled of [true, false]) {
               return [{ href: element.getAttribute("href"), exists: Boolean(document.getElementById(decodeURIComponent(url.hash.slice(1)))) }];
             }));
             expect(links.filter((link) => !link.exists), "Every local jump has an actual destination").toEqual([]);
-            const dock = page.locator(".mobile-consultation");
-            await expect(dock.getByRole("link")).toHaveCount(1);
-            await expect(dock.locator("[data-booking-link]")).toHaveAttribute("href", bookingURL);
+            await expect(page.locator(".mobile-consultation")).toHaveCount(0);
             expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
               "The complete document fits a narrow phone").toBe(true);
           });

@@ -12,16 +12,18 @@ for (const javaScriptEnabled of [true, false]) {
         await expect(page.locator(".simple-service")).toHaveCount(4);
         await expect(page.locator(".simple-project")).toHaveCount(3);
         await expect(page.locator("#project-dialog, .hero-explorer, .hero-project-types, .planner-shortcut, #business-guides")).toHaveCount(0);
-        const targets = await page.locator(".simple-actions a, .simple-service, .simple-project, #website-offer a").evaluateAll((elements) =>
-          elements.map((element) => {
-            element.focus();
+        const controls = page.locator(".simple-actions a, .simple-service, .simple-project, #website-offer a");
+        for (const control of await controls.all()) {
+          await control.focus();
+          await control.evaluate((element) => element.scrollIntoView({ block: "center", inline: "nearest", behavior: "instant" }));
+          await expect(control).toBeFocused();
+          const target = await control.evaluate((element) => {
             const box = element.getBoundingClientRect();
             const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
             return { label: element.textContent.trim(), width: box.width, height: box.height,
               left: box.left, right: box.right, top: box.top, bottom: box.bottom,
               directlyTappable: hit === element || element.contains(hit) };
-          }));
-        for (const target of targets) {
+          });
           const label = `${width}px ${target.label}`;
           expect(target.width, label).toBeGreaterThanOrEqual(44);
           expect(target.height, label).toBeGreaterThanOrEqual(44);

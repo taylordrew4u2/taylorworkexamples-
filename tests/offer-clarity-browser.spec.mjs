@@ -3,7 +3,7 @@ import { launchOffer } from "../seo-offer.js";
 import { services } from "../seo-content.js";
 import { bookingURL } from "../booking.js";
 
-const destinationNote = "Video consultation · Opens BriefBooth in a new tab. Requests are reviewed before confirmation.";
+const destinationNote = "Online via BriefBooth (opens in a new tab). Requests are reviewed before confirmation.";
 
 for (const javaScriptEnabled of [true, false]) {
   test.describe(`offer commitments and booking context with JavaScript ${javaScriptEnabled ? "enabled" : "disabled"}`, () => {

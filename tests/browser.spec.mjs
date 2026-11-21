@@ -7,10 +7,10 @@ test("the homepage loads a concise hiring offer and original project artwork wit
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page).toHaveTitle("Website, App & Software Development | 4u Digital");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and people.");
+  await expect(page).toHaveTitle("Website Design & Development | 4u Digital");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and individuals.");
   await expect(page.locator(".simple-kicker")).toHaveText("Custom tech build for you.");
-  await expect(page.locator(".simple-descriptor")).toHaveText("Get a personal site or portfolio, or give customers a place to book and shop online.");
+  await expect(page.locator(".simple-descriptor")).toHaveText("Business websites, online shops, and personal portfolios. You work directly with me, from the first idea to launch.");
   await expect(page.getByRole("banner").getByRole("link", { name: "4u Digital, home", exact: true })).toBeVisible();
   await expect(page.locator(".simple-project img")).toHaveCount(3);
   for (const image of await page.locator(".simple-project img").all()) {
@@ -46,7 +46,8 @@ test("dedicated project pages show the need, optional build evidence, and one co
   const card = page.locator(`.work-page-grid .seo-project-card[data-project-id="${project.id}"]`);
   await card.getByRole("link", { name: `See how it works: ${project.title}`, exact: true }).click();
   await expect(page).toHaveURL(/\/work\/pins-and-needles-comedy\/$/);
-  await expect(page.locator("#overview .project-summary")).toHaveText(project.clientSummary);
+  await expect(page.locator(".project-story-hero .page-lead")).toHaveText(project.purpose);
+  await expect(page.locator("#overview .project-summary")).toHaveCount(0);
   await expect(page.locator("#development .project-technical")).not.toHaveAttribute("open");
   await page.locator("#development .project-technical > summary").click();
   await expect(page.locator("#development .project-context")).toContainText(project.challenge);

@@ -77,7 +77,9 @@ test.describe("NYC project without JavaScript", () => {
       await expect(page.locator("main")).toContainText(/custom code.*100% yours/i);
       await expect(page.locator("main")).toContainText(/without your permission|unless you give permission/i);
       await expect(page.locator("main form, main iframe, main input[type='date'], main input[type='time']")).toHaveCount(0);
-      const booking = page.locator(".mobile-consultation [data-booking-link]");
+      const booking = page.locator("main [data-booking-link]").last();
+      await expect(page.locator(".mobile-consultation")).toHaveCount(0);
+      await booking.focus();
       await expect(booking).toBeInViewport({ ratio: 1 });
       await expect(booking).toHaveAttribute("href", bookingURL);
       await expect(booking).toHaveAttribute("target", "_blank");
