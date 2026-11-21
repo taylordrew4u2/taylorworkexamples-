@@ -1019,7 +1019,7 @@ test("immutable caching applies only to content-versioned assets and keeps one c
     digest.update(name).update("\0").update(content).update("\0");
     if (!name.endsWith(".js")) continue;
     const importer = `${origin}/static/${version}/${name}`;
-    for (const [, reference] of content.toString("utf8").matchAll(/^\s*import\s+[^;\n]*?\bfrom\s+["']([^"']+)["']/gm)) {
+    for (const [, reference] of content.toString("utf8").matchAll(/^\s*import\s+(?:[^;\n]*?\bfrom\s+)?["']([^"']+)["']/gm)) {
       assert.ok(reference.startsWith("./"), `${name}: module imports stay relative to their versioned graph`);
       const target = new URL(reference, importer);
       assert.equal(path.posix.dirname(target.pathname), `/static/${version}`,

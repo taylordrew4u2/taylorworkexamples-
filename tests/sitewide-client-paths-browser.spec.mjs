@@ -38,7 +38,11 @@ async function expectPageBooking(page) {
   await expect(page.locator(".mobile-consultation, .planner-shortcut")).toHaveCount(0);
   const booking = page.locator("main [data-booking-link]").last();
   await expectDirectBooking(booking);
+  // This is an ordinary page link. Refocusing a link that is already focused
+  // does not scroll it back after the test deliberately visits the footer.
+  await booking.scrollIntoViewIfNeeded();
   await booking.focus();
+  await expect(booking).toBeFocused();
   await expect(booking).toBeInViewport({ ratio: 1 });
   expect(await booking.evaluate((element) => {
     const box = element.getBoundingClientRect();

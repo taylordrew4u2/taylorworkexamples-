@@ -468,7 +468,7 @@ test("homepage visitors can open the optional planner without booking or finding
 
 test("the later existing-client kickoff resource still prepares an attributed email without JavaScript", async ({ page }) => {
   await page.goto("/project-kickoff/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("A clear plan before the build.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Before work starts");
   await expect(page.locator("main")).toContainText("You don’t need this worked out before getting in touch.");
   for (const heading of ["1. Agree the first useful version.", "2. Know who makes the decisions.", "3. Plan the assets, access, and handover."])
     await expect(page.getByRole("heading", { name: heading, exact: true })).toBeVisible();

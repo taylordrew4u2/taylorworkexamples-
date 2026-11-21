@@ -10,7 +10,7 @@ test("the homepage loads a concise hiring offer and original project artwork wit
   await expect(page).toHaveTitle("Website Design & Development | 4u Digital");
   await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and individuals.");
   await expect(page.locator(".simple-kicker")).toHaveText("Custom tech build for you.");
-  await expect(page.locator(".simple-descriptor")).toHaveText("Get a personal site or portfolio, or give customers a place to book and shop online.");
+  await expect(page.locator(".simple-descriptor")).toHaveText("Business websites, online shops, and personal portfolios. You work directly with me, from the first idea to launch.");
   await expect(page.getByRole("banner").getByRole("link", { name: "4u Digital, home", exact: true })).toBeVisible();
   await expect(page.locator(".simple-project img")).toHaveCount(3);
   for (const image of await page.locator(".simple-project img").all()) {
