@@ -146,7 +146,7 @@ async function expectOriginalImage(image, frame) {
 
 test("the homepage leads to a complete dedicated portfolio and individual project pages without JavaScript", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Websites, apps & custom software.");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and individuals.");
   await expect(page.locator("#featured-projects, #archive-projects, #range-proof, .project-card, .archive-card")).toHaveCount(0);
   await expect(page.locator(".simple-project")).toHaveCount(3);
   await expect(page.locator("#business-guides, dialog, input[name='hero-project']")).toHaveCount(0);
@@ -651,7 +651,7 @@ test("a business guide connects the idea to a service and the supplied consultat
   await expect(page.locator("main")).toContainText(/Start with a video consultation/i);
   await expect(page.getByRole("heading", { name: "See the space before deciding on the software.", exact: true })).toBeVisible();
   await expect(page.locator("main")).toContainText(/reception desk, booking handoff, order station/i);
-  for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
+  for (const option of ["websites", "businesses and individuals", "online shops", "personal portfolios"]) {
     await expect(page.locator(".page-intro")).toContainText(option);
   }
   const arrange = page.locator(".page-intro .page-actions [data-booking-link]");

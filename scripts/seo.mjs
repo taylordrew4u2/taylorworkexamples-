@@ -33,7 +33,7 @@ function organization() {
   return {
     "@type": "Organization", "@id": organizationId, name: "4u Digital", url: `${origin}/`,
     slogan: "Custom tech build for you.",
-    description: "Custom websites, apps, and software for businesses and people.",
+    description: "Website design and development, with apps and custom software for businesses and individuals.",
     email: site.email, logo: `${origin}/assets/4u-digital-logo-mono.png`,
     sameAs: ["https://github.com/taylordrew4u2"],
   };
@@ -284,7 +284,7 @@ function projectIndexContent(route) {
 }
 
 const serviceChoices = {
-  "website-development": { heading: "Websites", title: "Custom websites.", text: "Business sites, portfolios, and online shops. New websites or improvements to an existing one.", capabilities: ["Clear service and product pages", "Useful inquiry or booking flows", "Layouts made for phones and computers"] },
+  "website-development": { heading: "Websites", title: "Website design & development.", text: "Business sites, portfolios, and online shops. New websites or improvements to an existing one.", capabilities: ["Clear service and product pages", "Useful inquiry or booking flows", "Layouts made for phones and computers"] },
   "web-app-development": { heading: "Web apps", title: "Web apps.", text: "Booking systems, customer accounts, and tools your team can use in a browser.", capabilities: ["Customer and team accounts", "Requests, approvals, and shared records", "Payments connected to your workflow"] },
   "app-development": { heading: "iPhone, iPad & Mac apps", title: "iPhone, iPad & Mac apps.", text: "Apps designed for Apple devices, from writing tools to calendars.", capabilities: ["Native iPhone, iPad, and Mac screens", "Device features and offline workflows", "Testing and release preparation"] },
   "custom-software-development": { heading: "Custom software", title: "Custom software.", text: "Tools that organize everyday work, automate repeated tasks, or connect your existing systems.", capabilities: ["Tools for specialist team tasks", "Documents turned into useful records", "Connections between existing systems"] },
@@ -406,10 +406,10 @@ function articlePage(article) {
 function localPage() {
   const route = "/new-york-city/";
   const page = { path: route, title: localConsultation.metaTitle, description: localConsultation.description,
-    service: localConsultation, local: true, modified: "2026-11-20", faq: localConsultation.faq,
-    breadcrumbs: [{ name: "New York City consultations", path: route }],
+    service: localConsultation, local: true, modified: "2026-11-21", faq: localConsultation.faq,
+    breadcrumbs: [{ name: "Website development in NYC", path: route }],
   };
-  const content = intro("NYC CONSULTATIONS", localConsultation.heading, localConsultation.intro,
+  const content = intro("NEW YORK CITY", localConsultation.heading, localConsultation.intro,
     `<div class="page-actions">${bookingLink()}<a class="text-link" href="mailto:${site.email}">${site.email} ↗</a></div>${bookingDestinationNote()}`) +
     `<section class="page-section local-meeting-choices" aria-labelledby="meeting-choices-title"><h2 id="meeting-choices-title">Choose how we work through it.</h2><div class="page-columns"><article><h3>Start with a video call.</h3><p>Bring a rough idea, a question, or an example of something you want to make easier. Pick a time through BriefBooth.</p></article><article><h3>Arrange a visit in NYC.</h3><p>We can walk through your space if you’re unsure what you need or the technology has to fit a specific workflow. Visits are available in Manhattan, Brooklyn, and parts of Queens.</p></article></div></section>` +
     `<section class="page-section" aria-labelledby="consultation-examples-title"><h2 id="consultation-examples-title">See the space before deciding on the software.</h2><p>${escape(localConsultation.visitExample)}</p><div class="faq-list local-preparation"><details class="faq-item"><summary>What should I bring to the consultation?</summary><p>${escape(localConsultation.preparation)}</p></details><details class="faq-item"><summary>What happens after we talk?</summary><p>${escape(localConsultation.afterConsultation)}</p></details></div></section>` +
@@ -485,7 +485,7 @@ function offerPage() {
 function servicePage(service) {
   const route = `/services/${service.slug}/`;
   const page = { path: route, title: service.metaTitle, description: service.description, service, faq: service.faq,
-    modified: "2026-11-20",
+    modified: service.modified > "2026-11-20" ? service.modified : "2026-11-20",
     breadcrumbs: [{ name: "Services", path: "/services/" }, { name: service.title, path: route }],
   };
   const examples = service.projectIds.map((id) => projects.find((project) => project.id === id)).filter(Boolean);
@@ -579,9 +579,9 @@ function guidePage() {
 }
 
 export async function generateSEO(output) {
-  const home = { path: "/", title: "Website, App & Software Development | 4u Digital",
-    description: "Websites, apps, and custom software for businesses and individuals. Explore projects and book a consultation with 4u Digital.",
-    modified: "2026-11-20",
+  const home = { path: "/", title: "Website Design & Development | 4u Digital",
+    description: "Custom website design and development for businesses and individuals. View project examples, see starting prices, and work directly with the developer.",
+    modified: "2026-11-21",
   };
   let html = await readFile(new URL("../index.html", import.meta.url), "utf8");
   html = html.replace(/<head>[\s\S]*?<\/head>/, pageHead(home, true));

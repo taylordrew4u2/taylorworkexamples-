@@ -1,5 +1,5 @@
 export const serviceHeadings = {
-  "website-development": "Custom websites.",
+  "website-development": "Website design & development.",
   "web-app-development": "Web apps.",
   "app-development": "iPhone, iPad & Mac apps.",
   "custom-software-development": "Custom software.",

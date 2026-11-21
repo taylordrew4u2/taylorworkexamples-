@@ -21,7 +21,7 @@ for (const javaScriptEnabled of [true, false]) {
         await page.goto("/");
         const hero = page.locator(".simple-hero");
         await expect(hero.getByRole("heading", { level: 1 })).toBeVisible();
-        await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Websites, apps & custom software.");
+        await expect(hero.getByRole("heading", { level: 1 })).toHaveText("I build websites for businesses and individuals.");
         const actions = hero.locator(".simple-actions");
         await expect(actions.getByRole("link")).toHaveCount(2);
         const booking = actions.locator("[data-booking-link]");

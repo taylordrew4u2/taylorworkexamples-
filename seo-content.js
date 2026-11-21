@@ -15,11 +15,11 @@ export const services = [
     slug: "website-development",
     title: "Websites",
     serviceLabel: "Websites",
-    modified: "2026-11-20",
-    metaTitle: "Custom Website Development for Your Business | 4u Digital",
-    description: "Websites for businesses and personal projects, including portfolios, inquiries, and bookings. See examples from 4u Digital.",
-    heading: "Websites.",
-    intro: "I build websites that show what you do and make it easy to get in touch, book, or shop. New sites and redesigns are welcome.",
+    modified: "2026-11-21",
+    metaTitle: "Business & Personal Website Design | 4u Digital",
+    description: "Website design and development for businesses and individuals: company websites, online shops, and personal portfolios. View examples and discuss your project.",
+    heading: "Website design & development.",
+    intro: "I design and build business websites, online shops, and personal portfolios. Start a new site or improve one you already have.",
     eyebrow: "WEBSITES",
     topic: "website",
     when: [
@@ -50,8 +50,8 @@ export const services = [
         text: "We agree the domain, hosting, email, booking connections, and ongoing costs before building. Page titles and descriptions can be included; search rankings are not guaranteed.",
       },
     ],
-    projectIds: ["micro-short-website", "PinsAndNeedlesComedyWebsite"],
-    proofIntro: "Micro-short presents a film, cast, crew, and festival recognition. Pins & Needles Comedy combines a show website with producer controls and audience screens. Both are personal projects.",
+    projectIds: ["micro-short-website", "tlcmassagewellness", "PinsAndNeedlesComedyWebsite"],
+    proofIntro: "Micro-short is a film website. TLC Massage Wellness is a service-business website demo. Pins & Needles Comedy is a show website. All three are personal projects; each page explains its images and context.",
     faq: [
       {
         question: "Do I need finished copy?",

@@ -463,7 +463,7 @@ test("business guides and consultation details are discoverable, truthful, and r
   assert.match(text(local), /See the space before deciding on the software\./);
   assert.match(text(local), /reception desk, booking handoff, order station/);
   assert.match(text(local), /in-person consultation can help us understand the work before choosing what to build/);
-  for (const option of ["website", "mobile app", "web platform", "desktop software", "custom tool"]) {
+  for (const option of ["websites", "businesses and individuals", "online shops", "personal portfolios"]) {
     assert.ok(text(local).includes(option), `${option}: the consultation explains the available build range`);
   }
   assert.match(text(local), /Manhattan, Brooklyn, and parts of Queens/);
@@ -597,8 +597,10 @@ test("salon and restaurant services explain the business workflow and connect to
     assert.equal(sitemapDates.get(`/insights/${article.slug}/`), "2026-11-20",
       `${article.title}: the generated opening and navigation changed while the publication date remains unchanged`);
   }
+  const websiteSearchUpdates = new Set(["/", "/services/website-development/", "/new-york-city/"]);
   for (const route of routes) {
-    assert.equal(sitemapDates.get(route), "2026-11-20", `${route}: the modification date reflects the shared navigation and footer changes`);
+    const expectedModified = websiteSearchUpdates.has(route) ? "2026-11-21" : "2026-11-20";
+    assert.equal(sitemapDates.get(route), expectedModified, `${route}: the modification date reflects its latest content change`);
   }
 });
 

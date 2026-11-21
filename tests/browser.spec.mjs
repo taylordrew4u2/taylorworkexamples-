@@ -7,8 +7,8 @@ test("the homepage loads a concise hiring offer and original project artwork wit
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
-  await expect(page).toHaveTitle("Website, App & Software Development | 4u Digital");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("Websites, apps & custom software.");
+  await expect(page).toHaveTitle("Website Design & Development | 4u Digital");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveAccessibleName("I build websites for businesses and individuals.");
   await expect(page.locator(".simple-kicker")).toHaveText("Custom tech build for you.");
   await expect(page.locator(".simple-descriptor")).toHaveText("Get a personal site or portfolio, or give customers a place to book and shop online.");
   await expect(page.getByRole("banner").getByRole("link", { name: "4u Digital, home", exact: true })).toBeVisible();
